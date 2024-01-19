@@ -61,7 +61,7 @@ public class GameDataMgr : MonoBehaviour
         return File.Exists(fileName);
     }
 
-    internal void DeleteAllProfiles()
+    public void DeleteAllProfiles()
     {
         File.Delete(GetProfileFileName("Jeff"));
         File.Delete(GetProfileFileName("Jenn"));
