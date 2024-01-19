@@ -27,7 +27,7 @@ MonoBehaviour:
     StartingItemsInBuilding:
     - Item: {fileID: 11400000, guid: 0f7a65437217c4f3c8bdf660e2b482c4, type: 2}
       Count: 3
-    NumWorkersStartAtBuilding: 1
+    NumWorkersStartAtBuilding: 4
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 829b56cdca3664623ba2653708959f4e, type: 2}
     TileX: 0
@@ -41,7 +41,7 @@ MonoBehaviour:
     StartingItemsInBuilding:
     - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
       Count: 0
-    NumWorkersStartAtBuilding: 1
+    NumWorkersStartAtBuilding: 4
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: d69245655853a409d8735542bd6b725d, type: 2}
     TileX: 2

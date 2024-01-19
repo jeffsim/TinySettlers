@@ -13,18 +13,20 @@ public class GameDefnsMgr
     [SerializeReference] public Dictionary<string, TownDefn> TownDefns = new Dictionary<string, TownDefn>();
     [SerializeReference] public Dictionary<string, WorkerDefn> WorkerDefns = new Dictionary<string, WorkerDefn>();
     [SerializeReference] public Dictionary<string, WorldDefn> WorldDefns = new Dictionary<string, WorldDefn>();
+    [SerializeReference] public Dictionary<string, GameSettingsDefn> GameSettingsDefns = new();
 
     public void RefreshDefns()
     {
         // Find all Defn objects and add them.
         // TODO (PERF, LATER): This makes my development life easier, but when I get closer to prod, these should be stored 
         // persistently in the GameDefns prefab so that I don't have to do this on every scene load
-        loadDefns<BuildingDefn>("Buildings", BuildingDefns);
-        loadDefns<TileDefn>("Tiles", TileDefns);
-        loadDefns<ItemDefn>("Items", ItemDefns);
-        loadDefns<TownDefn>("Towns", TownDefns);
-        loadDefns<WorkerDefn>("Workers", WorkerDefns);
-        loadDefns<WorldDefn>("Worlds", WorldDefns);
+        loadDefns("Buildings", BuildingDefns);
+        loadDefns("Tiles", TileDefns);
+        loadDefns("Items", ItemDefns);
+        loadDefns("Towns", TownDefns);
+        loadDefns("Workers", WorkerDefns);
+        loadDefns("Worlds", WorldDefns);
+        loadDefns("GameSettings", GameSettingsDefns);
     }
 
     private void loadDefns<T>(string folderName, Dictionary<string, T> defnDict) where T : BaseDefn
@@ -47,6 +49,7 @@ public class GameDefns : SerializedMonoBehaviour
     public Dictionary<string, TownDefn> TownDefns => GameDefnsMgr.TownDefns;
     public Dictionary<string, WorkerDefn> WorkerDefns => GameDefnsMgr.WorkerDefns;
     public Dictionary<string, WorldDefn> WorldDefns => GameDefnsMgr.WorldDefns;
+    public Dictionary<string, GameSettingsDefn> GameSettingsDefns => GameDefnsMgr.GameSettingsDefns;
 
     void Awake()
     {

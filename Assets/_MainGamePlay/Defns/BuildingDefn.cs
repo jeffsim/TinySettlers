@@ -41,6 +41,8 @@ public class BuildingDefn : BaseDefn
     public List<Vector3> StorageAreaLocations;
     [ShowIf("CanStoreItems")]
     public int NumStorageAreas => StorageAreaLocations.Count;
+    [ShowIf("CanStoreItems")]
+    public int StorageAreaWidthAndHeight = 3;
 
     public bool WorkersCanFerryItems;
 

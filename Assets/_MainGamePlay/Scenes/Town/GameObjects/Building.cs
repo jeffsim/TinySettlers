@@ -111,6 +111,7 @@ public class Building : MonoBehaviour
             dragState = DragState.NotDragging;
 
             var tile = scene.Map.getTileAt(Input.mousePosition);
+            Debug.Assert(tile != null, "null tile at " + Input.mousePosition);
             scene.Map.Town.MoveBuilding(Data, tile.Data.TileX, tile.Data.TileY);
         }
     }

@@ -39,7 +39,7 @@ public class StorageAreaData : BaseData
         Building = buildingData;
 
         StorageSpots = new List<StorageSpotData>();
-        for (int i = 0; i < 9; i++)
+        for (int i = 0; i < buildingData.Defn.StorageAreaWidthAndHeight * buildingData.Defn.StorageAreaWidthAndHeight; i++)
             StorageSpots.Add(new StorageSpotData(this, i));
 
         var loc = buildingData.Defn.StorageAreaLocations[index];

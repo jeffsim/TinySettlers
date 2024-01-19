@@ -31,7 +31,7 @@ public class StorageSpotData : BaseData
     public StorageSpotData(StorageAreaData area, int index)
     {
         Area = area;
-        LocalLoc = new Vector2((index % 3) * 1.1f - 1.1f, -(index / 3) * 1.1f + 1.1f);
+        LocalLoc = new Vector2((index % Building.Defn.StorageAreaWidthAndHeight) * 1.1f - 1.1f, -(index / Building.Defn.StorageAreaWidthAndHeight) * 1.1f + 1.1f);
     }
 
     public void UpdateWorldLoc()

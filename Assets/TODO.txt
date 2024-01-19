@@ -8,6 +8,7 @@
 
 * Implement "pick up abandoned item on ground" (after building destroyed or worker destroyed)
  - include tests
+* Assign 4 workers to miners hut; quickly fills storage: add task "move my building's item to storage [if I'm idling for too long?]"
 
 * Graph demand for goods
     - add current supply
