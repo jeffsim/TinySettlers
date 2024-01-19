@@ -27,6 +27,7 @@ public class SceneWithMap : SceneMgr
     public CraftingSpotDetails CraftingSpotDetails;
     public ItemOnGroundDetails ItemOnGroundDetails;
     public AllNeedsDetails AllNeedsDetails;
+    public SelectBuildingToConstructDialog SelectBuildingToConstruct;
 
     public Background Background;
 
@@ -138,6 +139,7 @@ public class SceneWithMap : SceneMgr
         ItemOnGroundDetails.Hide();
         BuildingDetails.Hide();
         WorkerDetails.Hide();
+        SelectBuildingToConstruct.Hide();
     }
 
     public void OnTestMoveClicked(int test)
@@ -160,5 +162,15 @@ public class SceneWithMap : SceneMgr
         var mapGO = new GameObject("Map");
         Map = mapGO.AddComponent<Map>();
         Map.Initialize(this, mapData);
+    }
+
+    internal void OnTileClicked(Tile tile)
+    {
+        // Debug.Log("tile clicked " + tile.Data.TileX + " " + tile.Data.TileY);
+        if (tile.Data.BuildingInTile == null)
+        {
+            // User clicked empty tile; show the 'select building to construct' dialog
+            SelectBuildingToConstruct.ShowForTile(this, tile);
+        }
     }
 }

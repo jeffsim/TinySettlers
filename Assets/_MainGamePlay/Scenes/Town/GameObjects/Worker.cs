@@ -39,7 +39,7 @@ public class Worker : MonoBehaviour
 
     private void OnAssignedToBuilding()
     {
-        Debug.Log(name);
+//        Debug.Log(name);
         updateVisual();
     }
 

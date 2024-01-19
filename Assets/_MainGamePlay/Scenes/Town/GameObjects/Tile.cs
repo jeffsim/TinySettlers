@@ -19,4 +19,6 @@ public class Tile : MonoBehaviour
         GetComponentInChildren<Renderer>().material = data.Defn.TileColor;
         transform.position = new Vector3(data.WorldX, data.WorldY, TileZ);
     }
+
+    public void OnClicked() => scene.OnTileClicked(this);
 }

@@ -19,8 +19,10 @@ MonoBehaviour:
   AssignedWorkerColor: {r: 0.09818679, g: 0.59607846, b: 0, a: 0}
   AssignedWorkerFriendlyName: Courier
   EditorColor: {r: 0.11972148, g: 0.24528301, b: 0, a: 1}
-  CanBeConstructed: 0
-  ResourcesNeededForConstruction: []
+  CanBeConstructed: 1
+  ResourcesNeededForConstruction:
+  - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
+    Count: 1
   NumConstructorSpots: 0
   CanCraft: 0
   CraftableItems: []
@@ -29,6 +31,7 @@ MonoBehaviour:
   IsPrimaryStorage: 1
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
+  StorageAreaWidthAndHeight: 3
   WorkersCanFerryItems: 1
   CanGatherResources: 0
   GatherableResources:

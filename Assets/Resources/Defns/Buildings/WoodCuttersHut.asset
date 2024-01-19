@@ -19,7 +19,7 @@ MonoBehaviour:
   AssignedWorkerColor: {r: 0.30000722, g: 0, b: 0.5943396, a: 0}
   AssignedWorkerFriendlyName: Wood cutter
   EditorColor: {r: 0.24574943, g: 0, b: 0.5566038, a: 1}
-  CanBeConstructed: 0
+  CanBeConstructed: 1
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
   CanCraft: 0
@@ -29,6 +29,7 @@ MonoBehaviour:
   IsPrimaryStorage: 0
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
+  StorageAreaWidthAndHeight: 3
   WorkersCanFerryItems: 0
   CanGatherResources: 1
   GatherableResources:
