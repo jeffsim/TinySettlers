@@ -1,0 +1,19 @@
+* implement OnBuildingStorageChanged - call whenever an item is added or removed
+    - All tasks that have a target storage spot in that building find the new best one
+    - Also remove all the one off "find better storage spot"
+    - Implement onstoragechanged tests
+* implement crafting tests
+* implement DestroyBuilding_ItemsCarriedToDestroyedBuildingAreCarriedToStorageInstead
+* implement DestroyBuilding_ItemsLeftOnGroundAreSubsequentlyPickedUp
+
+* Implement "pick up abandoned item on ground" (after building destroyed or worker destroyed)
+ - include tests
+
+* Graph demand for goods
+    - add current supply
+    - add "in progress to gain" supply (e.g. crftng tasks for the items)
+    - want to see ebb and flow (pred/prey?) and maybe stable?
+
+== DONE 4/2/22
+* DONE: press space to pause
+* DONE: click on storagespot, see details including id

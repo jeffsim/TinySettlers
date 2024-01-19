@@ -26,13 +26,7 @@ public class Item : MonoBehaviour
 
     public void OnMouseUp()
     {
-        Debug.Log(1);
         if (!EventSystem.current.IsPointerOverGameObject())
-        {
-            Debug.Log(2);
-
             scene.OnItemOnGroundClicked(this);
-        }
     }
-
 }

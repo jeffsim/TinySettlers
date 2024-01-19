@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEditor.Compilation;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class SceneWithMap : SceneMgr
 {
@@ -26,6 +27,8 @@ public class SceneWithMap : SceneMgr
     public CraftingSpotDetails CraftingSpotDetails;
     public ItemOnGroundDetails ItemOnGroundDetails;
     public AllNeedsDetails AllNeedsDetails;
+
+    public Background Background;
 
     public GameObject RecompilingText;
     public TextMeshProUGUI DebugInfo;
@@ -67,8 +70,9 @@ public class SceneWithMap : SceneMgr
             reloadOnNextOnEnable = false;
             CreateMap(gameDataMgr.GameData.CurrentTown);
         }
-#endif 
-        hideDialogs();
+#endif
+        Background.Initialize(this);
+        HideAllDialogs();
     }
 
     internal void DestroyBuilding(Building building)
@@ -85,47 +89,47 @@ public class SceneWithMap : SceneMgr
 
     public void OnWorkerClicked(Worker worker)
     {
-        hideDialogs();
+        HideAllDialogs();
         WorkerDetails.ShowForWorker(this, worker);
     }
 
     public void OnBuildingClicked(Building building)
     {
-        hideDialogs();
+        HideAllDialogs();
         BuildingDetails.ShowForBuilding(this, building);
     }
 
     public void OnStorageSpotClicked(StorageSpot storageSpot)
     {
-        hideDialogs();
+        HideAllDialogs();
         StorageSpotDetails.ShowForStorageSpot(this, storageSpot);
     }
 
     public void OnGatheringSpotClicked(GatheringSpot spot)
     {
-        hideDialogs();
+        HideAllDialogs();
         GatheringSpotDetails.ShowForGatheringSpot(this, spot);
     }
 
     public void OnCraftingSpotClicked(CraftingSpot spot)
     {
-        hideDialogs();
+        HideAllDialogs();
         CraftingSpotDetails.ShowForCraftingSpot(this, spot);
     }
 
     public void OnItemOnGroundClicked(Item item)
     {
-        hideDialogs();
+        HideAllDialogs();
         ItemOnGroundDetails.ShowForItemOnGround(this, item);
     }
 
     public void OnShowAllNeedsClicked(int sortBy)
     {
-        hideDialogs();
+        HideAllDialogs();
         AllNeedsDetails.Show(this, (SortNeedsDisplayBy)sortBy);
     }
 
-    void hideDialogs()
+    public void HideAllDialogs()
     {
         AllNeedsDetails.Hide();
         StorageSpotDetails.Hide();
