@@ -6,5 +6,6 @@ public class TileDefn : BaseDefn
     public Material TileColor;
     public string FriendlyName;
 
+    public bool PlayerCanBuildOn = true;
     public Color EditorColor;
 }

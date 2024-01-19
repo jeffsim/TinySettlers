@@ -100,4 +100,13 @@ public class Map : MonoBehaviour
 
         return null;
     }
+
+    internal bool IsValidDropSpotForBuilding(Vector3 mousePosition, Building building)
+    {
+        var tile = getTileAt(Input.mousePosition);
+        if (tile == null) return false;
+        if (!tile.Data.Defn.PlayerCanBuildOn) return false;
+        if (tile.Data.BuildingInTile != null && tile.Data.BuildingInTile != building.Data) return false;
+        return true;
+    }
 }

@@ -16,12 +16,8 @@ public class DraggedBuilding : MonoBehaviour
     public void updatePosition(Vector3 loc)
     {
         transform.position = loc;
-
-        // update if dragged over valid tile
-        var tile = building.scene.Map.getTileAt(Input.mousePosition);
-        var showValidDropSpot = tile != null && tile.Data.BuildingInTile == null;
-        var showInvalidDropSpot = tile == null || (tile.Data.BuildingInTile != null && tile.Data.BuildingInTile != building.Data);
-        validDropSpot.SetActive(showValidDropSpot);
-        invalidDropSpot.SetActive(showInvalidDropSpot);
+        var validDropSpotForBuilding = building.scene.Map.IsValidDropSpotForBuilding(Input.mousePosition, building);
+        validDropSpot.SetActive(validDropSpotForBuilding);
+        invalidDropSpot.SetActive(!validDropSpotForBuilding);
     }
 }

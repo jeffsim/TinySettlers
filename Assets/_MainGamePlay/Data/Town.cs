@@ -50,7 +50,7 @@ public class TownData : BaseData
         Debug.Assert(tiles.Length == Defn.Width * Defn.Height, "wrong num tiles");
         for (int y = 0; y < Defn.Height; y++)
             for (int x = 0; x < Defn.Width; x++)
-                Tiles.Add(new TileData() { DefnId = tiles[y * Defn.Width + x], TileX = x, TileY = y });
+                Tiles.Add(new TileData(x, y, tiles[y * Defn.Width + x]));
 
         Buildings.Clear();
         Workers.Clear();

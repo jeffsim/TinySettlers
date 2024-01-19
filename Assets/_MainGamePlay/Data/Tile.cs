@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 
 [Serializable]
 public class TileData : BaseData
@@ -24,4 +25,12 @@ public class TileData : BaseData
     public float WorldY => TileY * TileSize;
 
     public BuildingData BuildingInTile;
+
+    public TileData(int x, int y, string defnId)
+    {
+        Debug.Assert(!String.IsNullOrEmpty(defnId), "null defnId in TileData constructor"); 
+        TileX = x;
+        TileY = y;
+        DefnId = defnId;
+    }
 } 
