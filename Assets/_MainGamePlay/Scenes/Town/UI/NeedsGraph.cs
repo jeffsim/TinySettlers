@@ -79,7 +79,7 @@ public class NeedsGraph : MonoBehaviour
     private void drawSupply(int maxFramesToRender, int frameSkip, float stepLength, Vector3 baseLoc)
     {
         var maxSupplyValue = getMaxValue(values.supplyOfItemAcrossTime, maxFramesToRender, frameSkip);
-        var yMultiplier = maxSupplyValue < 16f ? 1f : 15f / maxSupplyValue;
+        var yMultiplier = maxSupplyValue < 6f ? 1f : 5f / maxSupplyValue;
 
         drawValues(values.supplyOfItemAcrossTime, yMultiplier, maxFramesToRender, 2, frameSkip, stepLength, baseLoc, (float x, float y, float previousY, Vector3 baseLoc) =>
                     {
