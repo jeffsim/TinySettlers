@@ -90,7 +90,7 @@ public abstract class WorkerTask
     protected void gotoNextSubstate() => gotoSubstate(substate + 1);
 
 
-    protected float getPercentSubstateDone(float substateRuntime)
+    public float getPercentSubstateDone(float substateRuntime)
     {
         // started at 12, run for 5 seconds.  done at 17.  current = 12,14.5,17
         // (current-start) / total

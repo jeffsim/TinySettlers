@@ -39,7 +39,7 @@ public class Worker : MonoBehaviour
 
     private void OnAssignedToBuilding()
     {
-//        Debug.Log(name);
+        //        Debug.Log(name);
         updateVisual();
     }
 
@@ -71,10 +71,60 @@ public class Worker : MonoBehaviour
                 }
             }
 
+        var itemUp = new Vector3(0, 1f, -1);
+        var itemDown = new Vector3(0, 0f, -1);
+
         var isCourier = Data.CurrentTask.Type == TaskType.FerryItem;
         CarriedItem.gameObject.SetActive(isCourier);
         if (isCourier)
-            CarriedItem.text = (Data.CurrentTask as WorkerTask_FerryItem).itemBeingFerried.DefnId.Substring(0, 1);
+        {
+            CarriedItem.text = (Data.CurrentTask as WorkerTask_FerryItem).itemBeingFerried.DefnId.Substring(0, 2);
+            var rectTransform = CarriedItem.GetComponent<RectTransform>();
+            switch ((WorkerTask_FerryItemSubstate)Data.CurrentTask.substate)
+            {
+                case WorkerTask_FerryItemSubstate.PickupItemInBuilding:
+                    var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_FerryItem.secondsToPickup);
+                    rectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
+                    CarriedItem.color = Color.white;
+                    break;
+                case WorkerTask_FerryItemSubstate.DropItemInBuilding:
+                    var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_FerryItem.secondsToDrop);
+                    rectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t2);
+                    CarriedItem.color = Color.red;
+                    break;
+                case WorkerTask_FerryItemSubstate.GotoBuildingWithItem:
+                    CarriedItem.color = Color.red;
+                    break;
+                case WorkerTask_FerryItemSubstate.GotoDestinationBuilding:
+                    CarriedItem.color = Color.white;
+                    break;
+            }
+        }
+        if (Data.CurrentTask.Type == TaskType.GatherResource)
+        {
+            CarriedItem.gameObject.SetActive(true);
+            CarriedItem.text = (Data.CurrentTask as WorkerTask_GatherResource).GetTaskItem().Id.Substring(0, 2);
+            var rectTransform = CarriedItem.GetComponent<RectTransform>();
+            switch ((WorkerTask_GatherResourceSubstate)Data.CurrentTask.substate)
+            {
+                case WorkerTask_GatherResourceSubstate.GotoResourceBuilding:
+                    CarriedItem.color = Color.red;
+                    break;
+                case WorkerTask_GatherResourceSubstate.GatherResourceInBuilding:
+                    var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_GatherResource.secondsToGather);
+                    rectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
+                    CarriedItem.color = Color.white;
+                    break;
+                case WorkerTask_GatherResourceSubstate.ReturnToAssignedBuilding:
+                    CarriedItem.color = Color.white;
+                    break;
+                case WorkerTask_GatherResourceSubstate.DropGatheredResource:
+                    var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_GatherResource.secondsToDrop);
+                    rectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t2);
+                    CarriedItem.color = Color.white;
+                    break;
+            }
+        }
 
         // If this worker is assigned to currently selected building then highlight
         bool showHighlight = scene.BuildingDetails.isActiveAndEnabled &&

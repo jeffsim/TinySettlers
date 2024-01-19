@@ -18,3 +18,4 @@ MonoBehaviour:
   GoodType: 2
   ResourcesNeededForCrafting: []
   ItemClass: 1
+  CarryingSpeedModifier: 0.5

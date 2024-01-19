@@ -19,4 +19,6 @@ public class ItemDefn : BaseDefn
     public GoodType GoodType = GoodType.explicitGood;
     public List<ResourceNeededForCraftingOrConstruction> ResourcesNeededForCrafting;
     public ItemClass ItemClass;
+
+    public float CarryingSpeedModifier = 1.0f;
 }

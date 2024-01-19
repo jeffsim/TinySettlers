@@ -19,12 +19,12 @@ public class WorkerTask_GatherResource : WorkerTask
 
     [SerializeField] BuildingData buildingGatheringFrom;
     [SerializeField] string GatheringItemDefnId;
-
+    [SerializeField] float CarryingSpeedMultiplier;
     [SerializeField] StorageSpotData reservedStorageSpot;
     [SerializeField] GatheringSpotData reservedGatheringSpot;
 
-    const float secondsToGather = 1;
-    const float secondsToDrop = 0.5f;
+    public const float secondsToGather = 1;
+    public const float secondsToDrop = 0.5f;
 
     public override bool Debug_IsMovingToTarget => substate == 0 || substate == 2;
 
@@ -43,9 +43,9 @@ public class WorkerTask_GatherResource : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_GatherResourceSubstate.GotoResourceBuilding: str += "; dist=" + Vector2.Distance(Worker.WorldLoc, reservedGatheringSpot.WorldLoc); break;
+            case (int)WorkerTask_GatherResourceSubstate.GotoResourceBuilding: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, reservedGatheringSpot.WorldLoc).ToString("0.0"); break;
             case (int)WorkerTask_GatherResourceSubstate.GatherResourceInBuilding: str += "; per = " + getPercentSubstateDone(secondsToGather); break;
-            case (int)WorkerTask_GatherResourceSubstate.ReturnToAssignedBuilding: str += "; dist=" + Vector2.Distance(Worker.WorldLoc, reservedStorageSpot.WorldLoc); break;
+            case (int)WorkerTask_GatherResourceSubstate.ReturnToAssignedBuilding: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, reservedStorageSpot.WorldLoc).ToString("0.0"); break;
             case (int)WorkerTask_GatherResourceSubstate.DropGatheredResource: str += "; per = " + getPercentSubstateDone(secondsToDrop); break;
             default: Debug.LogError("unknown substate " + substate); break;
         }
@@ -67,6 +67,7 @@ public class WorkerTask_GatherResource : WorkerTask
     {
         buildingGatheringFrom = buildingToGatherFrom;
         GatheringItemDefnId = itemToGather.Id;
+        CarryingSpeedMultiplier = itemToGather.CarryingSpeedModifier;
     }
 
     public override void Start()
@@ -125,7 +126,7 @@ public class WorkerTask_GatherResource : WorkerTask
                 break;
 
             case (int)WorkerTask_GatherResourceSubstate.ReturnToAssignedBuilding: // Walk back to our assigned building
-                if (moveTowards(reservedStorageSpot.WorldLoc, distanceMovedPerSecond))
+                if (moveTowards(reservedStorageSpot.WorldLoc, distanceMovedPerSecond * CarryingSpeedMultiplier))
                     gotoNextSubstate();
                 break;
 

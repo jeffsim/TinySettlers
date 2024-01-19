@@ -20,3 +20,4 @@ MonoBehaviour:
   - Item: {fileID: 11400000, guid: 0f7a65437217c4f3c8bdf660e2b482c4, type: 2}
     Count: 2
   ItemClass: 5
+  CarryingSpeedModifier: 0.25

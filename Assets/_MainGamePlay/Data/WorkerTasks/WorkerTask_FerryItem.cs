@@ -20,8 +20,9 @@ public class WorkerTask_FerryItem : WorkerTask
     [SerializeField] StorageSpotData storageSpotWithItem;
     [SerializeField] StorageSpotData destinationStorageSpotForItem;
     [SerializeField] public ItemData itemBeingFerried;
-    const float secondsToPickup = 1;
-    const float secondsToDrop = 0.5f;
+    [SerializeField] float CarryingSpeedMultiplier;
+    public const float secondsToPickup = 1;
+    public const float secondsToDrop = 0.5f;
 
     public override bool Debug_IsMovingToTarget => substate == 0 || substate == 2;
 
@@ -40,9 +41,9 @@ public class WorkerTask_FerryItem : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_FerryItemSubstate.GotoBuildingWithItem: str += "; dist=" + Vector2.Distance(Worker.WorldLoc, storageSpotWithItem.WorldLoc); break;
+            case (int)WorkerTask_FerryItemSubstate.GotoBuildingWithItem: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, storageSpotWithItem.WorldLoc).ToString("0.0"); break;
             case (int)WorkerTask_FerryItemSubstate.PickupItemInBuilding: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
-            case (int)WorkerTask_FerryItemSubstate.GotoDestinationBuilding: str += "; dist=" + Vector2.Distance(Worker.WorldLoc, destinationStorageSpotForItem.WorldLoc); break;
+            case (int)WorkerTask_FerryItemSubstate.GotoDestinationBuilding: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, destinationStorageSpotForItem.WorldLoc).ToString("0.0"); break;
             case (int)WorkerTask_FerryItemSubstate.DropItemInBuilding: str += "; per = " + getPercentSubstateDone(secondsToDrop); break;
             default: Debug.LogError("unknown substate " + substate); break;
         }
@@ -64,6 +65,7 @@ public class WorkerTask_FerryItem : WorkerTask
     {
         this.storageSpotWithItem = storageSpotWithItem;
         this.destinationStorageSpotForItem = destinationStorageSpotForItem;
+        CarryingSpeedMultiplier = storageSpotWithItem.ItemInStorage.Defn.CarryingSpeedModifier;
     }
 
     public override void Start()
@@ -120,7 +122,7 @@ public class WorkerTask_FerryItem : WorkerTask
                     unreserveStorageSpot(storageSpotWithItem);
 
                     storageSpotWithItem.RemoveItem();
-                    
+
                     // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
                     if (betterStorageSpotExists(destinationStorageSpotForItem))
                         destinationStorageSpotForItem = getBetterStorageSpot(destinationStorageSpotForItem);
@@ -130,7 +132,7 @@ public class WorkerTask_FerryItem : WorkerTask
                 break;
 
             case (int)WorkerTask_FerryItemSubstate.GotoDestinationBuilding: // Walk back to our assigned building
-                if (moveTowards(destinationStorageSpotForItem.WorldLoc, distanceMovedPerSecond))
+                if (moveTowards(destinationStorageSpotForItem.WorldLoc, distanceMovedPerSecond * CarryingSpeedMultiplier))
                     gotoNextSubstate();
                 break;
 

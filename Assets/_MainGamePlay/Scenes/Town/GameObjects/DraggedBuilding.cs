@@ -1,8 +1,9 @@
+using System;
 using UnityEngine;
 
 public class DraggedBuilding : MonoBehaviour
 {
-    Building building;
+    [NonSerialized] Building building;
 
     public GameObject validDropSpot;
     public GameObject invalidDropSpot;

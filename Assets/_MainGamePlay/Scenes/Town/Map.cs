@@ -45,6 +45,7 @@ public class Map : MonoBehaviour
 
     void OnDestroy()
     {
+        if (Town == null) return;
         Town.OnBuildingAdded -= addBuildingGO;
         Town.OnItemAddedToGround -= addItemOnGroundGO;
     }

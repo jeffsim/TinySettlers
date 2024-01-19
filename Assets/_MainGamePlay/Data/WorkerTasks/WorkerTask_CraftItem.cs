@@ -59,12 +59,12 @@ public class WorkerTask_CraftItem : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource: str += "; dist=" + Vector2.Distance(Worker.WorldLoc, nextCraftingResourceStorageSpotToGetFrom.WorldLoc); break;
+            case (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, nextCraftingResourceStorageSpotToGetFrom.WorldLoc).ToString("0.0"); break;
             case (int)WorkerTask_CraftItemSubstate.PickupResource: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
-            case (int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot: str += "; dist=" + Vector2.Distance(Worker.WorldLoc, reservedCraftingSpot.WorldLoc); break;
+            case (int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, reservedCraftingSpot.WorldLoc).ToString("0.0"); break;
             case (int)WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot: str += "; per = " + getPercentSubstateDone(secondsToDrop); break;
             case (int)WorkerTask_CraftItemSubstate.ProduceGood: str += "; per = " + getPercentSubstateDone(secondsToCraft); break;
-            case (int)WorkerTask_CraftItemSubstate.CarryCraftedGoodToStorageSpot: str += "; dist=" + Vector2.Distance(Worker.WorldLoc, reservedStorageSpot.WorldLoc); break;
+            case (int)WorkerTask_CraftItemSubstate.CarryCraftedGoodToStorageSpot: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, reservedStorageSpot.WorldLoc).ToString("0.0"); break;
             case (int)WorkerTask_CraftItemSubstate.DropCraftedGoodInStorageSpot: str += "; per = " + getPercentSubstateDone(secondsToDrop); break;
             default: Debug.LogError("unknown substate " + substate); break;
         }
