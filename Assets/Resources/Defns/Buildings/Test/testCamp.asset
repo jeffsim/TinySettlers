@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e75d84e7abf74cb19c5077568ca91fd, type: 3}
+  m_Name: testCamp
+  m_EditorClassIdentifier: 
+  Id: testCamp
+  BuildingColor: {r: 0, g: 0.18073483, b: 0.3962264, a: 1}
+  FriendlyName: Camp (test)
+  BuildingClass: 1
+  AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
+  EditorColor: {r: 0.021646384, g: 0, b: 0.6132076, a: 1}
+  CanBeConstructed: 0
+  ResourcesNeededForConstruction: []
+  NumConstructorSpots: 0
+  CanCraft: 0
+  CraftableItems: []
+  CraftingSpots: []
+  CanStoreItems: 1
+  StorageAreaLocations:
+  - {x: 0, y: 0, z: 0}
+  CanGatherResources: 0
+  GatherableResources: []
+  ResourcesCanBeGatheredFromHere: 0
+  ResourcesThatCanBeGatheredFromHere: []
+  GatheringSpots: []

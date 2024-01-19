@@ -1,0 +1,51 @@
+using System;
+using UnityEngine;
+using UnityEngine.EventSystems;
+
+public class GatheringSpot : MonoBehaviour
+{
+    public GameObject ReservedIndicator;
+    [NonSerialized] public GatheringSpotData Data;
+    SceneWithMap scene;
+
+    int index;
+    
+    internal void Initialize(SceneWithMap scene, GatheringSpotData data, int index, Building building)
+    {
+        this.Data = data;
+        this.index = index;
+        this.scene = scene;
+        name = "Gathering Spot " + index;
+        transform.position = new Vector3(data.WorldLoc.x, data.WorldLoc.y, -5);
+
+       // spot.OnItemRemoved += OnItemRemoved;
+    }
+
+    void OnDestroy()
+    {
+      //  spot.OnItemRemoved -= OnItemRemoved;
+    }
+
+    public void OnMouseUp()
+    {
+        if (!EventSystem.current.IsPointerOverGameObject())
+            scene.OnGatheringSpotClicked(this);
+    }
+
+    private void OnItemRemoved(ItemData item)
+    {
+
+    }
+
+    void Update()
+    {
+        // if (spot.IsEmpty)
+        //     GetComponentInChildren<Renderer>().material.color = Color.black;
+        // else
+        // {
+        //     GetComponentInChildren<Renderer>().material.color = spot.ItemInStorage.Defn.Color;
+        //     name = "Storage " + index + " - " + spot.ItemInStorage.Defn.FriendlyName;
+        // }
+        ReservedIndicator.SetActive(Data.IsReserved);
+    }
+}

@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6e562c03a2d0e4208a50bcf16ad35961, type: 3}
+  m_Name: StoneBlock
+  m_EditorClassIdentifier: 
+  Id: stoneBlock
+  FriendlyName: Stone Block
+  Color: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 0}
+  GoodType: 2
+  ResourcesNeededForCrafting:
+  - Item: {fileID: 11400000, guid: 0f7a65437217c4f3c8bdf660e2b482c4, type: 2}
+    Count: 2
+  ItemClass: 5
