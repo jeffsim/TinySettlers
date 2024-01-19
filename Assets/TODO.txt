@@ -1,3 +1,10 @@
+* Add hireworker button to buildingdetailsdialog   
+    - can you unassign workers to reassign them?
+* update 'items' lists in dialogs to shwo e.g. woodPlank(4) rather than four copies of woodPlank
+
+
+
+
 * implement OnBuildingStorageChanged - call whenever an item is added or removed
     - All tasks that have a target storage spot in that building find the new best one
     - Also remove all the one off "find better storage spot"

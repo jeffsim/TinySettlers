@@ -19,6 +19,8 @@ MonoBehaviour:
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
   AssignedWorkerFriendlyName: Camper
   EditorColor: {r: 0, g: 0.099416494, b: 1, a: 1}
+  PlayerCanMove: 1
+  PlayerCanDestroy: 0
   CanBeConstructed: 0
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
@@ -29,6 +31,7 @@ MonoBehaviour:
   IsPrimaryStorage: 1
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
+  StorageAreaWidthAndHeight: 3
   WorkersCanFerryItems: 1
   CanGatherResources: 0
   GatherableResources: []

@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class SelectBuildingToConstructDialog : MonoBehaviour
 {
@@ -22,7 +20,7 @@ public class SelectBuildingToConstructDialog : MonoBehaviour
         {
             if (!defn.CanBeConstructed) continue;
             var entry = Instantiate(SelectBuildingToConstructEntryPrefab, List.transform);
-            entry.InitializeForBuilding(this, defn);
+            entry.InitializeForBuilding(scene, tile, this, defn);
         }
     }
 

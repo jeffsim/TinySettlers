@@ -75,12 +75,6 @@ MonoBehaviour:
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 5cf22471cfa19413f82bc414449f99a3, type: 2}
     TileX: 2
-    TileY: 0
-    StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 1
-  - IsEnabled: 1
-    Building: {fileID: 11400000, guid: 5cf22471cfa19413f82bc414449f99a3, type: 2}
-    TileX: 2
     TileY: 1
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 1

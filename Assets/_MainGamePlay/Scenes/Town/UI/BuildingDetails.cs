@@ -21,7 +21,7 @@ public class BuildingDetails : MonoBehaviour
         Name.text = building.Data.Defn.FriendlyName + " (" + building.Data.InstanceId + ")";
 
         // can't destroy camp building
-        DestroyButton.interactable = building.Data.Defn.BuildingClass != BuildingClass.Camp;
+        DestroyButton.interactable = building.Data.Defn.PlayerCanDestroy;
     }
 
     public void Hide()

@@ -69,6 +69,8 @@ public class Building : MonoBehaviour
 
     public void OnMouseDown()
     {
+        if (!Data.Defn.PlayerCanMove)
+            return;
         dragState = DragState.PreDrag;
         dragStartPoint = Input.mousePosition;
     }

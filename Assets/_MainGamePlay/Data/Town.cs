@@ -25,6 +25,8 @@ public class TownData : BaseData
 
     public int Gold;
     [NonSerialized] public OnItemAddedToGroundEvent OnItemAddedToGround;
+    [NonSerialized] public Action<BuildingData> OnBuildingAdded;
+
     public TownState State;
     public bool CanEnter => State == TownState.Available || State == TownState.InProgress;
 
@@ -57,12 +59,8 @@ public class TownData : BaseData
         foreach (var tbDefn in Defn.Buildings)
         {
             if (!tbDefn.IsEnabled) continue;
-            var building = new BuildingData(tbDefn.Building, tbDefn.TileX, tbDefn.TileY);
-            building.Initialize(this);
-            Buildings.Add(building);
 
-            Tiles[tbDefn.TileY * Defn.Width + tbDefn.TileX].BuildingInTile = building;
-
+            var building = ConstructBuilding(tbDefn.Building, tbDefn.TileX, tbDefn.TileY);
             if (building.Defn.BuildingClass == BuildingClass.Camp)
                 Camp = building;
 
@@ -73,6 +71,18 @@ public class TownData : BaseData
                     building.AddItemToStorage(new ItemData() { DefnId = item.Item.Id });
         }
         UpdateDistanceToRooms();
+    }
+
+    public BuildingData ConstructBuilding(BuildingDefn buildingDefn, int tileX, int tileY)
+    {
+        var building = new BuildingData(buildingDefn, tileX, tileY);
+        building.Initialize(this);
+        Buildings.Add(building);
+        Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
+        
+        OnBuildingAdded?.Invoke(building);
+
+        return building;
     }
 
     internal void TestMoveBuilding(int test)

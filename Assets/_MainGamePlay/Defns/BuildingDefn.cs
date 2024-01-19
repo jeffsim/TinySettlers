@@ -22,6 +22,9 @@ public class BuildingDefn : BaseDefn
     // used in the editor
     public Color EditorColor;
 
+    public bool PlayerCanMove = true;
+    public bool PlayerCanDestroy = true;
+
     public bool CanBeConstructed;
     [ShowIf("CanBeConstructed")]
     public List<ResourceNeededForCraftingOrConstruction> ResourcesNeededForConstruction;

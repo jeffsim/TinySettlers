@@ -1,16 +1,23 @@
+using System;
 using TMPro;
 using UnityEngine;
 
 public class SelectBuildingToConstructEntry : MonoBehaviour
 {
     SelectBuildingToConstructDialog dialog;
-    BuildingDefn buildingDefn;
     public TextMeshProUGUI Name;
 
-    internal void InitializeForBuilding(SelectBuildingToConstructDialog dialog, BuildingDefn buildingDefn)
+    [NonSerialized] BuildingDefn buildingDefn;
+    [NonSerialized] SceneWithMap scene;
+    [NonSerialized] Tile tile;
+
+    internal void InitializeForBuilding(SceneWithMap scene, Tile tile, SelectBuildingToConstructDialog dialog, BuildingDefn buildingDefn)
     {
         this.dialog = dialog;
         this.buildingDefn = buildingDefn;
+        this.scene = scene;
+        this.tile = tile;
+
         Name.text = buildingDefn.FriendlyName;
         gameObject.SetActive(true);
     }
@@ -18,5 +25,10 @@ public class SelectBuildingToConstructEntry : MonoBehaviour
     public void Hide()
     {
         gameObject.SetActive(false);
+    }
+
+    public void OnClicked()
+    {
+        scene.PlayerSelectedBuildingToConstructInTile(buildingDefn, tile.Data);
     }
 }

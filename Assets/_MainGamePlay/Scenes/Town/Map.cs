@@ -6,11 +6,15 @@ public class Map : MonoBehaviour
     [NonSerialized] public TownData Town;
     SceneWithMap scene;
     GameObject ItemsFolder;
+    GameObject BuildingsFolder;
+    GameObject TilesFolder;
+    GameObject WorkersFolder;
 
     public void OnKeyDown()
     {
         Debug.Log("Asdf");
     }
+
     public void Initialize(SceneWithMap scene, TownData townData)
     {
         this.scene = scene;
@@ -18,40 +22,55 @@ public class Map : MonoBehaviour
         gameObject.RemoveAllChildren();
 
         // Set up folders for hierarchy cleanliness
-        var TilesFolder = addFolder("Tiles");
-        var BuildingsFolder = addFolder("Buildings");
+        TilesFolder = addFolder("Tiles");
+        BuildingsFolder = addFolder("Buildings");
         ItemsFolder = addFolder("Items");
-        var WorkersFolder = addFolder("Workers");
+        WorkersFolder = addFolder("Workers");
 
         foreach (var tile in townData.Tiles)
-        {
-            var tileGO = Worker.Instantiate<Tile>(scene.TilePrefab);
-            tileGO.transform.SetParent(TilesFolder.transform, false);
-            tileGO.Initialize(tile, scene);
-        }
+            addTileGO(tile);
 
         foreach (var worker in townData.Workers)
-        {
-            var workerGO = Worker.Instantiate<Worker>(scene.WorkerPrefab);
-            workerGO.transform.SetParent(WorkersFolder.transform, false);
-            workerGO.Initialize(worker, scene);
-        }
+            addWorkerGO(worker);
 
         foreach (var building in townData.Buildings)
-        {
-            var buildingGO = Worker.Instantiate<Building>(scene.BuildingPrefab);
-            buildingGO.transform.SetParent(BuildingsFolder.transform, false);
-            buildingGO.Initialize(building, scene);
-        }
+            addBuildingGO(building);
 
-        // foreach (var tile in townData.InitialItemsOnGround)
-        // {
-        // }
+        foreach (var item in townData.ItemsOnGround)
+            addItemOnGroundGO(item);
 
-        townData.OnItemAddedToGround += ItemAddedToGround;
+        townData.OnBuildingAdded += addBuildingGO;
+        townData.OnItemAddedToGround += addItemOnGroundGO;
     }
 
-    private void ItemAddedToGround(ItemData item)
+    void OnDestroy()
+    {
+        Town.OnBuildingAdded -= addBuildingGO;
+        Town.OnItemAddedToGround -= addItemOnGroundGO;
+    }
+    
+    private void addTileGO(TileData tile)
+    {
+        var tileGO = Worker.Instantiate<Tile>(scene.TilePrefab);
+        tileGO.transform.SetParent(TilesFolder.transform, false);
+        tileGO.Initialize(tile, scene);
+    }
+
+    private void addWorkerGO(WorkerData worker)
+    {
+        var workerGO = Worker.Instantiate<Worker>(scene.WorkerPrefab);
+        workerGO.transform.SetParent(WorkersFolder.transform, false);
+        workerGO.Initialize(worker, scene);
+    }
+
+    private void addBuildingGO(BuildingData building)
+    {
+        var buildingGO = Worker.Instantiate<Building>(scene.BuildingPrefab);
+        buildingGO.transform.SetParent(BuildingsFolder.transform, false);
+        buildingGO.Initialize(building, scene);
+    }
+
+    private void addItemOnGroundGO(ItemData item)
     {
         if (this == null) return; // destroyed
         var itemGO = Instantiate<Item>(scene.ItemOnGroundPrefab);

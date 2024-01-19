@@ -173,4 +173,10 @@ public class SceneWithMap : SceneMgr
             SelectBuildingToConstruct.ShowForTile(this, tile);
         }
     }
+
+    internal void PlayerSelectedBuildingToConstructInTile(BuildingDefn buildingDefn, TileData tile)
+    {
+        Map.Town.ConstructBuilding(buildingDefn, tile.TileX, tile.TileY);
+        SelectBuildingToConstruct.Hide();
+    }
 }

@@ -20,5 +20,10 @@ public class Tile : MonoBehaviour
         transform.position = new Vector3(data.WorldX, data.WorldY, TileZ);
     }
 
-    public void OnClicked() => scene.OnTileClicked(this);
+    public void OnClicked() 
+    {
+        // if mouse is still over this tile then call scene.OnTileClicked
+        if (scene.Map.getTileAt(Input.mousePosition) == this)
+            scene.OnTileClicked(this);
+    }
 }
