@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BuildingDetails : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class BuildingDetails : MonoBehaviour
     public TextMeshProUGUI Needs;
     public TextMeshProUGUI Items;
     public Building building;
+    public Button DestroyButton;
     SceneWithMap scene;
 
     public void ShowForBuilding(SceneWithMap scene, Building building)
@@ -17,6 +19,9 @@ public class BuildingDetails : MonoBehaviour
         this.scene = scene;
         this.building = building;
         Name.text = building.Data.Defn.FriendlyName + " (" + building.Data.InstanceId + ")";
+
+        // can't destroy camp building
+        DestroyButton.interactable = building.Data.Defn.BuildingClass != BuildingClass.Camp;
     }
 
     public void Hide()

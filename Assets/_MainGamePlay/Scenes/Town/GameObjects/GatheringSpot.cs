@@ -5,11 +5,12 @@ using UnityEngine.EventSystems;
 public class GatheringSpot : MonoBehaviour
 {
     public GameObject ReservedIndicator;
+    public GameObject Highlight;
     [NonSerialized] public GatheringSpotData Data;
     SceneWithMap scene;
 
     int index;
-    
+
     internal void Initialize(SceneWithMap scene, GatheringSpotData data, int index, Building building)
     {
         this.Data = data;
@@ -18,12 +19,12 @@ public class GatheringSpot : MonoBehaviour
         name = "Gathering Spot " + index;
         transform.position = new Vector3(data.WorldLoc.x, data.WorldLoc.y, -5);
 
-       // spot.OnItemRemoved += OnItemRemoved;
+        // spot.OnItemRemoved += OnItemRemoved;
     }
 
     void OnDestroy()
     {
-      //  spot.OnItemRemoved -= OnItemRemoved;
+        //  spot.OnItemRemoved -= OnItemRemoved;
     }
 
     public void OnMouseUp()
@@ -47,5 +48,11 @@ public class GatheringSpot : MonoBehaviour
         //     name = "Storage " + index + " - " + spot.ItemInStorage.Defn.FriendlyName;
         // }
         ReservedIndicator.SetActive(Data.IsReserved);
+
+        // highlight this spot if this gathering spot is reserved by the currently selected worker
+        bool showHighlight = false;
+        if (scene.WorkerDetails.gameObject.activeSelf && scene.WorkerDetails.worker != null && scene.WorkerDetails.worker.Data.CurrentTask.HasReservedGatheringSpot(Data))
+            showHighlight = true;
+        Highlight.SetActive(showHighlight);
     }
 }

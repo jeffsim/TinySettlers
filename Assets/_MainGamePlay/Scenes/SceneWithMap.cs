@@ -24,6 +24,7 @@ public class SceneWithMap : SceneMgr
     public StorageSpotDetails StorageSpotDetails;
     public GatheringSpotDetails GatheringSpotDetails;
     public CraftingSpotDetails CraftingSpotDetails;
+    public ItemOnGroundDetails ItemOnGroundDetails;
     public AllNeedsDetails AllNeedsDetails;
 
     public GameObject RecompilingText;
@@ -112,6 +113,12 @@ public class SceneWithMap : SceneMgr
         CraftingSpotDetails.ShowForCraftingSpot(this, spot);
     }
 
+    public void OnItemOnGroundClicked(Item item)
+    {
+        hideDialogs();
+        ItemOnGroundDetails.ShowForItemOnGround(this, item);
+    }
+
     public void OnShowAllNeedsClicked(int sortBy)
     {
         hideDialogs();
@@ -124,6 +131,7 @@ public class SceneWithMap : SceneMgr
         StorageSpotDetails.Hide();
         GatheringSpotDetails.Hide();
         CraftingSpotDetails.Hide();
+        ItemOnGroundDetails.Hide();
         BuildingDetails.Hide();
         WorkerDetails.Hide();
     }

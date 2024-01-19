@@ -26,6 +26,10 @@ public abstract class WorkerTask
     [SerializeField] List<GatheringSpotData> ReservedGatheringSpots;
     [SerializeField] List<StorageSpotData> ReservedStorageSpots;
 
+    public bool HasReservedStorageSpot(StorageSpotData spot) => ReservedStorageSpots.Contains(spot);
+    public bool HasReservedCraftingSpot(CraftingSpotData spot) => ReservedCraftingSpots.Contains(spot);
+    public bool HasReservedGatheringSpot(GatheringSpotData spot) => ReservedGatheringSpots.Contains(spot);
+
     public abstract string ToDebugString();
 
     public virtual bool IsCarryingItem(string itemId) => false;
@@ -40,7 +44,7 @@ public abstract class WorkerTask
         Debug.Assert(false, "GetTaskItem not implemented for task type");
         return null;
     }
-    
+
     protected WorkerTask(WorkerData workerData)
     {
         Worker = workerData;
@@ -180,7 +184,6 @@ public abstract class WorkerTask
         Debug.Assert(ReservedCraftingResourceStorageSpots.Count > 0, "getting crafting resource spot, but none remain");
         return ReservedCraftingResourceStorageSpots[0];
     }
-
 
     public virtual void Cleanup()
     {

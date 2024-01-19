@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Item : MonoBehaviour
 {
@@ -17,9 +18,21 @@ public class Item : MonoBehaviour
         this.scene = scene;
         Data = data;
         name = data.DefnId;
-        Name.text = data.Defn.FriendlyName.Substring(0,1);
+        Name.text = data.Defn.FriendlyName.Substring(0, 1);
 
         GetComponentInChildren<Renderer>().material.color = data.Defn.Color;
         transform.position = new Vector3(data.WorldLocOnGround.x, data.WorldLocOnGround.y, ItemZ);
     }
+
+    public void OnMouseUp()
+    {
+        Debug.Log(1);
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            Debug.Log(2);
+
+            scene.OnItemOnGroundClicked(this);
+        }
+    }
+
 }

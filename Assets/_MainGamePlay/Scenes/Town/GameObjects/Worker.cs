@@ -66,7 +66,7 @@ public class Worker : MonoBehaviour
                 var offset = new Vector3(0, 0, -6);
                 using (Drawing.Draw.ingame.WithColor(Color.blue))
                 {
-                    using (Drawing.Draw.ingame.WithLineWidth(4))
+                    using (Drawing.Draw.ingame.WithLineWidth(3))
                         Drawing.Draw.ingame.Line(new Vector3(Data.WorldLoc.x, Data.WorldLoc.y, 0) + offset, Data.CurrentTask.LastMoveToTarget + offset);
                 }
             }
@@ -76,9 +76,15 @@ public class Worker : MonoBehaviour
         if (isCourier)
             CarriedItem.text = (Data.CurrentTask as WorkerTask_FerryItem).itemBeingFerried.DefnId.Substring(0, 1);
 
+        // If this worker is assigned to currently selected building then highlight
         bool showHighlight = scene.BuildingDetails.isActiveAndEnabled &&
                              scene.BuildingDetails.building != null &&
                              scene.BuildingDetails.building.Data == Data.AssignedBuilding;
+
+        // If this worker is currently selected then highlight
+        if (scene.WorkerDetails.gameObject.activeSelf && scene.WorkerDetails.worker == this)
+            showHighlight = true;
+
         Highlight.SetActive(showHighlight);
     }
 }
