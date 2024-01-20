@@ -28,6 +28,7 @@ public class SceneWithMap : SceneMgr
     public ItemOnGroundDetails ItemOnGroundDetails;
     public AllNeedsDetails AllNeedsDetails;
     public SelectBuildingToConstructDialog SelectBuildingToConstruct;
+    public AvailableTasksDialog AvailableTasksDialog;
 
     public Background Background;
 
@@ -132,6 +133,12 @@ public class SceneWithMap : SceneMgr
         AllNeedsDetails.Show(this, (SortNeedsDisplayBy)sortBy);
     }
 
+    public void OnAvailableTasksClicked()
+    {
+        HideAllDialogs();
+        AvailableTasksDialog.Show(this);
+    }
+
     public void HideAllDialogs()
     {
         AllNeedsDetails.Hide();
@@ -142,6 +149,7 @@ public class SceneWithMap : SceneMgr
         BuildingDetails.Hide();
         WorkerDetails.Hide();
         SelectBuildingToConstruct.Hide();
+        AvailableTasksDialog.Hide();
     }
 
     public void OnTestMoveClicked(int test)

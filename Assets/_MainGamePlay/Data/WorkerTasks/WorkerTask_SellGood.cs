@@ -11,7 +11,7 @@ public enum WorkerTask_SellGoodSubstate
 [Serializable]
 public class WorkerTask_SellGood : WorkerTask
 {
-    public override string ToString() => "Sell good (" + StorageSpotWithGoodToSell.ItemInStorage.Defn.Id + ")";
+    public override string ToString() => "Sell good (" +(StorageSpotWithGoodToSell.ItemInStorage==null?"NULL" : StorageSpotWithGoodToSell.ItemInStorage.Defn.Id) + ")";
     public override TaskType Type => TaskType.SellGood;
 
     [SerializeField] StorageSpotData StorageSpotWithGoodToSell;

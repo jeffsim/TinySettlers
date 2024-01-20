@@ -5,7 +5,7 @@ using UnityEngine;
 public enum ConstructionState { NotStarted, UnderConstruction, FullyConstructed };
 
 // Not serialized - just used internally by BuildingData
-class PrioritizedTask
+public class PrioritizedTask
 {
     public override string ToString() => $"{Priority:F1} {Task.getDebuggerString()}";
 

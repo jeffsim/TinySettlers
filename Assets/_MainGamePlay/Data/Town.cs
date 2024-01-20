@@ -30,6 +30,10 @@ public class TownData : BaseData
 
     [NonSerialized] public Action<BuildingData> OnBuildingAdded;
     [NonSerialized] public Action<WorkerData> OnWorkerCreated;
+    [NonSerialized] public List<PrioritizedTask> availableTasks;
+
+    // For debugging purposes
+    [NonSerialized] public List<PrioritizedTask> LastSeenPrioritizedTasks = new();
 
     public TownState State;
     public bool CanEnter => State == TownState.Available || State == TownState.InProgress;
@@ -104,7 +108,7 @@ public class TownData : BaseData
 
         return building;
     }
-    
+
     public void DestroyBuilding(BuildingData building)
     {
         Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
@@ -131,7 +135,7 @@ public class TownData : BaseData
     public void Update()
     {
         GameTime.Update();
-        
+
         // TODO (PERF): Update on change
         foreach (var building in Buildings)
             building.UpdateWorldLoc();
@@ -183,7 +187,8 @@ public class TownData : BaseData
         // Add needs to pick up any items abandoned on the ground
         allNeeds.AddRange(otherTownNeeds);
 
-        List<PrioritizedTask> availableTasks = new();
+        if (availableTasks == null) availableTasks = new();
+        availableTasks.Clear();
         foreach (var worker in idleWorkers)
             worker.AssignedBuilding?.GetAvailableTasksForWorker(availableTasks, worker, allNeeds);
 
@@ -193,6 +198,11 @@ public class TownData : BaseData
             return;
 
         availableTasks.Sort((a, b) => (int)((b.Priority - a.Priority) * 1000));
+
+        // For debugging
+        LastSeenPrioritizedTasks ??= new();
+        LastSeenPrioritizedTasks.Clear();
+        LastSeenPrioritizedTasks.AddRange(availableTasks);
 
         // availableTasks now contains every IdleWorker+BuildingNeed combination, sorted by priority
         // Go through the list in priority order, assigning to workers as we go
