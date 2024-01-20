@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -15,6 +14,8 @@ public class BuildingDetails : MonoBehaviour
     public Button UnassignWorkerButton;
     SceneWithMap scene;
 
+    public BuildingDetailsItemList BuildingDetailsItemList;
+
     public void ShowForBuilding(SceneWithMap scene, Building building)
     {
         gameObject.SetActive(true);
@@ -23,13 +24,14 @@ public class BuildingDetails : MonoBehaviour
         Name.text = building.Data.Defn.FriendlyName + " (" + building.Data.InstanceId + ")";
 
         DestroyButton.interactable = building.Data.Defn.PlayerCanDestroy;
+
+        BuildingDetailsItemList.ShowForBuilding(building);
     }
 
     public void Hide()
     {
         gameObject.SetActive(false);
     }
-
 
     void Update()
     {
@@ -50,17 +52,17 @@ public class BuildingDetails : MonoBehaviour
         str += Utilities.getNeedsDebugString(needs, false);
         Needs.text = str;
 
-        if (building.Data.Defn.CanStoreItems)
-        {
-            str = "<color=yellow>Items:</color>\n";
-            foreach (var area in building.Data.StorageAreas)
-                foreach (var spot in area.StorageSpots)
-                    if (spot.ItemInStorage != null)
-                        str += spot.ItemInStorage.DefnId + "\n";
-            Items.text = str;
-        }
-        else
-            Items.text = "";
+        // if (building.Data.Defn.CanStoreItems)
+        // {
+        //     str = "<color=yellow>Items:</color>\n";
+        //     foreach (var area in building.Data.StorageAreas)
+        //         foreach (var spot in area.StorageSpots)
+        //             if (spot.ItemInStorage != null)
+        //                 str += spot.ItemInStorage.DefnId + "\n";
+        //     Items.text = str;
+        // }
+        // else
+        //     Items.text = "";
     }
 
     public void OnDestroyClicked() => scene.DestroyBuilding(this.building);
