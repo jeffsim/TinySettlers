@@ -9,6 +9,7 @@ public enum NeedType
     GatherResource,
     CraftingOrConstructionMaterial,
     Defend,
+    SellGood,
 
     PersistentRoomNeed, // e.g. water for farm
     ConstructionWorker,  // to construct a building
@@ -31,7 +32,7 @@ public enum NeedCoreType
 {
     Item,   // A need for an item
     Entity,  // A need for an entity (to do something)
-    Building // An inherent needf for a building (e.g. cleanup storage)
+    Building // An inherent need for a building (e.g. cleanup storage)
 }
 
 public enum ItemClass

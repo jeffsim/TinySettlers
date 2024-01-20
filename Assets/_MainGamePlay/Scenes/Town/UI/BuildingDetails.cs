@@ -59,6 +59,8 @@ public class BuildingDetails : MonoBehaviour
                         str += spot.ItemInStorage.DefnId + "\n";
             Items.text = str;
         }
+        else
+            Items.text = "";
     }
 
     public void OnDestroyClicked() => scene.DestroyBuilding(this.building);

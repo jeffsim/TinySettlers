@@ -196,6 +196,12 @@ public class BuildingData : BaseData
             ClearOutStorageNeed.NeedCoreType = NeedCoreType.Building;
             Needs.Add(ClearOutStorageNeed);
         }
+
+        if (Defn.CanSellGoods)
+        {
+            foreach (var item in Defn.GoodsThatCanBeSold)
+                Needs.Add(new NeedData(this, NeedType.SellGood, item));
+        }
     }
 
     internal void GetAvailableTasksForWorker(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
@@ -296,8 +302,8 @@ public class BuildingData : BaseData
         // for now, find the first instance where a building needs a resource and the resource is in another building.
         foreach (var need in allTownNeeds)
         {
-            // Only looking for item needs
-            if (need.Type != NeedType.CraftingOrConstructionMaterial) continue;
+            // Only looking for crafting, construction, and selling needs
+            if (need.Type != NeedType.CraftingOrConstructionMaterial && need.Type != NeedType.SellGood) continue;
 
             // stockers only meet item needs
             if (need.NeedCoreType != NeedCoreType.Item) continue;
@@ -489,6 +495,13 @@ public class BuildingData : BaseData
                     ClearOutStorageNeed.Priority *= 1.5f;
             }
         }
+
+        foreach (var need in Needs)
+            if (need.Type == NeedType.SellGood)
+            {
+                // Can be set by user; e.g. they can increase priority of selling wood if they want to
+                need.Priority = 0.5f;
+            }
 
         foreach (var need in GatheringNeeds)
         {

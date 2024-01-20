@@ -19,7 +19,7 @@ MonoBehaviour:
   AssignedWorkerColor: {r: 0.8796489, g: 1, b: 0, a: 0}
   AssignedWorkerFriendlyName: Marketer
   HasWorkers: 1
-  MaxWorkers: 1
+  MaxWorkers: 2
   EditorColor: {r: 1, g: 0.6673894, b: 0.009433806, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1

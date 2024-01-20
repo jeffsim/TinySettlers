@@ -66,6 +66,7 @@ public static class Utilities
             case NeedType.GatherResource: str += "Gather (" + need.NeededItem.Id + ")"; break;
             case NeedType.PersistentRoomNeed: str += "Persistent need"; break;
             case NeedType.PickupAbandonedItem: str += "Pickup item"; break;
+            case NeedType.SellGood: str += "Sell good (" + need.NeededItem.FriendlyName + ")"; break;
             default: Debug.LogError("unknown need type " + need.Type); break;
         };
         return str;
