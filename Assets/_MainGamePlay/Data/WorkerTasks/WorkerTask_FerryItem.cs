@@ -52,7 +52,7 @@ public class WorkerTask_FerryItem : WorkerTask
 
     public override bool IsCarryingItem(string itemId)
     {
-        return substate > 2 && itemBeingFerried.DefnId == itemId;
+        return substate > 1 && itemBeingFerried.DefnId == itemId;
     }
 
     // TODO: Pooling

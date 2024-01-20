@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.IO.LowLevel.Unsafe;
 using UnityEngine;
 
 public enum ConstructionState { NotStarted, UnderConstruction, FullyConstructed };
@@ -520,8 +521,39 @@ public class BuildingData : BaseData
         foreach (var need in Needs)
             if (need.Type == NeedType.SellGood)
             {
-                // Can be set by user; e.g. they can increase priority of selling wood if they want to
-                need.Priority = 0.5f;
+                if (need.IsBeingFullyMet)
+                {
+                    need.Priority = 0;
+                    continue;
+                }
+                var item = need.NeededItem;
+                var globalNeedForItem = 0f;
+
+                // if the item-to-be-sold is highly needed by other buildings, then don't sell it
+                foreach (var building in Town.Buildings)
+                {
+                    foreach (var otherNeed in building.Needs)
+                    {
+                        if (otherNeed.Type == NeedType.CraftingOrConstructionMaterial && otherNeed.NeededItem == item)
+                            globalNeedForItem += otherNeed.Priority;
+                        // if (otherNeed.Type == NeedType.ClearStorage && building.NumItemsInStorage(item) > 0) // todo: not quite right; only 1 of need's item is in storage will be the smae priority as if 9 of needs' item are in storage
+                        // globalNeedForItem += otherNeed.Priority;
+                        //   numInStorage += building.NumItemsInStorage(item); // doesn't include ferrying items but :shrug:
+                    }
+                }
+                if (globalNeedForItem > 0.25f) // TODO: Allow user to modify this to e.g. effect a 'fire sale' in which even highly needed items are sold
+                {
+                    need.Priority = 0;
+                    continue;
+                }
+
+                // if here then the item-to-be-sold isn't highly needed.  If there's a lot of it in storage, then sell it
+                int numInStorage = 0;
+                foreach (var building in Town.Buildings)
+                    numInStorage += building.NumItemsInStorage(item);
+
+                var storageImpact = Mathf.Clamp(numInStorage / 10f, 0, 2);
+                need.Priority = storageImpact/2f;
             }
 
         foreach (var need in GatheringNeeds)
