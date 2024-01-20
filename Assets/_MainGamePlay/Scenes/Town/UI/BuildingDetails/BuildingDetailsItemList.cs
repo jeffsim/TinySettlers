@@ -13,8 +13,8 @@ public class BuildingDetailsItemList : MonoBehaviour
 
     public void ShowForBuilding(Building building)
     {
-        gameObject.SetActive(building.Data.Defn.CanStoreItems);
-        if (!building.Data.Defn.CanStoreItems)
+        gameObject.SetActive(building.Data.Defn.CanStoreItems || building.Data.Defn.CanSellGoods);
+        if (!gameObject.activeSelf)
             return;
         this.building = building;
         ListEntries.Clear();
