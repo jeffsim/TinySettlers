@@ -25,7 +25,7 @@ public enum NeedState
     //  crafting need is met when: 		        all required items are present or in-transit
     unmet,
     met,
-    canspoted
+    cancelled
 }
 
 public enum NeedCoreType
@@ -75,8 +75,8 @@ public class NeedData : BaseData
         }
         return $"UNKNOWN NEED TYPE {Type} {NeededItem} {State} {Priority}";
     }
-    [SerializeField] bool IsCanspoted = false;
-    public NeedState State => IsCanspoted ? NeedState.canspoted : (IsBeingFullyMet ? NeedState.met : NeedState.unmet);
+    [SerializeField] bool IsCancelled = false;
+    public NeedState State => IsCancelled ? NeedState.cancelled : (IsBeingFullyMet ? NeedState.met : NeedState.unmet);
     public NeedType Type;
     public NeedCoreType NeedCoreType;
 
@@ -150,10 +150,10 @@ public class NeedData : BaseData
 
     internal void Cancel()
     {
-        Debug.Assert(!IsCanspoted, "Cancelling already cancelled Need");
+        Debug.Assert(!IsCancelled, "Cancelling already cancelled Need");
         foreach (var worker in WorkersMeetingNeed)
-            worker.OnNeedBeingMetCanspoted();
-        IsCanspoted = true;
+            worker.OnNeedBeingMetCancelled();
+        IsCancelled = true;
     }
 
     // itemCellDistance = distance from mob to cell that the specified item is in.
@@ -165,9 +165,10 @@ public class NeedData : BaseData
 
         var distFromResourcesRoomToRoom = building.getDistanceToBuilding(entity.AssignedBuilding) * 9;
         var totalDistance = itemCellDistance + distFromResourcesRoomToRoom;
-        var timeNeedHasBeenAlive = GameTime.time - this.StartTimeInSeconds;
+        var timeNeedHasBeenAlive = GameTime.time - StartTimeInSeconds;
 
         // TODO: I'm sure this will need tweaking...
-        return this.Priority * 100 + (30 - (Math.Min(30, totalDistance))) / 10f + timeNeedHasBeenAlive / 10f;
+        var pri = this.Priority + (30 - (Math.Min(30, totalDistance))) / 10f + Math.Min(timeNeedHasBeenAlive / 100f, 1);
+        return pri;
     }
 }

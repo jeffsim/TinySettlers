@@ -8,7 +8,7 @@ public enum ConstructionState { NotStarted, UnderConstruction, FullyConstructed 
 class PrioritizedTask
 {
     public override string ToString() => $"{Priority:F1} {Task.getDebuggerString()}";
-  
+
     public WorkerTask Task;
     public float Priority;
 
@@ -511,7 +511,7 @@ public class BuildingData : BaseData
                 // unless close to full, Cleanup tasks are lower priority than filling crafting need tasks
                 if (percentFull < .75)
                     percentFull /= 5f;
-
+                percentFull *= 2;
                 ClearOutStorageNeed.Priority = percentFull;
 
                 // if we're a crafting room then we have a higher priority than non-crafting rooms (e.g. woodcutter) to clear storage
@@ -556,7 +556,7 @@ public class BuildingData : BaseData
                     numInStorage += building.NumItemsInStorage(item);
 
                 var storageImpact = Mathf.Clamp(numInStorage / 10f, 0, 2);
-                need.Priority = storageImpact/2f;
+                need.Priority = storageImpact / 2f;
             }
 
         foreach (var need in GatheringNeeds)

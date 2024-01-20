@@ -62,7 +62,7 @@ public class WorkerData : BaseData
         return Vector2.Distance(WorldLoc, target.WorldLoc);
     }
 
-    internal void OnNeedBeingMetCanspoted()
+    internal void OnNeedBeingMetCancelled()
     {
         throw new NotImplementedException();
     }
