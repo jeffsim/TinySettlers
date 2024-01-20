@@ -176,7 +176,11 @@ public class SceneWithMap : SceneMgr
 
     internal void PlayerSelectedBuildingToConstructInTile(BuildingDefn buildingDefn, TileData tile)
     {
-        Map.Town.ConstructBuilding(buildingDefn, tile.TileX, tile.TileY);
+        var building = Map.Town.ConstructBuilding(buildingDefn, tile.TileX, tile.TileY);
+
+        // Autoassign one worker to the newly constructed building
+        if (buildingDefn.HasWorkers)
+            Map.Town.AssignWorkerToBuilding(building);
         SelectBuildingToConstruct.Hide();
     }
 }

@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3e75d84e7abf74cb19c5077568ca91fd, type: 3}
-  m_Name: StoneCutter
+  m_Name: Market
   m_EditorClassIdentifier: 
-  Id: stoneCutter
-  BuildingColor: {r: 0.5019608, g: 0.49517393, b: 0, a: 1}
-  FriendlyName: Stone Cutter
+  Id: market
+  BuildingColor: {r: 0.7484276, g: 0.65758735, b: 0.035303097, a: 1}
+  FriendlyName: Market
   BuildingClass: 2
-  AssignedWorkerColor: {r: 0.9246069, g: 1, b: 0, a: 0}
-  AssignedWorkerFriendlyName: Stone Cutter
+  AssignedWorkerColor: {r: 0.8796489, g: 1, b: 0, a: 0}
+  AssignedWorkerFriendlyName: Marketer
   HasWorkers: 1
-  MaxWorkers: 2
-  EditorColor: {r: 0.6320754, g: 0.5255832, b: 0.08646317, a: 1}
+  MaxWorkers: 1
+  EditorColor: {r: 1, g: 0.6673894, b: 0.009433806, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
   CanBeConstructed: 1
@@ -28,20 +28,22 @@ MonoBehaviour:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
     Count: 4
   NumConstructorSpots: 2
-  CanCraft: 1
-  CraftableItems:
-  - {fileID: 11400000, guid: 8299fd30f1aba4fbea13091ddf0ceeb2, type: 2}
-  CraftingSpots:
-  - {x: 1, y: 3, z: 0}
-  - {x: 3, y: 2, z: 0}
-  CanStoreItems: 1
+  CanCraft: 0
+  CraftableItems: []
+  CraftingSpots: []
+  CanStoreItems: 0
   IsPrimaryStorage: 0
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
   StorageAreaWidthAndHeight: 3
   WorkersCanFerryItems: 0
   CanGatherResources: 0
-  GatherableResources: []
+  GatherableResources:
+  - {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
   ResourcesCanBeGatheredFromHere: 0
   ResourcesThatCanBeGatheredFromHere: []
   GatheringSpots: []
+  CanSellGoods: 1
+  GoodsThatCanBeSold:
+  - {fileID: 11400000, guid: 0f7a65437217c4f3c8bdf660e2b482c4, type: 2}
+  - {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}

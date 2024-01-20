@@ -11,6 +11,8 @@ public class BuildingDetails : MonoBehaviour
     public TextMeshProUGUI Items;
     public Building building;
     public Button DestroyButton;
+    public Button AssignWorkerButton;
+    public Button UnassignWorkerButton;
     SceneWithMap scene;
 
     public void ShowForBuilding(SceneWithMap scene, Building building)
@@ -20,7 +22,6 @@ public class BuildingDetails : MonoBehaviour
         this.building = building;
         Name.text = building.Data.Defn.FriendlyName + " (" + building.Data.InstanceId + ")";
 
-        // can't destroy camp building
         DestroyButton.interactable = building.Data.Defn.PlayerCanDestroy;
     }
 
@@ -35,6 +36,15 @@ public class BuildingDetails : MonoBehaviour
         if (building == null)
             return;
 
+        // todo: store reference (or at least count) of workers in building
+        // don't assign/unassign from camp, or if building can't have workers
+        var assignable = building.Data.Defn.BuildingClass != BuildingClass.Camp && building.Data.Defn.HasWorkers;
+        if (assignable)
+        {
+            var numWorkersInBuilding = scene.Map.Town.NumBuildingWorkers(building.Data);
+            AssignWorkerButton.interactable = scene.Map.Town.WorkerIsAvailable() && numWorkersInBuilding < building.Data.Defn.MaxWorkers;
+            UnassignWorkerButton.interactable = numWorkersInBuilding > 0;
+        }
         var str = "<color=yellow>Needs:</color>\n";
         var needs = new List<NeedData>(building.Data.Needs);
         str += Utilities.getNeedsDebugString(needs, false);
@@ -54,15 +64,16 @@ public class BuildingDetails : MonoBehaviour
     public void OnDestroyClicked() => scene.DestroyBuilding(this.building);
     public void OnEmptyBuildingStorage() => scene.Debug_OnEmptyBuildingStorage(this.building);
 
-    public void OnAddWorkerClicked()
+    public void OnAssignWorkerClicked()
     {
         // Assign worker from camp to this building
         // scene.Map.Town.CreateWorkerInBuilding(building.Data);
+        scene.Map.Town.AssignWorkerToBuilding(building.Data);
     }
 
-    public void OnRemoveWorkerClicked()
+    public void OnUnassignWorkerClicked()
     {
         // Remove worker from this building and send back to camp
-        last working here
+        scene.Map.Town.UnassignWorkerFromBuilding(building.Data);
     }
 }

@@ -18,6 +18,7 @@ MonoBehaviour:
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.002558625, g: 0.4245283, b: 0, a: 0}
   AssignedWorkerFriendlyName: n/a
+  HasWorkers: 0
   EditorColor: {r: 0, g: 0.38679248, b: 0.047153078, a: 1}
   PlayerCanMove: 0
   PlayerCanDestroy: 0

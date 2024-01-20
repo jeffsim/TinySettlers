@@ -537,7 +537,7 @@ GameObject:
   - component: {fileID: 244483191}
   - component: {fileID: 244483190}
   m_Layer: 5
-  m_Name: RemoveWorker
+  m_Name: UnassignWorker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -609,7 +609,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1954432328}
         m_TargetAssemblyTypeName: BuildingDetails, MainGame
-        m_MethodName: OnRemoveWorkerClicked
+        m_MethodName: OnUnassignWorkerClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1779,7 +1779,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '-'
+  m_text: Unassign
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1806,8 +1806,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -5591,7 +5591,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: +
+  m_text: Assign
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -5618,8 +5618,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 12
+  m_fontSizeBase: 12
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -8393,7 +8393,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -244}
-  m_SizeDelta: {x: 0, y: 191.5102}
+  m_SizeDelta: {x: 0, y: 153.39}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1665490148
 MonoBehaviour:
@@ -9361,6 +9361,8 @@ MonoBehaviour:
   Items: {fileID: 1665490148}
   building: {fileID: 0}
   DestroyButton: {fileID: 1508983530}
+  AssignWorkerButton: {fileID: 2112940463}
+  UnassignWorkerButton: {fileID: 244483190}
 --- !u!114 &1954432329
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9953,7 +9955,7 @@ GameObject:
   - component: {fileID: 2112940464}
   - component: {fileID: 2112940463}
   m_Layer: 5
-  m_Name: AddWorker
+  m_Name: AssignWorker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10025,7 +10027,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1954432328}
         m_TargetAssemblyTypeName: BuildingDetails, MainGame
-        m_MethodName: OnAddWorkerClicked
+        m_MethodName: OnAssignWorkerClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

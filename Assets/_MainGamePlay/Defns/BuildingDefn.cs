@@ -19,6 +19,10 @@ public class BuildingDefn : BaseDefn
     public Color AssignedWorkerColor;
     public string AssignedWorkerFriendlyName;
 
+    public bool HasWorkers = true;
+    [ShowIf("HasWorkers")]
+    public int MaxWorkers = 4;
+
     // used in the editor
     public Color EditorColor;
 
@@ -59,4 +63,8 @@ public class BuildingDefn : BaseDefn
 
     [ShowIf("ResourcesCanBeGatheredFromHere")]
     public List<Vector3> GatheringSpots;
+
+    public bool CanSellGoods;
+    [ShowIf("CanSellGoods")]
+    public List<ItemDefn> GoodsThatCanBeSold;
 }

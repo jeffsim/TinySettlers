@@ -86,23 +86,24 @@ public class TownData : BaseData
         OnWorkerCreated?.Invoke(worker);
     }
 
+    internal void TestMoveBuilding(int test)
+    {
+        MoveBuilding(Buildings[test], 2, 1);
+    }
+
     public BuildingData ConstructBuilding(BuildingDefn buildingDefn, int tileX, int tileY)
     {
         var building = new BuildingData(buildingDefn, tileX, tileY);
         building.Initialize(this);
         Buildings.Add(building);
         Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
+        UpdateDistanceToRooms();
 
         OnBuildingAdded?.Invoke(building);
 
         return building;
     }
-
-    internal void TestMoveBuilding(int test)
-    {
-        MoveBuilding(Buildings[test], 2, 1);
-    }
-
+    
     public void DestroyBuilding(BuildingData building)
     {
         Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
@@ -364,5 +365,42 @@ public class TownData : BaseData
                 if (need.Type == NeedType.CraftingOrConstructionMaterial && need.NeededItem.Id == itemId)
                     total += need.Priority;
         return total;
+    }
+
+    internal void UnassignWorkerFromBuilding(BuildingData data)
+    {
+        WorkerData worker = GetWorkerInBuilding(data);
+        worker?.AssignToBuilding(Camp);
+    }
+
+    internal void AssignWorkerToBuilding(BuildingData data)
+    {
+        WorkerData worker = GetWorkerInBuilding(Camp);
+        worker?.AssignToBuilding(data);
+    }
+
+    private WorkerData GetWorkerInBuilding(BuildingData building)
+    {
+        foreach (var worker in Workers)
+            if (worker.AssignedBuilding == building)
+                return worker;
+        return null;
+    }
+
+    internal int NumBuildingWorkers(BuildingData building)
+    {
+        // TODO: STore in buidlingdata instead
+        int num = 0;
+        foreach (var worker in Workers)
+            if (worker.AssignedBuilding == building)
+                num++;
+        return num;
+    }
+
+    internal bool WorkerIsAvailable()
+    {
+        // called when a building is requesting an available worker be assigned to it
+        // For now, assignment is done from Camp, so just check if Camp has any workers
+        return NumBuildingWorkers(Camp) > 0;
     }
 }

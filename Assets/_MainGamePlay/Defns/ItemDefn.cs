@@ -20,5 +20,9 @@ public class ItemDefn : BaseDefn
     public List<ResourceNeededForCraftingOrConstruction> ResourcesNeededForCrafting;
     public ItemClass ItemClass;
 
+    // sold for this many gold.  can be increased via research, etc
+    public int BaseSellPrice = 1;
+
+    // Heavy objects slow down the worker carrying them
     public float CarryingSpeedModifier = 1.0f;
 }
