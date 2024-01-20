@@ -21,11 +21,25 @@ public class ItemOnGroundDetails : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-
     void Update()
     {
         if (item == null) return;
 
-        Reservation.text = "TODO: show reserved details";
+        // Get the town need that tracks the need to pick up this item
+        var need = scene.Map.Town.otherTownNeeds.Find(n => n.Type == NeedType.PickupAbandonedItem && n.AbandonedItemToPickup == item.Data);
+        if (need == null)
+        {
+            Reservation.text = "ERROR: Failed to find need";
+            return;
+        }
+
+        Reservation.text = "  Priority: " + need.Priority +
+                           "\n  Start time:" + need.StartTimeInSeconds;
+                           
+
+        if (need.IsBeingFullyMet)
+            Reservation.text += "\n  Being met by worker " + need.WorkersMeetingNeed[0].InstanceId;
+        else
+            Reservation.text += "\n  Not being met";
     }
 }

@@ -64,7 +64,7 @@ public class WorkerTask_Idle : WorkerTask
             case 1: // wait to go to a new spot
                 if (getPercentSubstateDone(secondsToWait) == 1)
                 {
-                    idleMoveToDest = Utilities.locationWithinDistance(Worker.AssignedBuilding.WorldLoc, 3f);
+                    idleMoveToDest = Utilities.LocationWithinDistance(Worker.AssignedBuilding.WorldLoc, 3f);
                     distanceMovedPerSecond = 3 + (UnityEngine.Random.value - .5f) * 1f;
                     gotoNextSubstate();
                 }

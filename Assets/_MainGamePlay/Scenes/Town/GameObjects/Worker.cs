@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -74,78 +75,111 @@ public class Worker : MonoBehaviour
         var itemUp = new Vector3(0, 1f, -1);
         var itemDown = new Vector3(0, 0f, -1);
 
-        var isCourier = Data.CurrentTask.Type == TaskType.FerryItem;
-        CarriedItem.gameObject.SetActive(isCourier);
-        if (isCourier)
+        var carriedItemRectTransform = CarriedItem.GetComponent<RectTransform>();
+        switch (Data.CurrentTask.Type)
         {
-            CarriedItem.text = (Data.CurrentTask as WorkerTask_FerryItem).itemBeingFerried.DefnId.Substring(0, 2);
-            var rectTransform = CarriedItem.GetComponent<RectTransform>();
-            switch ((WorkerTask_FerryItemSubstate)Data.CurrentTask.substate)
-            {
-                case WorkerTask_FerryItemSubstate.GotoBuildingWithItem:
-                    CarriedItem.color = Color.red;
-                    break;
-                case WorkerTask_FerryItemSubstate.PickupItemInBuilding:
-                    var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_FerryItem.secondsToPickup);
-                    rectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
-                    CarriedItem.color = Color.white;
-                    break;
-                case WorkerTask_FerryItemSubstate.GotoDestinationBuilding:
-                    CarriedItem.color = Color.white;
-                    break;
-                case WorkerTask_FerryItemSubstate.DropItemInBuilding:
-                    var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_FerryItem.secondsToDrop);
-                    rectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t2);
-                    CarriedItem.color = Color.white;
-                    break;
-            }
-        }
-        if (Data.CurrentTask.Type == TaskType.GatherResource)
-        {
-            CarriedItem.gameObject.SetActive(true);
-            CarriedItem.text = (Data.CurrentTask as WorkerTask_GatherResource).GetTaskItem().Id.Substring(0, 2);
-            var rectTransform = CarriedItem.GetComponent<RectTransform>();
-            switch ((WorkerTask_GatherResourceSubstate)Data.CurrentTask.substate)
-            {
-                case WorkerTask_GatherResourceSubstate.GotoResourceBuilding:
-                    CarriedItem.color = Color.red;
-                    break;
-                case WorkerTask_GatherResourceSubstate.GatherResourceInBuilding:
-                    var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_GatherResource.secondsToGather);
-                    rectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
-                    CarriedItem.color = Color.white;
-                    break;
-                case WorkerTask_GatherResourceSubstate.ReturnToAssignedBuilding:
-                    CarriedItem.color = Color.white;
-                    break;
-                case WorkerTask_GatherResourceSubstate.DropGatheredResource:
-                    var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_GatherResource.secondsToDrop);
-                    rectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t2);
-                    CarriedItem.color = Color.white;
-                    break;
-            }
-        }
+            case TaskType.FerryItem:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_FerryItem).itemBeingFerried.DefnId.Substring(0, 2);
+                switch ((WorkerTask_FerryItemSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_FerryItemSubstate.GotoBuildingWithItem:
+                        carriedItemRectTransform.localPosition = itemDown;
+                        CarriedItem.color = Color.red;
+                        break;
+                    case WorkerTask_FerryItemSubstate.PickupItemInBuilding:
+                        var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_FerryItem.secondsToPickup);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_FerryItemSubstate.GotoDestinationBuilding:
+                        carriedItemRectTransform.localPosition = itemUp;
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_FerryItemSubstate.DropItemInBuilding:
+                        var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_FerryItem.secondsToDrop);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t2);
+                        CarriedItem.color = Color.white;
+                        break;
+                }
+                break;
 
-        if (Data.CurrentTask.Type == TaskType.SellGood)
-        {
-            CarriedItem.gameObject.SetActive(true);
+            case TaskType.GatherResource:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_GatherResource).GetTaskItem().Id.Substring(0, 2);
+                switch ((WorkerTask_GatherResourceSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_GatherResourceSubstate.GotoResourceBuilding:
+                        carriedItemRectTransform.localPosition = itemDown;
+                        CarriedItem.color = Color.red;
+                        break;
+                    case WorkerTask_GatherResourceSubstate.GatherResourceInBuilding:
+                        var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_GatherResource.secondsToGather);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_GatherResourceSubstate.ReturnToAssignedBuilding:
+                        carriedItemRectTransform.localPosition = itemUp;
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_GatherResourceSubstate.DropGatheredResource:
+                        var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_GatherResource.secondsToDrop);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t2);
+                        CarriedItem.color = Color.white;
+                        break;
+                }
+                break;
 
-            var rectTransform = CarriedItem.GetComponent<RectTransform>();
-            switch ((WorkerTask_SellGoodSubstate)Data.CurrentTask.substate)
-            {
-                case WorkerTask_SellGoodSubstate.GotoSpotWithGoodToSell:
-                    CarriedItem.text = (Data.CurrentTask as WorkerTask_SellGood).GetTaskItem().Id.Substring(0, 2);
-                    CarriedItem.color = Color.red;
-                    break;
-                case WorkerTask_SellGoodSubstate.SellGood:
-                    var sellPrice = (Data.CurrentTask as WorkerTask_SellGood).GetTaskItem().BaseSellPrice; // TODO: Multipliers
-                    CarriedItem.text = sellPrice + "gp";
+            case TaskType.PickupAbandonedItem:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_PickupAbandonedItem).GetTaskItem().Id.Substring(0, 2);
+                switch ((WorkerTask_PickupAbandonedItemSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_PickupAbandonedItemSubstate.GotoItemOnGround:
+                        carriedItemRectTransform.localPosition = itemDown;
+                        CarriedItem.color = Color.red;
+                        break;
+                    case WorkerTask_PickupAbandonedItemSubstate.PickupItemOnGround:
+                        var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupAbandonedItem.secondsToPickup);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_PickupAbandonedItemSubstate.GotoDestinationBuilding:
+                        carriedItemRectTransform.localPosition = itemUp;
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_PickupAbandonedItemSubstate.DropItemInBuilding:
+                        var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_GatherResource.secondsToDrop);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t2);
+                        CarriedItem.color = Color.white;
+                        break;
+                }
+                break;
 
-                    var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_SellGood.secondsToSell);
-                    rectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
-                    CarriedItem.color = Color.white;
-                    break;
-            }
+            case TaskType.Idle:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = "<i>i</i>";
+                break;
+
+            case TaskType.SellGood:
+                CarriedItem.gameObject.SetActive(true);
+
+                switch ((WorkerTask_SellGoodSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_SellGoodSubstate.GotoSpotWithGoodToSell:
+                        CarriedItem.text = (Data.CurrentTask as WorkerTask_SellGood).GetTaskItem().Id.Substring(0, 2);
+                        carriedItemRectTransform.localPosition = itemDown;
+                        CarriedItem.color = Color.red;
+                        break;
+                    case WorkerTask_SellGoodSubstate.SellGood:
+                        var sellPrice = (Data.CurrentTask as WorkerTask_SellGood).GetTaskItem().BaseSellPrice; // TODO: Multipliers
+                        CarriedItem.text = sellPrice + "gp";
+                        var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_SellGood.secondsToSell);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
+                        CarriedItem.color = Color.white;
+                        break;
+                }
+                break;
         }
 
         // If this worker is assigned to currently selected building then highlight

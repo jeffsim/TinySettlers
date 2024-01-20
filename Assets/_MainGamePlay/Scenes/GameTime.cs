@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 // this exists so that we can replace it in Tests
@@ -68,6 +67,8 @@ public static class GameTime
     {
         time += Time.unscaledDeltaTime;
     }
+
+    static public void UnPause() => timeScale = _lastSetNonZeroTimeScale;
 
     static public void TogglePause()
     {

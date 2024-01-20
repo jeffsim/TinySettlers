@@ -22,6 +22,8 @@ public delegate void OnBuildingTileLocChangedEvent();
 [Serializable]
 public class BuildingData : BaseData
 {
+    public override string ToString() => Defn.FriendlyName + " (" + InstanceId + ")";
+
     private BuildingDefn _defn;
     public BuildingDefn Defn
     {

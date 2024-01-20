@@ -52,6 +52,7 @@ public class AllNeedsDetails : MonoBehaviour
                 var needsByType = new List<NeedData>();
                 foreach (var building in scene.Map.Town.Buildings)
                     needsByType.AddRange(building.Needs);
+                needsByType.AddRange(scene.Map.Town.otherTownNeeds);
                 needsByType.Sort((a, b) => (int)((b.Type - a.Type) * 1000));
                 str += Utilities.getNeedsDebugString(needsByType, true);
                 break;
@@ -61,6 +62,7 @@ public class AllNeedsDetails : MonoBehaviour
                 var allNeeds = new List<NeedData>();
                 foreach (var building in scene.Map.Town.Buildings)
                     allNeeds.AddRange(building.Needs);
+                allNeeds.AddRange(scene.Map.Town.otherTownNeeds);
                 str += Utilities.getNeedsDebugString(allNeeds, true);
                 break;
         }

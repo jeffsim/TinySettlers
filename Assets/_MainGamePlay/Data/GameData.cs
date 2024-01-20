@@ -32,5 +32,6 @@ public class GameData
     {
         UniqueIdGenerator.Instance = UniqueIdGenerator;
         GameTime.time = lastGameTime;
+        GameTime.UnPause();
     }
 }

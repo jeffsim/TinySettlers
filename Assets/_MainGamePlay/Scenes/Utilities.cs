@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEditor.Compilation;
 #endif
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public enum Direction
 {
@@ -37,21 +38,27 @@ public static class Utilities
     }
 #endif
 
-    public static Vector3 locationWithinDistance(Vector3 worldLoc, float maxDistance)
+    public static Vector3 LocationWithinDistance(Vector3 worldLoc, float maxDistance)
     {
         var circle = UnityEngine.Random.insideUnitCircle * maxDistance;
-        return worldLoc + new Vector3(circle.x, circle.y, 0);
+        return worldLoc + (Vector3)circle;
     }
 
     internal static string getNeedsDebugString(List<NeedData> needs, bool includeBuildingId)
     {
         var str = "";
         needs.Sort((a, b) => (int)((b.Priority - a.Priority) * 1000));
+
         foreach (var need in needs)
+        {
+            str += need.Priority.ToString("0.00") + " ";
             if (includeBuildingId)
-                str += need.Priority.ToString("0.00") + " " + need.BuildingWithNeed.DefnId + " " + getNeedText(need) + "\n";
-            else
-                str += need.Priority.ToString("0.00") + " " + getNeedText(need) + "\n";
+            {
+                if (need.Type != NeedType.PickupAbandonedItem)
+                    str += need.BuildingWithNeed + ": ";
+            }
+            str += getNeedText(need) + "\n";
+        }
         return str;
     }
 
@@ -61,12 +68,12 @@ public static class Utilities
         switch (need.Type)
         {
             case NeedType.ClearStorage: str += "Clear Storage"; break;
-            case NeedType.ConstructionWorker: str += "Const Worker"; break;
-            case NeedType.CraftingOrConstructionMaterial: str += "Need Item (" + need.NeededItem.Id + ")"; break;
+            case NeedType.ConstructionWorker: str += "Construction Worker"; break;
+            case NeedType.CraftingOrConstructionMaterial: str += "Need Item: " + need.NeededItem; break;
             case NeedType.GatherResource: str += "Gather (" + need.NeededItem.Id + ")"; break;
             case NeedType.PersistentRoomNeed: str += "Persistent need"; break;
-            case NeedType.PickupAbandonedItem: str += "Pickup item"; break;
-            case NeedType.SellGood: str += "Sell good (" + need.NeededItem.FriendlyName + ")"; break;
+            case NeedType.PickupAbandonedItem: str += "Pickup item: " + need.AbandonedItemToPickup; break;
+            case NeedType.SellGood: str += "Sell good: " + need.NeededItem; break;
             default: Debug.LogError("unknown need type " + need.Type); break;
         };
         return str;

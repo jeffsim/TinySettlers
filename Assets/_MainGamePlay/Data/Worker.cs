@@ -25,7 +25,7 @@ public class WorkerData : BaseData
 
     public WorkerData(BuildingData buildingToStartIn)
     {
-        WorldLoc = Utilities.locationWithinDistance(new Vector2(buildingToStartIn.WorldLoc.x, buildingToStartIn.WorldLoc.y), 1);
+        WorldLoc = Utilities.LocationWithinDistance(new Vector2(buildingToStartIn.WorldLoc.x, buildingToStartIn.WorldLoc.y), 1);
 
         Town = buildingToStartIn.Town;
 
