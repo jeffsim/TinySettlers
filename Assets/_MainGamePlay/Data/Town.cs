@@ -26,6 +26,7 @@ public class TownData : BaseData
     public int Gold;
     [NonSerialized] public OnItemAddedToGroundEvent OnItemAddedToGround;
     [NonSerialized] public Action<ItemData> OnItemRemovedFromGround;
+    [NonSerialized] public Action<ItemData> OnItemSold;
 
     [NonSerialized] public Action<BuildingData> OnBuildingAdded;
     [NonSerialized] public Action<WorkerData> OnWorkerCreated;
@@ -389,7 +390,7 @@ public class TownData : BaseData
 
     internal int NumBuildingWorkers(BuildingData building)
     {
-        // TODO: STore in buidlingdata instead
+        // TODO: Store in buidlingdata instead
         int num = 0;
         foreach (var worker in Workers)
             if (worker.AssignedBuilding == building)
@@ -402,5 +403,12 @@ public class TownData : BaseData
         // called when a building is requesting an available worker be assigned to it
         // For now, assignment is done from Camp, so just check if Camp has any workers
         return NumBuildingWorkers(Camp) > 0;
+    }
+
+    internal void ItemSold(ItemData item)
+    {
+        // todo: multipliers e.g. from research
+        Gold += item.Defn.BaseSellPrice;
+        OnItemSold?.Invoke(item);
     }
 }

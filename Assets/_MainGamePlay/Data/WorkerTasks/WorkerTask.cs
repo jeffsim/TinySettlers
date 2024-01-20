@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TaskType { Unset, Idle, GatherResource, CraftGood, FerryItem, PickupAbandonedItem };
+public enum TaskType { Unset, Idle, GatherResource, CraftGood, FerryItem, PickupAbandonedItem, SellGood };
 
 public enum TaskState { Unset, NotStarted, Started, Completed, Abandoned };
 

@@ -126,6 +126,24 @@ public class Worker : MonoBehaviour
             }
         }
 
+        if (Data.CurrentTask.Type == TaskType.SellGood)
+        {
+            CarriedItem.gameObject.SetActive(true);
+            CarriedItem.text = (Data.CurrentTask as WorkerTask_SellGood).GetTaskItem().Id.Substring(0, 2);
+            var rectTransform = CarriedItem.GetComponent<RectTransform>();
+            switch ((WorkerTask_SellGoodSubstate)Data.CurrentTask.substate)
+            {
+                case WorkerTask_SellGoodSubstate.GotoSpotWithGoodToSell:
+                    CarriedItem.color = Color.red;
+                    break;
+                case WorkerTask_SellGoodSubstate.SellGood:
+                    var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_SellGood.secondsToSell);
+                    rectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
+                    CarriedItem.color = Color.white;
+                    break;
+            }
+        }
+
         // If this worker is assigned to currently selected building then highlight
         bool showHighlight = scene.BuildingDetails.isActiveAndEnabled &&
                              scene.BuildingDetails.building != null &&

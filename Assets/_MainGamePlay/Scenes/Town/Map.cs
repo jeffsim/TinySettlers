@@ -43,7 +43,7 @@ public class Map : MonoBehaviour
         Town.OnBuildingAdded += addBuildingGO;
         Town.OnItemAddedToGround += addItemOnGroundGO;
         Town.OnItemRemovedFromGround += OnItemRemovedFromGround;
-        
+        // Town.OnItemSold += OnItemSold;
     }
 
     void OnDestroy()
@@ -53,8 +53,9 @@ public class Map : MonoBehaviour
         Town.OnBuildingAdded -= addBuildingGO;
         Town.OnItemAddedToGround -= addItemOnGroundGO;
         Town.OnItemRemovedFromGround -= OnItemRemovedFromGround;
+        // Town.OnItemSold -= OnItemSold;
     }
-    
+
     private void addTileGO(TileData tile)
     {
         var tileGO = Worker.Instantiate<Tile>(scene.TilePrefab);
@@ -127,6 +128,8 @@ public class Map : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Space))
             GameTime.TogglePause();
+
+        scene.Gold.text = "Gold: " + Town.Gold.ToString();
 
         int numReservedStorageSpots = 0;
         foreach (var building in Town.Buildings)

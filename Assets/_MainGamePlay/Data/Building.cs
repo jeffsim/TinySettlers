@@ -211,6 +211,27 @@ public class BuildingData : BaseData
         addCourierTasks(availableTasks, worker, allTownNeeds);
         addStorageCleanupTasks(availableTasks, worker, allTownNeeds);
         addAbandonedItemTasks(availableTasks, worker, allTownNeeds);
+        addSellGoodTasks(availableTasks, worker, allTownNeeds);
+    }
+
+    private void addSellGoodTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
+    {
+        if (!Defn.CanSellGoods) return;
+
+        foreach (var need in allTownNeeds)
+        {
+            if (need.Type != NeedType.SellGood) continue;
+
+            // If no priority then don't try to meet it
+            if (need.Priority == 0) continue;
+
+            // Do we have the item in storage to sell?
+            StorageSpotData spotWithItemToSell = GetStorageSpotWithUnreservedItemOfType(need.NeededItem);
+            if (spotWithItemToSell == null) continue;
+
+            // Found a storage spot to hold the item
+            availableTasks.Add(new PrioritizedTask(WorkerTask_SellGood.Create(worker, need, spotWithItemToSell), need.Priority));
+        }
     }
 
     private void addAbandonedItemTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
