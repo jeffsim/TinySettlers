@@ -53,4 +53,16 @@ public class BuildingDetails : MonoBehaviour
 
     public void OnDestroyClicked() => scene.DestroyBuilding(this.building);
     public void OnEmptyBuildingStorage() => scene.Debug_OnEmptyBuildingStorage(this.building);
+
+    public void OnAddWorkerClicked()
+    {
+        // Assign worker from camp to this building
+        // scene.Map.Town.CreateWorkerInBuilding(building.Data);
+    }
+
+    public void OnRemoveWorkerClicked()
+    {
+        // Remove worker from this building and send back to camp
+        last working here
+    }
 }

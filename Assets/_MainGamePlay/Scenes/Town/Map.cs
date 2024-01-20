@@ -27,27 +27,29 @@ public class Map : MonoBehaviour
         ItemsFolder = addFolder("Items");
         WorkersFolder = addFolder("Workers");
 
-        foreach (var tile in townData.Tiles)
+        foreach (var tile in Town.Tiles)
             addTileGO(tile);
 
-        foreach (var worker in townData.Workers)
+        foreach (var worker in Town.Workers)
             addWorkerGO(worker);
 
-        foreach (var building in townData.Buildings)
+        foreach (var building in Town.Buildings)
             addBuildingGO(building);
 
-        foreach (var item in townData.ItemsOnGround)
+        foreach (var item in Town.ItemsOnGround)
             addItemOnGroundGO(item);
 
-        townData.OnBuildingAdded += addBuildingGO;
-        townData.OnItemAddedToGround += addItemOnGroundGO;
-        townData.OnItemRemovedFromGround += OnItemRemovedFromGround;
+        Town.OnWorkerCreated += addWorkerGO;
+        Town.OnBuildingAdded += addBuildingGO;
+        Town.OnItemAddedToGround += addItemOnGroundGO;
+        Town.OnItemRemovedFromGround += OnItemRemovedFromGround;
         
     }
 
     void OnDestroy()
     {
         if (Town == null) return;
+        Town.OnWorkerCreated -= addWorkerGO;
         Town.OnBuildingAdded -= addBuildingGO;
         Town.OnItemAddedToGround -= addItemOnGroundGO;
         Town.OnItemRemovedFromGround -= OnItemRemovedFromGround;

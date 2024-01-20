@@ -25,7 +25,7 @@ MonoBehaviour:
     TileX: 0
     TileY: 0
     StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 4
+    NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 5cf22471cfa19413f82bc414449f99a3, type: 2}
     TileX: 1
@@ -39,4 +39,16 @@ MonoBehaviour:
     TileX: 2
     TileY: 0
     StartingItemsInBuilding: []
+    NumWorkersStartAtBuilding: 4
+  - IsEnabled: 0
+    Building: {fileID: 11400000, guid: 829b56cdca3664623ba2653708959f4e, type: 2}
+    TileX: 2
+    TileY: 0
+    StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 0
+  - IsEnabled: 0
+    Building: {fileID: 11400000, guid: e97797728a8334f7fb30f4e3b00fcc2d, type: 2}
+    TileX: 1
+    TileY: 1
+    StartingItemsInBuilding: []
+    NumWorkersStartAtBuilding: 3

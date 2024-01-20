@@ -21,7 +21,7 @@ MonoBehaviour:
   EditorColor: {r: 0, g: 0.38679248, b: 0.047153078, a: 1}
   PlayerCanMove: 0
   PlayerCanDestroy: 0
-  CanBeConstructed: 0
+  CanBeConstructed: 1
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
   CanCraft: 0

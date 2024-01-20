@@ -28,6 +28,7 @@ public class TownData : BaseData
     [NonSerialized] public Action<ItemData> OnItemRemovedFromGround;
 
     [NonSerialized] public Action<BuildingData> OnBuildingAdded;
+    [NonSerialized] public Action<WorkerData> OnWorkerCreated;
 
     public TownState State;
     public bool CanEnter => State == TownState.Available || State == TownState.InProgress;
@@ -69,12 +70,20 @@ public class TownData : BaseData
                 Camp = building;
 
             for (int i = 0; i < tbDefn.NumWorkersStartAtBuilding; i++)
-                Workers.Add(new WorkerData(building));
+                CreateWorkerInBuilding(building);
+
             foreach (var item in tbDefn.StartingItemsInBuilding)
                 for (int i = 0; i < item.Count; i++)
                     building.AddItemToStorage(new ItemData() { DefnId = item.Item.Id });
         }
         UpdateDistanceToRooms();
+    }
+
+    public void CreateWorkerInBuilding(BuildingData building)
+    {
+        var worker = new WorkerData(building);
+        Workers.Add(worker);
+        OnWorkerCreated?.Invoke(worker);
     }
 
     public BuildingData ConstructBuilding(BuildingDefn buildingDefn, int tileX, int tileY)
