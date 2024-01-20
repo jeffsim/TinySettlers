@@ -39,6 +39,13 @@ public class AllNeedsDetails : MonoBehaviour
                     str += Utilities.getNeedsDebugString(needs, false);
                     str += "\n";
                 }
+
+                // add town otherneeds
+                str += "<color=yellow>= Town ====</color> \n";
+                foreach (var need in scene.Map.Town.otherTownNeeds)
+                {
+                    str += need.Type + ": " + need.Priority + " - " + need.State + "\n";
+                }
                 break;
 
             case SortNeedsDisplayBy.TaskType:

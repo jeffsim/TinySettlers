@@ -203,10 +203,35 @@ public class BuildingData : BaseData
         addGatheringResourceTasks(availableTasks, worker);
         addCraftingTasks(availableTasks, worker);
         addCourierTasks(availableTasks, worker, allTownNeeds);
-        addCleanupTasks(availableTasks, worker, allTownNeeds);
+        addStorageCleanupTasks(availableTasks, worker, allTownNeeds);
+        addAbandonedItemTasks(availableTasks, worker, allTownNeeds);
     }
 
-    private void addCleanupTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
+    private void addAbandonedItemTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
+    {
+        // If our workers can ferry items, and there are any items left on the ground, then consider picking them up
+        if (!Defn.WorkersCanFerryItems) return;
+
+        foreach (var need in allTownNeeds)
+        {
+            // Only looking for pickup-abandoned-item needs
+            if (need.Type != NeedType.PickupAbandonedItem) continue;
+
+            // If no priority then don't try to meet it
+            if (need.Priority == 0) continue;
+
+            // Minion must have a path to the item
+            if (!worker.HasPathToItemOnGround(need.AbandonedItemToPickup)) continue;
+
+            StorageSpotData destinationStorageSpot = Town.GetClosestStorageSpotThatCanStoreItem(need.AbandonedItemToPickup.WorldLocOnGround, need.AbandonedItemToPickup);
+            if (destinationStorageSpot == null) continue;
+
+            // Found a storage spot to hold the item
+            availableTasks.Add(new PrioritizedTask(WorkerTask_PickupAbandonedItem.Create(worker, need, destinationStorageSpot), need.Priority));
+        }
+    }
+
+    private void addStorageCleanupTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
     {
         if (!Defn.WorkersCanFerryItems) return;
 
@@ -229,6 +254,8 @@ public class BuildingData : BaseData
             // If those are found, then create a ferryitem task to move it to storage
             StorageSpotData spotWithItemToMove = need.BuildingWithNeed.GetItemToRemoveFromStorage();
             if (spotWithItemToMove == null) continue;
+
+            // TODO: Currently looking at worker's start loc; I think it should look for closest storage spot near where the item is
             StorageSpotData destinationStorageSpot = Town.GetClosestStorageSpotThatCanStoreItem(worker.WorldLoc, spotWithItemToMove.ItemInStorage);
             if (destinationStorageSpot == null) continue;
 
@@ -707,7 +734,7 @@ public class BuildingData : BaseData
         // Update Workers that are assigned to or have Tasks which involve this building.
         foreach (var worker in Town.Workers)
             worker.OnBuildingDestroyed(this);
-            
+
         // Move items that were in storage onto the ground here
         foreach (var area in StorageAreas)
             foreach (var spot in area.StorageSpots)

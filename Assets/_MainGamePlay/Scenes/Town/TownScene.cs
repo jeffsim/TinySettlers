@@ -67,8 +67,9 @@ public class TownScene : SceneWithMap
 
     public void OnResetClicked()
     {
-        var townData = gameDataMgr.GameData.CurrentTown;
-        townData.InitializeOnFirstEnter();
+        gameDataMgr.GameData.CurrentTown = new TownData(gameDataMgr.GameData.CurrentTown.Defn, gameDataMgr.GameData.CurrentTown.State);
+        gameDataMgr.GameData.CurrentTown.InitializeOnFirstEnter();
+
         gameDataMgr.SaveProfile();
         SceneManager.LoadScene("TownScene", LoadSceneMode.Single);
     }

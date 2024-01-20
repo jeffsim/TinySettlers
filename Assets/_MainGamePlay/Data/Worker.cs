@@ -95,4 +95,9 @@ public class WorkerData : BaseData
         // TODO
         return true;
     }
+    internal bool HasPathToItemOnGround(ItemData itemOnGround)
+    {
+        // TODO
+        return true;
+    }
 }

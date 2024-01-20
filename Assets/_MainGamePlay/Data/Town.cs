@@ -25,19 +25,22 @@ public class TownData : BaseData
 
     public int Gold;
     [NonSerialized] public OnItemAddedToGroundEvent OnItemAddedToGround;
+    [NonSerialized] public Action<ItemData> OnItemRemovedFromGround;
+
     [NonSerialized] public Action<BuildingData> OnBuildingAdded;
 
     public TownState State;
     public bool CanEnter => State == TownState.Available || State == TownState.InProgress;
 
     // Current Map
-    public List<TileData> Tiles = new List<TileData>();
-    public List<WorkerData> Workers = new List<WorkerData>();
+    public List<TileData> Tiles = new();
+    public List<WorkerData> Workers = new();
 
-    public List<BuildingData> Buildings = new List<BuildingData>();
+    public List<BuildingData> Buildings = new();
 
     public BuildingData Camp;
-    public List<ItemData> ItemsOnGround = new List<ItemData>();
+    public List<ItemData> ItemsOnGround = new();
+    public List<NeedData> otherTownNeeds = new();
 
     public TownData(TownDefn townDefn, TownState startingState)
     {
@@ -56,6 +59,7 @@ public class TownData : BaseData
 
         Buildings.Clear();
         Workers.Clear();
+        otherTownNeeds.Clear();
         foreach (var tbDefn in Defn.Buildings)
         {
             if (!tbDefn.IsEnabled) continue;
@@ -79,7 +83,7 @@ public class TownData : BaseData
         building.Initialize(this);
         Buildings.Add(building);
         Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
-        
+
         OnBuildingAdded?.Invoke(building);
 
         return building;
@@ -122,10 +126,24 @@ public class TownData : BaseData
         foreach (var building in Buildings)
             building.Update();
 
+        // e.g. pick up items on the ground
+        updateTownNeeds();
+
         FindTasksForNextIdleWorker();
 
         foreach (var worker in Workers)
             worker.Update();
+    }
+
+    private void updateTownNeeds()
+    {
+        foreach (var need in otherTownNeeds)
+        {
+            if (need.IsBeingFullyMet)
+                need.Priority = 0;
+            else
+                need.Priority = Math.Min(GameTime.time - need.StartTimeInSeconds / 10f, .25f);
+        }
     }
 
     /**
@@ -139,17 +157,20 @@ public class TownData : BaseData
     private void FindTasksForNextIdleWorker()
     {
         // todo (perf): keep list of idle
-        var idleWorkers = new List<WorkerData>();
+        List<WorkerData> idleWorkers = new();
         foreach (var worker in Workers) if (worker.IsIdle) idleWorkers.Add(worker);
         if (idleWorkers.Count == 0)
             return;
 
         // TODO (PERF): Keep list of all needs
-        var allNeeds = new List<NeedData>();
+        List<NeedData> allNeeds = new();
         foreach (var building in Buildings)
             allNeeds.AddRange(building.Needs);
 
-        List<PrioritizedTask> availableTasks = new List<PrioritizedTask>();
+        // Add needs to pick up any items abandoned on the ground
+        allNeeds.AddRange(otherTownNeeds);
+
+        List<PrioritizedTask> availableTasks = new();
         foreach (var worker in idleWorkers)
             worker.AssignedBuilding?.GetAvailableTasksForWorker(availableTasks, worker, allNeeds);
 
@@ -213,6 +234,24 @@ public class TownData : BaseData
         ItemsOnGround.Add(item);
         item.WorldLocOnGround = pos;
         OnItemAddedToGround?.Invoke(item);
+
+        // Add a need to pick up the item.  This will be removed when the item is picked up
+        otherTownNeeds.Add(new NeedData(item));
+    }
+
+    public void RemoveItemFromGround(ItemData item)
+    {
+        Debug.Assert(ItemsOnGround.Contains(item), "removing item from ground that isn't there");
+        ItemsOnGround.Remove(item);
+        OnItemRemovedFromGround?.Invoke(item);
+
+        // Remove the need to pick up the item
+        foreach (var need in otherTownNeeds)
+            if (need.Type == NeedType.PickupAbandonedItem && need.AbandonedItemToPickup == item)
+            {
+                otherTownNeeds.Remove(need);
+                break;
+            }
     }
 
     // Only returns Primary Storage rooms (Camp, STorageRoom)

@@ -5,6 +5,7 @@ using UnityEngine;
 public enum NeedType
 {
     ClearStorage,
+    PickupAbandonedItem,
     GatherResource,
     CraftingOrConstructionMaterial,
     Defend,
@@ -58,6 +59,9 @@ public class NeedData : BaseData
     // The Building (if any) that has the Need - e.g. crafting resource
     public BuildingData BuildingWithNeed;
 
+    // The item (if any) that has the need - only for abandoned items (e.g. after a building is destroyed or courier is killed)
+    public ItemData AbandonedItemToPickup;
+
     // The Worker (if any) that has the Need - e.g. hunger
     public WorkerData EntityWithNeed;
 
@@ -82,6 +86,16 @@ public class NeedData : BaseData
         StartTimeInSeconds = GameTime.time;
     }
 
+    public NeedData(ItemData abandonedItem)
+    {
+        AbandonedItemToPickup = abandonedItem;
+        Type = NeedType.PickupAbandonedItem;
+        Priority = 0.1f;//.5f; // TODO: Remove
+        WorkersMeetingNeed = new List<WorkerData>();
+        StartTimeInSeconds = GameTime.time;
+        MaxNumWorkersThatCanMeetNeed = 1;
+    }
+
     public NeedData(BuildingData buildingData, NeedType needType, ResourceNeededForCraftingOrConstruction resource) : this(buildingData, needType)
     {
         neededItemDefnId = resource.Item.Id;
@@ -101,9 +115,14 @@ public class NeedData : BaseData
         WorkersMeetingNeed.Add(worker);
     }
 
+    internal void UnassignWorkerToMeetNeed(WorkerData worker)
+    {
+        WorkersMeetingNeed.Remove(worker);
+    }
+
     internal void Cancel()
     {
-        Debug.Assert(!IsCanspoted, "Canspoting already canspoted Need");
+        Debug.Assert(!IsCanspoted, "Cancelling already cancelled Need");
         foreach (var worker in WorkersMeetingNeed)
             worker.OnNeedBeingMetCanspoted();
         IsCanspoted = true;

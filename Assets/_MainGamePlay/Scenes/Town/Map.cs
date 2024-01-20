@@ -41,6 +41,8 @@ public class Map : MonoBehaviour
 
         townData.OnBuildingAdded += addBuildingGO;
         townData.OnItemAddedToGround += addItemOnGroundGO;
+        townData.OnItemRemovedFromGround += OnItemRemovedFromGround;
+        
     }
 
     void OnDestroy()
@@ -48,6 +50,7 @@ public class Map : MonoBehaviour
         if (Town == null) return;
         Town.OnBuildingAdded -= addBuildingGO;
         Town.OnItemAddedToGround -= addItemOnGroundGO;
+        Town.OnItemRemovedFromGround -= OnItemRemovedFromGround;
     }
     
     private void addTileGO(TileData tile)
@@ -74,9 +77,29 @@ public class Map : MonoBehaviour
     private void addItemOnGroundGO(ItemData item)
     {
         if (this == null) return; // destroyed
-        var itemGO = Instantiate<Item>(scene.ItemOnGroundPrefab);
+        var itemGO = Instantiate(scene.ItemOnGroundPrefab);
         itemGO.transform.SetParent(ItemsFolder.transform, false);
         itemGO.Initialize(item, scene);
+    }
+
+    private void OnItemRemovedFromGround(ItemData item)
+    {
+        if (this == null) return; // destroyed
+        
+        var itemGO = getItemGO(item);
+        if (itemGO != null)
+            Destroy(itemGO.gameObject);
+    }
+
+    private Item getItemGO(ItemData item)
+    {
+        foreach (Transform child in ItemsFolder.transform)
+        {
+            var itemGO = child.GetComponent<Item>();
+            if (itemGO != null && itemGO.Data == item)
+                return itemGO;
+        }
+        return null;
     }
 
     private GameObject addFolder(string name)
