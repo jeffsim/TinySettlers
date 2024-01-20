@@ -130,6 +130,7 @@ public class Map : MonoBehaviour
             GameTime.TogglePause();
 
         scene.Gold.text = "Gold: " + Town.Gold.ToString();
+        scene.Gold.text += "\nTime: " + GameTime.time.ToString("0.0");
 
         int numReservedStorageSpots = 0;
         foreach (var building in Town.Buildings)

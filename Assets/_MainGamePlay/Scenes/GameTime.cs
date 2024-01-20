@@ -30,16 +30,14 @@ public static class GameTime
     {
         get
         {
-            if (IsTest) return _testTime;
-            else return Time.time;
+            return _testTime;
         }
         set
         {
-            if (IsTest) _testTime = value;
-            else
-                Debug.Assert(false, "not allowed");
+            _testTime = value;
         }
     }
+
 
     static float _testDeltaTime;
     static public float deltaTime
@@ -64,6 +62,11 @@ public static class GameTime
         // Assume 1/100th second per tick for tests
         deltaTime = .01f * _testTimeScale;
         time += deltaTime;
+    }
+
+    static public void Update()
+    {
+        time += Time.unscaledDeltaTime;
     }
 
     static public void TogglePause()

@@ -130,6 +130,8 @@ public class TownData : BaseData
 
     public void Update()
     {
+        GameTime.Update();
+        
         // TODO (PERF): Update on change
         foreach (var building in Buildings)
             building.UpdateWorldLoc();

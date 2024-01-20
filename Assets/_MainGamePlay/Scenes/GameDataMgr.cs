@@ -83,6 +83,7 @@ public class GameDataMgr : MonoBehaviour
     public void SaveProfile()
     {
         EnsureProfilesFolderExists();
+        GameData.lastGameTime = GameTime.time;
 
         var fileName = GetProfileFileName(GameData.ProfileName);
         byte[] bytes = SerializationUtility.SerializeValue(GameData, UseBinarySaveFiles ? DataFormat.Binary : DataFormat.JSON);

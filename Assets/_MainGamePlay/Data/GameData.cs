@@ -11,6 +11,8 @@ public class GameData
 
     public List<TownData> Towns = new List<TownData>();
 
+    public float lastGameTime;
+
     // Enables unique generation of ids that span saves
     public UniqueIdGenerator UniqueIdGenerator;
 
@@ -29,5 +31,6 @@ public class GameData
     public void OnLoaded()
     {
         UniqueIdGenerator.Instance = UniqueIdGenerator;
+        GameTime.time = lastGameTime;
     }
 }
