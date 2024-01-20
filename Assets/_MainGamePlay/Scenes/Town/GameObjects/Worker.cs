@@ -156,6 +156,54 @@ public class Worker : MonoBehaviour
                 }
                 break;
 
+            // GotoSpotWithResource = 0,
+            // PickupResource = 1,
+            // CarryResourceToCraftingSpot = 2,
+            // DropResourceInCraftingSpot = 3,
+            // ProduceGood = 4,
+            // CarryCraftedGoodToStorageSpot = 5, // only used if == explicit item (e.g. wood, not gold)
+            // DropCraftedGoodInStorageSpot = 6,  // only used if == explicit item (e.g. wood, not gold)
+
+            case TaskType.CraftGood:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_CraftItem).GetTaskItem().Id.Substring(0, 2);
+                switch ((WorkerTask_CraftItemSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_CraftItemSubstate.GotoSpotWithResource:
+                        carriedItemRectTransform.localPosition = itemDown;
+                        CarriedItem.color = Color.red;
+                        break;
+                    case WorkerTask_CraftItemSubstate.PickupResource:
+                        var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToPickup);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
+                        carriedItemRectTransform.localPosition = itemUp;
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
+                        var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToDrop);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t2);
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_CraftItemSubstate.ProduceGood:
+                        var t3 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToCraft);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t3);
+                        CarriedItem.color = Color.yellow;
+                        break;
+                    case WorkerTask_CraftItemSubstate.CarryCraftedGoodToStorageSpot:
+                        carriedItemRectTransform.localPosition = itemUp;
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_CraftItemSubstate.DropCraftedGoodInStorageSpot:
+                        var t4 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToDrop);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t4);
+                        CarriedItem.color = Color.white;
+                        break;
+
+                }
+                break;
             case TaskType.Idle:
                 CarriedItem.gameObject.SetActive(true);
                 CarriedItem.text = "<i>i</i>";

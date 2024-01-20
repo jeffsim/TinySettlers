@@ -32,6 +32,11 @@ public class WorkerTask_FerryItem : WorkerTask
         return itemBeingFerried.Defn;
     }
 
+    internal override string getDebuggerString()
+    {
+        return $"Ferry {itemBeingFerried} from {storageSpotWithItem.Building} to {destinationStorageSpotForItem.Building}";
+    }
+
     public override string ToDebugString()
     {
         var str = "Ferry\n";
@@ -66,6 +71,7 @@ public class WorkerTask_FerryItem : WorkerTask
         this.storageSpotWithItem = storageSpotWithItem;
         this.destinationStorageSpotForItem = destinationStorageSpotForItem;
         CarryingSpeedMultiplier = storageSpotWithItem.ItemInStorage.Defn.CarryingSpeedModifier;
+        itemBeingFerried = storageSpotWithItem.ItemInStorage;
     }
 
     public override void Start()
@@ -73,7 +79,6 @@ public class WorkerTask_FerryItem : WorkerTask
         base.Start();
         reserveStorageSpot(storageSpotWithItem);
         reserveStorageSpot(destinationStorageSpotForItem);
-        itemBeingFerried = storageSpotWithItem.ItemInStorage;
     }
 
     public override void OnBuildingDestroyed(BuildingData building)

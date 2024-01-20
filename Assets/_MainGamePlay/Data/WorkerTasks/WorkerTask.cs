@@ -15,6 +15,7 @@ public abstract class WorkerTask
     public bool IsRunning => TaskState == TaskState.Started;
 
     public virtual bool Debug_IsMovingToTarget => false;
+    internal virtual string getDebuggerString() => $"{Type}  debugger string not implemented";
 
     [SerializeReference] public WorkerData Worker;
 

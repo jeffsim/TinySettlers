@@ -28,6 +28,11 @@ public class WorkerTask_GatherResource : WorkerTask
 
     public override bool Debug_IsMovingToTarget => substate == 0 || substate == 2;
 
+    internal override string getDebuggerString()
+    {
+        return $"Gather {GetTaskItem()} from {buildingGatheringFrom} for {Worker.AssignedBuilding}";
+    }
+
     public override ItemDefn GetTaskItem()
     {
         if (string.IsNullOrEmpty(GatheringItemDefnId)) return null;

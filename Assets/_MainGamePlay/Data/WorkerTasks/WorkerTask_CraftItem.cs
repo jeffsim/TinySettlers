@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum WorkerTask_CraftItemSubstate
@@ -33,9 +32,9 @@ public class WorkerTask_CraftItem : WorkerTask
 
     [SerializeField] StorageSpotData nextCraftingResourceStorageSpotToGetFrom;
 
-    const float secondsToPickup = .5f;
-    const float secondsToCraft = 1;
-    const float secondsToDrop = 0.5f;
+    public const float secondsToPickup = .5f;
+    public const float secondsToCraft = 1;
+    public const float secondsToDrop = 0.5f;
 
     // Used to draw walking lines in debug mode
     public override bool Debug_IsMovingToTarget =>
@@ -47,6 +46,10 @@ public class WorkerTask_CraftItem : WorkerTask
     {
         if (string.IsNullOrEmpty(CraftingItemDefnId)) return null;
         return GameDefns.Instance.ItemDefns[CraftingItemDefnId];
+    }
+    internal override string getDebuggerString()
+    {
+        return "Crafting";
     }
 
     public override string ToDebugString()

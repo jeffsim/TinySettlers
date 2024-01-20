@@ -48,6 +48,33 @@ public enum ItemClass
 [Serializable]
 public class NeedData : BaseData
 {
+    public override string ToString()
+    {
+        switch (Type)
+        {
+            case NeedType.ClearStorage:
+                return $"Need: {Type} {BuildingWithNeed} {State} {Priority}";
+            case NeedType.PickupAbandonedItem:
+                return $"Need: {Type} {AbandonedItemToPickup} {State} {Priority}";
+            case NeedType.GatherResource:
+                return $"Need: {Type} {NeededItem} {State} {Priority}";
+            case NeedType.CraftingOrConstructionMaterial:
+                return $"Need: {Type} {NeededItem} {State} {Priority}";
+            case NeedType.Defend:
+                return $"Need: {Type} {BuildingWithNeed}";
+            case NeedType.SellGood:
+                return $"Need: {Type} {NeededItem} {State} {Priority}";
+            case NeedType.PersistentRoomNeed:
+                return $"Need: {Type} {NeededItem} {State} {Priority}";
+            case NeedType.ConstructionWorker:
+                return $"Need: {Type} {BuildingWithNeed} {State} {Priority}";
+            case NeedType.Repair:
+                return $"Need: {Type} {BuildingWithNeed} {State} {Priority}";
+            case NeedType.EntitySelfNeed:
+                return $"Need: {Type} {NeededItem} {State} {Priority}";
+        }
+        return $"UNKNOWN NEED TYPE {Type} {NeededItem} {State} {Priority}";
+    }
     [SerializeField] bool IsCanspoted = false;
     public NeedState State => IsCanspoted ? NeedState.canspoted : (IsBeingFullyMet ? NeedState.met : NeedState.unmet);
     public NeedType Type;

@@ -75,6 +75,7 @@ public class SceneWithMap : SceneMgr
 #endif
         Background.Initialize(this);
         HideAllDialogs();
+        AllNeedsDetails.Show(this, SortNeedsDisplayBy.Priority);
     }
 
     internal void DestroyBuilding(Building building)
