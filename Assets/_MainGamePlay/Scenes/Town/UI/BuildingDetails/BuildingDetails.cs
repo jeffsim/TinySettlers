@@ -15,6 +15,7 @@ public class BuildingDetails : MonoBehaviour
     SceneWithMap scene;
 
     public BuildingDetailsItemList BuildingDetailsItemList;
+    public BuildingDetailsNeedsList BuildingDetailsNeedsList;
 
     public void ShowForBuilding(SceneWithMap scene, Building building)
     {
@@ -26,6 +27,7 @@ public class BuildingDetails : MonoBehaviour
         DestroyButton.interactable = building.Data.Defn.PlayerCanDestroy;
 
         BuildingDetailsItemList.ShowForBuilding(building);
+        BuildingDetailsNeedsList.ShowForBuilding(building);
     }
 
     public void Hide()
@@ -47,10 +49,10 @@ public class BuildingDetails : MonoBehaviour
             AssignWorkerButton.interactable = scene.Map.Town.WorkerIsAvailable() && numWorkersInBuilding < building.Data.Defn.MaxWorkers;
             UnassignWorkerButton.interactable = numWorkersInBuilding > 0;
         }
-        var str = "<color=yellow>Needs:</color>\n";
-        var needs = new List<NeedData>(building.Data.Needs);
-        str += Utilities.getNeedsDebugString(needs, false);
-        Needs.text = str;
+        // var str = "<color=yellow>Needs:</color>\n";
+        // var needs = new List<NeedData>(building.Data.Needs);
+        // str += Utilities.getNeedsDebugString(needs, false);
+        // Needs.text = str;
 
         // if (building.Data.Defn.CanStoreItems)
         // {
