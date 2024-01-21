@@ -18,11 +18,15 @@ MonoBehaviour:
   BuildingClass: 2
   AssignedWorkerColor: {r: 1, g: 0.50591254, b: 0, a: 0}
   AssignedWorkerFriendlyName: Miner
+  HasWorkers: 1
+  MaxWorkers: 4
   EditorColor: {r: 0.3018868, g: 0.12629957, b: 0, a: 1}
+  PlayerCanMove: 1
+  PlayerCanDestroy: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
-    Count: 2
+    Count: 4
   NumConstructorSpots: 0
   CanCraft: 0
   CraftableItems: []
@@ -41,3 +45,5 @@ MonoBehaviour:
   ResourcesCanBeGatheredFromHere: 0
   ResourcesThatCanBeGatheredFromHere: []
   GatheringSpots: []
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

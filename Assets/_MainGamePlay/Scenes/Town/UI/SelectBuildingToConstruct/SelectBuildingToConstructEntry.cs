@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SelectBuildingToConstructEntry : MonoBehaviour
 {
@@ -11,6 +12,12 @@ public class SelectBuildingToConstructEntry : MonoBehaviour
     [NonSerialized] SceneWithMap scene;
     [NonSerialized] Tile tile;
 
+    Button button;
+    void Awake()
+    {
+        button = GetComponent<Button>();
+    }
+
     internal void InitializeForBuilding(SceneWithMap scene, Tile tile, SelectBuildingToConstructDialog dialog, BuildingDefn buildingDefn)
     {
         this.dialog = dialog;
@@ -20,6 +27,11 @@ public class SelectBuildingToConstructEntry : MonoBehaviour
 
         Name.text = buildingDefn.FriendlyName;
         gameObject.SetActive(true);
+    }
+
+    public void Update()
+    {
+        button.interactable = scene.Map.Town.PlayerCanAffordBuilding(buildingDefn);
     }
 
     public void Hide()

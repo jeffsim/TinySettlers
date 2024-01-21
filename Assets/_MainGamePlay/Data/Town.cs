@@ -423,4 +423,16 @@ public class TownData : BaseData
         Gold += item.Defn.BaseSellPrice;
         OnItemSold?.Invoke(item);
     }
+
+    internal bool PlayerCanAffordBuilding(BuildingDefn buildingDefn)
+    {
+        // verify that the building's construction requirements (wood etc) are in the Town and unreserved
+        foreach (var item in buildingDefn.ResourcesNeededForConstruction)
+        {
+            int numInStorage = Chart_GetNumOfItemInTown(item.Item.Id);
+            if (numInStorage < item.Count)
+                return false;
+        }
+        return true;
+    }
 }

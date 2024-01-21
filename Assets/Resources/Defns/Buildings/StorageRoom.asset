@@ -18,11 +18,17 @@ MonoBehaviour:
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.09818679, g: 0.59607846, b: 0, a: 0}
   AssignedWorkerFriendlyName: Courier
+  HasWorkers: 1
+  MaxWorkers: 4
   EditorColor: {r: 0.11972148, g: 0.24528301, b: 0, a: 1}
+  PlayerCanMove: 1
+  PlayerCanDestroy: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
-    Count: 1
+    Count: 4
+  - Item: {fileID: 11400000, guid: 8299fd30f1aba4fbea13091ddf0ceeb2, type: 2}
+    Count: 2
   NumConstructorSpots: 0
   CanCraft: 0
   CraftableItems: []
@@ -39,3 +45,5 @@ MonoBehaviour:
   ResourcesCanBeGatheredFromHere: 0
   ResourcesThatCanBeGatheredFromHere: []
   GatheringSpots: []
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

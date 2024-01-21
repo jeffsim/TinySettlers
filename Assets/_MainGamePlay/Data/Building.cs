@@ -500,7 +500,7 @@ public class BuildingData : BaseData
     public void UpdateNeedPriorities()
     {
         // Hardcoded 9 storage spots per storage area
-        float percentFull = 1 - (float)(NumAvailableStorageSpots) / (Defn.NumStorageAreas * 9);
+        float percentFull = 1 - (float)(NumAvailableStorageSpots) / (Defn.NumStorageAreas * Defn.StorageAreaWidthAndHeight * Defn.StorageAreaWidthAndHeight);
 
         if (Defn.CanStoreItems)
         {

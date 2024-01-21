@@ -18,11 +18,17 @@ MonoBehaviour:
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.9622642, g: 0, b: 0, a: 0}
   AssignedWorkerFriendlyName: Crafter
+  HasWorkers: 1
+  MaxWorkers: 4
   EditorColor: {r: 0.4431373, g: 0.003921569, b: 0, a: 1}
+  PlayerCanMove: 1
+  PlayerCanDestroy: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
     Count: 4
+  - Item: {fileID: 11400000, guid: 0f7a65437217c4f3c8bdf660e2b482c4, type: 2}
+    Count: 2
   NumConstructorSpots: 2
   CanCraft: 1
   CraftableItems:
@@ -33,9 +39,12 @@ MonoBehaviour:
   IsPrimaryStorage: 0
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
+  StorageAreaWidthAndHeight: 3
   WorkersCanFerryItems: 0
   CanGatherResources: 0
   GatherableResources: []
   ResourcesCanBeGatheredFromHere: 0
   ResourcesThatCanBeGatheredFromHere: []
   GatheringSpots: []
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

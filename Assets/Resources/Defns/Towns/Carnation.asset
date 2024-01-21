@@ -16,39 +16,25 @@ MonoBehaviour:
   FriendlyName: Carnation
   Width: 3
   Height: 3
-  Tiles: g,g,g,d,g,g,g,g,g
+  Tiles: g,g,g,d,g,d,g,g,g
   WorldX: -500
   WorldY: 120
   Buildings:
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: f2953a264124d4f6c8869db0916ad9c3, type: 2}
-    TileX: 0
-    TileY: 0
-    StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 4
-  - IsEnabled: 1
-    Building: {fileID: 11400000, guid: 5cf22471cfa19413f82bc414449f99a3, type: 2}
     TileX: 1
     TileY: 1
-    StartingItemsInBuilding:
-    - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
-      Count: 2
-    NumWorkersStartAtBuilding: 0
-  - IsEnabled: 1
-    Building: {fileID: 11400000, guid: 5cf22471cfa19413f82bc414449f99a3, type: 2}
-    TileX: 2
-    TileY: 0
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 4
-  - IsEnabled: 0
+  - IsEnabled: 1
     Building: {fileID: 11400000, guid: 829b56cdca3664623ba2653708959f4e, type: 2}
-    TileX: 2
-    TileY: 0
-    StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 0
-  - IsEnabled: 0
-    Building: {fileID: 11400000, guid: e97797728a8334f7fb30f4e3b00fcc2d, type: 2}
-    TileX: 1
+    TileX: 0
     TileY: 1
     StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 3
+    NumWorkersStartAtBuilding: 0
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: d69245655853a409d8735542bd6b725d, type: 2}
+    TileX: 2
+    TileY: 1
+    StartingItemsInBuilding: []
+    NumWorkersStartAtBuilding: 0

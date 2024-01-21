@@ -19,10 +19,11 @@ MonoBehaviour:
   AssignedWorkerColor: {r: 0.002558625, g: 0.4245283, b: 0, a: 0}
   AssignedWorkerFriendlyName: n/a
   HasWorkers: 0
+  MaxWorkers: 4
   EditorColor: {r: 0, g: 0.38679248, b: 0.047153078, a: 1}
   PlayerCanMove: 0
   PlayerCanDestroy: 0
-  CanBeConstructed: 1
+  CanBeConstructed: 0
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
   CanCraft: 0
@@ -42,3 +43,5 @@ MonoBehaviour:
   - {x: 0, y: 2, z: 0}
   - {x: 2, y: 1, z: 0}
   - {x: -1, y: 3, z: 0}
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

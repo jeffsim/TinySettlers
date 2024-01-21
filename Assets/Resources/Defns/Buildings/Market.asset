@@ -25,8 +25,8 @@ MonoBehaviour:
   PlayerCanDestroy: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction:
-  - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
-    Count: 4
+  - Item: {fileID: 11400000, guid: 8299fd30f1aba4fbea13091ddf0ceeb2, type: 2}
+    Count: 2
   NumConstructorSpots: 2
   CanCraft: 0
   CraftableItems: []

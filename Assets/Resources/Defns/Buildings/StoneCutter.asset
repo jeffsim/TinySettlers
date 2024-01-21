@@ -27,6 +27,8 @@ MonoBehaviour:
   ResourcesNeededForConstruction:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
     Count: 4
+  - Item: {fileID: 11400000, guid: 0f7a65437217c4f3c8bdf660e2b482c4, type: 2}
+    Count: 0
   NumConstructorSpots: 2
   CanCraft: 1
   CraftableItems:
@@ -45,3 +47,5 @@ MonoBehaviour:
   ResourcesCanBeGatheredFromHere: 0
   ResourcesThatCanBeGatheredFromHere: []
   GatheringSpots: []
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

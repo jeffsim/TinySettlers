@@ -14,6 +14,9 @@ public class SceneMgr : MonoBehaviour
     {
         GameTime.IsTest = false;
 
+        Application.targetFrameRate = 60;
+        QualitySettings.vSyncCount = 0;
+        
         gameDataMgr = FindFirstObjectByType<GameDataMgr>(FindObjectsInactive.Exclude);
         gameDefns = FindFirstObjectByType<GameDefns>(FindObjectsInactive.Exclude);
 
