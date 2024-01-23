@@ -254,7 +254,7 @@ public class BuildingData : BaseData
             // Minion must have a path to the item
             if (!worker.HasPathToItemOnGround(need.AbandonedItemToPickup)) continue;
 
-            StorageSpotData destinationStorageSpot = Town.GetClosestStorageSpotThatCanStoreItem(need.AbandonedItemToPickup.WorldLocOnGround, need.AbandonedItemToPickup);
+            StorageSpotData destinationStorageSpot = Town.GetClosestPrimaryStorageSpotThatCanStoreItem(need.AbandonedItemToPickup.WorldLocOnGround);
             if (destinationStorageSpot == null) continue;
 
             // Found a storage spot to hold the item
@@ -283,11 +283,11 @@ public class BuildingData : BaseData
             // need.BuildingWithNeed is saying "I have a need to have items removed from my storage"
             // The worker needs to find the closest item in that building that can/should be removed, and the closest PrimaryStorage spot that is empty and avaialble
             // If those are found, then create a ferryitem task to move it to storage
-            StorageSpotData spotWithItemToMove = need.BuildingWithNeed.GetItemToRemoveFromStorage();
+            StorageSpotData spotWithItemToMove = need.BuildingWithNeed.GetItemToRemoveFromStorage(worker);
             if (spotWithItemToMove == null) continue;
 
             // TODO: Currently looking at worker's start loc; I think it should look for closest storage spot near where the item is
-            StorageSpotData destinationStorageSpot = Town.GetClosestStorageSpotThatCanStoreItem(worker.WorldLoc, spotWithItemToMove.ItemInStorage);
+            StorageSpotData destinationStorageSpot = Town.GetClosestPrimaryStorageSpotThatCanStoreItem(spotWithItemToMove.WorldLoc);
             if (destinationStorageSpot == null) continue;
 
             // Found a resource that can meet the need - calculate how well this minion can meet the need (score)
@@ -295,29 +295,35 @@ public class BuildingData : BaseData
         }
     }
 
-    private StorageSpotData GetItemToRemoveFromStorage()
+    private StorageSpotData GetItemToRemoveFromStorage(WorkerData worker)
     {
-        var itemsUsedForCrafting = new List<StorageSpotData>();
+        float distToClosest = float.MaxValue;
+        StorageSpotData closestSpotWithItemToRemove = null;
 
         // Called when a cleaner is looking for something to remove from our storage.
         foreach (var area in StorageAreas)
             foreach (var spot in area.StorageSpots)
                 if (!spot.IsEmpty && !spot.IsReserved)
                 {
-                    // spot contains an unreserved item; do WE need it?
-                    var itemIsNeededForCrafting = false;
-                    foreach (var need in CraftingResourceNeeds)
-                        if (need.NeededItem.Id == spot.ItemInStorage.DefnId)
-                        {
-                            itemIsNeededForCrafting = true;
-                            itemsUsedForCrafting.Add(spot);
-                            break;
-                        }
-                    if (!itemIsNeededForCrafting)
-                        return spot;
+                    if (itemIsNeededForCrafting(spot.ItemInStorage))
+                        continue;
+                    var dist = Vector3.Distance(worker.WorldLoc, spot.WorldLoc); // TODO (PERF): There are a lot of Vector3.Distance calls happening...
+                    if (dist < distToClosest)
+                    {
+                        distToClosest = dist;
+                        closestSpotWithItemToRemove = spot;
+                    }
                 }
 
-        return null;
+        return closestSpotWithItemToRemove;
+    }
+
+    private bool itemIsNeededForCrafting(ItemData item)
+    {
+        foreach (var need in CraftingResourceNeeds)
+            if (need.NeededItem.Id == item.DefnId)
+                return true;
+        return false;
     }
 
     private void addCourierTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
@@ -355,7 +361,7 @@ public class BuildingData : BaseData
             }
 
             // Can't deliver items to a room that's full
-            var destinationStorageSpot = need.BuildingWithNeed.GetStorageCellThatCanStoreItem(closestStorageSpotWithItem.StorageSpot.ItemInStorage.Defn);
+            var destinationStorageSpot = need.BuildingWithNeed.GetClosestStorageCellThatCanStoreItem(closestStorageSpotWithItem.StorageSpot.WorldLoc, closestStorageSpotWithItem.StorageSpot.ItemInStorage.Defn);
             if (destinationStorageSpot == null)
                 continue;
 
@@ -366,15 +372,22 @@ public class BuildingData : BaseData
         }
     }
 
-    private StorageSpotData GetStorageCellThatCanStoreItem(ItemDefn defn)
+    private StorageSpotData GetClosestStorageCellThatCanStoreItem(Vector3 worldLoc, ItemDefn defn)
     {
-        // PORT: Before, N items could be stored in a storage spot; now only one can.  May need to revisit that.
+        float dist = float.MaxValue;
+        StorageSpotData closestSpot = null;
         foreach (var area in StorageAreas)
             foreach (var spot in area.StorageSpots)
-                // if (spot.CanStoreItem(defn))
                 if (spot.IsEmptyAndAvailable)
-                    return spot;
-        return null;
+                {
+                    var newDist = Vector3.Distance(worldLoc, spot.WorldLoc);
+                    if (newDist < dist)
+                    {
+                        dist = newDist;
+                        closestSpot = spot;
+                    }
+                }
+        return closestSpot;
     }
 
     private void addGatheringResourceTasks(List<PrioritizedTask> availableTasks, WorkerData worker)
@@ -509,10 +522,10 @@ public class BuildingData : BaseData
             else
             {
                 // unless close to full, Cleanup tasks are lower priority than filling crafting need tasks
-                if (percentFull < .75)
-                    percentFull /= 5f;
-                percentFull *= 2;
                 ClearOutStorageNeed.Priority = percentFull;
+                if (ClearOutStorageNeed.Priority < .75)
+                    ClearOutStorageNeed.Priority /= 5f;
+                ClearOutStorageNeed.Priority *= 2;
 
                 // if we're a crafting room then we have a higher priority than non-crafting rooms (e.g. woodcutter) to clear storage
                 // so that we can craft more
@@ -621,15 +634,21 @@ public class BuildingData : BaseData
         return count;
     }
 
-    public void AddItemToStorage(ItemData item)
+    // public void AddItemToStorage(ItemData item)
+    // {
+    //     Debug.Assert(!IsStorageFull, "Adding item to full storage " + DefnId);
+
+    //     // Find an empty storagespot
+    //     StorageSpotData emptySpot = GetEmptyStorageSpot();
+    //     emptySpot.AddItem(item);
+
+    //     Debug.Assert(!emptySpot.IsReserved, "AddItemToStorage: Got a reserved spot");
+    // }
+
+
+    public void AddItemToStorageSpot(ItemData item, StorageSpotData spot)
     {
-        Debug.Assert(!IsStorageFull, "Adding item to full storage " + DefnId);
-
-        // Find an empty storagespot
-        StorageSpotData emptySpot = GetEmptyStorageSpot();
-        emptySpot.AddItem(item);
-
-        Debug.Assert(!emptySpot.IsReserved, "AddItemToStorage: Got a reserved spot");
+        spot.AddItem(item);
     }
 
     public StorageSpotData GetEmptyStorageSpot()
@@ -639,6 +658,25 @@ public class BuildingData : BaseData
                 if (spot.IsEmptyAndAvailable)
                     return spot;
         return null;
+    }
+
+    public StorageSpotData GetClosestEmptyStorageSpot(Vector3 worldLoc) => GetClosestEmptyStorageSpot(worldLoc, out float _);
+
+    public StorageSpotData GetClosestEmptyStorageSpot(Vector3 worldLoc, out float dist)
+    {
+        StorageSpotData closestSpot = null;
+        dist = float.MaxValue;
+        foreach (var area in StorageAreas)
+            foreach (var spot in area.StorageSpots)
+                if (spot.IsEmptyAndAvailable)
+                {
+                    if (Vector3.Distance(worldLoc, spot.WorldLoc) < dist)
+                    {
+                        dist = Vector3.Distance(worldLoc, spot.WorldLoc);
+                        closestSpot = spot;
+                    }
+                }
+        return closestSpot;
     }
 
     // internal void RemoveItemFromStorage(ItemData item)
@@ -751,6 +789,15 @@ public class BuildingData : BaseData
     {
         Debug.Assert(HasAvailableStorageSpot, "Assigning too many workers to storage spots");
         var spot = GetEmptyStorageSpot();
+        if (spot != null)
+            spot.ReserveBy(worker);
+        return spot;
+    }
+
+    internal StorageSpotData ReserveStorageSpotClosestToWorldLoc(WorkerData worker, Vector3 worldLoc)
+    {
+        Debug.Assert(HasAvailableStorageSpot, "Assigning too many workers to storage spots");
+        var spot = GetClosestEmptyStorageSpot(worldLoc);
         if (spot != null)
             spot.ReserveBy(worker);
         return spot;

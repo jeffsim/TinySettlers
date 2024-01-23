@@ -118,16 +118,29 @@ public abstract class WorkerTask
 
     // ==== STORAGE ===================================================
 
+    protected StorageSpotData reserveStorageSpotClosestToWorldLoc(Vector3 worldLoc)
+    {
+        var spot = Worker.Town.GetClosestStorageSpotThatCanStoreItem(worldLoc);
+        Debug.Assert(spot != null, "Failed to reserve storage spot close to " + worldLoc);
+        Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
+        reserveStorageSpot(spot);
+        return spot;
+    } 
+
     protected StorageSpotData reserveStorageSpot(BuildingData buildingToStoreIn)
     {
         var spot = buildingToStoreIn.ReserveStorageSpot(Worker);
         Debug.Assert(spot != null, "Failed to reserve storage spot in " + buildingToStoreIn.DefnId);
+        Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
+        
         ReservedStorageSpots.Add(spot);
         return spot;
     }
 
     protected StorageSpotData reserveStorageSpot(StorageSpotData spot)
     {
+        Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
+
         spot.ReserveBy(Worker);
         ReservedStorageSpots.Add(spot);
         return spot;
@@ -232,16 +245,28 @@ public abstract class WorkerTask
     {
     }
 
-    protected bool betterStorageSpotExists(StorageSpotData spot)
+    protected StorageSpotData getBetterStorageSpotThanSpotIfExists(StorageSpotData sourceSpot)
     {
-        var firstEmptySpot = spot.Building.GetEmptyStorageSpot();
-        return firstEmptySpot == null ||
-               spot.Building.GetStorageSpotIndex(firstEmptySpot) < spot.Building.GetStorageSpotIndex(spot);
+        float distanceToSourceSpot = Vector2.Distance(Worker.WorldLoc, sourceSpot.WorldLoc);
+        var closestSpot = sourceSpot.Building.GetClosestEmptyStorageSpot(Worker.WorldLoc, out float distanceToNewSpot);
+        if (distanceToNewSpot >= distanceToSourceSpot)
+            return sourceSpot;// there isn't a better one
+
+        // found a better one
+        unreserveStorageSpot(sourceSpot);
+        return reserveStorageSpot(closestSpot);
     }
 
-    protected StorageSpotData getBetterStorageSpot(StorageSpotData spot)
-    {
-        unreserveStorageSpot(spot);
-        return reserveStorageSpot(spot.Building);
-    }
+    // protected bool betterStorageSpotExists(StorageSpotData spot)
+    // {
+    //     float distanceToSpot = Vector2.Distance(Worker.WorldLoc, spot.WorldLoc);
+    //     var firstEmptySpot = spot.Building.GetClosestEmptyStorageSpot(Worker.WorldLoc, out float distanceToNewSpot);
+    //     return firstEmptySpot != null && distanceToNewSpot < distanceToSpot;
+    // }
+
+    // protected StorageSpotData getBetterStorageSpot(StorageSpotData spot)
+    // {
+    //     unreserveStorageSpot(spot);
+    //     return reserveStorageSpot(spot.Building);
+    // }
 }

@@ -114,8 +114,7 @@ public class WorkerTask_PickupAbandonedItem : WorkerTask
                 if (getPercentSubstateDone(secondsToPickup) == 1)
                 {
                     // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
-                    if (betterStorageSpotExists(destinationStorageSpotForItem))
-                        destinationStorageSpotForItem = getBetterStorageSpot(destinationStorageSpotForItem);
+                    destinationStorageSpotForItem = getBetterStorageSpotThanSpotIfExists(destinationStorageSpotForItem);
 
                     // remove item from ground
                     Worker.Town.RemoveItemFromGround(ItemToPickup);
@@ -134,7 +133,7 @@ public class WorkerTask_PickupAbandonedItem : WorkerTask
                 {
                     // Done dropping.  Add the item into the storage spot.  Complete the task first so that the spot is unreserved so that we can add to it
                     CompleteTask();
-                    destinationStorageSpotForItem.Building.AddItemToStorage(ItemToPickup);
+                    destinationStorageSpotForItem.Building.AddItemToStorageSpot(ItemToPickup, destinationStorageSpotForItem);
                 }
                 break;
 

@@ -129,9 +129,7 @@ public class WorkerTask_FerryItem : WorkerTask
                     storageSpotWithItem.RemoveItem();
 
                     // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
-                    if (betterStorageSpotExists(destinationStorageSpotForItem))
-                        destinationStorageSpotForItem = getBetterStorageSpot(destinationStorageSpotForItem);
-
+                    destinationStorageSpotForItem = getBetterStorageSpotThanSpotIfExists(destinationStorageSpotForItem);
                     gotoNextSubstate();
                 }
                 break;
@@ -146,7 +144,7 @@ public class WorkerTask_FerryItem : WorkerTask
                 {
                     // Done dropping.  Add the item into the storage spot.  Complete the task first so that the spot is unreserved so that we can add to it
                     CompleteTask();
-                    destinationStorageSpotForItem.Building.AddItemToStorage(itemBeingFerried);
+                    destinationStorageSpotForItem.Building.AddItemToStorageSpot(itemBeingFerried, destinationStorageSpotForItem);
                 }
                 break;
 

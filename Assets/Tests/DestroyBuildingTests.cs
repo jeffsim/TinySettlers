@@ -9,7 +9,7 @@ public class DestroyBuildingTests : TestBase
 
         // Add items to storage
         var item = new ItemData() { DefnId = "wood" };
-        MinersHut.AddItemToStorage(item);
+        MinersHut.AddItemToStorageSpot(item, MinersHut.GetEmptyStorageSpot());
 
         // Destroy the building, verify new state
         Town.DestroyBuilding(MinersHut);

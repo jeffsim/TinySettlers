@@ -104,7 +104,7 @@ public class WorkerTask_CraftItem : WorkerTask
 
         // If the crafted item can be stored (vs e.g. gold), then reserve the spot to store it
         if (itemBeingCrafted.GoodType == GoodType.explicitGood)
-            reservedStorageSpot = reserveStorageSpot(Worker.AssignedBuilding);
+            reservedStorageSpot = reserveStorageSpotClosestToWorldLoc(reservedCraftingSpot.WorldLoc);
 
         // Start out walking to the storage spot with the first resource wek'll use for crafting
         nextCraftingResourceStorageSpotToGetFrom = getNextReservedCraftingResourceStorageSpot();
@@ -182,8 +182,7 @@ public class WorkerTask_CraftItem : WorkerTask
                     if (itemBeingCrafted.GoodType == GoodType.explicitGood)
                     {
                         // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
-                        if (betterStorageSpotExists(reservedStorageSpot))
-                            reservedStorageSpot = getBetterStorageSpot(reservedStorageSpot);
+                        reservedStorageSpot = getBetterStorageSpotThanSpotIfExists(reservedStorageSpot);
                         gotoSubstate((int)WorkerTask_CraftItemSubstate.CarryCraftedGoodToStorageSpot);
                     }
                     else
@@ -205,7 +204,7 @@ public class WorkerTask_CraftItem : WorkerTask
                 {
                     // Done dropping.  Add the item into the storage spot.  Complete the task first so that the spot is unreserved so that we can add to it
                     CompleteTask();
-                    Worker.AssignedBuilding.AddItemToStorage(new ItemData() { DefnId = CraftingItemDefnId });
+                    Worker.AssignedBuilding.AddItemToStorageSpot(new ItemData() { DefnId = CraftingItemDefnId }, reservedStorageSpot);
                 }
                 break;
 

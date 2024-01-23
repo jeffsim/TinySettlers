@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 public enum WorkerTask_GatherResourceSubstate
@@ -78,8 +77,8 @@ public class WorkerTask_GatherResource : WorkerTask
     public override void Start()
     {
         base.Start();
-        reservedStorageSpot = reserveStorageSpot(Worker.AssignedBuilding);
         reservedGatheringSpot = reserveBuildingGatheringSpot(buildingGatheringFrom);
+        reservedStorageSpot = reserveStorageSpotClosestToWorldLoc(reservedGatheringSpot.WorldLoc);
     }
 
     public override void OnBuildingDestroyed(BuildingData building)
@@ -123,8 +122,9 @@ public class WorkerTask_GatherResource : WorkerTask
                     unreserveBuildingGatheringSpot(reservedGatheringSpot);
 
                     // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
-                    if (betterStorageSpotExists(reservedStorageSpot))
-                        reservedStorageSpot = getBetterStorageSpot(reservedStorageSpot);
+                    // Note: only consider storage stpots in our worker's assigned building - a woodcutter shouldn't drop off wood in a nearby miner's hut
+                    // An optimization would be to allow droppin in nearby primary storage spots (e.g. storage room, camp)
+                    reservedStorageSpot = Worker.AssignedBuilding.GetClosestEmptyStorageSpot(Worker.WorldLoc);
 
                     gotoNextSubstate();
                 }
@@ -140,7 +140,7 @@ public class WorkerTask_GatherResource : WorkerTask
                 {
                     // Done dropping.  Add the item into the storage spot.  Complete the task first so that the spot is unreserved so that we can add to it
                     CompleteTask();
-                    Worker.AssignedBuilding.AddItemToStorage(new ItemData() { DefnId = GatheringItemDefnId });
+                    Worker.AssignedBuilding.AddItemToStorageSpot(new ItemData() { DefnId = GatheringItemDefnId }, reservedStorageSpot);
                 }
                 break;
 

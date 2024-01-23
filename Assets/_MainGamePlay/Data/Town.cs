@@ -79,7 +79,7 @@ public class TownData : BaseData
 
             foreach (var item in tbDefn.StartingItemsInBuilding)
                 for (int i = 0; i < item.Count; i++)
-                    building.AddItemToStorage(new ItemData() { DefnId = item.Item.Id });
+                    building.AddItemToStorageSpot(new ItemData() { DefnId = item.Item.Id }, building.GetEmptyStorageSpot());
         }
         UpdateDistanceToRooms();
     }
@@ -278,7 +278,7 @@ public class TownData : BaseData
     }
 
     // Only returns Primary Storage rooms (Camp, STorageRoom)
-    internal StorageSpotData GetClosestStorageSpotThatCanStoreItem(Vector3 worldLoc, ItemData itemInStorage)
+    internal StorageSpotData GetClosestPrimaryStorageSpotThatCanStoreItem(Vector3 worldLoc)
     {
         // TODO: more performant distance checking
         StorageSpotData closestSpot = null;
@@ -287,9 +287,27 @@ public class TownData : BaseData
         foreach (var building in Buildings)
             if (building.Defn.CanStoreItems && building.Defn.IsPrimaryStorage && building.HasAvailableStorageSpot)
             {
-                var spot = building.GetEmptyStorageSpot();
-                var dist = Vector2.Distance(worldLoc, spot.WorldLoc);
-                if (closestSpot == null || dist < closestSpotDistance)
+                var spot = building.GetClosestEmptyStorageSpot(worldLoc, out float dist);
+                if (dist < closestSpotDistance)
+                {
+                    closestSpot = spot;
+                    closestSpotDistance = dist;
+                }
+            }
+        return closestSpot;
+    }
+
+    internal StorageSpotData GetClosestStorageSpotThatCanStoreItem(Vector3 worldLoc)
+    {
+        // TODO: more performant distance checking
+        StorageSpotData closestSpot = null;
+        float closestSpotDistance = float.MaxValue;
+
+        foreach (var building in Buildings)
+            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot)
+            {
+                var spot = building.GetClosestEmptyStorageSpot(worldLoc, out float dist);
+                if (dist < closestSpotDistance)
                 {
                     closestSpot = spot;
                     closestSpotDistance = dist;
