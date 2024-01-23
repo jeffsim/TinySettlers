@@ -36,8 +36,8 @@ MonoBehaviour:
   CanStoreItems: 1
   IsPrimaryStorage: 1
   StorageAreaLocations:
-  - {x: 0, y: 0, z: 0}
-  StorageAreaWidthAndHeight: 3
+  - {x: 0, y: 0.5, z: 0}
+  StorageAreaSize: {x: 6, y: 5}
   WorkersCanFerryItems: 1
   CanGatherResources: 0
   GatherableResources:

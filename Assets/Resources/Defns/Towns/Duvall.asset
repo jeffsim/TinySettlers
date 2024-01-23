@@ -52,9 +52,7 @@ MonoBehaviour:
     Building: {fileID: 11400000, guid: d837263a9b2b44c989df5e19d8f2f7e0, type: 2}
     TileX: 0
     TileY: 1
-    StartingItemsInBuilding:
-    - Item: {fileID: 11400000, guid: 8299fd30f1aba4fbea13091ddf0ceeb2, type: 2}
-      Count: 2
+    StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 1
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 32d664a4ff2974b0d89f2f9dbe66195b, type: 2}

@@ -27,13 +27,15 @@ MonoBehaviour:
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 4
   - IsEnabled: 1
-    Building: {fileID: 11400000, guid: 829b56cdca3664623ba2653708959f4e, type: 2}
-    TileX: 0
-    TileY: 1
-    StartingItemsInBuilding: []
+    Building: {fileID: 11400000, guid: e97797728a8334f7fb30f4e3b00fcc2d, type: 2}
+    TileX: 2
+    TileY: 2
+    StartingItemsInBuilding:
+    - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
+      Count: 4
     NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
-    Building: {fileID: 11400000, guid: d69245655853a409d8735542bd6b725d, type: 2}
+    Building: {fileID: 11400000, guid: 5cf22471cfa19413f82bc414449f99a3, type: 2}
     TileX: 2
     TileY: 1
     StartingItemsInBuilding: []

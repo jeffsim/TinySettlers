@@ -28,10 +28,10 @@ public class StorageSpotData : BaseData
 
     public BuildingData Building => Area.Building;
 
-    public StorageSpotData(StorageAreaData area, int index)
+    public StorageSpotData(StorageAreaData area, Vector2 localLoc)
     {
         Area = area;
-        LocalLoc = new Vector2((index % Building.Defn.StorageAreaWidthAndHeight) * 1.1f - 1.1f, -(index / Building.Defn.StorageAreaWidthAndHeight) * 1.1f + 1.1f);
+        LocalLoc = localLoc;
     }
 
     public void UpdateWorldLoc()

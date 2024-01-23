@@ -39,11 +39,17 @@ public class StorageAreaData : BaseData
         Building = buildingData;
 
         StorageSpots = new List<StorageSpotData>();
-        for (int i = 0; i < buildingData.Defn.StorageAreaWidthAndHeight * buildingData.Defn.StorageAreaWidthAndHeight; i++)
-            StorageSpots.Add(new StorageSpotData(this, i));
+        var width = buildingData.Defn.StorageAreaSize.x;
+        var height = buildingData.Defn.StorageAreaSize.y;
+        for (int y = 0; y < height; y++)
+            for (int x = 0; x < width; x++)
+            {
+                Vector2 spotLoc = new((x - (width - 1) / 2f) * 1.1f, (y - (height - 1) / 2f) * 1.1f);
+                StorageSpots.Add(new StorageSpotData(this, spotLoc));
+            }
 
         var loc = buildingData.Defn.StorageAreaLocations[index];
-        LocalLoc = new Vector2(loc.x, loc.y);
+        LocalLoc = new(loc.x, loc.y);
     }
 
     public void UpdateWorldLoc()

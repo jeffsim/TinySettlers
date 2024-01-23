@@ -36,21 +36,21 @@ public class Building : MonoBehaviour
 
         for (int i = 0; i < Data.Defn.NumStorageAreas; i++)
         {
-            var item = StorageArea.Instantiate(scene.BuildingStorageAreaPrefab);
+            var item = Instantiate(scene.BuildingStorageAreaPrefab);
             item.transform.SetParent(StorageEditorFolder.transform, false);
             item.Initialize(Data.StorageAreas[i], this, scene.BuildingStorageSpotPrefab, StorageEditorFolder.transform);
         }
 
         for (int i = 0; i < Data.Defn.GatheringSpots.Count; i++)
         {
-            var spot = GatheringSpot.Instantiate(scene.GatheringSpotPrefab);
+            var spot = Instantiate(scene.GatheringSpotPrefab);
             spot.transform.SetParent(transform, false);
             spot.Initialize(scene, Data.GatheringSpots[i], i, this);
         }
 
         for (int i = 0; i < Data.Defn.CraftingSpots.Count; i++)
         {
-            var spot = CraftingSpot.Instantiate(scene.CraftingSpotPrefab);
+            var spot = Instantiate(scene.CraftingSpotPrefab);
             spot.transform.SetParent(transform, false);
             spot.Initialize(Data.CraftingSpots[i], i, this, scene);
         }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MinersHut
   m_EditorClassIdentifier: 
   Id: minersHut
-  BuildingColor: {r: 0.4245283, g: 0.21407837, b: 0, a: 1}
+  BuildingColor: {r: 0.42352942, g: 0.21568628, b: 0, a: 1}
   FriendlyName: Miners Hut
   BuildingClass: 2
   AssignedWorkerColor: {r: 1, g: 0.50591254, b: 0, a: 0}
@@ -34,10 +34,10 @@ MonoBehaviour:
   CanStoreItems: 1
   IsPrimaryStorage: 0
   StorageAreaLocations:
-  - {x: -2, y: 2, z: 0}
-  - {x: 0.6, y: 2, z: 0}
-  - {x: 3.1, y: 2, z: 0}
-  StorageAreaWidthAndHeight: 2
+  - {x: -2.5, y: 0.9, z: 0}
+  - {x: 0, y: 0.9, z: 0}
+  - {x: 2.5, y: 0.9, z: 0}
+  StorageAreaSize: {x: 2, y: 5}
   WorkersCanFerryItems: 0
   CanGatherResources: 1
   GatherableResources:

@@ -18,6 +18,8 @@ MonoBehaviour:
   BuildingClass: 1
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
   AssignedWorkerFriendlyName: Camper
+  HasWorkers: 1
+  MaxWorkers: 4
   EditorColor: {r: 0, g: 0.099416494, b: 1, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 0
@@ -31,10 +33,12 @@ MonoBehaviour:
   IsPrimaryStorage: 1
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
-  StorageAreaWidthAndHeight: 3
+  StorageAreaSize: {x: 3, y: 3}
   WorkersCanFerryItems: 1
   CanGatherResources: 0
   GatherableResources: []
   ResourcesCanBeGatheredFromHere: 0
   ResourcesThatCanBeGatheredFromHere: []
   GatheringSpots: []
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

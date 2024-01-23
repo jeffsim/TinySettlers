@@ -18,6 +18,7 @@ public class NeedDetailsEntry : MonoBehaviour
 
     void Update()
     {
+        if (Need == null) return;
         Priority.text = Need.Priority.ToString("0.0");
         Info.text = Need.State.ToString();
 
