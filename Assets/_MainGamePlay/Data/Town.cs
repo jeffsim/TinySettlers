@@ -278,20 +278,20 @@ public class TownData : BaseData
     }
 
     // Only returns Primary Storage rooms (Camp, STorageRoom)
-    internal StorageSpotData GetClosestPrimaryStorageSpotThatCanStoreItem(Vector3 worldLoc)
+    internal StorageSpotData GetClosestPrimaryStorageSpotThatCanStoreItem(Vector3 worldLoc, out float distance)
     {
         // TODO: more performant distance checking
         StorageSpotData closestSpot = null;
-        float closestSpotDistance = float.MaxValue;
+        distance = float.MaxValue;
 
         foreach (var building in Buildings)
             if (building.Defn.CanStoreItems && building.Defn.IsPrimaryStorage && building.HasAvailableStorageSpot)
             {
                 var spot = building.GetClosestEmptyStorageSpot(worldLoc, out float dist);
-                if (dist < closestSpotDistance)
+                if (dist < distance)
                 {
                     closestSpot = spot;
-                    closestSpotDistance = dist;
+                    distance = dist;
                 }
             }
         return closestSpot;

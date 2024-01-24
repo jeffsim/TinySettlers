@@ -77,8 +77,8 @@ public class WorkerTask_GatherResource : WorkerTask
     public override void Start()
     {
         base.Start();
-        reservedGatheringSpot = reserveBuildingGatheringSpot(buildingGatheringFrom);
-        reservedStorageSpot = reserveStorageSpotClosestToWorldLoc(reservedGatheringSpot.WorldLoc);
+        reservedGatheringSpot = reserveClosestBuildingGatheringSpot(buildingGatheringFrom, Worker.WorldLoc);
+        reservedStorageSpot = reserveStorageSpotClosestToWorldLoc_AssignedBuildingOrPrimaryStorageOnly(reservedGatheringSpot.WorldLoc);
     }
 
     public override void OnBuildingDestroyed(BuildingData building)
@@ -122,9 +122,7 @@ public class WorkerTask_GatherResource : WorkerTask
                     unreserveBuildingGatheringSpot(reservedGatheringSpot);
 
                     // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
-                    // Note: only consider storage stpots in our worker's assigned building - a woodcutter shouldn't drop off wood in a nearby miner's hut
-                    // An optimization would be to allow droppin in nearby primary storage spots (e.g. storage room, camp)
-                    reservedStorageSpot = Worker.AssignedBuilding.GetClosestEmptyStorageSpot(Worker.WorldLoc);
+                    reservedStorageSpot = getBetterStorageSpotThanSpotIfExists_AssignedBuildingOrPrimaryStorageOnly(reservedStorageSpot);
 
                     gotoNextSubstate();
                 }

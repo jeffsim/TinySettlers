@@ -254,7 +254,7 @@ public class BuildingData : BaseData
             // Minion must have a path to the item
             if (!worker.HasPathToItemOnGround(need.AbandonedItemToPickup)) continue;
 
-            StorageSpotData destinationStorageSpot = Town.GetClosestPrimaryStorageSpotThatCanStoreItem(need.AbandonedItemToPickup.WorldLocOnGround);
+            StorageSpotData destinationStorageSpot = Town.GetClosestPrimaryStorageSpotThatCanStoreItem(need.AbandonedItemToPickup.WorldLocOnGround, out float _);
             if (destinationStorageSpot == null) continue;
 
             // Found a storage spot to hold the item
@@ -287,7 +287,7 @@ public class BuildingData : BaseData
             if (spotWithItemToMove == null) continue;
 
             // TODO: Currently looking at worker's start loc; I think it should look for closest storage spot near where the item is
-            StorageSpotData destinationStorageSpot = Town.GetClosestPrimaryStorageSpotThatCanStoreItem(spotWithItemToMove.WorldLoc);
+            StorageSpotData destinationStorageSpot = Town.GetClosestPrimaryStorageSpotThatCanStoreItem(spotWithItemToMove.WorldLoc, out float _);
             if (destinationStorageSpot == null) continue;
 
             // Found a resource that can meet the need - calculate how well this minion can meet the need (score)
@@ -726,15 +726,28 @@ public class BuildingData : BaseData
     //     ConstructionNeeds.Clear();
     // }
 
-    internal GatheringSpotData ReserveGatheringSpot(WorkerData worker)
+    internal GatheringSpotData ReserveClosestGatheringSpot(WorkerData worker, Vector3 worldLoc)
     {
-        // Find first unreserved gathering spot
+        GatheringSpotData closestSpot = null;
+        float dist = float.MaxValue;
+
+        // Find Closest unreserved gathering spot
         foreach (var spot in GatheringSpots)
             if (!spot.IsReserved)
             {
-                spot.ReserveBy(worker);
-                return spot;
+                var distToSpot = Vector3.Distance(worldLoc, spot.WorldLoc);
+                if (distToSpot < dist)
+                {
+                    dist = distToSpot;
+                    closestSpot = spot;
+                }
             }
+        if (closestSpot != null)
+        {
+            closestSpot.ReserveBy(worker);
+            return closestSpot;
+        }
+
         Debug.Assert(false, "Reserving spot but none available");
         return null;
     }

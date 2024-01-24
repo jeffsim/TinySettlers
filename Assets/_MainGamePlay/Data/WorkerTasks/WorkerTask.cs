@@ -100,10 +100,10 @@ public abstract class WorkerTask
     }
 
     // ==== GATHERING ===================================================
-
-    protected GatheringSpotData reserveBuildingGatheringSpot(BuildingData buildingGatheringFrom)
+    
+    protected GatheringSpotData reserveClosestBuildingGatheringSpot(BuildingData buildingGatheringFrom, Vector3 worldLoc)
     {
-        var spot = buildingGatheringFrom.ReserveGatheringSpot(Worker);
+        var spot = buildingGatheringFrom.ReserveClosestGatheringSpot(Worker, worldLoc);
         Debug.Assert(spot != null, "Failed to reserve gathering spot in " + buildingGatheringFrom.DefnId);
         ReservedGatheringSpots.Add(spot);
         return spot;
@@ -118,6 +118,18 @@ public abstract class WorkerTask
 
     // ==== STORAGE ===================================================
 
+    protected StorageSpotData reserveStorageSpotClosestToWorldLoc_AssignedBuildingOrPrimaryStorageOnly(Vector3 worldLoc)
+    {
+        var closestAssignedBuildingStorageSpot = Worker.AssignedBuilding.GetClosestEmptyStorageSpot(worldLoc, out float distanceToClosestAssignedBuildingSpot);
+        var closestPrimaryStorageSpot = Worker.Town.GetClosestPrimaryStorageSpotThatCanStoreItem(worldLoc, out float distanceToClosestPrimaryStorageSpot);
+        var spot = distanceToClosestAssignedBuildingSpot < distanceToClosestPrimaryStorageSpot ? closestAssignedBuildingStorageSpot : closestPrimaryStorageSpot;
+        
+        Debug.Assert(spot != null, "Failed to reserve storage spot close to " + worldLoc);
+        Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
+        reserveStorageSpot(spot);
+        return spot;
+    }
+
     protected StorageSpotData reserveStorageSpotClosestToWorldLoc(Vector3 worldLoc)
     {
         var spot = Worker.Town.GetClosestStorageSpotThatCanStoreItem(worldLoc);
@@ -125,14 +137,14 @@ public abstract class WorkerTask
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
         reserveStorageSpot(spot);
         return spot;
-    } 
+    }
 
     protected StorageSpotData reserveStorageSpot(BuildingData buildingToStoreIn)
     {
         var spot = buildingToStoreIn.ReserveStorageSpot(Worker);
         Debug.Assert(spot != null, "Failed to reserve storage spot in " + buildingToStoreIn.DefnId);
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
-        
+
         ReservedStorageSpots.Add(spot);
         return spot;
     }
@@ -255,6 +267,37 @@ public abstract class WorkerTask
         // found a better one
         unreserveStorageSpot(sourceSpot);
         return reserveStorageSpot(closestSpot);
+    }
+
+    protected StorageSpotData getBetterStorageSpotThanSpotIfExists_AssignedBuildingOrPrimaryStorageOnly(StorageSpotData sourceSpot)
+    {
+        var bestSpot = getClosestBestStorageSpot_AssignedBuildingOrPrimaryStorageOnly(out float distanceToBestSpot);
+
+        var distanceToReservedStorageSpot = Vector2.Distance(Worker.WorldLoc, sourceSpot.WorldLoc);
+        if (distanceToBestSpot < distanceToReservedStorageSpot)
+        {
+            unreserveStorageSpot(sourceSpot);
+            reserveStorageSpot(bestSpot);
+            return bestSpot;
+        }
+
+        return sourceSpot;
+    }
+
+    private StorageSpotData getClosestBestStorageSpot_AssignedBuildingOrPrimaryStorageOnly(out float distance)
+    {
+        var closestAssignedBuildingSpot = Worker.AssignedBuilding.GetClosestEmptyStorageSpot(Worker.WorldLoc, out float distanceToClosestAssignedBuildingSpot);
+        var closestPrimaryStorageSpot = Worker.Town.GetClosestPrimaryStorageSpotThatCanStoreItem(Worker.WorldLoc, out float distanceToClosestPrimaryStorageSpot);
+        if (distanceToClosestAssignedBuildingSpot < distanceToClosestPrimaryStorageSpot)
+        {
+            distance = distanceToClosestAssignedBuildingSpot;
+            return closestAssignedBuildingSpot;
+        }
+        else
+        {
+            distance = distanceToClosestPrimaryStorageSpot;
+            return closestPrimaryStorageSpot;
+        }
     }
 
     // protected bool betterStorageSpotExists(StorageSpotData spot)

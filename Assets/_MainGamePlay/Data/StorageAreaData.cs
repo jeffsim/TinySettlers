@@ -82,6 +82,10 @@ public class StorageAreaData : BaseData
     {
         foreach (var spot in StorageSpots)
             if (!spot.IsEmpty)
+            {
+                if (spot.IsReserved)
+                    spot.ReservedBy.CurrentTask?.Abandon();
                 spot.RemoveItem();
+            }
     }
 }
