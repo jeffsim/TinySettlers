@@ -316,6 +316,15 @@ public class TownData : BaseData
         return closestSpot;
     }
 
+    internal bool StorageSpotIsAvailable()
+    {
+        foreach (var building in Buildings)
+            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot)
+                if (building.GetEmptyStorageSpot() != null)
+                    return true;
+        return false;
+    }
+
     /**
      * Return the closest Cell that holds an un-reserved resource of the specified type.  This is used to find
      * A resource that a stocker can bring to a room that needs the resource.

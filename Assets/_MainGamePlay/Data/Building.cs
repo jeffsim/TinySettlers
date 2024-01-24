@@ -399,11 +399,15 @@ public class BuildingData : BaseData
         {
             if (need.Priority == 0) continue; // no active need for the resource (e.g. already being fully met)
 
-            BuildingData targetMine = Town.getNearestResourceSource(worker, need.NeededItem);
-            if (targetMine == null) continue; // no building to gather from
+            BuildingData buildingToGatherFrom = Town.getNearestResourceSource(worker, need.NeededItem);
+            if (buildingToGatherFrom == null) continue; // no building to gather from
+
+            // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
+            // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
+            if (!Town.StorageSpotIsAvailable()) return;
 
             // Good to go - add the task as a possible choice
-            availableTasks.Add(new PrioritizedTask(WorkerTask_GatherResource.Create(worker, need.NeededItem, targetMine), need.Priority));
+            availableTasks.Add(new PrioritizedTask(WorkerTask_GatherResource.Create(worker, need.NeededItem, buildingToGatherFrom), need.Priority));
         }
     }
 
