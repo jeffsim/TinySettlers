@@ -258,7 +258,7 @@ public class BuildingData : BaseData
             if (destinationStorageSpot == null) continue;
 
             // Found a storage spot to hold the item
-            availableTasks.Add(new PrioritizedTask(WorkerTask_PickupAbandonedItem.Create(worker, need, destinationStorageSpot), need.Priority));
+            availableTasks.Add(new PrioritizedTask(WorkerTask_PickupAbandonedItem.Create(worker, need), need.Priority));
         }
     }
 

@@ -52,16 +52,15 @@ public class WorkerTask_PickupAbandonedItem : WorkerTask
     }
 
     // TODO: Pooling
-    public static WorkerTask_PickupAbandonedItem Create(WorkerData worker, NeedData need, StorageSpotData destinationStorageSpotForItem)
+    public static WorkerTask_PickupAbandonedItem Create(WorkerData worker, NeedData need)
     {
-        return new WorkerTask_PickupAbandonedItem(worker, need, destinationStorageSpotForItem);
+        return new WorkerTask_PickupAbandonedItem(worker, need);
     }
 
-    private WorkerTask_PickupAbandonedItem(WorkerData worker, NeedData need, StorageSpotData destinationStorageSpotForItem) : base(worker)
+    private WorkerTask_PickupAbandonedItem(WorkerData worker, NeedData need) : base(worker)
     {
         Need = need;
         ItemToPickup = need.AbandonedItemToPickup;
-        this.destinationStorageSpotForItem = destinationStorageSpotForItem;
         CarryingSpeedMultiplier = ItemToPickup.Defn.CarryingSpeedModifier;
     }
 
@@ -69,7 +68,7 @@ public class WorkerTask_PickupAbandonedItem : WorkerTask
     {
         base.Start();
         Need.AssignWorkerToMeetNeed(Worker);
-        reserveStorageSpot(destinationStorageSpotForItem);
+        destinationStorageSpotForItem = reserveStorageSpotClosestToWorldLoc_AssignedBuildingOrPrimaryStorageOnly(Worker.WorldLoc);
     }
 
     public override void OnBuildingDestroyed(BuildingData building)

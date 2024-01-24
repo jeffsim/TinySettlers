@@ -22,14 +22,14 @@ MonoBehaviour:
   Buildings:
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: f2953a264124d4f6c8869db0916ad9c3, type: 2}
-    TileX: 1
-    TileY: 1
+    TileX: 2
+    TileY: 2
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 4
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 398e5d5419b4f4c96a4ba82e31073144, type: 2}
     TileX: 1
-    TileY: 0
+    TileY: 1
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 2
   - IsEnabled: 0

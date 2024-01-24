@@ -21,4 +21,4 @@ MonoBehaviour:
     Count: 2
   ItemClass: 5
   BaseSellPrice: 5
-  CarryingSpeedModifier: 0.25
+  CarryingSpeedModifier: 1

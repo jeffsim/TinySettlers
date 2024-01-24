@@ -20,4 +20,5 @@ MonoBehaviour:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
     Count: 2
   ItemClass: 5
-  CarryingSpeedModifier: 0.5
+  BaseSellPrice: 2
+  CarryingSpeedModifier: 1
