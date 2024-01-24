@@ -254,8 +254,9 @@ public class BuildingData : BaseData
             // Minion must have a path to the item
             if (!worker.HasPathToItemOnGround(need.AbandonedItemToPickup)) continue;
 
-            StorageSpotData destinationStorageSpot = Town.GetClosestPrimaryStorageSpotThatCanStoreItem(need.AbandonedItemToPickup.WorldLocOnGround, out float _);
-            if (destinationStorageSpot == null) continue;
+            // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
+            // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
+            if (!Town.StorageSpotIsAvailable()) continue;
 
             // Found a storage spot to hold the item
             availableTasks.Add(new PrioritizedTask(WorkerTask_PickupAbandonedItem.Create(worker, need), need.Priority));
@@ -286,49 +287,27 @@ public class BuildingData : BaseData
             StorageSpotData spotWithItemToMove = need.BuildingWithNeed.GetItemToRemoveFromStorage(worker);
             if (spotWithItemToMove == null) continue;
 
-            // TODO: Currently looking at worker's start loc; I think it should look for closest storage spot near where the item is
+            // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
+            // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
+            if (!Town.StorageSpotIsAvailable()) continue;
+
+            // Hm; Ferry Item takes a destination building, forcing me to find the closest storage spot in that building.  I don't want to do that since it's redone in the task.start
+            // and doing it here is wasted work if this Task isn't chosen.
             StorageSpotData destinationStorageSpot = Town.GetClosestPrimaryStorageSpotThatCanStoreItem(spotWithItemToMove.WorldLoc, out float _);
             if (destinationStorageSpot == null) continue;
 
             // Found a resource that can meet the need - calculate how well this minion can meet the need (score)
-            availableTasks.Add(new PrioritizedTask(WorkerTask_FerryItem.Create(worker, spotWithItemToMove, destinationStorageSpot), need.Priority));
+            availableTasks.Add(new PrioritizedTask(WorkerTask_FerryItem.Create(worker, spotWithItemToMove, null), need.Priority));
         }
-    }
-
-    private StorageSpotData GetItemToRemoveFromStorage(WorkerData worker)
-    {
-        float distToClosest = float.MaxValue;
-        StorageSpotData closestSpotWithItemToRemove = null;
-
-        // Called when a cleaner is looking for something to remove from our storage.
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (!spot.IsEmpty && !spot.IsReserved)
-                {
-                    if (itemIsNeededForCrafting(spot.ItemInStorage))
-                        continue;
-                    var dist = Vector3.Distance(worker.WorldLoc, spot.WorldLoc); // TODO (PERF): There are a lot of Vector3.Distance calls happening...
-                    if (dist < distToClosest)
-                    {
-                        distToClosest = dist;
-                        closestSpotWithItemToRemove = spot;
-                    }
-                }
-
-        return closestSpotWithItemToRemove;
-    }
-
-    private bool itemIsNeededForCrafting(ItemData item)
-    {
-        foreach (var need in CraftingResourceNeeds)
-            if (need.NeededItem.Id == item.DefnId)
-                return true;
-        return false;
     }
 
     private void addCourierTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
     {
         if (!Defn.WorkersCanFerryItems) return;
+
+        // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
+        // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
+        if (!Town.StorageSpotIsAvailable()) return;
 
         // for now, find the first instance where a building needs a resource and the resource is in another building.
         foreach (var need in allTownNeeds)
@@ -339,55 +318,27 @@ public class BuildingData : BaseData
             // stockers only meet item needs
             if (need.NeedCoreType != NeedCoreType.Item) continue;
 
-            // If some other minion is already handling fulfilling this need; ignore it
-            // if (need.State != NeedState.unmet) continue;
-
-            // If no priority then don't try to meet it
+            // If no priority then don't try to meet it.  If another worker is meeting the need then this will be set to 0 in UpdateNeedPriorities
             if (need.Priority == 0) continue;
 
             // don't meet the needs of destroyed rooms
             if (need.BuildingWithNeed.IsDestroyed) continue;
 
-            // Minion must have a path to the room
+            // Worker must have a path to the room
             if (!worker.HasPathToRoom(need.BuildingWithNeed)) continue;
 
-            // Find closest accessible resource to this minion that can meet the need.  This function ensures that
-            // there is a path from the room to the resource.
+            // Building with Need must have a storage spot to hold the need
+            if (!need.BuildingWithNeed.HasAvailableStorageSpot) continue;
+
+            // Find closest accessible resource to this worker that can meet the need.  This function ensures that there is a path from the room to the resource.
             ClosestStorageSpotWithItem closestStorageSpotWithItem = Town.getClosestItemOfType(need.NeededItem, need.ItemClass, need.BuildingWithNeed);
-            if (closestStorageSpotWithItem.Distance == float.MaxValue)
-            {
-                // No resource available to meet the need.  Ignore it, hope we can at least meet antoher need
-                continue;
-            }
+            if (closestStorageSpotWithItem.Distance == float.MaxValue) continue;
 
-            // Can't deliver items to a room that's full
-            var destinationStorageSpot = need.BuildingWithNeed.GetClosestStorageCellThatCanStoreItem(closestStorageSpotWithItem.StorageSpot.WorldLoc, closestStorageSpotWithItem.StorageSpot.ItemInStorage.Defn);
-            if (destinationStorageSpot == null)
-                continue;
+            // TODO: Calculate how well this worker can meet the need; e.g. a closer worker can meet the need better than this one.
 
-            // Found a resource that can meet the need - calculate how well this minion can meet the need (score)
-            float needScore = need.PriorityOfMeetingItemNeed(worker, destinationStorageSpot.Building, closestStorageSpotWithItem.Distance);
-            if (needScore > 0)
-                availableTasks.Add(new PrioritizedTask(WorkerTask_FerryItem.Create(worker, closestStorageSpotWithItem.StorageSpot, destinationStorageSpot), needScore));
+            // Good to go - add the task as a possible choice
+            availableTasks.Add(new PrioritizedTask(WorkerTask_FerryItem.Create(worker, closestStorageSpotWithItem.StorageSpot, need.BuildingWithNeed), need.Priority));
         }
-    }
-
-    private StorageSpotData GetClosestStorageCellThatCanStoreItem(Vector3 worldLoc, ItemDefn defn)
-    {
-        float dist = float.MaxValue;
-        StorageSpotData closestSpot = null;
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (spot.IsEmptyAndAvailable)
-                {
-                    var newDist = Vector3.Distance(worldLoc, spot.WorldLoc);
-                    if (newDist < dist)
-                    {
-                        dist = newDist;
-                        closestSpot = spot;
-                    }
-                }
-        return closestSpot;
     }
 
     private void addGatheringResourceTasks(List<PrioritizedTask> availableTasks, WorkerData worker)
@@ -434,6 +385,55 @@ public class BuildingData : BaseData
             // Good to go - add the task as a possible choice
             availableTasks.Add(new PrioritizedTask(WorkerTask_CraftItem.Create(worker, itemToCraft), priority));
         }
+    }
+
+    private StorageSpotData GetItemToRemoveFromStorage(WorkerData worker)
+    {
+        float distToClosest = float.MaxValue;
+        StorageSpotData closestSpotWithItemToRemove = null;
+
+        // Called when a cleaner is looking for something to remove from our storage.
+        foreach (var area in StorageAreas)
+            foreach (var spot in area.StorageSpots)
+                if (!spot.IsEmpty && !spot.IsReserved)
+                {
+                    if (itemIsNeededForCrafting(spot.ItemInStorage))
+                        continue;
+                    var dist = Vector3.Distance(worker.WorldLoc, spot.WorldLoc); // TODO (PERF): There are a lot of Vector3.Distance calls happening...
+                    if (dist < distToClosest)
+                    {
+                        distToClosest = dist;
+                        closestSpotWithItemToRemove = spot;
+                    }
+                }
+
+        return closestSpotWithItemToRemove;
+    }
+
+    private bool itemIsNeededForCrafting(ItemData item)
+    {
+        foreach (var need in CraftingResourceNeeds)
+            if (need.NeededItem.Id == item.DefnId)
+                return true;
+        return false;
+    }
+
+    private StorageSpotData GetClosestStorageCellThatCanStoreItem(Vector3 worldLoc, ItemDefn defn)
+    {
+        float dist = float.MaxValue;
+        StorageSpotData closestSpot = null;
+        foreach (var area in StorageAreas)
+            foreach (var spot in area.StorageSpots)
+                if (spot.IsEmptyAndAvailable)
+                {
+                    var newDist = Vector3.Distance(worldLoc, spot.WorldLoc);
+                    if (newDist < dist)
+                    {
+                        dist = newDist;
+                        closestSpot = spot;
+                    }
+                }
+        return closestSpot;
     }
 
     public int GetStorageSpotIndex(StorageSpotData spotToCheck)

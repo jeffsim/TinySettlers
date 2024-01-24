@@ -20,6 +20,7 @@ public class WorkerTask_FerryItem : WorkerTask
     [SerializeField] StorageSpotData storageSpotWithItem;
     [SerializeField] StorageSpotData destinationStorageSpotForItem;
     [SerializeField] public ItemData itemBeingFerried;
+    [SerializeField] public BuildingData destBuilding;
     [SerializeField] float CarryingSpeedMultiplier;
     public const float secondsToPickup = 1;
     public const float secondsToDrop = 0.5f;
@@ -61,15 +62,15 @@ public class WorkerTask_FerryItem : WorkerTask
     }
 
     // TODO: Pooling
-    public static WorkerTask_FerryItem Create(WorkerData worker, StorageSpotData storageSpotWithItem, StorageSpotData destinationStorageSpotForItem)
+    public static WorkerTask_FerryItem Create(WorkerData worker, StorageSpotData storageSpotWithItem, BuildingData destBuilding)
     {
-        return new WorkerTask_FerryItem(worker, storageSpotWithItem, destinationStorageSpotForItem);
+        return new WorkerTask_FerryItem(worker, storageSpotWithItem, destBuilding);
     }
 
-    private WorkerTask_FerryItem(WorkerData worker, StorageSpotData storageSpotWithItem, StorageSpotData destinationStorageSpotForItem) : base(worker)
+    private WorkerTask_FerryItem(WorkerData worker, StorageSpotData storageSpotWithItem, BuildingData destBuilding) : base(worker)
     {
         this.storageSpotWithItem = storageSpotWithItem;
-        this.destinationStorageSpotForItem = destinationStorageSpotForItem;
+        this.destBuilding = destBuilding;
         CarryingSpeedMultiplier = storageSpotWithItem.ItemInStorage.Defn.CarryingSpeedModifier;
         itemBeingFerried = storageSpotWithItem.ItemInStorage;
     }
@@ -78,7 +79,16 @@ public class WorkerTask_FerryItem : WorkerTask
     {
         base.Start();
         reserveStorageSpot(storageSpotWithItem);
-        reserveStorageSpot(destinationStorageSpotForItem);
+        if (destBuilding == null)
+        {
+            // Need doesn't care where it goes - e.g. StorageCleanup.  Find the closest primary storage spot that can store the item
+            destinationStorageSpotForItem = reserveStorageSpot(Worker.Town.GetClosestPrimaryStorageSpotThatCanStoreItem(storageSpotWithItem.WorldLoc, out float _));
+        }
+        else
+        {
+            // Need specified a destination building - e.g. Crafting.  Find the closest empty storage spot in that building
+            destinationStorageSpotForItem = reserveStorageSpot(destBuilding.GetClosestEmptyStorageSpot(storageSpotWithItem.WorldLoc));
+        }
     }
 
     public override void OnBuildingDestroyed(BuildingData building)
