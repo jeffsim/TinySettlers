@@ -1,23 +1,7 @@
-* update 'items' lists in dialogs to shwo e.g. woodPlank(4) rather than four copies of woodPlank
+* Market is not requesting goods, or couriers are not seeing it as a valid place ot cleanupstorage
 
-
-* implement OnBuildingStorageChanged - call whenever an item is added or removed
-    - All tasks that have a target storage spot in that building find the new best one
-    - Also remove all the one off "find better storage spot"
-    - Implement onstoragechanged tests
-* implement crafting tests
-* implement DestroyBuilding_ItemsCarriedToDestroyedBuildingAreCarriedToStorageInstead
-* implement DestroyBuilding_ItemsLeftOnGroundAreSubsequentlyPickedUp
-
-* Implement "pick up abandoned item on ground" (after building destroyed or worker destroyed)
- - include tests
-* Assign 4 workers to miners hut; quickly fills storage: add task "move my building's item to storage [if I'm idling for too long?]"
-
-* Graph demand for goods
-    - add current supply
-    - add "in progress to gain" supply (e.g. crftng tasks for the items)
-    - want to see ebb and flow (pred/prey?) and maybe stable?
-
-== DONE 4/2/22
-* DONE: press space to pause
-* DONE: click on storagespot, see details including id
+* Woodcutter goes to chop wood; after gathered, it looks around to see where to drop off the gathered wood
+    - currently: looks for closest of (primary storage, assigned building)
+    - but: what if there is a crafting station asking that needs wood?
+        + should woodcutter carry wood directly to crafting station?
+        + what if crafting station is farther than storage?
