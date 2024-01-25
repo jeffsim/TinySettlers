@@ -44,7 +44,7 @@ public class NeedDetailsEntry : MonoBehaviour
                 Source.text = Need.BuildingWithNeed.ToString();
                 Info.text = Need.State.ToString();
                 break;
-            case NeedType.PersistentRoomNeed:
+            case NeedType.PersistentBuildingNeed:
                 Type.text = "Persistent need";
                 Source.text = Need.BuildingWithNeed.ToString();
                 Info.text = Need.State.ToString();

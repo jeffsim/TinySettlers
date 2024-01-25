@@ -7,6 +7,13 @@ public enum ConstructionState { NotStarted, UnderConstruction, FullyConstructed 
 public delegate void OnBuildingTileLocChangedEvent();
 
 [Serializable]
+public class DistanceToBuilding
+{
+    public float Distance;
+    public BuildingData Building;
+}
+
+[Serializable]
 public class BuildingData : BaseData
 {
     public override string ToString() => Defn.FriendlyName + " (" + InstanceId + ")";
@@ -44,6 +51,8 @@ public class BuildingData : BaseData
     // public ConstructionState ConstructionState;
     // public float PercentBuilt;
     // public bool IsConstructed => !(Defn.CanBeConstructed) || (ConstructionState == ConstructionState.FullyConstructed);
+
+    public List<DistanceToBuilding> OtherBuildingsByDistance = new();
 
     public List<NeedData> Needs;
 
@@ -109,7 +118,7 @@ public class BuildingData : BaseData
     // If this building can craft items, then CraftingResourceNeeds contains the priority of
     // how much we need different resources to craft those items.  priority is depedent on how
     // many are in storage.
-    // * TODO: If another room has broadcast a need for Crafted good X and we can craft it, then
+    // * TODO: If another building has broadcast a need for Crafted good X and we can craft it, then
     //   increase priority of resources for crafting it.  note that a settlers-like model may ONLY do these.
     public List<NeedData> CraftingResourceNeeds;
 
@@ -120,7 +129,7 @@ public class BuildingData : BaseData
     // gathering each resource.  e.g.:
     // * if we have many of X and few of Y, then Y may have a higher priority
     // * if our storage is nearly full then all resource gathering is at a reduced priority
-    // * TODO: If another room has broadcast a need for resource R and we can gather it, then
+    // * TODO: If another building has broadcast a need for resource R and we can gather it, then
     //   increase priority to gather it.  note that a settlers-like model may ONLY do these.
     public List<NeedData> GatheringNeeds;
 
@@ -265,7 +274,7 @@ public class BuildingData : BaseData
                     ClearOutStorageNeed.Priority /= 5f;
                 ClearOutStorageNeed.Priority *= 2;
 
-                // if we're a crafting room then we have a higher priority than non-crafting rooms (e.g. woodcutter) to clear storage
+                // if we're a crafting building then we have a higher priority than non-crafting buildings (e.g. woodcutter) to clear storage
                 // so that we can craft more
                 if (Defn.CanCraft)
                     ClearOutStorageNeed.Priority *= 1.5f;
@@ -640,39 +649,15 @@ public class BuildingData : BaseData
             spot.UpdateWorldLoc();
     }
 
-    public List<DistanceToBuilding> RoomsByDistance = new List<DistanceToBuilding>();
-
-    public void UpdateDistanceToRooms()
+    public void UpdateDistanceToOtherBuildings()
     {
-        RoomsByDistance.Clear();
+        OtherBuildingsByDistance.Clear();
         foreach (var building in Town.Buildings)
         {
-            //  if (room.Defn.IsScriptedEventRoom || room.BuildingData.IsInStash) continue;
-            float distance = distanceToRoom(building);
+            float distance = Vector3.Distance(WorldLoc, building.WorldLoc);
             if (distance < int.MaxValue)
-            {
-                RoomsByDistance.Add(new DistanceToBuilding() { Building = building, Distance = distance });
-            }
+                OtherBuildingsByDistance.Add(new() { Building = building, Distance = distance });
         }
-        RoomsByDistance.Sort((a, b) => (int)(a.Distance - b.Distance));
-    }
-
-    private float distanceToRoom(BuildingData destRoom)
-    {
-        return Vector3.Distance(WorldLoc, destRoom.WorldLoc);
-    }
-
-    public DistanceToBuilding getRoomDistance(BuildingData building)
-    {
-        foreach (var roomDist in RoomsByDistance)
-            if (roomDist.Building == building)
-                return roomDist;
-        return null;
-    }
-
-    public float getDistanceToBuilding(BuildingData room)
-    {
-        DistanceToBuilding roomDist = getRoomDistance(room);
-        return roomDist != null ? roomDist.Distance : float.MaxValue;
+        OtherBuildingsByDistance.Sort((a, b) => (int)(a.Distance - b.Distance));
     }
 }

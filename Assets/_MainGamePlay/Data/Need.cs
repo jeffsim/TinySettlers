@@ -11,7 +11,7 @@ public enum NeedType
     Defend,
     SellGood,
 
-    PersistentRoomNeed, // e.g. water for farm
+    PersistentBuildingNeed, // e.g. water for farm
     ConstructionWorker,  // to construct a building
     Repair,  // to construct a building
     EntitySelfNeed // e.g.: food (for hunger)
@@ -64,7 +64,7 @@ public class NeedData : BaseData
                 return $"Need: {Type} {BuildingWithNeed}";
             case NeedType.SellGood:
                 return $"Need: {Type} {NeededItem} {State} {Priority}";
-            case NeedType.PersistentRoomNeed:
+            case NeedType.PersistentBuildingNeed:
                 return $"Need: {Type} {NeededItem} {State} {Priority}";
             case NeedType.ConstructionWorker:
                 return $"Need: {Type} {BuildingWithNeed} {State} {Priority}";

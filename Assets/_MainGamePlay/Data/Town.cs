@@ -83,7 +83,7 @@ public class TownData : BaseData
                 for (int i = 0; i < item.Count; i++)
                     building.AddItemToStorageSpot(new ItemData() { DefnId = item.Item.Id }, building.GetEmptyStorageSpot());
         }
-        UpdateDistanceToRooms();
+        UpdateDistanceToBuildings();
     }
 
     public void CreateWorkerInBuilding(BuildingData building)
@@ -104,7 +104,7 @@ public class TownData : BaseData
         building.Initialize(this);
         Buildings.Add(building);
         Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
-        UpdateDistanceToRooms();
+        UpdateDistanceToBuildings();
 
         OnBuildingAdded?.Invoke(building);
 
@@ -117,7 +117,7 @@ public class TownData : BaseData
 
         Buildings.Remove(building);
         building.Destroy();
-        UpdateDistanceToRooms();
+        UpdateDistanceToBuildings();
     }
 
     public void DestroyWorker(WorkerData worker)
@@ -131,7 +131,7 @@ public class TownData : BaseData
         Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
         building.MoveTo(tileX, tileY);
         Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
-        UpdateDistanceToRooms();
+        UpdateDistanceToBuildings();
     }
 
     public void Update()
@@ -339,60 +339,42 @@ public class TownData : BaseData
         return closestBuilding?.GetClosestEmptyStorageSpot(worldLoc, out dist);
     }
 
-    /**
-     * Return the closest Cell that holds an un-reserved resource of the specified type.  This is used to find
-     * A resource that a stocker can bring to a room that needs the resource.
-     */
-    public ClosestStorageSpotWithItem getClosestItemOfType(ItemDefn itemDefn, ItemClass itemClass, BuildingData startingRoom)
+    public StorageSpotData GetClosestItemOfType(ItemDefn itemDefn, ItemClass itemClass, BuildingData startingBuilding)
     {
-        foreach (var roomDist in startingRoom.RoomsByDistance)
+        foreach (var buildingDist in startingBuilding.OtherBuildingsByDistance)
         {
-            BuildingData building = roomDist.Building;
-            //  DebugMgr.Assert(room != null, "huh?");
-            if (building == startingRoom) continue;
-            //    if (!room.IsBuilt) continue;
+            BuildingData building = buildingDist.Building;
+            if (building == startingBuilding) continue;
             if (!building.Defn.CanStoreItems) continue;
-            // for now, don't care about cell-based distance; just room-based.  can add that later if it looks odd
 
-            // If 'room' itself has a need for resourceType then don't consider it for pickup (e.g. don't move food from room that has hungry assigned entity)
-            bool ignoreRoom = false;
+            // If 'building' itself has a need for resourceType then don't consider it for pickup (e.g. don't move food from building that has hungry assigned entity)
+            bool ignoreBuilding = false;
             foreach (var need in building.Needs)
             {
                 // only check non-item-class-based item needs.  If looking for e.g any item of type food then use getclosestItemOfClass instead...
                 if (itemDefn != null && need.Type != NeedType.GatherResource && need.NeedCoreType == NeedCoreType.Item && need.NeededItem != null && need.NeededItem.Id == itemDefn.Id && need.State == NeedState.unmet)
                 {
-                    ignoreRoom = true;
+                    ignoreBuilding = true;
                     break;
                 }
             }
-
-            // TODO: Removed in porting
-            // if ((itemClass == ItemClass.Edible || itemClass == ItemClass.Drinkable) && room.Assignable != null && !room.Assignable.HasSurplusOfItemClass(ItemClass.Edible))
-            //     ignoreRoom = true;
-
-            if (ignoreRoom)
+            if (ignoreBuilding)
                 continue;
 
             var storageSpotWithItem = building.GetStorageSpotWithUnreservedItemOfType(itemDefn, itemClass);
             if (storageSpotWithItem != null)
-                return new ClosestStorageSpotWithItem(storageSpotWithItem, roomDist);
+                return storageSpotWithItem;
         }
 
         // no resource accessible
-        ClosestStorageSpotWithItem closestItem = new ClosestStorageSpotWithItem();
-        closestItem.Distance = float.MaxValue;
-        return closestItem;
+        return null;
     }
 
-    public void UpdateDistanceToRooms()
+    public void UpdateDistanceToBuildings()
     {
-        // TODO (PERF): Can cut this time in 1/2 since room A->B distance is same as room B->A distance.
-        foreach (BuildingData building in Buildings)// PlacedBuildings)
-        {
-            // if (room.Defn.IsScriptedEventRoom || room.BuildingData.IsInStash)
-            // continue;
-            building.UpdateDistanceToRooms();
-        }
+        // TODO (PERF): Can cut this time in 1/2 since building A->B distance is same as building B->A distance.
+        foreach (BuildingData building in Buildings)
+            building.UpdateDistanceToOtherBuildings();
     }
 
     internal int Chart_GetNumOfItemInTown(string itemId)

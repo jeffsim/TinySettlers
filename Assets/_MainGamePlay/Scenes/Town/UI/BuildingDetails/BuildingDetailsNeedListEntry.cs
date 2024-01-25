@@ -38,7 +38,7 @@ public class BuildingDetailsNeedListEntry : MonoBehaviour
                 Type.text = $"Gather ({Need.NeededItem})";
                 Info.text = Need.State.ToString();
                 break;
-            case NeedType.PersistentRoomNeed:
+            case NeedType.PersistentBuildingNeed:
                 Type.text = "Persistent need";
                 Info.text = Need.State.ToString();
                 break;

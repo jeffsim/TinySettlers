@@ -90,7 +90,7 @@ public class WorkerData : BaseData
             AssignToBuilding(null);
     }
 
-    internal bool HasPathToRoom(BuildingData buildingWithNeed)
+    internal bool HasPathToBuilding(BuildingData buildingWithNeed)
     {
         // TODO
         return true;

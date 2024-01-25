@@ -71,7 +71,7 @@ public static class Utilities
             case NeedType.ConstructionWorker: str += "Construction Worker"; break;
             case NeedType.CraftingOrConstructionMaterial: str += "Need Item: " + need.NeededItem; break;
             case NeedType.GatherResource: str += "Gather (" + need.NeededItem.Id + ")"; break;
-            case NeedType.PersistentRoomNeed: str += "Persistent need"; break;
+            case NeedType.PersistentBuildingNeed: str += "Persistent need"; break;
             case NeedType.PickupAbandonedItem: str += "Pickup item: " + need.AbandonedItemToPickup; break;
             case NeedType.SellGood: str += "Sell good: " + need.NeededItem; break;
             default: Debug.LogError("unknown need type " + need.Type); break;

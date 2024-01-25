@@ -99,11 +99,11 @@ public class BuildingTaskMgrData
             // If no priority then don't try to meet it
             if (need.Priority == 0) continue;
 
-            // don't meet the needs of destroyed rooms
+            // don't meet the needs of destroyed buildings
             if (need.BuildingWithNeed.IsDestroyed) continue;
 
-            // Minion must have a path to the room
-            if (!worker.HasPathToRoom(need.BuildingWithNeed)) continue;
+            // Minion must have a path to the building
+            if (!worker.HasPathToBuilding(need.BuildingWithNeed)) continue;
 
             // need.BuildingWithNeed is saying "I have a need to have items removed from my storage"
             // The worker needs to find the closest item in that building that can/should be removed, and the closest PrimaryStorage spot that is empty and avaialble
@@ -141,23 +141,23 @@ public class BuildingTaskMgrData
             // If no priority then don't try to meet it.  If another worker is meeting the need then this will be set to 0 in UpdateNeedPriorities
             if (need.Priority == 0) continue;
 
-            // don't meet the needs of destroyed rooms
+            // don't meet the needs of destroyed buildings
             if (need.BuildingWithNeed.IsDestroyed) continue;
 
-            // Worker must have a path to the room
-            if (!worker.HasPathToRoom(need.BuildingWithNeed)) continue;
+            // Worker must have a path to the building
+            if (!worker.HasPathToBuilding(need.BuildingWithNeed)) continue;
 
             // Building with Need must have a storage spot to hold the need
             if (!need.BuildingWithNeed.HasAvailableStorageSpot) continue;
 
-            // Find closest accessible resource to this worker that can meet the need.  This function ensures that there is a path from the room to the resource.
-            ClosestStorageSpotWithItem closestStorageSpotWithItem = Town.getClosestItemOfType(need.NeededItem, need.ItemClass, need.BuildingWithNeed);
-            if (closestStorageSpotWithItem.Distance == float.MaxValue) continue;
+            // Find closest accessible resource to this worker that can meet the need.  This function ensures that there is a path from the building to the resource.
+            var closestStorageSpotWithItem = Town.GetClosestItemOfType(need.NeededItem, need.ItemClass, need.BuildingWithNeed);
+            if (closestStorageSpotWithItem == null) continue;
 
             // TODO: Calculate how well this worker can meet the need; e.g. a closer worker can meet the need better than this one.
 
             // Good to go - add the task as a possible choice
-            availableTasks.Add(new PrioritizedTask(WorkerTask_FerryItem.Create(worker, closestStorageSpotWithItem.StorageSpot, need.BuildingWithNeed), need.Priority));
+            availableTasks.Add(new PrioritizedTask(WorkerTask_FerryItem.Create(worker, closestStorageSpotWithItem, need.BuildingWithNeed), need.Priority));
         }
     }
 
@@ -198,7 +198,7 @@ public class BuildingTaskMgrData
             if (!hasUnreservedResourcesInStorageToCraftItem(itemToCraft)) continue;
 
             // Do we have storage for the crafted item?
-            // TODO: Option to move item from our storage to a storage room if couriers aren't doing it?
+            // TODO: Option to move item from our storage to a storage building if couriers aren't doing it?
             bool isImplicitGood = itemToCraft.GoodType == GoodType.implicitGood;
             if (!isImplicitGood && !Building.HasAvailableStorageSpot) continue;
 
