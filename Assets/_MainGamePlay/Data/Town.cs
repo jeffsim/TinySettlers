@@ -4,6 +4,8 @@ using UnityEngine;
 
 public delegate void OnItemAddedToGroundEvent(ItemData item);
 
+public enum StorageSpotSearchType { Any, Primary, AssignedBuildingOrPrimary }
+
 [Serializable]
 public class TownData : BaseData
 {
@@ -277,79 +279,64 @@ public class TownData : BaseData
             }
     }
 
-    // Only returns Primary Storage rooms (Camp, STorageRoom)
-    internal StorageSpotData GetClosestPrimaryStorageSpotThatCanStoreItem(Vector3 worldLoc) => GetClosestPrimaryStorageSpotThatCanStoreItem(worldLoc, out float _);
-    internal StorageSpotData GetClosestPrimaryStorageSpotThatCanStoreItem(Vector3 worldLoc, out float distance)
+    public bool HasAvailableStorageSpot(StorageSpotSearchType searchType = StorageSpotSearchType.Any, WorkerData worker = null) => GetAvailableStorageSpot(searchType, worker) != null;
+
+    public StorageSpotData GetAvailableStorageSpot(StorageSpotSearchType searchType, WorkerData worker = null)
     {
-        // TODO: more performant distance checking
-        StorageSpotData closestSpot = null;
-        distance = float.MaxValue;
+        Debug.Assert(searchType != StorageSpotSearchType.AssignedBuildingOrPrimary || worker != null, "worker must be specified for AnyAssignedBuildingOrPrimary");
 
         foreach (var building in Buildings)
-            if (building.Defn.CanStoreItems && building.Defn.IsPrimaryStorage && building.HasAvailableStorageSpot)
+        {
+            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot)
             {
-                var spot = building.GetClosestEmptyStorageSpot(worldLoc, out float dist);
-                if (dist < distance)
+                var buildingMatchesSearchType = searchType switch
                 {
-                    closestSpot = spot;
-                    distance = dist;
+                    StorageSpotSearchType.Any => true,
+                    StorageSpotSearchType.Primary => building.Defn.IsPrimaryStorage,
+                    StorageSpotSearchType.AssignedBuildingOrPrimary => building.Defn.IsPrimaryStorage || building == worker.AssignedBuilding,
+                    _ => throw new Exception("unhandled search type " + searchType),
+                };
+
+                if (buildingMatchesSearchType)
+                {
+                    var spot = building.GetEmptyStorageSpot();
+                    if (spot != null)
+                        return spot;
                 }
             }
-        return closestSpot;
-    }
-
-    internal StorageSpotData GetAnyPrimaryStorageSpotThatCanStoreItem()
-    {
-        foreach (var building in Buildings)
-            if (building.Defn.CanStoreItems && building.Defn.IsPrimaryStorage && building.HasAvailableStorageSpot)
-            {
-                var spot = building.GetEmptyStorageSpot();
-                if (spot != null)
-                    return spot;
-            }
+        }
         return null;
     }
 
-    internal StorageSpotData GetClosestStorageSpotThatCanStoreItem(Vector3 worldLoc)
+    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Vector3 worldLoc) => GetClosestAvailableStorageSpot(searchType, worldLoc, out float _);
+    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Vector3 worldLoc, out float dist, WorkerData worker = null)
     {
-        // TODO: more performant distance checking
-        StorageSpotData closestSpot = null;
-        float closestSpotDistance = float.MaxValue;
-
+        BuildingData closestBuilding = null;
+        dist = float.MaxValue;
         foreach (var building in Buildings)
+        {
             if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot)
             {
-                var spot = building.GetClosestEmptyStorageSpot(worldLoc, out float dist);
-                if (dist < closestSpotDistance)
+                var buildingMatchesSearchType = searchType switch
                 {
-                    closestSpot = spot;
-                    closestSpotDistance = dist;
+                    StorageSpotSearchType.Any => true,
+                    StorageSpotSearchType.Primary => building.Defn.IsPrimaryStorage,
+                    StorageSpotSearchType.AssignedBuildingOrPrimary => building.Defn.IsPrimaryStorage || building == worker.AssignedBuilding,
+                    _ => throw new Exception("unhandled search type " + searchType),
+                };
+
+                if (buildingMatchesSearchType)
+                {
+                    var distanceToBuilding = Vector3.Distance(worldLoc, building.WorldLoc);
+                    if (distanceToBuilding < dist)
+                    {
+                        closestBuilding = building;
+                        dist = distanceToBuilding;
+                    }
                 }
             }
-        return closestSpot;
-    }
-
-    public StorageSpotData GetClosestAssignedBuildingOrPrimaryStorageSpotThatCanStoreAnItem(WorkerData worker, Vector3 worldLoc)
-    {
-        var closestAssignedBuildingStorageSpot = worker.AssignedBuilding.GetClosestEmptyStorageSpot(worldLoc, out float distanceToClosestAssignedBuildingSpot);
-        var closestPrimaryStorageSpot = GetClosestPrimaryStorageSpotThatCanStoreItem(worldLoc, out float distanceToClosestPrimaryStorageSpot);
-        return distanceToClosestAssignedBuildingSpot < distanceToClosestPrimaryStorageSpot ? closestAssignedBuildingStorageSpot : closestPrimaryStorageSpot;
-    }
-
-    public bool HasStorageSpotInAssignedBuildingOrPrimaryThatCanStoreAnItem(WorkerData worker)
-    {
-        if (worker.AssignedBuilding.GetEmptyStorageSpot() != null)
-            return true;
-        return GetAnyPrimaryStorageSpotThatCanStoreItem() != null;
-    }
-
-    internal bool StorageSpotIsAvailable()
-    {
-        foreach (var building in Buildings)
-            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot)
-                if (building.GetEmptyStorageSpot() != null)
-                    return true;
-        return false;
+        }
+        return closestBuilding?.GetClosestEmptyStorageSpot(worldLoc, out dist);
     }
 
     /**
@@ -421,7 +408,6 @@ public class TownData : BaseData
                 numBeingCarried++;
         return numInStorage + numBeingCarried;
     }
-
 
     internal float Chart_GetNeedForItem(string itemId)
     {

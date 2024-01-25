@@ -120,7 +120,7 @@ public abstract class WorkerTask
 
     protected StorageSpotData reserveStorageSpotClosestToWorldLoc_AssignedBuildingOrPrimaryStorageOnly(Vector3 worldLoc)
     {
-        var spot = Worker.Town.GetClosestAssignedBuildingOrPrimaryStorageSpotThatCanStoreAnItem(Worker, worldLoc);
+        var spot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worldLoc, out float _, Worker);
         Debug.Assert(spot != null, "Caller neesd to ensure that we can reserve storage spot close to " + worldLoc);
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
         reserveStorageSpot(spot);
@@ -129,7 +129,7 @@ public abstract class WorkerTask
 
     protected StorageSpotData reserveStorageSpotClosestToWorldLoc(Vector3 worldLoc)
     {
-        var spot = Worker.Town.GetClosestStorageSpotThatCanStoreItem(worldLoc);
+        var spot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Any, worldLoc);
         Debug.Assert(spot != null, "Failed to reserve storage spot close to " + worldLoc);
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
         reserveStorageSpot(spot);
@@ -284,7 +284,7 @@ public abstract class WorkerTask
     private StorageSpotData getClosestBestStorageSpot_AssignedBuildingOrPrimaryStorageOnly(out float distance)
     {
         var closestAssignedBuildingSpot = Worker.AssignedBuilding.GetClosestEmptyStorageSpot(Worker.WorldLoc, out float distanceToClosestAssignedBuildingSpot);
-        var closestPrimaryStorageSpot = Worker.Town.GetClosestPrimaryStorageSpotThatCanStoreItem(Worker.WorldLoc, out float distanceToClosestPrimaryStorageSpot);
+        var closestPrimaryStorageSpot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, Worker.WorldLoc, out float distanceToClosestPrimaryStorageSpot);
         if (distanceToClosestAssignedBuildingSpot < distanceToClosestPrimaryStorageSpot)
         {
             distance = distanceToClosestAssignedBuildingSpot;

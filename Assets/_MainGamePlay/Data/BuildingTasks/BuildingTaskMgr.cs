@@ -9,10 +9,7 @@ public class BuildingTaskMgrData
 
     TownData Town => Building.Town;
     BuildingDefn Defn => Building.Defn;
-    bool HasAvailableStorageSpot => Building.HasAvailableStorageSpot;
-    int NumAvailableCraftingSpots => Building.NumAvailableCraftingSpots;
-    bool IsStorageFull => Building.IsStorageFull;
-    
+
     public BuildingTaskMgrData(BuildingData building)
     {
         Building = building;
@@ -58,13 +55,6 @@ public class BuildingTaskMgrData
 
             // Found a storage spot in this building with an item to sell
             availableTasks.Add(new PrioritizedTask(WorkerTask_SellGood.Create(worker, need, spotWithItemToSell), need.Priority));
-
-            // Do we have a space in which to store an item that we want to sell which is elsewhere?
-            if (!HasAvailableStorageSpot) continue;
-
-            // Found a storage spot to hold the item; create a task that says "if this good that I want to sell is anywhere out there, then tranport it to me
-            // public static WorkerTask_FerryItem Create(WorkerData worker, StorageSpotData storageSpotWithItem, BuildingData destBuilding)
-            // availableTasks.Add(new PrioritizedTask(WorkerTask_FerryItem.Create(worker, spotWithItemToSell, null), need.Priority));
         }
     }
 
@@ -86,7 +76,7 @@ public class BuildingTaskMgrData
 
             // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
             // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
-            if (!Town.HasStorageSpotInAssignedBuildingOrPrimaryThatCanStoreAnItem(worker)) continue;
+            if (!Town.HasAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worker)) continue;
 
             // Found a storage spot to hold the item
             availableTasks.Add(new PrioritizedTask(WorkerTask_PickupAbandonedItem.Create(worker, need), need.Priority));
@@ -96,6 +86,10 @@ public class BuildingTaskMgrData
     private void addTasks_CleanupBuildingStorage(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
     {
         if (!Defn.WorkersCanFerryItems) return;
+
+        // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
+        // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
+        if (!Town.HasAvailableStorageSpot()) return;
 
         foreach (var need in allTownNeeds)
         {
@@ -117,13 +111,9 @@ public class BuildingTaskMgrData
             StorageSpotData spotWithItemToMove = GetItemToRemoveFromStorage(worker, need.BuildingWithNeed);
             if (spotWithItemToMove == null) continue;
 
-            // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
-            // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
-            if (!Town.StorageSpotIsAvailable()) continue;
-
             // Hm; Ferry Item takes a destination building, forcing me to find the closest storage spot in that building.  I don't want to do that since it's redone in the task.start
             // and doing it here is wasted work if this Task isn't chosen.
-            StorageSpotData destinationStorageSpot = Town.GetClosestPrimaryStorageSpotThatCanStoreItem(spotWithItemToMove.WorldLoc, out float _);
+            StorageSpotData destinationStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, spotWithItemToMove.WorldLoc, out float _);
             if (destinationStorageSpot == null) continue;
 
             // Found a resource that can meet the need - calculate how well this minion can meet the need (score)
@@ -137,7 +127,7 @@ public class BuildingTaskMgrData
 
         // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
         // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
-        if (!Town.StorageSpotIsAvailable()) return;
+        if (!Town.HasAvailableStorageSpot()) return;
 
         // for now, find the first instance where a building needs a resource and the resource is in another building.
         foreach (var need in allTownNeeds)
@@ -174,7 +164,11 @@ public class BuildingTaskMgrData
     private void addTasks_GatherResources(List<PrioritizedTask> availableTasks, WorkerData worker)
     {
         if (!Defn.CanGatherResources) return;
-        if (IsStorageFull) return;
+        if (Building.IsStorageFull) return;
+
+        // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
+        // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
+        if (!Town.HasAvailableStorageSpot()) return;
 
         foreach (var need in Building.GatheringNeeds)
         {
@@ -182,10 +176,6 @@ public class BuildingTaskMgrData
 
             BuildingData buildingToGatherFrom = Town.getNearestResourceSource(worker, need.NeededItem);
             if (buildingToGatherFrom == null) continue; // no building to gather from
-
-            // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
-            // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
-            if (!Town.StorageSpotIsAvailable()) return;
 
             // Good to go - add the task as a possible choice
             availableTasks.Add(new PrioritizedTask(WorkerTask_GatherResource.Create(worker, need.NeededItem, buildingToGatherFrom), need.Priority));
@@ -195,8 +185,8 @@ public class BuildingTaskMgrData
     private void addTasks_CraftItems(List<PrioritizedTask> availableTasks, WorkerData worker)
     {
         if (!Defn.CanCraft) return;
-        if (IsStorageFull) return;
-        if (NumAvailableCraftingSpots == 0) return;
+        if (Building.IsStorageFull) return;
+        if (Building.NumAvailableCraftingSpots == 0) return;
 
         foreach (var itemToCraft in Defn.CraftableItems)
         {
@@ -210,7 +200,7 @@ public class BuildingTaskMgrData
             // Do we have storage for the crafted item?
             // TODO: Option to move item from our storage to a storage room if couriers aren't doing it?
             bool isImplicitGood = itemToCraft.GoodType == GoodType.implicitGood;
-            if (!isImplicitGood && !HasAvailableStorageSpot) continue;
+            if (!isImplicitGood && !Building.HasAvailableStorageSpot) continue;
 
             // Good to go - add the task as a possible choice
             availableTasks.Add(new PrioritizedTask(WorkerTask_CraftItem.Create(worker, itemToCraft), priority));
@@ -248,23 +238,6 @@ public class BuildingTaskMgrData
             if (need.NeededItem.Id == item.DefnId)
                 return true;
         return false;
-    }
-    private StorageSpotData GetClosestStorageCellThatCanStoreItem(Vector3 worldLoc, ItemDefn defn)
-    {
-        float dist = float.MaxValue;
-        StorageSpotData closestSpot = null;
-        foreach (var area in Building.StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (spot.IsEmptyAndAvailable)
-                {
-                    var newDist = Vector3.Distance(worldLoc, spot.WorldLoc);
-                    if (newDist < dist)
-                    {
-                        dist = newDist;
-                        closestSpot = spot;
-                    }
-                }
-        return closestSpot;
     }
 
     float getPriorityOfCraftingItem(ItemDefn itemToCraft)

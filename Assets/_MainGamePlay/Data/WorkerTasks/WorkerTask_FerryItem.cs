@@ -82,7 +82,7 @@ public class WorkerTask_FerryItem : WorkerTask
         if (destBuilding == null)
         {
             // Need doesn't care where it goes - e.g. StorageCleanup.  Find the closest primary storage spot that can store the item
-            destinationStorageSpotForItem = reserveStorageSpot(Worker.Town.GetClosestPrimaryStorageSpotThatCanStoreItem(storageSpotWithItem.WorldLoc, out float _));
+            destinationStorageSpotForItem = reserveStorageSpot(Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, storageSpotWithItem.WorldLoc));
         }
         else
         {
