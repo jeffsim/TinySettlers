@@ -16,7 +16,7 @@ MonoBehaviour:
   FriendlyName: Duvall
   Width: 4
   Height: 3
-  Tiles: d,g,g,g,g,g,g,g,g,g,g,d
+  Tiles: d,g,g,g,g,g,g,g,g,g,g,g
   WorldX: -800
   WorldY: 100
   Buildings:
