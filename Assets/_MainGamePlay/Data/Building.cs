@@ -147,7 +147,7 @@ public class BuildingData : BaseData
 
     internal void Initialize(TownData town)
     {
-        this.Town = town;
+        Town = town;
 
         GatheringSpots = new List<GatheringSpotData>();
         for (int i = 0; i < Defn.GatheringSpots.Count; i++)
@@ -210,15 +210,28 @@ public class BuildingData : BaseData
 
     internal void GetAvailableTasksForWorker(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
     {
-        addGatheringResourceTasks(availableTasks, worker);
-        addCraftingTasks(availableTasks, worker);
-        addCourierTasks(availableTasks, worker, allTownNeeds);
-        addStorageCleanupTasks(availableTasks, worker, allTownNeeds);
-        addAbandonedItemTasks(availableTasks, worker, allTownNeeds);
-        addSellGoodTasks(availableTasks, worker, allTownNeeds);
+        addTasks_GatherResources(availableTasks, worker);
+        addTasks_CraftItems(availableTasks, worker);
+        addTasks_CourierItems(availableTasks, worker, allTownNeeds);
+        addTasks_CleanupBuildingStorage(availableTasks, worker, allTownNeeds);
+        addTasks_CleanupAbandonedItems(availableTasks, worker, allTownNeeds);
+        addTasks_sellGoodsThatAreInTheBuilding(availableTasks, worker, allTownNeeds);
+        addTasks_RequestGoodsThatBuildingCanSell(availableTasks, worker, allTownNeeds);
     }
 
-    private void addSellGoodTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
+    private void addTasks_RequestGoodsThatBuildingCanSell(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
+    {
+        if (!Defn.CanSellGoods) return;
+
+        foreach (var need in allTownNeeds)
+        {
+            if (need.Type != NeedType.SellGood) continue;
+
+            // TODO
+        }
+    }
+
+    private void addTasks_sellGoodsThatAreInTheBuilding(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
     {
         if (!Defn.CanSellGoods) return;
 
@@ -233,12 +246,19 @@ public class BuildingData : BaseData
             StorageSpotData spotWithItemToSell = GetStorageSpotWithUnreservedItemOfType(need.NeededItem);
             if (spotWithItemToSell == null) continue;
 
-            // Found a storage spot to hold the item
+            // Found a storage spot in this building with an item to sell
             availableTasks.Add(new PrioritizedTask(WorkerTask_SellGood.Create(worker, need, spotWithItemToSell), need.Priority));
+
+            // Do we have a space in which to store an item that we want to sell which is elsewhere?
+            if (!HasAvailableStorageSpot) continue;
+
+            // Found a storage spot to hold the item; create a task that says "if this good that I want to sell is anywhere out there, then tranport it to me
+            // public static WorkerTask_FerryItem Create(WorkerData worker, StorageSpotData storageSpotWithItem, BuildingData destBuilding)
+            // availableTasks.Add(new PrioritizedTask(WorkerTask_FerryItem.Create(worker, spotWithItemToSell, null), need.Priority));
         }
     }
 
-    private void addAbandonedItemTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
+    private void addTasks_CleanupAbandonedItems(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
     {
         // If our workers can ferry items, and there are any items left on the ground, then consider picking them up
         if (!Defn.WorkersCanFerryItems) return;
@@ -263,7 +283,7 @@ public class BuildingData : BaseData
         }
     }
 
-    private void addStorageCleanupTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
+    private void addTasks_CleanupBuildingStorage(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
     {
         if (!Defn.WorkersCanFerryItems) return;
 
@@ -301,7 +321,7 @@ public class BuildingData : BaseData
         }
     }
 
-    private void addCourierTasks(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
+    private void addTasks_CourierItems(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
     {
         if (!Defn.WorkersCanFerryItems) return;
 
@@ -313,7 +333,7 @@ public class BuildingData : BaseData
         foreach (var need in allTownNeeds)
         {
             // Only looking for crafting, construction, and selling needs
-            if (need.Type != NeedType.CraftingOrConstructionMaterial && need.Type != NeedType.SellGood) continue;
+            if (need.Type != NeedType.CraftingOrConstructionMaterial) continue;
 
             // stockers only meet item needs
             if (need.NeedCoreType != NeedCoreType.Item) continue;
@@ -341,7 +361,7 @@ public class BuildingData : BaseData
         }
     }
 
-    private void addGatheringResourceTasks(List<PrioritizedTask> availableTasks, WorkerData worker)
+    private void addTasks_GatherResources(List<PrioritizedTask> availableTasks, WorkerData worker)
     {
         if (!Defn.CanGatherResources) return;
         if (IsStorageFull) return;
@@ -362,7 +382,7 @@ public class BuildingData : BaseData
         }
     }
 
-    private void addCraftingTasks(List<PrioritizedTask> availableTasks, WorkerData worker)
+    private void addTasks_CraftItems(List<PrioritizedTask> availableTasks, WorkerData worker)
     {
         if (!Defn.CanCraft) return;
         if (IsStorageFull) return;
