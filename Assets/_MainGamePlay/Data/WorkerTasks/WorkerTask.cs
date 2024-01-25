@@ -100,7 +100,7 @@ public abstract class WorkerTask
     }
 
     // ==== GATHERING ===================================================
-    
+
     protected GatheringSpotData reserveClosestBuildingGatheringSpot(BuildingData buildingGatheringFrom, Vector3 worldLoc)
     {
         var spot = buildingGatheringFrom.ReserveClosestGatheringSpot(Worker, worldLoc);
@@ -120,11 +120,8 @@ public abstract class WorkerTask
 
     protected StorageSpotData reserveStorageSpotClosestToWorldLoc_AssignedBuildingOrPrimaryStorageOnly(Vector3 worldLoc)
     {
-        var closestAssignedBuildingStorageSpot = Worker.AssignedBuilding.GetClosestEmptyStorageSpot(worldLoc, out float distanceToClosestAssignedBuildingSpot);
-        var closestPrimaryStorageSpot = Worker.Town.GetClosestPrimaryStorageSpotThatCanStoreItem(worldLoc, out float distanceToClosestPrimaryStorageSpot);
-        var spot = distanceToClosestAssignedBuildingSpot < distanceToClosestPrimaryStorageSpot ? closestAssignedBuildingStorageSpot : closestPrimaryStorageSpot;
-        
-        Debug.Assert(spot != null, "Failed to reserve storage spot close to " + worldLoc);
+        var spot = Worker.Town.GetClosestAssignedBuildingOrPrimaryStorageSpotThatCanStoreAnItem(Worker, worldLoc);
+        Debug.Assert(spot != null, "Caller neesd to ensure that we can reserve storage spot close to " + worldLoc);
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
         reserveStorageSpot(spot);
         return spot;

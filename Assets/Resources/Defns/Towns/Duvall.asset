@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: duvall
   FriendlyName: Duvall
-  Width: 3
+  Width: 4
   Height: 3
-  Tiles: d,g,g,g,g,g,g,g,d
+  Tiles: d,g,g,g,g,g,g,g,g,g,g,d
   WorldX: -800
   WorldY: 100
   Buildings:

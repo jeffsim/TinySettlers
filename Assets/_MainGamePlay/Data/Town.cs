@@ -278,6 +278,7 @@ public class TownData : BaseData
     }
 
     // Only returns Primary Storage rooms (Camp, STorageRoom)
+    internal StorageSpotData GetClosestPrimaryStorageSpotThatCanStoreItem(Vector3 worldLoc) => GetClosestPrimaryStorageSpotThatCanStoreItem(worldLoc, out float _);
     internal StorageSpotData GetClosestPrimaryStorageSpotThatCanStoreItem(Vector3 worldLoc, out float distance)
     {
         // TODO: more performant distance checking
@@ -297,6 +298,18 @@ public class TownData : BaseData
         return closestSpot;
     }
 
+    internal StorageSpotData GetAnyPrimaryStorageSpotThatCanStoreItem()
+    {
+        foreach (var building in Buildings)
+            if (building.Defn.CanStoreItems && building.Defn.IsPrimaryStorage && building.HasAvailableStorageSpot)
+            {
+                var spot = building.GetEmptyStorageSpot();
+                if (spot != null)
+                    return spot;
+            }
+        return null;
+    }
+
     internal StorageSpotData GetClosestStorageSpotThatCanStoreItem(Vector3 worldLoc)
     {
         // TODO: more performant distance checking
@@ -314,6 +327,20 @@ public class TownData : BaseData
                 }
             }
         return closestSpot;
+    }
+
+    public StorageSpotData GetClosestAssignedBuildingOrPrimaryStorageSpotThatCanStoreAnItem(WorkerData worker, Vector3 worldLoc)
+    {
+        var closestAssignedBuildingStorageSpot = worker.AssignedBuilding.GetClosestEmptyStorageSpot(worldLoc, out float distanceToClosestAssignedBuildingSpot);
+        var closestPrimaryStorageSpot = GetClosestPrimaryStorageSpotThatCanStoreItem(worldLoc, out float distanceToClosestPrimaryStorageSpot);
+        return distanceToClosestAssignedBuildingSpot < distanceToClosestPrimaryStorageSpot ? closestAssignedBuildingStorageSpot : closestPrimaryStorageSpot;
+    }
+
+    public bool HasStorageSpotInAssignedBuildingOrPrimaryThatCanStoreAnItem(WorkerData worker)
+    {
+        if (worker.AssignedBuilding.GetEmptyStorageSpot() != null)
+            return true;
+        return GetAnyPrimaryStorageSpotThatCanStoreItem() != null;
     }
 
     internal bool StorageSpotIsAvailable()
