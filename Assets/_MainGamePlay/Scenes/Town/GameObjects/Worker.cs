@@ -206,6 +206,7 @@ public class Worker : MonoBehaviour
                 break;
             case TaskType.Idle:
                 CarriedItem.gameObject.SetActive(true);
+                carriedItemRectTransform.localPosition = itemDown;
                 CarriedItem.text = "<i>i</i>";
                 break;
 

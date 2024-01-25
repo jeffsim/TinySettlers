@@ -155,20 +155,4 @@ public class NeedData : BaseData
             worker.OnNeedBeingMetCancelled();
         IsCancelled = true;
     }
-
-    // itemCellDistance = distance from mob to cell that the specified item is in.
-    // public float PriorityOfMeetingItemNeed(WorkerData worker,  float itemCellDistance)
-    // {
-    //     // DebugMgr.AssertNotNull(entity, "Passed null entity to PriorityOfMeetingNeed");
-    //     // DebugMgr.AssertNotNull(room, "Passed null room to PriorityOfMeetingNeed");
-    //     // DebugMgr.Assert(NeedType != NeedType.Construction, "should only be called for item needs (persistent item, crafting, construction, or entityself)");
-
-    //     var distFromResourcesRoomToRoom = building.getDistanceToBuilding(worker.AssignedBuilding) * 9;
-    //     var totalDistance = itemCellDistance + distFromResourcesRoomToRoom;
-    //     var timeNeedHasBeenAlive = GameTime.time - StartTimeInSeconds;
-
-    //     // TODO: I'm sure this will need tweaking...
-    //     var pri = this.Priority + (30 - (Math.Min(30, totalDistance))) / 10f + Math.Min(timeNeedHasBeenAlive / 100f, 1);
-    //     return pri;
-    // }
 }

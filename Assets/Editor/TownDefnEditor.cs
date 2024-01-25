@@ -52,13 +52,13 @@ public class TownDefnEditor : OdinEditor
 
             }
 
-        foreach (var roomDefn in mapDefn.Buildings)
+        foreach (var buildingDefn in mapDefn.Buildings)
         {
-            var finalX = rect.x + roomDefn.TileX * tileSize;
-            var finalY = rect.y + roomDefn.TileY * tileSize;
+            var finalX = rect.x + buildingDefn.TileX * tileSize;
+            var finalY = rect.y + buildingDefn.TileY * tileSize;
             var buildingRect = new Rect(finalX + 2, finalY + 2, tileSize - 1 - 4, tileSize - 1 - 4);
-            EditorGUI.DrawRect(buildingRect, roomDefn.Building.EditorColor);
-            var name = roomDefn.Building.FriendlyName;
+            EditorGUI.DrawRect(buildingRect, buildingDefn.Building.EditorColor);
+            var name = buildingDefn.Building.FriendlyName;
             if (name.Length > 2)
             {
                 var text = name.Substring(0, Math.Min(name.Length, 4));
