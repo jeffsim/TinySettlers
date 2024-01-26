@@ -1,7 +1,22 @@
 * Market is not requesting goods, or couriers are not seeing it as a valid place ot cleanupstorage
 
 * Woodcutter goes to chop wood; after gathered, it looks around to see where to drop off the gathered wood
-    - currently: looks for closest of (primary storage, assigned building)
+    - currently: looks for closest of [primary storage, assigned building] and drops it off there
     - but: what if there is a crafting station asking that needs wood?
         + should woodcutter carry wood directly to crafting station?
         + what if crafting station is farther than storage?
+
+
+* FerryItem task:
+    scenarios:
+        1. building wants item for crafting purposes.  destBuilding speicified.  Creates "need for item for crafting"
+        2. building wants item removed from storage.  destBuilding not specified.  Creates "need to move item to primary storage"
+    - problem: if map = [storage][empty][empty][crafting][item], then courier will go from storage to item and carry it back to storage instead of crafting which needs it
+    
+    STORAGE / FERRY
+    - option 1: FOR CLEANUP ONLY (not crafting ferry needs) -- keep Needs as-is, and when item is picked up ask "does any building actually need this item?"; 
+        + if no building needs the item then continue to carry it to primary storage
+        + if a building needs the item, then continue to meet the cleanup need, but do so by carrying to the crafting building  
+            - AND mark the crafting-item-need as Met.  I don't think anything needs to get abandoned
+    - option 2: Change how storage cleanup need works
+        + not sure how, since needs are "pull" not push.  

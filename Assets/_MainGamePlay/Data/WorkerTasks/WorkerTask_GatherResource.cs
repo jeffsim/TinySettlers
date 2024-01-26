@@ -122,8 +122,22 @@ public class WorkerTask_GatherResource : WorkerTask
                     unreserveBuildingGatheringSpot(reservedGatheringSpot);
 
                     // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
-                    reservedStorageSpot = getBetterStorageSpotThanSpotIfExists_AssignedBuildingOrPrimaryStorageOnly(reservedStorageSpot);
+                    //                    reservedStorageSpot = getBetterStorageSpotThanSpotIfExists_AssignedBuildingOrPrimaryStorageOnly(reservedStorageSpot);
 
+                    // Before we bring the gathered resource back to our assigned building, check if any building needs it.  If so, bring it there instead.
+                    NeedData highestNeed = Worker.Town.GetHighestNeedForItem(GatheringItemDefnId);
+                    if (highestNeed != null)
+                    {
+                        highestNeed.AssignWorkerToMeetNeed(Worker);
+                        highestNeed.BuildingWithNeed.UpdateNeedPriorities();
+                        reservedStorageSpot = reserveStorageSpot(highestNeed.BuildingWithNeed.GetClosestEmptyStorageSpot(Worker.WorldLoc));
+                    }
+                    else
+                    {
+                        // no building needs the gathered resource, so bring it back to our assigned building OR the closest primary storage spot
+                        // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
+                        reservedStorageSpot = getBetterStorageSpotThanSpotIfExists_AssignedBuildingOrPrimaryStorageOnly(reservedStorageSpot);
+                    }
                     gotoNextSubstate();
                 }
                 break;

@@ -402,6 +402,17 @@ public class TownData : BaseData
         return total;
     }
 
+    internal NeedData GetHighestNeedForItem(string itemDefnId)
+    {
+        NeedData highestNeed = null;
+        foreach (var building in Buildings)
+            foreach (var need in building.Needs)
+                if ((need.Type == NeedType.CraftingOrConstructionMaterial || need.Type == NeedType.SellGood || need.Type == NeedType.PersistentBuildingNeed) && need.NeededItem.Id == itemDefnId)
+                    if (highestNeed == null || need.Priority > highestNeed.Priority)
+                        highestNeed = need;
+        return highestNeed;
+    }
+
     internal void UnassignWorkerFromBuilding(BuildingData data)
     {
         WorkerData worker = GetWorkerInBuilding(data);
