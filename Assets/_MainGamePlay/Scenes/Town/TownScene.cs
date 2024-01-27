@@ -33,6 +33,11 @@ public class TownScene : SceneWithMap
         if (gameDataMgr.GameData.CurrentTown == null) return;
         if (GameTime.timeScale == 0) return;
         gameDataMgr.GameData.CurrentTown.Update();
+
+        if (Input.GetKeyDown(KeyCode.Alpha1)) SetGameSpeed(1);
+        if (Input.GetKeyDown(KeyCode.Alpha2)) SetGameSpeed(2);
+        if (Input.GetKeyDown(KeyCode.Alpha3)) SetGameSpeed(4);
+        if (Input.GetKeyDown(KeyCode.Alpha4)) SetGameSpeed(8);
     }
 
     public void OnTownCompleted()

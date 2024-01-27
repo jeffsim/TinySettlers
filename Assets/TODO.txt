@@ -6,6 +6,8 @@
         + should woodcutter carry wood directly to crafting station?
         + what if crafting station is farther than storage?
 
+* eliminate building crafting needs if no assigned workers.  TBD: clear out resources proactively and/or allow other needs to 'take' from it?
+    
 
 * FerryItem task:
     scenarios:
