@@ -64,7 +64,8 @@
         "Assets/Scenes": true,
         "Assets/ALINE": true,
         "Assets/TextMesh Pro": true,
-        "**/*.asmdef": true
+        "**/*.asmdef": true,
+        "*.git*": true,
     },
     "dotnet.defaultSolution": "TinySettlers.sln"
 }
