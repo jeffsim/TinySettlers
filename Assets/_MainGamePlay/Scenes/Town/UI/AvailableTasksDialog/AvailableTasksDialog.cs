@@ -25,12 +25,12 @@ public class AvailableTasksDialog : MonoBehaviour
         if (scene == null) return;
 
         var town = scene.Map.Town;
-        if (town.LastSeenPrioritizedTasks == null)
+        if (town.TownTaskMgr.LastSeenPrioritizedTasks == null)
             return;
             
         List.RemoveAllChildren();
 
-        foreach (var task in town.LastSeenPrioritizedTasks)
+        foreach (var task in town.TownTaskMgr.LastSeenPrioritizedTasks)
         {
           //  if (!task.Task.IsRunning) continue;
             var entry = Instantiate(AvailableTasksDialogEntryPrefab, List.transform);

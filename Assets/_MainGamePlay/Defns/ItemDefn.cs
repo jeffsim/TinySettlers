@@ -25,4 +25,7 @@ public class ItemDefn : BaseDefn
 
     // Heavy objects slow down the worker carrying them
     public float CarryingSpeedModifier = 1.0f;
+
+    // Only applicable to e.g. potatoes, trees
+    public float SecondsToGrow = 1;
 }

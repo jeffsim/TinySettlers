@@ -219,7 +219,7 @@ public class BuildingTaskMgrData
             foreach (var spot in area.StorageSpots)
                 if (!spot.IsEmpty && !spot.IsReserved)
                 {
-                    if (itemIsNeededForCrafting(spot.ItemInStorage, building))
+                    if (itemIsNeededForCrafting(spot.ItemInSpot, building))
                         continue;
                     var dist = Vector3.Distance(worker.WorldLoc, spot.WorldLoc); // TODO (PERF): There are a lot of Vector3.Distance calls happening...
                     if (dist < distToClosest)

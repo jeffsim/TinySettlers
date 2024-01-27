@@ -21,6 +21,11 @@ public class WorkerData : BaseData
     // The Town which this Worker is in
     public TownData Town;
 
+    public ItemData ItemInHand;
+    public StorageSpotData StorageSpotReservedForItemInHand;
+
+    public NeedData OriginalPickupItemNeed;
+    
     [NonSerialized] public OnAssignedToBuildingEvent OnAssignedToBuilding;
 
     public WorkerData(BuildingData buildingToStartIn)
@@ -99,5 +104,47 @@ public class WorkerData : BaseData
     {
         // TODO
         return true;
+    }
+
+    internal float GetMovementSpeed()
+    {
+        // todo: can be modified via e.g. research, town upgrades, ...
+        var distanceMovedPerSecond = 5f;
+        if (ItemInHand != null)
+            distanceMovedPerSecond *= ItemInHand.Defn.CarryingSpeedModifier;
+        return distanceMovedPerSecond;
+    }
+
+    internal void AddItemToHands(ItemData item)
+    {
+        Debug.Assert(item != null, "null item");
+        Debug.Assert(ItemInHand == null, "Already have ItemInHand (" + ItemInHand + ")");
+        ItemInHand = item;
+    }
+
+    internal void DropItemInHandInReservedStorageSpot()
+    {
+        Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
+        Debug.Assert(StorageSpotReservedForItemInHand.Building != null && !StorageSpotReservedForItemInHand.Building.IsDestroyed, "No ItemInHand or building destroyed");
+        Debug.Assert(ItemInHand != null, "No ItemInHand");
+
+        // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
+        StorageSpotReservedForItemInHand.Building.AddItemToItemSpot(ItemInHand, StorageSpotReservedForItemInHand);
+        ItemInHand = null;
+    }
+
+    internal bool CanGatherResource(ItemDefn neededItem)
+    {
+        // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
+        // worker is assigned to building and/or by worker's defn
+        return (AssignedBuilding.Defn.CanGatherResources && AssignedBuilding.Defn.GatherableResources.Contains(neededItem)) ||
+                AssignedBuilding.Defn.IsPrimaryStorage;
+    }
+
+    internal bool CanCleanupStorage()
+    {
+        // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
+        // worker is assigned to building and/or by worker's defn
+        return AssignedBuilding.Defn.WorkersCanFerryItems;
     }
 }

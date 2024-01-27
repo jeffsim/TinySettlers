@@ -102,6 +102,7 @@ public class NeedData : BaseData
         Priority = 0;//.5f; // TODO: Remove
         WorkersMeetingNeed = new List<WorkerData>();
         StartTimeInSeconds = GameTime.time;
+        MaxNumWorkersThatCanMeetNeed = 1;
     }
 
     public NeedData(ItemData abandonedItem)

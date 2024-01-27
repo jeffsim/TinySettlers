@@ -64,7 +64,7 @@ public class StorageAreaData : BaseData
         // TODO (perf): Dictionary lookup
         int count = 0;
         foreach (var spot in StorageSpots)
-            if (!spot.IsEmpty && (itemDefn == null || spot.ItemInStorage.DefnId == itemDefn.Id)) count++;
+            if (!spot.IsEmpty && (itemDefn == null || spot.ItemInSpot.DefnId == itemDefn.Id)) count++;
         return count;
     }
 
@@ -74,7 +74,7 @@ public class StorageAreaData : BaseData
         int count = 0;
         foreach (var spot in StorageSpots)
             if (!spot.IsEmpty && (itemDefn == null ||
-            (!spot.IsReserved && spot.ItemInStorage.DefnId == itemDefn.Id))) count++;
+            (!spot.IsReserved && spot.ItemInSpot.DefnId == itemDefn.Id))) count++;
         return count;
     }
 

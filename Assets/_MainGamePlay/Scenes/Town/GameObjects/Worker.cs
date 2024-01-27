@@ -74,10 +74,53 @@ public class Worker : MonoBehaviour
 
         var itemUp = new Vector3(0, 1f, -1);
         var itemDown = new Vector3(0, 0f, -1);
+        var scaleSmall = new Vector3(0, 0, 0);
+        var scaleNormal = new Vector3(1, 1, 1);
 
         var carriedItemRectTransform = CarriedItem.GetComponent<RectTransform>();
         switch (Data.CurrentTask.Type)
         {
+            case TaskType.PickupGatherableResource:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_PickupGatherableResource).GetTaskItem().Id.Substring(0, 2);
+                switch ((WorkerTask_PickupGatherableResourceSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot:
+                        carriedItemRectTransform.localPosition = itemDown;
+                        carriedItemRectTransform.localScale = scaleNormal;
+                        CarriedItem.color = Color.red;
+                        break;
+                    case WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource:
+                        var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupGatherableResource.secondsToReap);
+                        carriedItemRectTransform.localScale = Vector3.Lerp(scaleSmall, scaleNormal, t);
+                        CarriedItem.color = Color.Lerp(Color.red, Color.white, t);
+                        break;
+                    case WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource:
+                        var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupGatherableResource.secondsToPickup);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t2);
+                        carriedItemRectTransform.localScale = scaleNormal;
+                        CarriedItem.color = Color.white;
+                        break;
+                }
+                break;
+
+            case TaskType.DeliverItemInHandToStorageSpot:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_DeliverItemInHandToStorageSpot).GetTaskItem().Id.Substring(0, 2);
+                switch ((WorkerTask_DeliverItemInHandToStorageSpotSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo:
+                        carriedItemRectTransform.localPosition = itemUp;
+                        CarriedItem.color = Color.white;
+                        break;
+                    case WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot:
+                        var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_DeliverItemInHandToStorageSpot.secondsToDrop);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t);
+                        CarriedItem.color = Color.white;
+                        break;
+                }
+                break;
+
             case TaskType.FerryItem:
                 CarriedItem.gameObject.SetActive(true);
                 CarriedItem.text = (Data.CurrentTask as WorkerTask_FerryItem).itemBeingFerried.DefnId.Substring(0, 2);
@@ -207,6 +250,7 @@ public class Worker : MonoBehaviour
             case TaskType.Idle:
                 CarriedItem.gameObject.SetActive(true);
                 carriedItemRectTransform.localPosition = itemDown;
+                CarriedItem.color = Color.white;
                 CarriedItem.text = "<i>i</i>";
                 break;
 

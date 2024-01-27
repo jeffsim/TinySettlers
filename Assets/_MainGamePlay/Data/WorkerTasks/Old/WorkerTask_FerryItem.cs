@@ -71,8 +71,8 @@ public class WorkerTask_FerryItem : WorkerTask
     {
         this.storageSpotWithItem = storageSpotWithItem;
         this.destBuilding = destBuilding;
-        CarryingSpeedMultiplier = storageSpotWithItem.ItemInStorage.Defn.CarryingSpeedModifier;
-        itemBeingFerried = storageSpotWithItem.ItemInStorage;
+        CarryingSpeedMultiplier = storageSpotWithItem.ItemInSpot.Defn.CarryingSpeedModifier;
+        itemBeingFerried = storageSpotWithItem.ItemInSpot;
     }
 
     public override void Start()
@@ -154,7 +154,7 @@ public class WorkerTask_FerryItem : WorkerTask
                 {
                     // Done dropping.  Add the item into the storage spot.  Complete the task first so that the spot is unreserved so that we can add to it
                     CompleteTask();
-                    destinationStorageSpotForItem.Building.AddItemToStorageSpot(itemBeingFerried, destinationStorageSpotForItem);
+                    destinationStorageSpotForItem.Building.AddItemToItemSpot(itemBeingFerried, destinationStorageSpotForItem);
                 }
                 break;
 

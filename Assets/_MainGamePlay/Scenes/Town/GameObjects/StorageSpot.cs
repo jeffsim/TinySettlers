@@ -43,8 +43,8 @@ public class StorageSpot : MonoBehaviour
             GetComponentInChildren<Renderer>().material.color = Color.black;
         else
         {
-            GetComponentInChildren<Renderer>().material.color = Data.ItemInStorage.Defn.Color;
-            name = "Storage " + index + " - " + Data.ItemInStorage.Defn.FriendlyName;
+            GetComponentInChildren<Renderer>().material.color = Data.ItemInSpot.Defn.Color;
+            name = "Storage " + index + " - " + Data.ItemInSpot.Defn.FriendlyName;
         }
         ReservedIndicator.SetActive(Data.IsReserved);
     }

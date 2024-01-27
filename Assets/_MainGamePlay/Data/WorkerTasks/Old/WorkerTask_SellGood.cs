@@ -11,7 +11,7 @@ public enum WorkerTask_SellGoodSubstate
 [Serializable]
 public class WorkerTask_SellGood : WorkerTask
 {
-    public override string ToString() => "Sell good (" +(StorageSpotWithGoodToSell.ItemInStorage==null?"NULL" : StorageSpotWithGoodToSell.ItemInStorage.Defn.Id) + ")";
+    public override string ToString() => "Sell good (" +(StorageSpotWithGoodToSell.ItemInSpot==null?"NULL" : StorageSpotWithGoodToSell.ItemInSpot.Defn.Id) + ")";
     public override TaskType Type => TaskType.SellGood;
 
     [SerializeField] StorageSpotData StorageSpotWithGoodToSell;
@@ -21,15 +21,12 @@ public class WorkerTask_SellGood : WorkerTask
     // Used to draw walking lines in debug mode
     public override bool Debug_IsMovingToTarget => substate == (int)WorkerTask_SellGoodSubstate.GotoSpotWithGoodToSell;
 
-    // The Need that this task is meeting
-    public NeedData Need;
-
-    public override ItemDefn GetTaskItem() => StorageSpotWithGoodToSell.ItemInStorage.Defn;
+    public override ItemDefn GetTaskItem() => StorageSpotWithGoodToSell.ItemInSpot.Defn;
 
     public override string ToDebugString()
     {
         var str = "Sell\n";
-        str += "  Item: " + StorageSpotWithGoodToSell.ItemInStorage.Defn.Id + "\n";
+        str += "  Item: " + StorageSpotWithGoodToSell.ItemInSpot.Defn.Id + "\n";
         str += "  FromStorageSpot: " + StorageSpotWithGoodToSell.InstanceId + " (" + StorageSpotWithGoodToSell.Building.DefnId + ")\n";
         str += "  substate: " + substate;
         switch (substate)
@@ -47,7 +44,7 @@ public class WorkerTask_SellGood : WorkerTask
         return new WorkerTask_SellGood(worker, need, storageSpotWithItem);
     }
 
-    private WorkerTask_SellGood(WorkerData worker, NeedData need, StorageSpotData storageSpotWithItem) : base(worker)
+    private WorkerTask_SellGood(WorkerData worker, NeedData need, StorageSpotData storageSpotWithItem) : base(worker, need)
     {
         Need = need;
         StorageSpotWithGoodToSell = storageSpotWithItem;
@@ -94,7 +91,7 @@ public class WorkerTask_SellGood : WorkerTask
                 {
                     // Done dropping.  Add the item into the storage spot.  Complete the task first so that the spot is unreserved so that we can add to it
                     CompleteTask();
-                    Worker.Town.ItemSold(StorageSpotWithGoodToSell.ItemInStorage);
+                    Worker.Town.ItemSold(StorageSpotWithGoodToSell.ItemInSpot);
                     StorageSpotWithGoodToSell.RemoveItem();
                 }
                 break;

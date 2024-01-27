@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -8,6 +9,7 @@ public class GatheringSpot : MonoBehaviour
     public GameObject Highlight;
     [NonSerialized] public GatheringSpotData Data;
     SceneWithMap scene;
+    public TextMeshPro ItemInSpot;
 
     int index;
 
@@ -54,5 +56,21 @@ public class GatheringSpot : MonoBehaviour
         if (scene.WorkerDetails.gameObject.activeSelf && scene.WorkerDetails.worker != null && scene.WorkerDetails.worker.Data.CurrentTask.HasReservedGatheringSpot(Data))
             showHighlight = true;
         Highlight.SetActive(showHighlight);
+
+        var scaleSmall = new Vector3(0, 0, 0);
+        var scaleNormal = new Vector3(1, 1, 1);
+        var ItemInSpotRectTransform = ItemInSpot.GetComponent<RectTransform>();
+        if (Data.ItemInSpot != null)
+        {
+            ItemInSpot.text = Data.ItemInSpot.Defn.Id.Substring(0, 2);
+            ItemInSpot.color = Color.green;
+            ItemInSpotRectTransform.localScale = scaleNormal;
+        }
+        else if (Data.ItemGrownInSpotDefnId != null)
+        {
+            ItemInSpot.text = Data.ItemGrownInSpotDefnId.Substring(0, 2);
+            ItemInSpot.color = Color.Lerp(Color.red, Color.green, Data.PercentGrown);
+            ItemInSpotRectTransform.localScale = Vector3.Lerp(scaleSmall, scaleNormal, Data.PercentGrown);
+        }
     }
 }

@@ -24,9 +24,6 @@ public class WorkerTask_PickupAbandonedItem : WorkerTask
 
     public override bool Debug_IsMovingToTarget => substate == 0 || substate == 2;
 
-    // The Need that this task is meeting
-    public NeedData Need;
-
     public override ItemDefn GetTaskItem() => ItemToPickup?.Defn;
 
     public override string ToDebugString()
@@ -57,7 +54,7 @@ public class WorkerTask_PickupAbandonedItem : WorkerTask
         return new WorkerTask_PickupAbandonedItem(worker, need);
     }
 
-    private WorkerTask_PickupAbandonedItem(WorkerData worker, NeedData need) : base(worker)
+    private WorkerTask_PickupAbandonedItem(WorkerData worker, NeedData need) : base(worker, need)
     {
         Need = need;
         ItemToPickup = need.AbandonedItemToPickup;
@@ -132,7 +129,7 @@ public class WorkerTask_PickupAbandonedItem : WorkerTask
                 {
                     // Done dropping.  Add the item into the storage spot.  Complete the task first so that the spot is unreserved so that we can add to it
                     CompleteTask();
-                    destinationStorageSpotForItem.Building.AddItemToStorageSpot(ItemToPickup, destinationStorageSpotForItem);
+                    destinationStorageSpotForItem.Building.AddItemToItemSpot(ItemToPickup, destinationStorageSpotForItem);
                 }
                 break;
 

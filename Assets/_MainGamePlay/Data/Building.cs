@@ -71,6 +71,16 @@ public class BuildingData : BaseData
             return count;
         }
     }
+    public int NumStorageSpots
+    {
+        get
+        {
+            // TODO (PERF): Cache
+            int count = 0;
+            foreach (var area in StorageAreas) count += area.StorageSpots.Count;
+            return count;
+        }
+    }
 
     public bool HasAvailableStorageSpot
     {
@@ -235,7 +245,7 @@ public class BuildingData : BaseData
     {
         foreach (var area in StorageAreas)
             foreach (var spot in area.StorageSpots)
-                if (!spot.IsReserved && spot.ItemInStorage != null && spot.ItemInStorage.DefnId == itemDefn.Id)// && spot.ItemInStorage.Defn.ItemClass == itemClass)
+                if (!spot.IsReserved && spot.ItemInSpot != null && spot.ItemInSpot.DefnId == itemDefn.Id)// && spot.ItemInStorage.Defn.ItemClass == itemClass)
                     return spot;
 
         return null;
@@ -255,6 +265,10 @@ public class BuildingData : BaseData
     public void Update()
     {
         UpdateNeedPriorities();
+
+        // grow
+        foreach (var spot in GatheringSpots)
+            spot.Update();
     }
 
     public void UpdateNeedPriorities()
@@ -269,10 +283,7 @@ public class BuildingData : BaseData
             else
             {
                 // unless close to full, Cleanup tasks are lower priority than filling crafting need tasks
-                ClearOutStorageNeed.Priority = percentFull;
-                if (ClearOutStorageNeed.Priority < .75)
-                    ClearOutStorageNeed.Priority /= 5f;
-                ClearOutStorageNeed.Priority *= 2;
+                ClearOutStorageNeed.Priority = percentFull / 10f;
 
                 // if we're a crafting building then we have a higher priority than non-crafting buildings (e.g. woodcutter) to clear storage
                 // so that we can craft more
@@ -326,22 +337,14 @@ public class BuildingData : BaseData
                 need.Priority = 0;
                 continue;
             }
-            need.Priority = 1;
+            need.Priority = .1f;
             // if we have a lot of them then reduce priority
             int numOfNeededItemAlreadyInStorage = NumItemsInStorage(need.NeededItem);
-            if (percentFull > .99f)
-                need.Priority = 0; // full
-            else if (percentFull > .75f)
-                need.Priority *= .5f; // storage is mostly full of any items
-            else if (percentFull > .5f)
-                need.Priority *= .75f; // storage is somewhat full of any items
-            else if (percentFull > .25f)
-                need.Priority *= .875f; // storage has some of item already
-            else if (percentFull > .1f)
-                need.Priority *= .9f; // storage has a couple of item already
-            else if (numOfNeededItemAlreadyInStorage > Defn.NumStorageAreas / 2)
+            numOfNeededItemAlreadyInStorage = Town.NumTotalItemsInStorage(need.NeededItem);
+
+            if (numOfNeededItemAlreadyInStorage > Town.NumTotalStorageSpots() / 2)
                 need.Priority *= .5f; // storage is half+ full of the needed item
-            else if (numOfNeededItemAlreadyInStorage > Defn.NumStorageAreas / 4)
+            else if (numOfNeededItemAlreadyInStorage > Town.NumTotalStorageSpots() / 4)
                 need.Priority *= .75f; // storage is 25%-50% full of the needed item
         }
 
@@ -381,19 +384,7 @@ public class BuildingData : BaseData
         return count;
     }
 
-    // public void AddItemToStorage(ItemData item)
-    // {
-    //     Debug.Assert(!IsStorageFull, "Adding item to full storage " + DefnId);
-
-    //     // Find an empty storagespot
-    //     StorageSpotData emptySpot = GetEmptyStorageSpot();
-    //     emptySpot.AddItem(item);
-
-    //     Debug.Assert(!emptySpot.IsReserved, "AddItemToStorage: Got a reserved spot");
-    // }
-
-
-    public void AddItemToStorageSpot(ItemData item, StorageSpotData spot)
+    public void AddItemToItemSpot(ItemData item, ItemSpotData spot)
     {
         spot.AddItem(item);
     }
@@ -471,6 +462,48 @@ public class BuildingData : BaseData
     //     ConstructionNeeds.ForEach(need => need.Cancel());
     //     ConstructionNeeds.Clear();
     // }
+
+    internal GatheringSpotData GetClosestGatheringSpot(Vector3 worldLoc, out float distance)
+    {
+        GatheringSpotData closestSpot = null;
+        distance = float.MaxValue;
+
+        // Find Closest unreserved gathering spot
+        foreach (var spot in GatheringSpots)
+            if (!spot.IsReserved)
+            {
+                var distToSpot = Vector3.Distance(worldLoc, spot.WorldLoc);
+                if (distToSpot < distance)
+                {
+                    distance = distToSpot;
+                    closestSpot = spot;
+                }
+            }
+        if (closestSpot != null)
+            return closestSpot;
+        return null;
+    }
+
+    internal GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(Vector3 worldLoc, out float distance)
+    {
+        GatheringSpotData closestSpot = null;
+        distance = float.MaxValue;
+
+        // Find Closest unreserved gathering spot that has an item that needs to be gathered
+        foreach (var spot in GatheringSpots)
+            if (!spot.IsReserved && spot.ItemInSpot != null)
+            {
+                var distToSpot = Vector3.Distance(worldLoc, spot.WorldLoc);
+                if (distToSpot < distance)
+                {
+                    distance = distToSpot;
+                    closestSpot = spot;
+                }
+            }
+        if (closestSpot != null)
+            return closestSpot;
+        return null;
+    }
 
     internal GatheringSpotData ReserveClosestGatheringSpot(WorkerData worker, Vector3 worldLoc)
     {
@@ -581,8 +614,8 @@ public class BuildingData : BaseData
     {
         foreach (var area in StorageAreas)
             foreach (var spot in area.StorageSpots)
-                if (!spot.IsReserved && spot.ItemInStorage != null && spot.ItemInStorage.DefnId == item.Id)
-                    return spot.ItemInStorage;
+                if (!spot.IsReserved && spot.ItemInSpot != null && spot.ItemInSpot.DefnId == item.Id)
+                    return spot.ItemInSpot;
         return null;
     }
 
@@ -590,7 +623,7 @@ public class BuildingData : BaseData
     {
         foreach (var area in StorageAreas)
             foreach (var spot in area.StorageSpots)
-                if (!spot.IsReserved && spot.ItemInStorage != null && spot.ItemInStorage.DefnId == item.Id)
+                if (!spot.IsReserved && spot.ItemInSpot != null && spot.ItemInSpot.DefnId == item.Id)
                     return spot;
         return null;
     }
@@ -615,7 +648,7 @@ public class BuildingData : BaseData
             foreach (var spot in area.StorageSpots)
                 if (!spot.IsEmpty)
                 {
-                    Town.AddItemToGround(spot.ItemInStorage, spot.WorldLoc);// + WorldLoc);
+                    Town.AddItemToGround(spot.ItemInSpot, spot.WorldLoc);// + WorldLoc);
                     spot.RemoveItem();
                 }
     }
@@ -659,5 +692,19 @@ public class BuildingData : BaseData
                 OtherBuildingsByDistance.Add(new() { Building = building, Distance = distance });
         }
         OtherBuildingsByDistance.Sort((a, b) => (int)(a.Distance - b.Distance));
+    }
+
+    internal StorageSpotData GetFirstStorageSpotWithUnreservedItemToRemove()
+    {
+        foreach (var area in StorageAreas)
+            foreach (var spot in area.StorageSpots)
+                if (!spot.IsReserved && spot.ItemInSpot != null)
+                {
+                    // don't allow returning resources that we need for crafting
+                    if (CraftingResourceNeeds.Find(need => need.NeededItem == spot.ItemInSpot.Defn) != null)
+                        continue;
+                    return spot;
+                }
+        return null;
     }
 }

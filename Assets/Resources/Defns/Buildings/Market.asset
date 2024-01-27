@@ -24,9 +24,7 @@ MonoBehaviour:
   PlayerCanMove: 1
   PlayerCanDestroy: 1
   CanBeConstructed: 1
-  ResourcesNeededForConstruction:
-  - Item: {fileID: 11400000, guid: 8299fd30f1aba4fbea13091ddf0ceeb2, type: 2}
-    Count: 2
+  ResourcesNeededForConstruction: []
   NumConstructorSpots: 2
   CanCraft: 0
   CraftableItems: []
@@ -35,7 +33,7 @@ MonoBehaviour:
   IsPrimaryStorage: 0
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
-  StorageAreaWidthAndHeight: 3
+  StorageAreaSize: {x: 3, y: 3}
   WorkersCanFerryItems: 0
   CanGatherResources: 0
   GatherableResources:

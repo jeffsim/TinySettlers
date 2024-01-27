@@ -41,6 +41,11 @@ public class GatheringSpotDetails : MonoBehaviour
         var str = "Gatherable resources:";
         foreach (var resource in spot.Data.Building.Defn.ResourcesThatCanBeGatheredFromHere)
             str += "\n    " + resource.Id;
+
+        if (spot.Data.ItemInSpot != null)
+            str += " (grown)";
+        else if (spot.Data.ItemGrownInSpotDefnId != null)
+            str += " (" + (spot.Data.PercentGrown * 100).ToString("0.0")  + "% grown)";
         Item.text = str;
     }
 }

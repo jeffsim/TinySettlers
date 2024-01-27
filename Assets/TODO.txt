@@ -69,6 +69,74 @@
                     I like decomposition, but the challenge with complete decomposition of substates is that I need to track this reservation;
                         e.g. if the task is somehow cancelled before step 3 then need to unreserve destination storage spot
                         Maybe abandontask tracks that automatically?
+
+            So, example scenario 1:
+                Woodcutter Building has a persistent Need: "I need to go gather wood"
+                    Building A creates Need_GatherResource(wood) which starts out unmet
+                
+                Later, during UpdateNeeds, Town looks at all unmet Needs, sees the WoodCutter Building A has the unmet gatherresource(wood) Need
+                    FIRST, Town determines if need is meetable
+                        Town determines list of: all buildings that generate [wood] (store it for ref below)
+                        if no buildng generates wood,
+                            determines if Building A has available storage in it (if so, store it for ref below)
+                                if not, determines if any primary storage is available (if so, store it for ref below)
+                                    if not, it cannot meet the need so aborts
+                    
+                    SECOND, determine if there is a worker available that can meet the need 
+                        For each Idle worker (WITHOUT an item in hand) in the entire Town:
+                            if idle worker has "can gather resource of type (wood)" attribute then
+                                Look at each building B that has attribute "Can Generate Resource of Type (wood) AND has available gatherspot
+                                    Add a preliminary task to list of tasks to choose from. set desireToMeetNeed based on:
+                                        1. user-set variables (e.g. if player can set slide on "gather wood" high)
+                                        2. distance, so that closer workers choose the task
+                
+                    THIRD, Town finds the idle worker with the highest desireToMeetNeed (based on distance etc), and if any is found assigns them the task
+                        BuildingA's Need.AssignWorkerToTask(Worker);
+                        Worker.Task = new WorkerTask_GatherItemFromBuildingToMoveOutOfBuilding();
+                            Task.substates are: WalkToGatherSpot, ReapItem, PickupItem
+                        Worker.Task.Start();
+                            1. Reserves for the Worker: (a) the gatherspot and (b) the storagespot
+                        Task.Update():
+                            ...
+                        Task.OnAbandoned(): // e.g. building was destroyed, worker was unassigned from woodcutter building, etc
+                            ...
+                        Task.OnComplete
+                            At this point, Worker is standing on the gatherspot, holding the gathered item
+                            Unreserve the gatherspot
+                            Set Worker back to Idle, but note that it now has "an item that I need to carry to whoever wants it OR my prereserved storage spot
+                            In Town.UpdateNeeds, Town looks at worker, sees it has the Item, and starts the above process resulting in 
+                                ... a new WorkerTask_TransportPickedUpItemToHighestNeedBuilding task being created.
+                                    in that process, determine if the item isn't being delivered to its original pre-reserved storage spot, then unreserve that spot
+
+                    OR:
+                    
+                        Worker.Task = new WorkerTask_WalkToGatherSpot();
+                            NO SUBSTATES
+                        Worker.Task.Start();
+                            1. Reserves for the Worker: the gatherspot
+                        Task.Update():
+                            ...
+                        Task.OnAbandoned(): // e.g. building was destroyed, worker was unassigned from woodcutter building, etc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 E. I am going to sell the item I just picked up [constrained to Market-person worker]
                 F. I am going to defend/attack?
 

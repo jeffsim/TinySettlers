@@ -204,7 +204,7 @@ public class WorkerTask_CraftItem : WorkerTask
                 {
                     // Done dropping.  Add the item into the storage spot.  Complete the task first so that the spot is unreserved so that we can add to it
                     CompleteTask();
-                    Worker.AssignedBuilding.AddItemToStorageSpot(new ItemData() { DefnId = CraftingItemDefnId }, reservedStorageSpot);
+                    Worker.AssignedBuilding.AddItemToItemSpot(new ItemData() { DefnId = CraftingItemDefnId }, reservedStorageSpot);
                 }
                 break;
 

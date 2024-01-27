@@ -119,7 +119,7 @@ public class WorkerTask_GatherResource : WorkerTask
                 if (getPercentSubstateDone(secondsToGather) == 1)
                 {
                     // Done gathering; let someone else gather from it and goto next substate
-                    unreserveBuildingGatheringSpot(reservedGatheringSpot);
+                    unreserveGatheringSpot(reservedGatheringSpot);
 
                     // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
                     //                    reservedStorageSpot = getBetterStorageSpotThanSpotIfExists_AssignedBuildingOrPrimaryStorageOnly(reservedStorageSpot);
@@ -152,7 +152,7 @@ public class WorkerTask_GatherResource : WorkerTask
                 {
                     // Done dropping.  Add the item into the storage spot.  Complete the task first so that the spot is unreserved so that we can add to it
                     CompleteTask();
-                    Worker.AssignedBuilding.AddItemToStorageSpot(new ItemData() { DefnId = GatheringItemDefnId }, reservedStorageSpot);
+                    Worker.AssignedBuilding.AddItemToItemSpot(new ItemData() { DefnId = GatheringItemDefnId }, reservedStorageSpot);
                 }
                 break;
 

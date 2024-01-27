@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public delegate void OnItemAddedToGroundEvent(ItemData item);
@@ -32,10 +33,8 @@ public class TownData : BaseData
 
     [NonSerialized] public Action<BuildingData> OnBuildingAdded;
     [NonSerialized] public Action<WorkerData> OnWorkerCreated;
-    [NonSerialized] public List<PrioritizedTask> availableTasks;
 
-    // For debugging purposes
-    [NonSerialized] public List<PrioritizedTask> LastSeenPrioritizedTasks = new();
+    public TownTaskMgr TownTaskMgr;
 
     public TownState State;
     public bool CanEnter => State == TownState.Available || State == TownState.InProgress;
@@ -81,9 +80,10 @@ public class TownData : BaseData
 
             foreach (var item in tbDefn.StartingItemsInBuilding)
                 for (int i = 0; i < item.Count; i++)
-                    building.AddItemToStorageSpot(new ItemData() { DefnId = item.Item.Id }, building.GetEmptyStorageSpot());
+                    building.AddItemToItemSpot(new ItemData() { DefnId = item.Item.Id }, building.GetEmptyStorageSpot());
         }
         UpdateDistanceToBuildings();
+        TownTaskMgr = new(this);
     }
 
     public void CreateWorkerInBuilding(BuildingData building)
@@ -148,7 +148,7 @@ public class TownData : BaseData
         // e.g. pick up items on the ground
         updateTownNeeds();
 
-        FindTasksForNextIdleWorker();
+        TownTaskMgr.AssignTaskToIdleWorker();
 
         foreach (var worker in Workers)
             worker.Update();
@@ -162,75 +162,6 @@ public class TownData : BaseData
                 need.Priority = 0;
             else
                 need.Priority = Math.Min(GameTime.time - need.StartTimeInSeconds / 10f, .25f);
-        }
-    }
-
-    /**
-        TODO (FUTURE): I've made this to only find the optimal task for the first idle worker, rather than
-        for all idle workers.  Reason: the act of assigning an idle worker itself changes priorities, and the 
-        code below doesn't account for that.  afaict, it looks fine to do one idle worker per frame.  If this 
-        becomes a problem in the future then I'll need to revisit this.  Note that I've left in support for >
-        idle worker handling below to ease that future need - it means a lot of extra work may be happening 
-        below, but again: it seems fine for now. also of note, it may be better to spread out processing like this anyways
-     */
-    private void FindTasksForNextIdleWorker()
-    {
-        // todo (perf): keep list of idle
-        List<WorkerData> idleWorkers = new();
-        foreach (var worker in Workers) if (worker.IsIdle) idleWorkers.Add(worker);
-        if (idleWorkers.Count == 0)
-            return;
-
-        // TODO (PERF): Keep list of all needs
-        List<NeedData> allNeeds = new();
-        foreach (var building in Buildings)
-            allNeeds.AddRange(building.Needs);
-
-        // Add needs to pick up any items abandoned on the ground
-        allNeeds.AddRange(otherTownNeeds);
-
-        if (availableTasks == null) availableTasks = new();
-        availableTasks.Clear();
-        foreach (var worker in idleWorkers)
-            worker.AssignedBuilding?.GetAvailableTasksForWorker(availableTasks, worker, allNeeds);
-
-        // TODO: Add worker self tasks; hunger thirst, return to assignedbuilding, etc
-
-        if (availableTasks.Count == 0)
-            return;
-
-        availableTasks.Sort((a, b) => (int)((b.Priority - a.Priority) * 1000));
-
-        // For debugging
-        LastSeenPrioritizedTasks ??= new();
-        LastSeenPrioritizedTasks.Clear();
-        LastSeenPrioritizedTasks.AddRange(availableTasks);
-
-        // availableTasks now contains every IdleWorker+BuildingNeed combination, sorted by priority
-        // Go through the list in priority order, assigning to workers as we go
-        foreach (var prioritizedTask in availableTasks)
-        {
-            var worker = prioritizedTask.Task.Worker;
-            // if (!worker.IsIdle)
-            //     continue;   // If not idle, then we must have assigned them a task earlier in the list
-
-            // If another worker was just assigned to perform the same task, then it may not longer be valid
-            // (e.g. its need is now being fully met)
-            // if (!prioritizedTask.Task.IsStillValid())
-            //     continue;
-
-            // Assign the task and start it
-            worker.CurrentTask = prioritizedTask.Task;
-            worker.CurrentTask.Start();
-            // worker.AssignedBuilding.UpdateNeedPriorities();
-
-            idleWorkers.Remove(worker);
-            if (idleWorkers.Count == 0)
-                break; // no more idle workers
-
-            // For now, just do one worker per frame.  When I support > 1 per frame, I need to 
-            // check for isstillvalid above.
-            return;
         }
     }
 
@@ -467,5 +398,21 @@ public class TownData : BaseData
                 return false;
         }
         return true;
+    }
+
+    internal int NumTotalItemsInStorage(ItemDefn neededItem)
+    {
+        int numInStorage = 0;
+        foreach (var building in Buildings)
+            numInStorage += building.NumItemsInStorage(neededItem);
+        return numInStorage;
+    }
+
+    internal int NumTotalStorageSpots()
+    {
+        int numSpots = 0;
+        foreach (var building in Buildings)
+            numSpots += building.NumStorageSpots;
+        return numSpots;
     }
 }

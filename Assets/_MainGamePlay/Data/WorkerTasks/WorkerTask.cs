@@ -2,7 +2,16 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TaskType { Unset, Idle, GatherResource, CraftGood, FerryItem, PickupAbandonedItem, SellGood };
+public enum TaskType
+{
+    Unset, Idle,
+    DeliverItemInHandToStorageSpot,
+    PickupGatherableResource,
+    PickupItemInStorageSpot,
+
+    
+    GatherResource, CraftGood, FerryItem, PickupAbandonedItem, SellGood
+};
 
 public enum TaskState { Unset, NotStarted, Started, Completed, Abandoned };
 
@@ -25,7 +34,7 @@ public abstract class WorkerTask
     public Vector3 LastMoveToTarget;
 
     [SerializeField] List<GatheringSpotData> ReservedGatheringSpots;
-    [SerializeField] List<StorageSpotData> ReservedStorageSpots;
+    [SerializeField] protected List<StorageSpotData> ReservedStorageSpots;
 
     public bool HasReservedStorageSpot(StorageSpotData spot) => ReservedStorageSpots.Contains(spot);
     public bool HasReservedCraftingSpot(CraftingSpotData spot) => ReservedCraftingSpots.Contains(spot);
@@ -40,12 +49,27 @@ public abstract class WorkerTask
 
     [SerializeField] protected float distanceMovedPerSecond = 5;
 
+    // The Need that this task is meeting
+    public NeedData Need;
+
     public virtual ItemDefn GetTaskItem()
     {
-        Debug.Assert(false, "GetTaskItem not implemented for task type");
+        Debug.Assert(false, "GetTaskItem not implemented for task type " + Type);
         return null;
     }
 
+    protected WorkerTask(WorkerData workerData, NeedData need)
+    {
+        Debug.Assert(need != null, "Need is null");
+        Need = need;
+        Worker = workerData;
+        ReservedGatheringSpots = new List<GatheringSpotData>();
+        ReservedStorageSpots = new List<StorageSpotData>();
+        ReservedCraftingSpots = new List<CraftingSpotData>();
+        ReservedCraftingResourceStorageSpots = new List<StorageSpotData>();
+    }
+
+    // TODO: remove this constructor
     protected WorkerTask(WorkerData workerData)
     {
         Worker = workerData;
@@ -105,11 +129,17 @@ public abstract class WorkerTask
     {
         var spot = buildingGatheringFrom.ReserveClosestGatheringSpot(Worker, worldLoc);
         Debug.Assert(spot != null, "Failed to reserve gathering spot in " + buildingGatheringFrom.DefnId);
-        ReservedGatheringSpots.Add(spot);
+        reserveGatheringSpot(spot);
         return spot;
     }
 
-    protected void unreserveBuildingGatheringSpot(GatheringSpotData spot)
+    protected void reserveGatheringSpot(GatheringSpotData spot)
+    {
+        spot.ReserveBy(Worker);
+        ReservedGatheringSpots.Add(spot);
+    }
+
+    protected void unreserveGatheringSpot(GatheringSpotData spot)
     {
         spot.Unreserve();
         ReservedGatheringSpots.Remove(spot);
