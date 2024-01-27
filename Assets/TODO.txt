@@ -8,6 +8,100 @@
 
 * eliminate building crafting needs if no assigned workers.  TBD: clear out resources proactively and/or allow other needs to 'take' from it?
     
+* Change Needs to be:
+    WorkerTask_PickupItemFromStorageToMoveOutOfBuilding
+    [BuildingNeed_GetRidOfUnnecessaryItemInStorage]
+        The building with the Need doesn't care where the item gets transported to, just 'anywhere but here please'
+        Created when:
+            * Any nonprimary storagespot contains an item that the building does not need.  e.g. Crafting building has crafted an item
+            * Applies to: crafting building
+        What it does:
+            * Ensures that a storage spot is reserved for the worker to bring the item to.
+            * subtasks: walktoitem, pickupitem
+
+    WorkerTask_GatherItemFromBuildingToMoveOutOfBuilding
+    [BuildingNeed_GatherResourceFromReadyGatherSpot]
+        The building with the Need doesn't care where the item gets transported to, just 'anywhere but here please'
+        Created when:
+            * Any resource gatherer has an available gatherspot
+            * Applies to: Miners hut, woodcutter, Farm
+        What it does:
+            * Ensures that a storage spot is reserved for the worker to bring the item to.
+            * subtasks: walktogatherspot, reapitem, pickupitem
+    
+    TODO: I was going to add WorkerTask_PickupItemFromStorageToDeliverToSpecificBuilding, but realized that 
+        maybe I don't want that.  e.g. yes a craftingbuilding may say "I need wood" and a worker may be dispatched to get the wood,
+            ... but if when the wood is picked up another building says "I need it more", then why not send there?
+        in this case, all scenarios in which a user is dispatched to pick up an item do NOT track what building needs the item
+            (except to ensure a storage spot is reserved)
+            ... and when they pick up the item is when they canvas the town with "who needs this the most?" and if no one does 
+        does this fundamentally change the building-centric Need model?
+        ie maybe it fully decouples it. 
+            Buildings have Needs; specifically:
+                1. I need items for crafting purposes
+                2. I need items for selling purposes
+                3. I need my storage to be cleared
+                NOT BUILDING Needs  
+                    * "I need a gatherspot to be gathered from"
+                        no "pull from me" needs? but then what about "clear my storage"?                    
+            Towns have Needs
+                4. I need abandoned items to be picked up
+                FUTURE:
+                    Town could have strategic needs
+                        * I need more wood [=> build a woodcutter]
+                        * I need more defense [=> build a tower]
+            Workers may have future Needs
+                5. I need Food, Water, Rest
+            But generally Workers don't have Needs but they have Tasks:
+                A. I am going to pick up an item that [building, Town] requested I pick up
+                B. I am delivering an item to a [building that most needs it]
+                C. I am delivering an item to a [any primary, or specified by worker-type (e.g. crafter)] storagespot 
+                    ... because I just picked it up and [no one needs it, or I am constrained to only deliver to my assignedbuilding (e.g. a Craftperson)]
+                D. I am crafting an item (substates: 1 walking to the source good, 2 pick it up, 3 carrying it to the crafting spot, 4 crafting, 5 carrying back to reserved storage spot in my building)
+                    Q: Maybe I should even decompose those substates into tasks? Substates become:
+                        1: A -- pick up an item that a building needs (my assigned building)
+                            requires reservation of source storagespot in step 0
+                        2: B -- deliver item to building that needs it (specifically: to crafting spot, specifically: my assigned building)
+                            requires reservation of crafting spot in step 0
+                        3: New -- craft item
+                        4: deliver item to storagespot (specifically: in my assigned building)
+                            requires reservation of destination storage spot in step 0
+                    I like decomposition, but the challenge with complete decomposition of substates is that I need to track this reservation;
+                        e.g. if the task is somehow cancelled before step 3 then need to unreserve destination storage spot
+                        Maybe abandontask tracks that automatically?
+                E. I am going to sell the item I just picked up [constrained to Market-person worker]
+                F. I am going to defend/attack?
+
+    WorkerTask_TransportPickedUpItemToHighestNeedBuilding
+    [WorkerNeed_GetRidOfItemImHolding]
+        Not a building task; applies to workers that just picked up an item and are wondering where they should transport it to 
+            The item should be transported to the building with the highest need (and/or closest) IF any building needs it
+            Caller was responsible for ensuring that the worker has a reserved spot in case no building needs the item, in which case it 
+                looks for the closest primaryorassigned building storage spot and transports it there to drop off
+                and unreserves the reserved spot if it has changed
+            This need/task isn't created if the worker picked up the item with a specific destination in mind - e.g. a craftingbuilding with "I need wood"
+                in this case the worker has a WorkerNeed_TransportItemImHoldingToSpecificBuilding need 
+                    HM: So are they meeting both a building need (crafting: i need wood) and worker need (worker: i need to transport this to crafting)?
+                    Or do i not create the workerneed and just ...
+        Created when:
+            * Any worker has just picked up an item and doesn't have a predefined destination that it must go to.
+        Thoughts:
+            * woodcutter gathers wood and is now holding it.  can deliver to:
+                assigned woodcutter hut
+                nearest primary storage
+                highest need building (crafting station that needs wood, market that wants to sell it)
+            * NOTE: I like the idea of player researching and unlocking 'smarter workers'.  
+                At start of game/level, worker only transports back to assigned hut
+                Unlock "smarter workers" and they'll also transport to nearest primary storage
+                Unlock "smarter 2" and they'll also transport to need-buildings.
+
+    BuildingNeed_ItemForCrafting
+    BuildingNeed_ItemForConstruction
+    TownNeed_PickupAbandonedItem
+
+
+
+
 
 * FerryItem task:
     scenarios:
