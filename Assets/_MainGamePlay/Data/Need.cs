@@ -50,30 +50,20 @@ public class NeedData : BaseData
 {
     public override string ToString()
     {
-        switch (Type)
+        return Type switch
         {
-            case NeedType.ClearStorage:
-                return $"Need: {Type} {BuildingWithNeed} {State} {Priority}";
-            case NeedType.PickupAbandonedItem:
-                return $"Need: {Type} {AbandonedItemToPickup} {State} {Priority}";
-            case NeedType.GatherResource:
-                return $"Need: {Type} {NeededItem} {State} {Priority}";
-            case NeedType.CraftingOrConstructionMaterial:
-                return $"Need: {Type} {NeededItem} {State} {Priority}";
-            case NeedType.Defend:
-                return $"Need: {Type} {BuildingWithNeed}";
-            case NeedType.SellGood:
-                return $"Need: {Type} {NeededItem} {State} {Priority}";
-            case NeedType.PersistentBuildingNeed:
-                return $"Need: {Type} {NeededItem} {State} {Priority}";
-            case NeedType.ConstructionWorker:
-                return $"Need: {Type} {BuildingWithNeed} {State} {Priority}";
-            case NeedType.Repair:
-                return $"Need: {Type} {BuildingWithNeed} {State} {Priority}";
-            case NeedType.EntitySelfNeed:
-                return $"Need: {Type} {NeededItem} {State} {Priority}";
-        }
-        return $"UNKNOWN NEED TYPE {Type} {NeededItem} {State} {Priority}";
+            NeedType.ClearStorage => $"Need: {Type} {BuildingWithNeed} {State} {Priority}",
+            NeedType.PickupAbandonedItem => $"Need: {Type} {AbandonedItemToPickup} {State} {Priority}",
+            NeedType.GatherResource => $"Need: {Type} {NeededItem} {State} {Priority}",
+            NeedType.CraftingOrConstructionMaterial => $"Need: {Type} {BuildingWithNeed} {NeededItem} {State} {Priority}",
+            NeedType.Defend => $"Need: {Type} {BuildingWithNeed}",
+            NeedType.SellGood => $"Need: {Type} {NeededItem} {State} {Priority}",
+            NeedType.PersistentBuildingNeed => $"Need: {Type} {NeededItem} {State} {Priority}",
+            NeedType.ConstructionWorker => $"Need: {Type} {BuildingWithNeed} {State} {Priority}",
+            NeedType.Repair => $"Need: {Type} {BuildingWithNeed} {State} {Priority}",
+            NeedType.EntitySelfNeed => $"Need: {Type} {NeededItem} {State} {Priority}",
+            _ => $"UNKNOWN NEED TYPE {Type} {NeededItem} {State} {Priority}",
+        };
     }
     [SerializeField] bool IsCancelled = false;
     public NeedState State => IsCancelled ? NeedState.cancelled : (IsBeingFullyMet ? NeedState.met : NeedState.unmet);
@@ -138,7 +128,7 @@ public class NeedData : BaseData
 
     internal void AssignWorkerToMeetNeed(WorkerData worker)
     {
-        Debug.Assert(!IsBeingFullyMet, "Assigning worker to a need that is already fully met");
+        Debug.Assert(!IsBeingFullyMet, "Assigning worker to a need that is already fully met. Need: " + this);
         // worker.AssignToMeetNeed(this);
         WorkersMeetingNeed.Add(worker);
     }
