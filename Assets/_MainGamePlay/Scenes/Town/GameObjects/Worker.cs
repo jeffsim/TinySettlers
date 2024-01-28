@@ -14,11 +14,12 @@ public class Worker : MonoBehaviour
 
     public SceneWithMap scene;
     static float WorkerZ = -6.2f;
-
+    RectTransform carriedItemRectTransform;
     public void Initialize(WorkerData data, SceneWithMap scene)
     {
         this.scene = scene;
         Data = data;
+        carriedItemRectTransform = CarriedItem.GetComponent<RectTransform>();
 
         transform.position = new Vector3(data.WorldLoc.x, data.WorldLoc.y, WorkerZ);
         updateVisual();
@@ -77,7 +78,6 @@ public class Worker : MonoBehaviour
         var scaleSmall = new Vector3(0, 0, 0);
         var scaleNormal = new Vector3(1, 1, 1);
 
-        var carriedItemRectTransform = CarriedItem.GetComponent<RectTransform>();
         switch (Data.CurrentTask.Type)
         {
             case TaskType.PickupGatherableResource:
@@ -86,20 +86,14 @@ public class Worker : MonoBehaviour
                 switch ((WorkerTask_PickupGatherableResourceSubstate)Data.CurrentTask.substate)
                 {
                     case WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot:
-                        carriedItemRectTransform.localPosition = itemDown;
-                        carriedItemRectTransform.localScale = scaleNormal;
-                        CarriedItem.color = Color.red;
+                        updateCarriedItem(itemDown, scaleNormal, Color.red);
                         break;
                     case WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource:
                         var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupGatherableResource.secondsToReap);
-                        carriedItemRectTransform.localScale = Vector3.Lerp(scaleSmall, scaleNormal, t);
-                        CarriedItem.color = Color.Lerp(Color.red, Color.white, t);
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemDown, t), Vector3.Lerp(scaleSmall, scaleNormal, t), Color.Lerp(Color.red, Color.white, t));
                         break;
                     case WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource:
-                        var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupGatherableResource.secondsToPickup);
-                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t2);
-                        carriedItemRectTransform.localScale = scaleNormal;
-                        CarriedItem.color = Color.white;
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupGatherableResource.secondsToPickup)), scaleNormal, Color.white);
                         break;
                 }
                 break;
@@ -110,15 +104,10 @@ public class Worker : MonoBehaviour
                 switch ((WorkerTask_PickupItemFromStorageSpotSubstate)Data.CurrentTask.substate)
                 {
                     case WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem:
-                        carriedItemRectTransform.localPosition = itemDown;
-                        carriedItemRectTransform.localScale = scaleNormal;
-                        CarriedItem.color = Color.red;
+                        updateCarriedItem(itemDown, scaleNormal, Color.red);
                         break;
                     case WorkerTask_PickupItemFromStorageSpotSubstate.PickupItemFromItemSpot:
-                        var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupItemFromStorageSpot.secondsToPickup);
-                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t2);
-                        carriedItemRectTransform.localScale = scaleNormal;
-                        CarriedItem.color = Color.white;
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupItemFromStorageSpot.secondsToPickup)), scaleNormal, Color.white);
                         break;
                 }
                 break;
@@ -129,15 +118,10 @@ public class Worker : MonoBehaviour
                 switch ((WorkerTask_PickupAbandonedItemFromGroundSubstate)Data.CurrentTask.substate)
                 {
                     case WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround:
-                        carriedItemRectTransform.localPosition = itemDown;
-                        carriedItemRectTransform.localScale = scaleNormal;
-                        CarriedItem.color = Color.red;
+                        updateCarriedItem(itemDown, scaleNormal, Color.red);
                         break;
                     case WorkerTask_PickupAbandonedItemFromGroundSubstate.PickupItemFromGround:
-                        var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupAbandonedItemFromGround.secondsToPickup);
-                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t2);
-                        carriedItemRectTransform.localScale = scaleNormal;
-                        CarriedItem.color = Color.white;
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupAbandonedItemFromGround.secondsToPickup)), scaleNormal, Color.white);
                         break;
                 }
                 break;
@@ -148,83 +132,66 @@ public class Worker : MonoBehaviour
                 switch ((WorkerTask_DeliverItemInHandToStorageSpotSubstate)Data.CurrentTask.substate)
                 {
                     case WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo:
-                        carriedItemRectTransform.localPosition = itemUp;
-                        CarriedItem.color = Color.white;
+                        updateCarriedItem(itemUp, scaleNormal, Color.white);
                         break;
                     case WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot:
-                        var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_DeliverItemInHandToStorageSpot.secondsToDrop);
-                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t);
-                        CarriedItem.color = Color.white;
+                        updateCarriedItem(Vector3.Lerp(itemUp, itemDown, Data.CurrentTask.getPercentSubstateDone(WorkerTask_DeliverItemInHandToStorageSpot.secondsToDrop)), scaleNormal, Color.white);
                         break;
                 }
                 break;
 
-            // case TaskType.CraftGood:
-            //     CarriedItem.gameObject.SetActive(true);
-            //     CarriedItem.text = (Data.CurrentTask as WorkerTask_CraftItem).GetTaskItem().Id.Substring(0, 2);
-            //     switch ((WorkerTask_CraftItemSubstate)Data.CurrentTask.substate)
-            //     {
-            //         case WorkerTask_CraftItemSubstate.GotoSpotWithResource:
-            //             carriedItemRectTransform.localPosition = itemDown;
-            //             CarriedItem.color = Color.red;
-            //             break;
-            //         case WorkerTask_CraftItemSubstate.PickupResource:
-            //             var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToPickup);
-            //             carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
-            //             CarriedItem.color = Color.white;
-            //             break;
-            //         case WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
-            //             carriedItemRectTransform.localPosition = itemUp;
-            //             CarriedItem.color = Color.white;
-            //             break;
-            //         case WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
-            //             var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToDrop);
-            //             carriedItemRectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t2);
-            //             CarriedItem.color = Color.white;
-            //             break;
-            //         case WorkerTask_CraftItemSubstate.ProduceGood:
-            //             var t3 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToCraft);
-            //             carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t3);
-            //             CarriedItem.color = Color.yellow;
-            //             break;
-            //         case WorkerTask_CraftItemSubstate.CarryCraftedGoodToStorageSpot:
-            //             carriedItemRectTransform.localPosition = itemUp;
-            //             CarriedItem.color = Color.white;
-            //             break;
-            //         case WorkerTask_CraftItemSubstate.DropCraftedGoodInStorageSpot:
-            //             var t4 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToDrop);
-            //             carriedItemRectTransform.localPosition = Vector3.Lerp(itemUp, itemDown, t4);
-            //             CarriedItem.color = Color.white;
-            //             break;
+            case TaskType.CraftGood:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_CraftItem).GetTaskItem().Id.Substring(0, 2);
+                switch ((WorkerTask_CraftItemSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_CraftItemSubstate.GotoSpotWithResource:
+                        updateCarriedItem(itemDown, scaleNormal, Color.red);
+                        break;
+                    case WorkerTask_CraftItemSubstate.PickupResource:
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToPickupSourceResource)), scaleNormal, Color.white);
+                        break;
+                    case WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
+                        updateCarriedItem(itemUp, scaleNormal, Color.white);
+                        break;
+                    case WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
+                        updateCarriedItem(Vector3.Lerp(itemUp, itemDown, Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToDropSourceResource)), scaleNormal, Color.white);
+                        break;
+                    case WorkerTask_CraftItemSubstate.CraftGood:
+                        var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToCraft);
+                        updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, t), Color.Lerp(Color.green, Color.white, t));
+                        break;
+                    case WorkerTask_CraftItemSubstate.PickupProducedGood:
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToPickupCraftedGood)), scaleNormal, Color.white);
+                        break;
+                }
+                break;
 
-            //     }
-            //     break;
             case TaskType.Idle:
                 CarriedItem.gameObject.SetActive(true);
-                carriedItemRectTransform.localPosition = itemDown;
-                CarriedItem.color = Color.white;
+                updateCarriedItem(itemDown, scaleNormal, Color.white);
                 CarriedItem.text = "<i>i</i>";
                 break;
 
-            // case TaskType.SellGood:
-            //     CarriedItem.gameObject.SetActive(true);
+                // case TaskType.SellGood:
+                //     CarriedItem.gameObject.SetActive(true);
 
-            //     switch ((WorkerTask_SellGoodSubstate)Data.CurrentTask.substate)
-            //     {
-            //         case WorkerTask_SellGoodSubstate.GotoSpotWithGoodToSell:
-            //             CarriedItem.text = (Data.CurrentTask as WorkerTask_SellGood).GetTaskItem().Id.Substring(0, 2);
-            //             carriedItemRectTransform.localPosition = itemDown;
-            //             CarriedItem.color = Color.red;
-            //             break;
-            //         case WorkerTask_SellGoodSubstate.SellGood:
-            //             var sellPrice = (Data.CurrentTask as WorkerTask_SellGood).GetTaskItem().BaseSellPrice; // TODO: Multipliers
-            //             CarriedItem.text = sellPrice + "gp";
-            //             var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_SellGood.secondsToSell);
-            //             carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
-            //             CarriedItem.color = Color.white;
-            //             break;
-            //     }
-            //     break;
+                //     switch ((WorkerTask_SellGoodSubstate)Data.CurrentTask.substate)
+                //     {
+                //         case WorkerTask_SellGoodSubstate.GotoSpotWithGoodToSell:
+                //             CarriedItem.text = (Data.CurrentTask as WorkerTask_SellGood).GetTaskItem().Id.Substring(0, 2);
+                //             carriedItemRectTransform.localPosition = itemDown;
+                //             CarriedItem.color = Color.red;
+                //             break;
+                //         case WorkerTask_SellGoodSubstate.SellGood:
+                //             var sellPrice = (Data.CurrentTask as WorkerTask_SellGood).GetTaskItem().BaseSellPrice; // TODO: Multipliers
+                //             CarriedItem.text = sellPrice + "gp";
+                //             var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_SellGood.secondsToSell);
+                //             carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
+                //             CarriedItem.color = Color.white;
+                //             break;
+                //     }
+                //     break;
         }
 
         // If this worker is assigned to currently selected building then highlight
@@ -237,5 +204,12 @@ public class Worker : MonoBehaviour
             showHighlight = true;
 
         Highlight.SetActive(showHighlight);
+    }
+
+    private void updateCarriedItem(Vector3 position, Vector3 scale, Color color)
+    {
+        carriedItemRectTransform.localPosition = position;
+        carriedItemRectTransform.localScale = scale;
+        CarriedItem.color = color;
     }
 }

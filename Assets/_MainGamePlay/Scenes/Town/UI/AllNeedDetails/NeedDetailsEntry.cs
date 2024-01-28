@@ -59,6 +59,11 @@ public class NeedDetailsEntry : MonoBehaviour
                 Source.text = Need.BuildingWithNeed.ToString();
                 Info.text = Need.State.ToString();
                 break;
+            case NeedType.CraftGood:
+                Type.text = "Craft good";// " + need.NeededItem;
+                Source.text = Need.BuildingWithNeed.ToString();
+                Info.text = Need.State.ToString();
+                break;
             default:
                 Debug.LogError("unknown need type " + Need.Type);
                 break;

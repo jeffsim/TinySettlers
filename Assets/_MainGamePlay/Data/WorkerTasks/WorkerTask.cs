@@ -176,6 +176,7 @@ public abstract class WorkerTask
 
     protected StorageSpotData reserveStorageSpot(StorageSpotData spot)
     {
+        Debug.Assert(spot != null, "Failed to reserve storage spot in " + spot.Building.DefnId);
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
         spot.ReserveBy(Worker);
         ReservedStorageSpots.Add(spot);
@@ -202,7 +203,7 @@ public abstract class WorkerTask
         return spot;
     }
 
-    protected void unreserveraftingSpot(CraftingSpotData spot)
+    protected void unreserveCraftingSpot(CraftingSpotData spot)
     {
         spot.Unreserve();
         ReservedCraftingSpots.Remove(spot);

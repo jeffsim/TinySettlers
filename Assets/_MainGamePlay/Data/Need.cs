@@ -53,6 +53,7 @@ public class NeedData : BaseData
     {
         return Type switch
         {
+            NeedType.CraftGood => $"Need: {Type} {BuildingWithNeed} {NeededItem} {State} {Priority}",
             NeedType.ClearStorage => $"Need: {Type} {BuildingWithNeed} {State} {Priority}",
             NeedType.PickupAbandonedItem => $"Need: {Type} {AbandonedItemToPickup} {State} {Priority}",
             NeedType.GatherResource => $"Need: {Type} {NeededItem} {State} {Priority}",

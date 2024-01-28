@@ -50,6 +50,10 @@ public class BuildingDetailsNeedListEntry : MonoBehaviour
                 Type.text = $"Sell good ({Need.NeededItem})";
                 Info.text = Need.State.ToString();
                 break;
+            case NeedType.CraftGood:
+                Type.text = $"Craft good ({Need.NeededItem})";
+                Info.text = Need.State.ToString();
+                break;
             default:
                 Debug.LogError("unknown need type " + Need.Type);
                 break;

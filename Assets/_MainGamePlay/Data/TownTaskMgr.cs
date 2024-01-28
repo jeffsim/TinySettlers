@@ -72,13 +72,18 @@ public class TownTaskMgr
 
         // =====================================================================================
         // FIRST, determine if need is meetable
-        if (craftingBuilding.IsStorageFull) return; // Confirm we can store it
         if (!craftingBuilding.HasUnreservedResourcesInStorageToCraftItem(itemToCraft)) return; // Confirm we have all the resources necessary to craft the item in our storage
 
         var craftingSpot = craftingBuilding.GetAvailableCraftingSpot();
         if (craftingSpot == null) return; // No crafting spot available
-        var storageSpotForCraftedItem = craftingBuilding.GetClosestEmptyStorageSpot(craftingSpot.WorldLoc);
-        if (storageSpotForCraftedItem == null) return; // No storage spot available for crafted item
+
+        // StorageSpot only required for explicit items
+        // StorageSpotData storageSpotForCraftedItem = null;
+        // if (itemToCraft.GoodType == GoodType.explicitGood)
+        // {
+        //     storageSpotForCraftedItem = craftingBuilding.GetClosestEmptyStorageSpot(craftingSpot.WorldLoc);
+        //     if (storageSpotForCraftedItem == null) return; // No storage spot available for crafted item
+        // }
 
         // =====================================================================================
         // SECOND, determine which idle workers can perform the task.
@@ -87,6 +92,15 @@ public class TownTaskMgr
         {
             if (worker.AssignedBuilding != craftingBuilding) continue; // worker must be assigned to the building that crafts the item
             if (!worker.CanCraftItems()) continue;
+            // if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
+            
+            // StorageSpot only required for explicit items
+            StorageSpotData storageSpotForCraftedItem = null;
+            if (itemToCraft.GoodType == GoodType.explicitGood)
+            {
+                storageSpotForCraftedItem = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary,craftingSpot.WorldLoc, worker);
+                if (storageSpotForCraftedItem == null) continue; // No storage spot available for crafted item
+            }
 
             float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.WorldLoc, craftingSpot.WorldLoc);
 

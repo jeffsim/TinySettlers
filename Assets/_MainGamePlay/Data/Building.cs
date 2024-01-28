@@ -314,6 +314,36 @@ public class BuildingData : BaseData
         }
 
         foreach (var need in Needs)
+        {
+            if (need.Type == NeedType.CraftGood)
+            {
+                if (need.IsBeingFullyMet)
+                {
+                    need.Priority = 0;
+                    continue;
+                }
+
+                // Priority of Crafting is set by:
+                //  does anyone else need it and how badly (priority of need)
+                //  how many of the item are already in the Town?
+                //  do we want/need to sell the item?
+                var globalPriorityOfNeedForItem = 0f;
+                foreach (var building in Town.Buildings)
+                    foreach (var otherNeed in building.Needs)
+                        if (otherNeed.Type == NeedType.CraftingOrConstructionMaterial && otherNeed.NeededItem == need.NeededItem)
+                            globalPriorityOfNeedForItem += otherNeed.Priority;
+
+                var storageImpact = Mathf.Clamp(Town.NumTotalItemsInStorage(need.NeededItem) / 10f, 0, 2);
+
+                var priorityToSellItem = 0f;
+                foreach (var building in Town.Buildings)
+                    foreach (var otherNeed in building.Needs)
+                        if (otherNeed.Type == NeedType.SellGood && otherNeed.NeededItem == need.NeededItem)
+                            priorityToSellItem += otherNeed.Priority;
+
+                need.Priority = storageImpact / 2f + globalPriorityOfNeedForItem + priorityToSellItem + .3f;
+            }
+
             if (need.Type == NeedType.SellGood)
             {
                 if (need.IsBeingFullyMet)
@@ -343,14 +373,11 @@ public class BuildingData : BaseData
                 }
 
                 // if here then the item-to-be-sold isn't highly needed.  If there's a lot of it in storage, then sell it
-                int numInStorage = 0;
-                foreach (var building in Town.Buildings)
-                    numInStorage += building.NumItemsInStorage(item);
-
+                int numInStorage = Town.NumTotalItemsInStorage(item);
                 var storageImpact = Mathf.Clamp(numInStorage / 10f, 0, 2);
                 need.Priority = storageImpact / 2f;
             }
-
+        }
         foreach (var need in GatheringNeeds)
         {
             if (need.IsBeingFullyMet)
