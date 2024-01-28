@@ -8,6 +8,7 @@ public abstract class TestBase
     public BuildingData Camp;        // first instance of building found in town
     public BuildingData MinersHut;   // first instance of building found in town
     public BuildingData StoneMine;   // first instance of building found in town
+    public BuildingData Market;   // first instance of building found in town
 
     public void LoadTestTown(string townDefnName)
     {
@@ -26,6 +27,7 @@ public abstract class TestBase
 
         Camp = getBuilding("testCamp");
         MinersHut = getBuilding("testMinersHut");
+        Market = getBuilding("testMarket", true);
         StoneMine = getBuilding("testStoneMine_oneGatherSpot", true);
         if (StoneMine == null)
             StoneMine = getBuilding("testStoneMine_twoGatherSpots");
@@ -99,6 +101,19 @@ public abstract class TestBase
     {
         Assert.NotNull(worker.CurrentTask);
         Assert.AreEqual(expectedType, worker.CurrentTask.Type);
+    }
+
+    protected void verify_WorkerTaskSubstate(int substate, WorkerData miner)
+    {
+        Assert.NotNull(miner.CurrentTask);
+        Assert.AreEqual(substate, miner.CurrentTask.substate);
+    }
+
+    protected void verify_AssignedBuilding(WorkerData worker, BuildingData building)
+    {
+        Assert.NotNull(worker);
+        Assert.NotNull(building);
+        Assert.AreEqual(worker.AssignedBuilding, building);
     }
 
     protected void updateTown()

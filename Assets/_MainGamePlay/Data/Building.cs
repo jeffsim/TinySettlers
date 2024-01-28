@@ -212,15 +212,21 @@ public class BuildingData : BaseData
             // Create needs for all craftables; TBD if priorities are set assuming all are crafted, or if only some are prioritized
             // based on AI (ala Settlers) or human selection.
             foreach (var item in Defn.CraftableItems)
+            {
+                // Add Need for "I need to craft (if resources are in room)"
+                Needs.Add(new NeedData(this, NeedType.CraftGood, item) { NeedCoreType = NeedCoreType.Building });
+
+                // Add Need for "I need resources to craft"
+                // TODO: If two craftable items use the same resource, then we'll have two needs for that resource.  sum up counts
                 foreach (var resource in item.ResourcesNeededForCrafting)
                     CraftingResourceNeeds.Add(new NeedData(this, NeedType.CraftingOrConstructionMaterial, resource.Item, resource.Count));
+            }
             Needs.AddRange(CraftingResourceNeeds);
         }
 
         if (Defn.CanStoreItems)
         {
-            ClearOutStorageNeed = new NeedData(this, NeedType.ClearStorage);
-            ClearOutStorageNeed.NeedCoreType = NeedCoreType.Building;
+            ClearOutStorageNeed = new NeedData(this, NeedType.ClearStorage) { NeedCoreType = NeedCoreType.Building };
             Needs.Add(ClearOutStorageNeed);
         }
 
@@ -388,6 +394,22 @@ public class BuildingData : BaseData
             else if (numOfNeededItemAlreadyInStorage > Defn.NumStorageAreas / 4)
                 need.Priority *= .75f; // storage is 25%-50% full of the needed item
         }
+    }
+
+    public bool HasUnreservedResourcesInStorageToCraftItem(ItemDefn item)
+    {
+        foreach (var resource in item.ResourcesNeededForCrafting)
+            if (!hasUnreservedItemsInStorage(resource.Item, resource.Count))
+                return false;
+        return true;
+    }
+
+    private bool hasUnreservedItemsInStorage(ItemDefn itemDefn, int count)
+    {
+        int num = 0;
+        foreach (var area in StorageAreas)
+            num += area.NumUnreservedItemsInStorage(itemDefn);
+        return num >= count;
     }
 
     public int NumItemsInStorage(ItemDefn itemDefn = null)
@@ -720,6 +742,14 @@ public class BuildingData : BaseData
                         continue;
                     return spot;
                 }
+        return null;
+    }
+
+    internal CraftingSpotData GetAvailableCraftingSpot()
+    {
+        foreach (var spot in CraftingSpots)
+            if (!spot.IsReserved)
+                return spot;
         return null;
     }
 }

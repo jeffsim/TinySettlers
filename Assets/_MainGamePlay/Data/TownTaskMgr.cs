@@ -58,17 +58,50 @@ public class TownTaskMgr
                     case NeedType.GatherResource: getHigherPriorityTaskIfExists_GatherResource(need, idleWorkers); break;
                     case NeedType.ClearStorage: getHigherPriorityTaskIfExists_CleanupStorage(need, idleWorkers); break;
                     case NeedType.PickupAbandonedItem: getHigherPriorityTaskIfExists_PickupAbandonedItem(need, idleWorkers); break;
+                    case NeedType.CraftGood: getHigherPriorityTaskIfExists_CraftItem(need, idleWorkers); break;
                 }
 
         // Return the highest priority task
         return HighestPriorityTask;
     }
 
+    private void getHigherPriorityTaskIfExists_CraftItem(NeedData need, List<WorkerData> idleWorkers)
+    {
+        var itemToCraft = need.NeededItem;
+        var craftingBuilding = need.BuildingWithNeed;
+
+        // =====================================================================================
+        // FIRST, determine if need is meetable
+        if (craftingBuilding.IsStorageFull) return; // Confirm we can store it
+        if (!craftingBuilding.HasUnreservedResourcesInStorageToCraftItem(itemToCraft)) return; // Confirm we have all the resources necessary to craft the item in our storage
+
+        var craftingSpot = craftingBuilding.GetAvailableCraftingSpot();
+        if (craftingSpot == null) return; // No crafting spot available
+        var storageSpotForCraftedItem = craftingBuilding.GetClosestEmptyStorageSpot(craftingSpot.WorldLoc);
+        if (storageSpotForCraftedItem == null) return; // No storage spot available for crafted item
+
+        // =====================================================================================
+        // SECOND, determine which idle workers can perform the task.
+        float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
+        foreach (var worker in idleWorkers)
+        {
+            if (worker.AssignedBuilding != craftingBuilding) continue; // worker must be assigned to the building that crafts the item
+            if (!worker.CanCraftItems()) continue;
+
+            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.WorldLoc, craftingSpot.WorldLoc);
+
+            if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
+            {
+                highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
+                HighestPriorityTask.Set(WorkerTask_CraftItem.Create(worker, need, craftingSpot, storageSpotForCraftedItem), highestPrioritySoFar);
+            }
+        }
+    }
+
     private void getHigherPriorityTaskIfExists_PickupAbandonedItem(NeedData need, List<WorkerData> idleWorkers)
     {
         // =====================================================================================
         // FIRST, determine if need is meetable
-
         // Assumed so
 
         // =====================================================================================
@@ -93,7 +126,6 @@ public class TownTaskMgr
             }
         }
     }
-
     // If here, then a building has a 'cleanup my storage please' need - see if any idleworkers can do it
     private void getHigherPriorityTaskIfExists_CleanupStorage(NeedData need, List<WorkerData> idleWorkers)
     {

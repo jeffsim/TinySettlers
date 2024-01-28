@@ -10,6 +10,7 @@ public enum NeedType
     CraftingOrConstructionMaterial,
     Defend,
     SellGood,
+    CraftGood,
 
     PersistentBuildingNeed, // e.g. water for farm
     ConstructionWorker,  // to construct a building

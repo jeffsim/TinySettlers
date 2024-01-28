@@ -10,7 +10,7 @@ public enum TaskType
     PickupItemInStorageSpot,
     PickupItemFromGround,
 
-    GatherResource, CraftGood, FerryItem, PickupAbandonedItem, SellGood
+   CraftGood, SellGood
 };
 
 public enum TaskState { Unset, NotStarted, Started, Completed, Abandoned };
@@ -177,7 +177,6 @@ public abstract class WorkerTask
     protected StorageSpotData reserveStorageSpot(StorageSpotData spot)
     {
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
-
         spot.ReserveBy(Worker);
         ReservedStorageSpots.Add(spot);
         return spot;
@@ -192,15 +191,18 @@ public abstract class WorkerTask
 
     // ==== CRAFTING ===================================================
 
-    protected CraftingSpotData reserveBuildingCraftingSpot(BuildingData buildingToCraftIn)
+    protected CraftingSpotData reserveCraftingSpot(CraftingSpotData spot)
     {
-        var spot = buildingToCraftIn.ReserveCraftingSpot(Worker);
-        Debug.Assert(spot != null, "Failed to reserve crafting spot in " + buildingToCraftIn.DefnId);
+        // var spot = buildingToCraftIn.ReserveCraftingSpot(Worker);
+        // Debug.Assert(spot != null, "Failed to reserve crafting spot in " + buildingToCraftIn.DefnId);
+        
+        Debug.Assert(!ReservedCraftingSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedCraftingSpots");
+        spot.ReserveBy(Worker);
         ReservedCraftingSpots.Add(spot);
         return spot;
     }
 
-    protected void unreserveBuildingCraftingSpot(CraftingSpotData spot)
+    protected void unreserveraftingSpot(CraftingSpotData spot)
     {
         spot.Unreserve();
         ReservedCraftingSpots.Remove(spot);

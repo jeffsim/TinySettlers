@@ -55,9 +55,9 @@ public class GatherResourceTests : TestBase
         Assert.AreEqual(MinersHut.StorageAreas[0].NumItemsInStorage(StoneMine.Defn.ResourcesThatCanBeGatheredFromHere[0]), 9);
     }
 
-    [Test]
-    public void GatheringSpotsAreReserved_PingPongGatherers()
-    {
+    // [Test]
+    // public void GatheringSpotsAreReserved_PingPongGatherers()
+    // {
         // // setup: miners hut with 3 miners; stonemine with 1 gathering spot.  Verify they tradeoff correctly
         // LoadTestTown("testTown2");
 
@@ -83,7 +83,7 @@ public class GatherResourceTests : TestBase
         // // Assert.IsTrue(StoneMine.WorkersThatReservedGatheringSpots.Contains(idler0) || StoneMine.WorkersThatReservedGatheringSpots.Contains(idler1));
 
         // // waitUntilAssignments(out gatherers, 2, out idlers, 1);
-    }
+    // }
 
     private void verify_anyGatheringSpotInBuildingReservedByWorker(BuildingData building, WorkerData worker)
     {
@@ -93,25 +93,25 @@ public class GatherResourceTests : TestBase
         Assert.Fail("spot not reserved by worker in " + building.DefnId);
     }
 
-    private void waitUntilAssignments(out List<WorkerData> gatherers, int numGatherers, out List<WorkerData> idlers, int numIdlers)
-    {
-        float breakTime = GameTime.time + 30;
+    // private void waitUntilAssignments(out List<WorkerData> gatherers, int numGatherers, out List<WorkerData> idlers, int numIdlers)
+    // {
+    //     float breakTime = GameTime.time + 30;
 
-        gatherers = new List<WorkerData>();
-        idlers = new List<WorkerData>();
-        while (GameTime.time < breakTime)
-        {
-            updateTown();
-            foreach (var worker in Town.Workers)
-                if (worker.CurrentTask.Type == TaskType.GatherResource)
-                    gatherers.Add(worker);
-                else if (worker.CurrentTask.Type == TaskType.Idle)
-                    idlers.Add(worker);
-            if (gatherers.Count == numGatherers && idlers.Count == numIdlers)
-                break;
-            gatherers.Clear();
-            idlers.Clear();
-        }
-        Assert.IsTrue(GameTime.time < breakTime, "stuck in loop in waitUntilAssignments");
-    }
+    //     gatherers = new List<WorkerData>();
+    //     idlers = new List<WorkerData>();
+    //     while (GameTime.time < breakTime)
+    //     {
+    //         updateTown();
+    //         foreach (var worker in Town.Workers)
+    //             if (worker.CurrentTask.Type == TaskType.GatherResource)
+    //                 gatherers.Add(worker);
+    //             else if (worker.CurrentTask.Type == TaskType.Idle)
+    //                 idlers.Add(worker);
+    //         if (gatherers.Count == numGatherers && idlers.Count == numIdlers)
+    //             break;
+    //         gatherers.Clear();
+    //         idlers.Clear();
+    //     }
+    //     Assert.IsTrue(GameTime.time < breakTime, "stuck in loop in waitUntilAssignments");
+    // }
 }

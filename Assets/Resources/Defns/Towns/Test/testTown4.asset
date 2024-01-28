@@ -10,37 +10,37 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ba40ddb7a672144348894273f778f708, type: 3}
-  m_Name: Carnation
+  m_Name: testTown4
   m_EditorClassIdentifier: 
-  Id: carnation
-  FriendlyName: Carnation
+  Id: testTown4
+  FriendlyName: testTown4
   Width: 3
   Height: 3
-  Tiles: g,g,g,d,g,d,g,g,g
-  WorldX: -500
-  WorldY: 120
+  Tiles: g,g,g,g,g,g,g,g,g
+  WorldX: -800
+  WorldY: 100
   Buildings:
   - IsEnabled: 1
-    Building: {fileID: 11400000, guid: f2953a264124d4f6c8869db0916ad9c3, type: 2}
+    Building: {fileID: 11400000, guid: 415d393f999da4868a008757ed588cec, type: 2}
     TileX: 2
-    TileY: 2
-    StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 2
-  - IsEnabled: 1
-    Building: {fileID: 11400000, guid: e97797728a8334f7fb30f4e3b00fcc2d, type: 2}
-    TileX: 0
     TileY: 0
     StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 2
+    NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
-    Building: {fileID: 11400000, guid: 829b56cdca3664623ba2653708959f4e, type: 2}
+    Building: {fileID: 11400000, guid: a8686a94d58b44b0b8400d3c70613146, type: 2}
+    TileX: 0
+    TileY: 2
+    StartingItemsInBuilding: []
+    NumWorkersStartAtBuilding: 1
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: 7494875aee3f5468b92e65b7ae31d238, type: 2}
     TileX: 0
     TileY: 1
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
-    Building: {fileID: 11400000, guid: d837263a9b2b44c989df5e19d8f2f7e0, type: 2}
-    TileX: 1
-    TileY: 1
+    Building: {fileID: 11400000, guid: eef494576fad2e04ea538a65b27e8670, type: 2}
+    TileX: 0
+    TileY: 0
     StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 1
+    NumWorkersStartAtBuilding: 0

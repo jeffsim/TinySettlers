@@ -144,7 +144,7 @@ public class Worker : MonoBehaviour
 
             case TaskType.DeliverItemInHandToStorageSpot:
                 CarriedItem.gameObject.SetActive(true);
-                CarriedItem.text = (Data.CurrentTask as WorkerTask_DeliverItemInHandToStorageSpot).GetTaskItem().Id.Substring(0, 2);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_DeliverItemInHandToStorageSpot).GetTaskItem().Id[..2];
                 switch ((WorkerTask_DeliverItemInHandToStorageSpotSubstate)Data.CurrentTask.substate)
                 {
                     case WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo:
