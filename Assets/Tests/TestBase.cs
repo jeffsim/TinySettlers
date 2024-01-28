@@ -95,6 +95,12 @@ public abstract class TestBase
         Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, message + "Locs not equal - " + v1 + ", " + v2);
     }
 
+    public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker)
+    {
+        Assert.NotNull(worker.CurrentTask);
+        Assert.AreEqual(expectedType, worker.CurrentTask.Type);
+    }
+
     protected void updateTown()
     {
         GameTime.Test_Update();

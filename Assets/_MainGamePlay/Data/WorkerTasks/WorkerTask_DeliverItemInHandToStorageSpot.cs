@@ -60,7 +60,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
                 Debug.Assert(false, "Failed to find *any* spot to store in.  Shouldn't happen since we already had one reserved");
 
         // If we're standing still and working in the building that was moved, then update our location
-        if (substate == (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo && movedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
+        if (substate == (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot && movedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
             Worker.WorldLoc += movedBuilding.WorldLoc - previousWorldLoc;
     }
 
