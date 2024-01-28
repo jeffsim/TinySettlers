@@ -138,8 +138,9 @@ public class WorkerData : BaseData
     {
         // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
         // worker is assigned to building and/or by worker's defn
-        return (AssignedBuilding.Defn.CanGatherResources && AssignedBuilding.Defn.GatherableResources.Contains(neededItem)) ||
-                AssignedBuilding.Defn.IsPrimaryStorage;
+        return (AssignedBuilding.Defn.CanGatherResources && AssignedBuilding.Defn.GatherableResources.Contains(neededItem))
+                //  || AssignedBuilding.Defn.IsPrimaryStorage
+                 ;
     }
 
     internal bool CanCleanupStorage()
