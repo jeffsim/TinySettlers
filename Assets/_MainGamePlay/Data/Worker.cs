@@ -125,7 +125,8 @@ public class WorkerData : BaseData
     internal void DropItemInHandInReservedStorageSpot()
     {
         Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
-        Debug.Assert(StorageSpotReservedForItemInHand.Building != null && !StorageSpotReservedForItemInHand.Building.IsDestroyed, "No ItemInHand or building destroyed");
+        Debug.Assert(StorageSpotReservedForItemInHand.Building != null, "No ItemInHand");
+        Debug.Assert(!StorageSpotReservedForItemInHand.Building.IsDestroyed, "Building destroyed");
         Debug.Assert(ItemInHand != null, "No ItemInHand");
 
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
@@ -139,7 +140,7 @@ public class WorkerData : BaseData
         // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
         // worker is assigned to building and/or by worker's defn
         return (AssignedBuilding.Defn.CanGatherResources && AssignedBuilding.Defn.GatherableResources.Contains(neededItem))
-                //  || AssignedBuilding.Defn.IsPrimaryStorage
+                 //  || AssignedBuilding.Defn.IsPrimaryStorage
                  ;
     }
 
@@ -150,11 +151,18 @@ public class WorkerData : BaseData
         return AssignedBuilding.Defn.WorkersCanFerryItems;
     }
 
+    internal bool CanPickupAbandonedItems()
+    {
+        // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
+        // worker is assigned to building and/or by worker's defn
+        return AssignedBuilding.Defn.WorkersCanFerryItems;
+    }
+
     internal void UnreserveStorageSpotReservedForItemInHand()
     {
         Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
         Debug.Assert(StorageSpotReservedForItemInHand.ReservedBy == this, "StorageSpotReservedForItemInHand.ReservedBy != this");
-        
+
         StorageSpotReservedForItemInHand.Unreserve();
         StorageSpotReservedForItemInHand = null;
     }

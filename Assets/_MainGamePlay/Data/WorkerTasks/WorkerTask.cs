@@ -8,7 +8,7 @@ public enum TaskType
     DeliverItemInHandToStorageSpot,
     PickupGatherableResource,
     PickupItemInStorageSpot,
-
+    PickupItemFromGround,
 
     GatherResource, CraftGood, FerryItem, PickupAbandonedItem, SellGood
 };

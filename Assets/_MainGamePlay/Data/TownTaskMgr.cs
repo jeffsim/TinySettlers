@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 [Serializable]
 public class TownTaskMgr
@@ -56,10 +57,41 @@ public class TownTaskMgr
                 {
                     case NeedType.GatherResource: getHigherPriorityTaskIfExists_GatherResource(need, idleWorkers); break;
                     case NeedType.ClearStorage: getHigherPriorityTaskIfExists_CleanupStorage(need, idleWorkers); break;
+                    case NeedType.PickupAbandonedItem: getHigherPriorityTaskIfExists_PickupAbandonedItem(need, idleWorkers); break;
                 }
 
         // Return the highest priority task
         return HighestPriorityTask;
+    }
+
+    private void getHigherPriorityTaskIfExists_PickupAbandonedItem(NeedData need, List<WorkerData> idleWorkers)
+    {
+        // =====================================================================================
+        // FIRST, determine if need is meetable
+
+        // Assumed so
+
+        // =====================================================================================
+        // SECOND, determine which idle workers can go pick up the abandoned item
+        float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
+        foreach (var worker in idleWorkers)
+        {
+            if (worker.ItemInHand != null) continue;                    // if worker is already carrying something then skip
+            if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
+            if (!worker.CanPickupAbandonedItems()) continue;
+
+            // availableTasks.Add(new PrioritizedTask(WorkerTask_PickupAbandonedItem.Create(worker, need), need.Priority));
+            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.WorldLoc, need.AbandonedItemToPickup.WorldLocOnGround);
+
+            var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, need.AbandonedItemToPickup.WorldLocOnGround);
+            Debug.Assert(closestStorageSpot != null, "Should have been caught above");
+
+            if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
+            {
+                highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
+                HighestPriorityTask.Set(WorkerTask_PickupAbandonedItemFromGround.Create(worker, need, closestStorageSpot), highestPrioritySoFar);
+            }
+        }
     }
 
     // If here, then a building has a 'cleanup my storage please' need - see if any idleworkers can do it
@@ -158,6 +190,8 @@ public class TownTaskMgr
         }
     }
 
+    float getDistanceImpactOnPriority(Vector3 loc1, Vector3 loc2) => getDistanceImpactOnPriority(Vector3.Distance(loc1, loc2));
+
     private float getDistanceImpactOnPriority(float distance)
     {
         // Distance is largely just used to differentiate between workers, so doesn't need to be large impact
@@ -177,7 +211,7 @@ public class TownTaskMgr
                 if (need.Priority > 0)
                     allNeeds.Add(need);
 
-        // allNeeds.AddRange(otherTownNeeds); // Add needs to pick up any items abandoned on the ground
+        allNeeds.AddRange(Town.otherTownNeeds); // Add needs to pick up any items abandoned on the ground
 
         return allNeeds;
     }
