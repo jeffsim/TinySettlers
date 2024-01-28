@@ -62,13 +62,29 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
         reserveStorageSpot(reservedSpotToStoreItemIn);
     }
 
-    public override void OnBuildingDestroyed(BuildingData building)
+    public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
-        // If our target resource-gathering building was destroyed and we're still walking to it, or gathering from it, then abandon
-        if (spotWithItemToPickup.Building.IsDestroyed && substate == 0)
+        // If our target spot's building was destroyed and we're still walking to it, then abandon
+        if (destroyedBuilding == spotWithItemToPickup.Building && substate == 0)
+        {
             Abandon();
-        else if (reservedSpotToStoreItemIn.Building.IsDestroyed && substate == 0)
-            Abandon();
+            return;
+        }
+
+        // If the building which we have reserved a storage spot in was destroyed then try to find an alternative
+        if (destroyedBuilding == reservedSpotToStoreItemIn.Building)
+        {
+            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedSpotToStoreItemIn);
+            if (newSpot == null)
+                Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
+            else
+            { 
+                // Swap for new storage spot
+                ReservedStorageSpots.Remove(reservedSpotToStoreItemIn);
+                reservedSpotToStoreItemIn = newSpot;
+                ReservedStorageSpots.Add(reservedSpotToStoreItemIn);
+            }
+        }
     }
 
     public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)

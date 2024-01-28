@@ -115,7 +115,7 @@ public abstract class WorkerTask
     protected void GotoNextSubstate() => gotoSubstate(substate + 1);
 
     public bool IsSubstateDone(float substateRuntime) => getPercentSubstateDone(substateRuntime) == 1;
-    
+
     public float getPercentSubstateDone(float substateRuntime)
     {
         return Math.Clamp((GameTime.time - timeStartedSubstate) / (substateRuntime / GameTime.timeScale), 0, 1);
@@ -337,4 +337,19 @@ public abstract class WorkerTask
     //     unreserveStorageSpot(spot);
     //     return reserveStorageSpot(spot.Building);
     // }
+
+    protected StorageSpotData FindNewOptimalStorageSpotToDeliverItemTo(StorageSpotData originalReservedSpot)
+    {
+        var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, Worker.WorldLoc, Worker);
+        if (optimalStorageSpotToDeliverItemTo == null)
+            return originalReservedSpot;
+
+        if (optimalStorageSpotToDeliverItemTo != originalReservedSpot)
+        {
+            originalReservedSpot.Unreserve();
+            originalReservedSpot = optimalStorageSpotToDeliverItemTo;
+            originalReservedSpot.ReserveBy(Worker);
+        }
+        return originalReservedSpot;
+    }
 }

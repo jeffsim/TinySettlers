@@ -45,10 +45,14 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
 
     public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
-        // If the building to which we are bringing the item is destroyed then try to find an alternative
+        // If the building which we have reserved a storage spot in was destroyed then try to find an alternative
         if (destroyedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
-            if (!FindNewOptimalStorageSpotToDeliverItemTo())
+        {
+            Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand);
+            if (Worker.StorageSpotReservedForItemInHand == null)
                 Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
+        }
+
     }
 
     public override void OnBuildingMoved(BuildingData movedBuilding, Vector3 previousWorldLoc)
@@ -56,27 +60,15 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         // If we're still walking, then determine if there is now a better/closer storage spot to deliver the item to. e.g. if user moved building far away
         // Note that we do this even if a building other than our target building moved, since a better alternative may have moved closer the worker.
         if (IsWalkingToTarget)
-            if (!FindNewOptimalStorageSpotToDeliverItemTo())
+        {
+            Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand);
+            if (Worker.StorageSpotReservedForItemInHand == null)
                 Debug.Assert(false, "Failed to find *any* spot to store in.  Shouldn't happen since we already had one reserved");
+        }
 
         // If we're standing still and working in the building that was moved, then update our location
         if (substate == (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot && movedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
             Worker.WorldLoc += movedBuilding.WorldLoc - previousWorldLoc;
-    }
-
-    private bool FindNewOptimalStorageSpotToDeliverItemTo()
-    {
-        var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, Worker.WorldLoc, Worker);
-        if (optimalStorageSpotToDeliverItemTo == null)
-            return false;
-
-        if (optimalStorageSpotToDeliverItemTo != Worker.StorageSpotReservedForItemInHand)
-        {
-            Worker.StorageSpotReservedForItemInHand.Unreserve();
-            Worker.StorageSpotReservedForItemInHand = optimalStorageSpotToDeliverItemTo;
-            Worker.StorageSpotReservedForItemInHand.ReserveBy(Worker);
-        }
-        return true;
     }
 
     public override void Update()
