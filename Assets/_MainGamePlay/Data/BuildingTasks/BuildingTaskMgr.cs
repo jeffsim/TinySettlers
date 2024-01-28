@@ -89,7 +89,7 @@ public class BuildingTaskMgrData
 
         // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
         // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
-        if (!Town.HasAvailableStorageSpot()) return;
+        if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) return;
 
         foreach (var need in allTownNeeds)
         {
@@ -127,7 +127,7 @@ public class BuildingTaskMgrData
 
         // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
         // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
-        if (!Town.HasAvailableStorageSpot()) return;
+        if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) return;
 
         // for now, find the first instance where a building needs a resource and the resource is in another building.
         foreach (var need in allTownNeeds)
@@ -168,7 +168,7 @@ public class BuildingTaskMgrData
 
         // Ensure a storage location exists; we don't care if it's closest as long as it's valid.  The determination of closest is 
         // deferred until the task is started since (a) it's more costly to calculate and (b) we may not opt to do this task
-        if (!Town.HasAvailableStorageSpot()) return;
+        if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) return;
 
         foreach (var need in Building.GatheringNeeds)
         {

@@ -211,6 +211,7 @@ public class TownData : BaseData
     }
 
     public bool HasAvailableStorageSpot(StorageSpotSearchType searchType = StorageSpotSearchType.Any, WorkerData worker = null) => GetAvailableStorageSpot(searchType, worker) != null;
+    public bool HasAvailablePrimaryOrAssignedStorageSpot(WorkerData worker) => GetAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worker) != null;
 
     public StorageSpotData GetAvailableStorageSpot(StorageSpotSearchType searchType, WorkerData worker = null)
     {
@@ -242,7 +243,8 @@ public class TownData : BaseData
     public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Vector3 worldLoc, WorkerData worker = null) => GetClosestAvailableStorageSpot(searchType, worldLoc, worker, out float _);
     public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Vector3 worldLoc, WorkerData worker, out float dist)
     {
-        Debug.Assert(searchType == StorageSpotSearchType.AssignedBuildingOrPrimary && worker != null, "worker must be specified for AnyAssignedBuildingOrPrimary");
+        if (searchType == StorageSpotSearchType.AssignedBuildingOrPrimary)
+            Debug.Assert(worker != null, "worker must be specified for AnyAssignedBuildingOrPrimary");
 
         BuildingData closestBuilding = null;
         dist = float.MaxValue;
