@@ -104,6 +104,44 @@ public class Worker : MonoBehaviour
                 }
                 break;
 
+            case TaskType.PickupItemInStorageSpot:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_PickupItemFromStorageSpot).GetTaskItem().Id.Substring(0, 2);
+                switch ((WorkerTask_PickupItemFromStorageSpotSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem:
+                        carriedItemRectTransform.localPosition = itemDown;
+                        carriedItemRectTransform.localScale = scaleNormal;
+                        CarriedItem.color = Color.red;
+                        break;
+                    case WorkerTask_PickupItemFromStorageSpotSubstate.PickupItemFromItemSpot:
+                        var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupItemFromStorageSpot.secondsToPickup);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t2);
+                        carriedItemRectTransform.localScale = scaleNormal;
+                        CarriedItem.color = Color.white;
+                        break;
+                }
+                break;
+
+            case TaskType.PickupItemFromGround:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_PickupAbandonedItemFromGround).GetTaskItem().Id.Substring(0, 2);
+                switch ((WorkerTask_PickupAbandonedItemFromGroundSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround:
+                        carriedItemRectTransform.localPosition = itemDown;
+                        carriedItemRectTransform.localScale = scaleNormal;
+                        CarriedItem.color = Color.red;
+                        break;
+                    case WorkerTask_PickupAbandonedItemFromGroundSubstate.PickupItemFromGround:
+                        var t2 = Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupAbandonedItemFromGround.secondsToPickup);
+                        carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t2);
+                        carriedItemRectTransform.localScale = scaleNormal;
+                        CarriedItem.color = Color.white;
+                        break;
+                }
+                break;
+
             case TaskType.DeliverItemInHandToStorageSpot:
                 CarriedItem.gameObject.SetActive(true);
                 CarriedItem.text = (Data.CurrentTask as WorkerTask_DeliverItemInHandToStorageSpot).GetTaskItem().Id.Substring(0, 2);

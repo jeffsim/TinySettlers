@@ -132,7 +132,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(WorkerTask_PickupItemFromBuilding.Create(worker, need, spotWithItem, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(WorkerTask_PickupItemFromStorageSpot.Create(worker, need, spotWithItem, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
