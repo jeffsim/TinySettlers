@@ -69,9 +69,7 @@ public class TownTaskMgr
         // FIRST, determine if need is meetable
 
         // Confirm that there is at least one storage spot that can store the cleaned-up item; if none then abort
-        var tempStorageSpot = Town.GetAvailableStorageSpot(StorageSpotSearchType.Primary);
-        if (tempStorageSpot == null)
-            return;
+        if (!Town.HasAvailableStorageSpot()) return;
 
         // For now, just pick the first item in storage and clean it up; in the future, pick the item closest to the worker, or the item that the building
         // "most wants to get rid of"
@@ -96,10 +94,15 @@ public class TownTaskMgr
             float distanceImpactOnPriority = getDistanceImpactOnPriority(distanceToSpotWithItemToCleanup);
             float priorityOfMeetingNeedWithThisWorker = need.Priority + distanceImpactOnPriority;
 
+            // Optimality of gathering from 'building' is based on distance from building-with-need
+            // TOOD: In the future, this is where I would add support for user putting thumb on scale re: which buildings to gather/not gather from
+            var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, need.BuildingWithNeed.WorldLoc);
+            Debug.Assert(closestStorageSpot != null, "Should have been caught above");
+
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(WorkerTask_PickupItemFromBuilding.Create(worker, need, spotWithItem, tempStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(WorkerTask_PickupItemFromBuilding.Create(worker, need, spotWithItem, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
@@ -111,8 +114,7 @@ public class TownTaskMgr
         // FIRST, determine if need is meetable
 
         // Confirm that there is at least one storage spot that can store the gathered resource; if none then abort
-        if (!Town.HasAvailableStorageSpot())
-            return;
+        if (!Town.HasAvailableStorageSpot()) return;
 
         // Generate the list of all buildings that the resource can be gathered from (and have an available gatheringspot); if none then abort
         var buildingsThatResourceCanBeGatheredFrom = Town.Buildings.Where(building => building.ResourceCanBeGatheredFromHere(need.NeededItem)).ToList();

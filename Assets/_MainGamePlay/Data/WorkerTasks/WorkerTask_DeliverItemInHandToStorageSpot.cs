@@ -49,10 +49,10 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         if (destroyedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
         {
             Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand);
+            substate = 0; // back to walking again
             if (Worker.StorageSpotReservedForItemInHand == null)
                 Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
         }
-
     }
 
     public override void OnBuildingMoved(BuildingData movedBuilding, Vector3 previousWorldLoc)
