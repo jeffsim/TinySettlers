@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
 using NUnit.Framework;
-using UnityEngine;
 
 public class MoveBuildingTests : TestBase
 {
     [Test]
-    public void MoveBuilding_WalkingToGatherResources()
+    public void MoveBuilding_GatheringResources_WalkingTo()
     {
         // i = 0 ==> move building with resources being gathered
         // i = 1 ==> move building which the miner is assigned to
@@ -46,7 +43,7 @@ public class MoveBuildingTests : TestBase
     }
 
     [Test]
-    public void MoveBuilding_GatheringResources()
+    public void MoveBuilding_GatheringResources_Reaping()
     {
         // i = 0 ==> move building with resources being gathered
         // i = 1 ==> move building which the miner is assigned to
@@ -57,10 +54,12 @@ public class MoveBuildingTests : TestBase
 
             // Start gathering task
             var miner = getAssignedWorker(MinersHut.DefnId);
-            waitUntilTask(miner, TaskType.GatherResource);
+            waitUntilTask(miner, TaskType.PickupGatherableResource);
 
-            // wait until walking to target mine
-            waitUntilTaskSubstate(miner, (int)WorkerTask_GatherResourceSubstate.GatherResourceInBuilding);
+            // wait until reaping
+            waitUntilTaskSubstate(miner, (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource);
+
+            var minerOriginalLocRelativeToReapingBuilding = miner.WorldLoc - StoneMine.WorldLoc;
 
             // Move the building, verify new state
             if (i == 0) Town.MoveBuilding(StoneMine, 2, 0);
@@ -68,14 +67,46 @@ public class MoveBuildingTests : TestBase
             else Town.MoveBuilding(Camp, 2, 0);
 
             // verify miner's task remains the same
-            Assert.AreEqual(miner.CurrentTask.Type, TaskType.GatherResource);
+            verify_WorkerTaskType(TaskType.PickupGatherableResource, miner);
+            Assert.AreEqual((int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource, miner.CurrentTask.substate);
 
-            // Verify reserved spots remain so
-            Assert.AreEqual(StoneMine.NumReservedGatheringSpots, 1);
-            Assert.AreEqual(StoneMine.GatheringSpots[0].ReservedBy, miner);
+            // verify miner is in new reapping location
+            var minerNewLocRelativeToReapingBuilding = miner.WorldLoc - StoneMine.WorldLoc;
+            verify_LocsAreEqual(minerOriginalLocRelativeToReapingBuilding, minerNewLocRelativeToReapingBuilding, "step " + i);
+        }
+    }
 
-            // verify miner is in new gathering location
-            verify_LocsAreEqual(miner.WorldLoc, StoneMine.GatheringSpots[0].WorldLoc, "step " + i);
+    [Test]
+    public void MoveBuilding_GatheringResources_PickingUp()
+    {
+        // i = 0 ==> move building with resources being gathered
+        // i = 1 ==> move building which the miner is assigned to
+        // i = 2 ==> move random other building
+        for (int i = 0; i < 3; i++)
+        {
+            LoadTestTown("testTown1");
+
+            // Start gathering task
+            var miner = getAssignedWorker(MinersHut.DefnId);
+            waitUntilTask(miner, TaskType.PickupGatherableResource);
+
+            // wait until reaping
+            waitUntilTaskSubstate(miner, (int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource);
+
+            var minerOriginalLocRelativeToReapingBuilding = miner.WorldLoc - StoneMine.WorldLoc;
+
+            // Move the building, verify new state
+            if (i == 0) Town.MoveBuilding(StoneMine, 2, 0);
+            else if (i == 1) Town.MoveBuilding(miner.AssignedBuilding, 2, 0);
+            else Town.MoveBuilding(Camp, 2, 0);
+
+            // verify miner's task remains the same
+            verify_WorkerTaskType(TaskType.PickupGatherableResource, miner);
+            Assert.AreEqual((int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource, miner.CurrentTask.substate);
+
+            // verify miner is in new reapping location
+            var minerNewLocRelativeToReapingBuilding = miner.WorldLoc - StoneMine.WorldLoc;
+            verify_LocsAreEqual(minerOriginalLocRelativeToReapingBuilding, minerNewLocRelativeToReapingBuilding, "step " + i);
         }
     }
 
@@ -145,12 +176,9 @@ public class MoveBuildingTests : TestBase
             var minerOriginalLocRelativeToDroppingBuilding = miner.WorldLoc - MinersHut.WorldLoc;
 
             // Move the building, verify new state
-            if (i == 0)
-                Town.MoveBuilding(StoneMine, 2, 0);
-            else if (i == 1)
-                Town.MoveBuilding(miner.AssignedBuilding, 2, 0);
-            else
-                Town.MoveBuilding(Camp, 2, 0);
+            if (i == 0) Town.MoveBuilding(StoneMine, 2, 0);
+            else if (i == 1) Town.MoveBuilding(miner.AssignedBuilding, 2, 0);
+            else Town.MoveBuilding(Camp, 2, 0);
 
             // verify miner's task remains the same
             verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, miner);
@@ -158,7 +186,6 @@ public class MoveBuildingTests : TestBase
 
             // verify miner is in new dropping location
             var minerNewLocRelativeToDroppingBuilding = miner.WorldLoc - MinersHut.WorldLoc;
-
             verify_LocsAreEqual(minerOriginalLocRelativeToDroppingBuilding, minerNewLocRelativeToDroppingBuilding, "step " + i);
         }
     }

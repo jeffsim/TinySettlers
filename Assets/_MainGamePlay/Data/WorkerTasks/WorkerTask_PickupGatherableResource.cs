@@ -29,11 +29,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
 
     public override bool IsWalkingToTarget => substate == 0;
 
-    public override ItemDefn GetTaskItem()
-    {
-        if (optimalGatheringSpot == null || optimalGatheringSpot == null) return null;
-        return optimalGatheringSpot.ItemInSpot.Defn;
-    }
+    public override ItemDefn GetTaskItem() => optimalGatheringSpot?.ItemInSpot.Defn;
 
     public override string ToDebugString()
     {
