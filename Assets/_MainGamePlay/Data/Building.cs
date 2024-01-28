@@ -108,6 +108,21 @@ public class BuildingData : BaseData
     public int NumAvailableGatheringSpots => Defn.GatheringSpots.Count - NumReservedGatheringSpots;
     public bool HasAvailableGatheringSpot => NumAvailableGatheringSpots > 0;
 
+    // storage
+    public int NumReservedStorageSpots
+    {
+        get
+        {
+            // TODO (PERF): Cache
+            int count = 0;
+            foreach (var area in StorageAreas)
+                foreach (var spot in area.StorageSpots)
+                    if (spot.IsReserved)
+                        count++;
+            return count;
+        }
+    }
+
     // Crafting fields
     public int NumReservedCraftingSpots
     {

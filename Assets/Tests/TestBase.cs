@@ -15,7 +15,8 @@ public abstract class TestBase
         if (GameDefns.Instance == null)
         {
             var go = new GameObject("GameDefns");
-            go.AddComponent<GameDefns>();
+            GameDefns.Instance = go.AddComponent<GameDefns>();
+            GameDefns.Instance.Test_ForceAwake();
         }
         UniqueIdGenerator.Instance = new UniqueIdGenerator();
 

@@ -19,6 +19,11 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
     [SerializeField] GatheringSpotData optimalGatheringSpot;
     [SerializeField] StorageSpotData reservedStorageSpot;
 
+#if UNITY_INCLUDE_TESTS
+    public GatheringSpotData OptimalGatheringSpot => optimalGatheringSpot;
+    public StorageSpotData ReservedStorageSpot => reservedStorageSpot;
+#endif
+
     public const float secondsToReap = 1;
     public const float secondsToPickup = 0.5f;
 
@@ -29,6 +34,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         if (optimalGatheringSpot == null || optimalGatheringSpot == null) return null;
         return optimalGatheringSpot.ItemInSpot.Defn;
     }
+
     public override string ToDebugString()
     {
         var str = "Pickup gatherable resource\n";

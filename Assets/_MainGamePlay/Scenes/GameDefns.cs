@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -27,6 +28,12 @@ public class GameDefnsMgr
         loadDefns("Workers", WorkerDefns);
         loadDefns("Worlds", WorldDefns);
         loadDefns("GameSettings", GameSettingsDefns);
+
+        if (GameTime.IsTest)
+        {
+            loadDefns("Towns/Test", TownDefns);
+            loadDefns("Buildings/Test", BuildingDefns);
+        }
     }
 
     private void loadDefns<T>(string folderName, Dictionary<string, T> defnDict) where T : BaseDefn
@@ -53,10 +60,13 @@ public class GameDefns : SerializedMonoBehaviour
 
     void Awake()
     {
-        GameDefns[] objs = GameObject.FindObjectsByType<GameDefns>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-        if (objs.Length > 1)
-            Destroy(this.gameObject);
-        DontDestroyOnLoad(this.gameObject);
+        if (!GameTime.IsTest)
+        {
+            GameDefns[] objs = FindObjectsByType<GameDefns>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            if (objs.Length > 1)
+                Destroy(gameObject);
+            DontDestroyOnLoad(gameObject);
+        }
         Instance = this;
         GameDefnsMgr = new GameDefnsMgr();
         GameDefnsMgr.RefreshDefns();
@@ -66,5 +76,13 @@ public class GameDefns : SerializedMonoBehaviour
     {
         Instance = this;
         GameDefnsMgr.RefreshDefns();
+    }
+
+    public void Test_ForceAwake()
+    {
+        if (Instance == null || GameDefnsMgr == null)
+            Awake();
+        else
+            GameDefnsMgr.RefreshDefns();
     }
 }

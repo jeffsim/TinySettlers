@@ -17,19 +17,29 @@ MonoBehaviour:
   FriendlyName: Miners Hut (test)
   BuildingClass: 2
   AssignedWorkerColor: {r: 1, g: 0.50591254, b: 0, a: 0}
+  AssignedWorkerFriendlyName: 
+  HasWorkers: 1
+  MaxWorkers: 4
   EditorColor: {r: 0.24528301, g: 0.12491265, b: 0, a: 1}
-  CanBeConstructed: 0
+  PlayerCanMove: 1
+  PlayerCanDestroy: 1
+  CanBeConstructed: 1
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
   CanCraft: 0
   CraftableItems: []
   CraftingSpots: []
   CanStoreItems: 1
+  IsPrimaryStorage: 0
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
+  StorageAreaSize: {x: 3, y: 3}
+  WorkersCanFerryItems: 0
   CanGatherResources: 1
   GatherableResources:
   - {fileID: 11400000, guid: 0f7a65437217c4f3c8bdf660e2b482c4, type: 2}
   ResourcesCanBeGatheredFromHere: 0
   ResourcesThatCanBeGatheredFromHere: []
   GatheringSpots: []
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

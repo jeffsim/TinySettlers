@@ -29,7 +29,7 @@ public class GatheringSpotData : ItemSpotData
 
         // Grow the item in spot; when fully grown, create an item so that it needs to be reaped
         var itemDefn = GameDefns.Instance.ItemDefns[ItemGrownInSpotDefnId];
-        PercentGrown += Time.deltaTime / itemDefn.SecondsToGrow;
+        PercentGrown += GameTime.deltaTime / itemDefn.SecondsToGrow;
         if (PercentGrown >= 1)
         {
             PercentGrown = 0;

@@ -17,7 +17,12 @@ MonoBehaviour:
   FriendlyName: Camp (test)
   BuildingClass: 1
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
+  AssignedWorkerFriendlyName: 
+  HasWorkers: 1
+  MaxWorkers: 4
   EditorColor: {r: 0.021646384, g: 0, b: 0.6132076, a: 1}
+  PlayerCanMove: 1
+  PlayerCanDestroy: 0
   CanBeConstructed: 0
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
@@ -25,10 +30,15 @@ MonoBehaviour:
   CraftableItems: []
   CraftingSpots: []
   CanStoreItems: 1
+  IsPrimaryStorage: 0
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
+  StorageAreaSize: {x: 3, y: 3}
+  WorkersCanFerryItems: 1
   CanGatherResources: 0
   GatherableResources: []
   ResourcesCanBeGatheredFromHere: 0
   ResourcesThatCanBeGatheredFromHere: []
   GatheringSpots: []
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

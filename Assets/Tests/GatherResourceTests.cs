@@ -13,28 +13,28 @@ public class GatherResourceTests : TestBase
         Assert.AreEqual(miner.CurrentTask.Type, TaskType.Idle);
 
         // Start gathering task
-        waitUntilTask(miner, TaskType.GatherResource);
-        Assert.AreEqual(miner.CurrentTask.Type, TaskType.GatherResource);
+        waitUntilTask(miner, TaskType.PickupGatherableResource);
 
         // Verify Worker reserved a gathering spot in the mine
         Assert.AreEqual(StoneMine.NumReservedGatheringSpots, 1);
         Assert.AreEqual(StoneMine.GatheringSpots[0].ReservedBy, miner);
 
-        // wait until actually gathering resource in target building
-        waitUntilTaskSubstate(miner, (int)WorkerTask_GatherResourceSubstate.GatherResourceInBuilding);
-        Assert.AreEqual(StoneMine.NumReservedGatheringSpots, 1);
-        Assert.AreEqual(StoneMine.GatheringSpots[0].ReservedBy, miner);
+        // Verify Worker reserved a storage spot in the Miners hut (which is closer to the mine than the camp)
+        Assert.AreEqual(MinersHut.NumReservedStorageSpots, 1);
+        Assert.AreEqual((miner.CurrentTask as WorkerTask_PickupGatherableResource).ReservedStorageSpot.ReservedBy, miner);
 
-        // wait until done gathering; gathering spot should no longer be reserve
-        waitUntilTaskSubstate(miner, (int)WorkerTask_GatherResourceSubstate.ReturnToAssignedBuilding);
-        Assert.AreEqual(StoneMine.NumReservedGatheringSpots, 0);
+        // wait until actually gathering (reaping) resource in target building
+        waitUntilTaskSubstate(miner, (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource);
 
-        // wait until dropping; should still be unreserved
-        waitUntilTaskSubstate(miner, (int)WorkerTask_GatherResourceSubstate.DropGatheredResource);
+        // wait until done gathering (reaping) and are now picking up
+        waitUntilTaskSubstate(miner, (int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource);
+
+        // wait until done picking up; gathering spot should no longer be reserve
+        waitUntilTaskDone(miner);
         Assert.AreEqual(StoneMine.NumReservedGatheringSpots, 0);
 
         // wait until restarted task; should be reserved again
-        waitUntilNewTask(miner, TaskType.GatherResource);
+        waitUntilTask(miner, TaskType.PickupGatherableResource);
         Assert.AreEqual(StoneMine.NumReservedGatheringSpots, 1);
         Assert.AreEqual(StoneMine.GatheringSpots[0].ReservedBy, miner);
     }
@@ -74,7 +74,7 @@ public class GatherResourceTests : TestBase
         waitUntilTaskSubstate(gatherer0, (int)WorkerTask_GatherResourceSubstate.GatherResourceInBuilding);
         Assert.AreEqual(StoneMine.NumReservedGatheringSpots, 1);
         verify_anyGatheringSpotInBuildingReservedByWorker(StoneMine, gatherer0);
-        
+
         // wait until done gathering; gathering spot should now be reserved by one of the idlers and they should be going
         waitUntilTaskSubstate(gatherer0, (int)WorkerTask_GatherResourceSubstate.ReturnToAssignedBuilding);
         updateTown();
