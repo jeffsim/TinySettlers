@@ -17,15 +17,15 @@ public class BuildingTaskMgrData
 
     internal void GetAvailableTasksForWorker(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
     {
-        addTasks_GatherResources(availableTasks, worker);
-        addTasks_CraftItems(availableTasks, worker);
-        addTasks_CourierItems(availableTasks, worker, allTownNeeds);
-        addTasks_CleanupBuildingStorage(availableTasks, worker, allTownNeeds);
-        addTasks_CleanupAbandonedItems(availableTasks, worker, allTownNeeds);
-        addTasks_sellGoodsThatAreInTheBuilding(availableTasks, worker, allTownNeeds);
-        addTasks_RequestGoodsThatBuildingCanSell(availableTasks, worker, allTownNeeds);
+        // addTasks_GatherResources(availableTasks, worker);
+        // addTasks_CraftItems(availableTasks, worker);
+        // addTasks_CourierItems(availableTasks, worker, allTownNeeds);
+        // addTasks_CleanupBuildingStorage(availableTasks, worker, allTownNeeds);
+        // addTasks_CleanupAbandonedItems(availableTasks, worker, allTownNeeds);
+        // addTasks_sellGoodsThatAreInTheBuilding(availableTasks, worker, allTownNeeds);
+        // addTasks_RequestGoodsThatBuildingCanSell(availableTasks, worker, allTownNeeds);
     }
-
+/*
     private void addTasks_RequestGoodsThatBuildingCanSell(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
     {
         if (!Building.Defn.CanSellGoods) return;
@@ -270,5 +270,5 @@ public class BuildingTaskMgrData
             num += area.NumUnreservedItemsInStorage(itemDefn);
         return num >= count;
     }
-
+*/
 }
