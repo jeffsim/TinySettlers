@@ -11,7 +11,7 @@ public class WorkerTask_Idle : WorkerTask
     [SerializeField] float secondsToWait;
     [SerializeField] Vector3 idleMoveToDest;
 
-    public override bool Debug_IsMovingToTarget
+    public override bool IsWalkingToTarget
     {
         get
         {
@@ -58,7 +58,7 @@ public class WorkerTask_Idle : WorkerTask
         {
             case 0: // choose how long to wait before moving
                 secondsToWait = shouldMoveToAssignedBuilding() ? 0 : (1 + UnityEngine.Random.value * 4f);
-                gotoNextSubstate();
+                GotoNextSubstate();
                 break;
 
             case 1: // wait to go to a new spot
@@ -66,12 +66,12 @@ public class WorkerTask_Idle : WorkerTask
                 {
                     idleMoveToDest = Utilities.LocationWithinDistance(Worker.AssignedBuilding.WorldLoc, 3f);
                     distanceMovedPerSecond = 3 + (UnityEngine.Random.value - .5f) * 1f;
-                    gotoNextSubstate();
+                    GotoNextSubstate();
                 }
                 break;
 
             case 2: // go to new spot
-                if (moveTowards(idleMoveToDest, distanceMovedPerSecond, .1f))
+                if (MoveTowards(idleMoveToDest, distanceMovedPerSecond, .1f))
                 {
                     // repeat until interrupted
                     Start();

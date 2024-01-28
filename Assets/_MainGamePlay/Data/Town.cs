@@ -239,9 +239,11 @@ public class TownData : BaseData
         return null;
     }
 
-    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Vector3 worldLoc) => GetClosestAvailableStorageSpot(searchType, worldLoc, out float _);
-    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Vector3 worldLoc, out float dist, WorkerData worker = null)
+    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Vector3 worldLoc, WorkerData worker = null) => GetClosestAvailableStorageSpot(searchType, worldLoc, worker, out float _);
+    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Vector3 worldLoc, WorkerData worker, out float dist)
     {
+        Debug.Assert(searchType == StorageSpotSearchType.AssignedBuildingOrPrimary && worker != null, "worker must be specified for AnyAssignedBuildingOrPrimary");
+
         BuildingData closestBuilding = null;
         dist = float.MaxValue;
         foreach (var building in Buildings)

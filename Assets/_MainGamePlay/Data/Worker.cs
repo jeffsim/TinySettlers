@@ -25,7 +25,7 @@ public class WorkerData : BaseData
     public StorageSpotData StorageSpotReservedForItemInHand;
 
     public NeedData OriginalPickupItemNeed;
-    
+
     [NonSerialized] public OnAssignedToBuildingEvent OnAssignedToBuilding;
 
     public WorkerData(BuildingData buildingToStartIn)
@@ -131,6 +131,7 @@ public class WorkerData : BaseData
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
         StorageSpotReservedForItemInHand.Building.AddItemToItemSpot(ItemInHand, StorageSpotReservedForItemInHand);
         ItemInHand = null;
+        UnreserveStorageSpotReservedForItemInHand();
     }
 
     internal bool CanGatherResource(ItemDefn neededItem)
@@ -146,5 +147,14 @@ public class WorkerData : BaseData
         // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
         // worker is assigned to building and/or by worker's defn
         return AssignedBuilding.Defn.WorkersCanFerryItems;
+    }
+
+    internal void UnreserveStorageSpotReservedForItemInHand()
+    {
+        Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
+        Debug.Assert(StorageSpotReservedForItemInHand.ReservedBy == this, "StorageSpotReservedForItemInHand.ReservedBy != this");
+        
+        StorageSpotReservedForItemInHand.Unreserve();
+        StorageSpotReservedForItemInHand = null;
     }
 }

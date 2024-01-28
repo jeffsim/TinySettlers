@@ -37,7 +37,7 @@ public class WorkerTask_CraftItem : WorkerTask
     public const float secondsToDrop = 0.5f;
 
     // Used to draw walking lines in debug mode
-    public override bool Debug_IsMovingToTarget =>
+    public override bool IsWalkingToTarget =>
         substate == (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource ||
         substate == (int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot ||
         substate == (int)WorkerTask_CraftItemSubstate.CarryCraftedGoodToStorageSpot;
@@ -141,7 +141,7 @@ public class WorkerTask_CraftItem : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource:
-                if (moveTowards(nextCraftingResourceStorageSpotToGetFrom.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(nextCraftingResourceStorageSpotToGetFrom.WorldLoc, distanceMovedPerSecond))
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.PickupResource);
                 break;
 
@@ -156,7 +156,7 @@ public class WorkerTask_CraftItem : WorkerTask
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
-                if (moveTowards(reservedCraftingSpot.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(reservedCraftingSpot.WorldLoc, distanceMovedPerSecond))
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot);
                 break;
 
@@ -195,7 +195,7 @@ public class WorkerTask_CraftItem : WorkerTask
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.CarryCraftedGoodToStorageSpot: // Walk to the spot that will store the crafted good
-                if (moveTowards(reservedStorageSpot.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(reservedStorageSpot.WorldLoc, distanceMovedPerSecond))
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.DropCraftedGoodInStorageSpot);
                 break;
 

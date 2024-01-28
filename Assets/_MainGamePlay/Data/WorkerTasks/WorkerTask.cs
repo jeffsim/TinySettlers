@@ -9,7 +9,7 @@ public enum TaskType
     PickupGatherableResource,
     PickupItemInStorageSpot,
 
-    
+
     GatherResource, CraftGood, FerryItem, PickupAbandonedItem, SellGood
 };
 
@@ -23,7 +23,7 @@ public abstract class WorkerTask
 
     public bool IsRunning => TaskState == TaskState.Started;
 
-    public virtual bool Debug_IsMovingToTarget => false;
+    public virtual bool IsWalkingToTarget => false;
     internal virtual string getDebuggerString() => $"{Type}  debugger string not implemented";
 
     [SerializeReference] public WorkerData Worker;
@@ -112,15 +112,13 @@ public abstract class WorkerTask
         Update();
     }
 
-    protected void gotoNextSubstate() => gotoSubstate(substate + 1);
+    protected void GotoNextSubstate() => gotoSubstate(substate + 1);
 
-
+    public bool IsSubstateDone(float substateRuntime) => getPercentSubstateDone(substateRuntime) == 1;
+    
     public float getPercentSubstateDone(float substateRuntime)
     {
-        // started at 12, run for 5 seconds.  done at 17.  current = 12,14.5,17
-        // (current-start) / total
         return Math.Clamp((GameTime.time - timeStartedSubstate) / (substateRuntime / GameTime.timeScale), 0, 1);
-        // if (GameTime.time > timeStartedSubstate + substateRuntime / GameTime.timeScale)
     }
 
     // ==== GATHERING ===================================================
@@ -150,7 +148,7 @@ public abstract class WorkerTask
 
     protected StorageSpotData reserveStorageSpotClosestToWorldLoc_AssignedBuildingOrPrimaryStorageOnly(Vector3 worldLoc)
     {
-        var spot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worldLoc, out float _, Worker);
+        var spot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worldLoc, Worker);
         Debug.Assert(spot != null, "Caller neesd to ensure that we can reserve storage spot close to " + worldLoc);
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
         reserveStorageSpot(spot);
@@ -250,7 +248,7 @@ public abstract class WorkerTask
             spot.Unreserve();
     }
 
-    protected bool moveTowards(Vector2 target, float distanceMovedPerSecond, float closeEnough = .1f)
+    protected bool MoveTowards(Vector2 target, float distanceMovedPerSecond, float closeEnough = .1f)
     {
         LastMoveToTarget = target;
 
@@ -269,7 +267,7 @@ public abstract class WorkerTask
 
     protected bool moveTowards(BuildingData target, float distanceMovedPerSecond)
     {
-        return moveTowards(target.WorldLoc, distanceMovedPerSecond);
+        return MoveTowards(target.WorldLoc, distanceMovedPerSecond);
     }
 
     // Called when any building is destroyed; if this Task involves that building then determine
@@ -314,7 +312,7 @@ public abstract class WorkerTask
     private StorageSpotData getClosestBestStorageSpot_AssignedBuildingOrPrimaryStorageOnly(out float distance)
     {
         var closestAssignedBuildingSpot = Worker.AssignedBuilding.GetClosestEmptyStorageSpot(Worker.WorldLoc, out float distanceToClosestAssignedBuildingSpot);
-        var closestPrimaryStorageSpot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, Worker.WorldLoc, out float distanceToClosestPrimaryStorageSpot);
+        var closestPrimaryStorageSpot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, Worker.WorldLoc, null, out float distanceToClosestPrimaryStorageSpot);
         if (distanceToClosestAssignedBuildingSpot < distanceToClosestPrimaryStorageSpot)
         {
             distance = distanceToClosestAssignedBuildingSpot;

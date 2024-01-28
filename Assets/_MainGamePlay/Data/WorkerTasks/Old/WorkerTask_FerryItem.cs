@@ -25,7 +25,7 @@ public class WorkerTask_FerryItem : WorkerTask
     public const float secondsToPickup = 1;
     public const float secondsToDrop = 0.5f;
 
-    public override bool Debug_IsMovingToTarget => substate == 0 || substate == 2;
+    public override bool IsWalkingToTarget => substate == 0 || substate == 2;
 
     public override ItemDefn GetTaskItem()
     {
@@ -126,8 +126,8 @@ public class WorkerTask_FerryItem : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_FerryItemSubstate.GotoBuildingWithItem: // go to resource source building
-                if (moveTowards(storageSpotWithItem.WorldLoc, distanceMovedPerSecond))
-                    gotoNextSubstate();
+                if (MoveTowards(storageSpotWithItem.WorldLoc, distanceMovedPerSecond))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_FerryItemSubstate.PickupItemInBuilding: // gather in the building.
@@ -140,13 +140,13 @@ public class WorkerTask_FerryItem : WorkerTask
 
                     // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
                     destinationStorageSpotForItem = getBetterStorageSpotThanSpotIfExists(destinationStorageSpotForItem);
-                    gotoNextSubstate();
+                    GotoNextSubstate();
                 }
                 break;
 
             case (int)WorkerTask_FerryItemSubstate.GotoDestinationBuilding: // Walk back to our assigned building
-                if (moveTowards(destinationStorageSpotForItem.WorldLoc, distanceMovedPerSecond * CarryingSpeedMultiplier))
-                    gotoNextSubstate();
+                if (MoveTowards(destinationStorageSpotForItem.WorldLoc, distanceMovedPerSecond * CarryingSpeedMultiplier))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_FerryItemSubstate.DropItemInBuilding: // drop the gathered item; and then done.

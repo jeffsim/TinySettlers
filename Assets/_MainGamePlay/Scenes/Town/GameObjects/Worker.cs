@@ -61,7 +61,7 @@ public class Worker : MonoBehaviour
         transform.position = new Vector3(Data.WorldLoc.x, Data.WorldLoc.y, WorkerZ);
 
         if (scene.Debug_DrawPaths)
-            if (Data.CurrentTask.Debug_IsMovingToTarget)
+            if (Data.CurrentTask.IsWalkingToTarget)
             {
                 // Draw path
                 var offset = new Vector3(0, 0, -6);

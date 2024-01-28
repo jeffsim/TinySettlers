@@ -62,7 +62,6 @@ public class TownTaskMgr
         return HighestPriorityTask;
     }
 
-
     // If here, then a building has a 'cleanup my storage please' need - see if any idleworkers can do it
     private void getHigherPriorityTaskIfExists_CleanupStorage(NeedData need, List<WorkerData> idleWorkers)
     {
@@ -154,7 +153,7 @@ public class TownTaskMgr
             {
                 // NOTE that we do not reserve anything at this point, because although we've found the optimal gathering task to perform,
                 // a better (non gathering) task to perform may still be found by caller.
-                var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, optimalGatheringSpot.WorldLoc, out float _, worker);
+                var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, optimalGatheringSpot.WorldLoc, worker);
                 Debug.Assert(closestStorageSpot != null, "No storage spot found for item that we're about to gather");
                 HighestPriorityTask.Set(WorkerTask_PickupGatherableResource.Create(worker, need, optimalGatheringSpot, closestStorageSpot), highestPrioritySoFar);
             }

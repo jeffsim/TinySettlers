@@ -22,7 +22,7 @@ public class WorkerTask_PickupAbandonedItem : WorkerTask
     public const float secondsToPickup = 1;
     public const float secondsToDrop = 0.5f;
 
-    public override bool Debug_IsMovingToTarget => substate == 0 || substate == 2;
+    public override bool IsWalkingToTarget => substate == 0 || substate == 2;
 
     public override ItemDefn GetTaskItem() => ItemToPickup?.Defn;
 
@@ -102,8 +102,8 @@ public class WorkerTask_PickupAbandonedItem : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupAbandonedItemSubstate.GotoItemOnGround: // go to item on ground
-                if (moveTowards(ItemToPickup.WorldLocOnGround, distanceMovedPerSecond))
-                    gotoNextSubstate();
+                if (MoveTowards(ItemToPickup.WorldLocOnGround, distanceMovedPerSecond))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_PickupAbandonedItemSubstate.PickupItemOnGround: // pick up item
@@ -115,13 +115,13 @@ public class WorkerTask_PickupAbandonedItem : WorkerTask
                     // remove item from ground
                     Worker.Town.RemoveItemFromGround(ItemToPickup);
 
-                    gotoNextSubstate();
+                    GotoNextSubstate();
                 }
                 break;
 
             case (int)WorkerTask_PickupAbandonedItemSubstate.GotoDestinationBuilding: // Walk back to our assigned building
-                if (moveTowards(destinationStorageSpotForItem.WorldLoc, distanceMovedPerSecond * CarryingSpeedMultiplier))
-                    gotoNextSubstate();
+                if (MoveTowards(destinationStorageSpotForItem.WorldLoc, distanceMovedPerSecond * CarryingSpeedMultiplier))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_PickupAbandonedItemSubstate.DropItemInBuilding: // drop the gathered item; and then done.

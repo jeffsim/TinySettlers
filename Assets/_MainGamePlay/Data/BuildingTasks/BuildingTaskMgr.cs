@@ -113,7 +113,7 @@ public class BuildingTaskMgrData
 
             // Hm; Ferry Item takes a destination building, forcing me to find the closest storage spot in that building.  I don't want to do that since it's redone in the task.start
             // and doing it here is wasted work if this Task isn't chosen.
-            StorageSpotData destinationStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, spotWithItemToMove.WorldLoc, out float _);
+            StorageSpotData destinationStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, spotWithItemToMove.WorldLoc);
             if (destinationStorageSpot == null) continue;
 
             // Found a resource that can meet the need - calculate how well this minion can meet the need (score)

@@ -22,7 +22,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
     public const float secondsToReap = 1;
     public const float secondsToPickup = 0.5f;
 
-    public override bool Debug_IsMovingToTarget => substate == 0;
+    public override bool IsWalkingToTarget => substate == 0;
 
     public override ItemDefn GetTaskItem()
     {
@@ -97,15 +97,15 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: // go to resource spot
-                if (moveTowards(optimalGatheringSpot.WorldLoc, distanceMovedPerSecond))
-                    gotoNextSubstate();
+                if (MoveTowards(optimalGatheringSpot.WorldLoc, distanceMovedPerSecond))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource: // reap item (e.g. cut down tree)
                 if (getPercentSubstateDone(secondsToReap) == 1)
                 {
                     // Done reaping.
-                    gotoNextSubstate();
+                    GotoNextSubstate();
                 }
                 break;
 

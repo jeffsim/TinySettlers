@@ -15,10 +15,10 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
 
     public const float secondsToPickup = 1;
     public const float secondsToDrop = 0.5f;
-    public override bool Debug_IsMovingToTarget => substate == 0 || substate == 2;
+    public override bool IsWalkingToTarget => substate == 0;
 
     public override ItemDefn GetTaskItem() => Worker.ItemInHand?.Defn;
-    public override bool IsCarryingItem(string itemId) => substate == 0 && Worker.ItemInHand.DefnId == itemId;
+    public override bool IsCarryingItem(string itemId) => true;
 
     public override string ToDebugString()
     {
@@ -35,41 +35,48 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         return str;
     }
 
-    public static WorkerTask_DeliverItemInHandToStorageSpot CreateAndStart(WorkerData worker, NeedData need) => new WorkerTask_DeliverItemInHandToStorageSpot(worker, need);
+    public static WorkerTask_DeliverItemInHandToStorageSpot CreateAndStart(WorkerData worker, NeedData need) => new(worker, need);
 
     private WorkerTask_DeliverItemInHandToStorageSpot(WorkerData worker, NeedData need) : base(worker, need)
     {
         worker.CurrentTask = this;
-        
         base.Start();
-
-        // worker.StorageSpotReservedForItemInHand has already been reserved by caller; we track it as a reserved storage spot so that we can automatically unreserve it
-        // when needed (e.g. if the building is destroyed, task is completed, worker dies, ...)
-        ReservedStorageSpots.Add(worker.StorageSpotReservedForItemInHand);
     }
 
     public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
-        // If the building to which we are bringing the item is destroyed then abandon
+        // If the building to which we are bringing the item is destroyed then try to find an alternative
         if (destroyedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
-        {
-            Need.UnassignWorkerToMeetNeed(Worker);
-            Abandon();
-        }
+            if (!FindNewOptimalStorageSpotToDeliverItemTo())
+                Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
     }
 
     public override void OnBuildingMoved(BuildingData movedBuilding, Vector3 previousWorldLoc)
     {
-        // If we're moving towards the building that was moved, then update our movement target
-        // If we're working in the building that was moved, then update our location
-        bool updateMoveToLoc = false, updateWorkerLoc = false;
-        switch ((WorkerTask_DeliverItemInHandToStorageSpotSubstate)substate)
+        // If we're still walking, then determine if there is now a better/closer storage spot to deliver the item to. e.g. if user moved building far away
+        // Note that we do this even if a building other than our target building moved, since a better alternative may have moved closer the worker.
+        if (IsWalkingToTarget)
+            if (!FindNewOptimalStorageSpotToDeliverItemTo())
+                Debug.Assert(false, "Failed to find *any* spot to store in.  Shouldn't happen since we already had one reserved");
+
+        // If we're standing still and working in the building that was moved, then update our location
+        if (substate == (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo && movedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
+            Worker.WorldLoc += movedBuilding.WorldLoc - previousWorldLoc;
+    }
+
+    private bool FindNewOptimalStorageSpotToDeliverItemTo()
+    {
+        var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, Worker.WorldLoc, Worker);
+        if (optimalStorageSpotToDeliverItemTo == null)
+            return false;
+
+        if (optimalStorageSpotToDeliverItemTo != Worker.StorageSpotReservedForItemInHand)
         {
-            case WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo: updateMoveToLoc = movedBuilding == Worker.StorageSpotReservedForItemInHand.Building; break;
-            case WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot: updateWorkerLoc = movedBuilding == Worker.StorageSpotReservedForItemInHand.Building; break;
+            Worker.StorageSpotReservedForItemInHand.Unreserve();
+            Worker.StorageSpotReservedForItemInHand = optimalStorageSpotToDeliverItemTo;
+            Worker.StorageSpotReservedForItemInHand.ReserveBy(Worker);
         }
-        if (updateMoveToLoc) LastMoveToTarget += movedBuilding.WorldLoc - previousWorldLoc;
-        if (updateWorkerLoc) Worker.WorldLoc += movedBuilding.WorldLoc - previousWorldLoc;
+        return true;
     }
 
     public override void Update()
@@ -79,12 +86,12 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo: // Walk back to our assigned building
-                if (moveTowards(Worker.StorageSpotReservedForItemInHand.WorldLoc, Worker.GetMovementSpeed()))
-                    gotoNextSubstate();
+                if (MoveTowards(Worker.StorageSpotReservedForItemInHand.WorldLoc, Worker.GetMovementSpeed()))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot: // drop the gathered item; and then done.
-                if (getPercentSubstateDone(secondsToDrop) == 1)
+                if (IsSubstateDone(secondsToDrop))
                 {
                     // Done dropping.  Add the item into the storage spot.
                     Worker.DropItemInHandInReservedStorageSpot();
@@ -92,9 +99,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
                 }
                 break;
 
-            default:
-                Debug.LogError("unknown substate " + substate);
-                break;
+            default: Debug.LogError("unknown substate " + substate); break;
         }
     }
 

@@ -19,7 +19,7 @@ public class WorkerTask_SellGood : WorkerTask
     public const float secondsToSell = 1;
 
     // Used to draw walking lines in debug mode
-    public override bool Debug_IsMovingToTarget => substate == (int)WorkerTask_SellGoodSubstate.GotoSpotWithGoodToSell;
+    public override bool IsWalkingToTarget => substate == (int)WorkerTask_SellGoodSubstate.GotoSpotWithGoodToSell;
 
     public override ItemDefn GetTaskItem() => StorageSpotWithGoodToSell.ItemInSpot.Defn;
 
@@ -82,7 +82,7 @@ public class WorkerTask_SellGood : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_SellGoodSubstate.GotoSpotWithGoodToSell:
-                if (moveTowards(StorageSpotWithGoodToSell.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(StorageSpotWithGoodToSell.WorldLoc, distanceMovedPerSecond))
                     gotoSubstate((int)WorkerTask_SellGoodSubstate.SellGood);
                 break;
 

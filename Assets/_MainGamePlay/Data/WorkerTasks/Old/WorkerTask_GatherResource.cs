@@ -25,7 +25,7 @@ public class WorkerTask_GatherResource : WorkerTask
     public const float secondsToGather = 1;
     public const float secondsToDrop = 0.5f;
 
-    public override bool Debug_IsMovingToTarget => substate == 0 || substate == 2;
+    public override bool IsWalkingToTarget => substate == 0 || substate == 2;
 
     internal override string getDebuggerString()
     {
@@ -111,8 +111,8 @@ public class WorkerTask_GatherResource : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_GatherResourceSubstate.GotoResourceBuilding: // go to resource source building
-                if (moveTowards(reservedGatheringSpot.WorldLoc, distanceMovedPerSecond))
-                    gotoNextSubstate();
+                if (MoveTowards(reservedGatheringSpot.WorldLoc, distanceMovedPerSecond))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_GatherResourceSubstate.GatherResourceInBuilding: // gather in the building.
@@ -138,13 +138,13 @@ public class WorkerTask_GatherResource : WorkerTask
                         // We've already reserved a storage spot for the crafted item, but other stored items may have changed since we reserved the spot.
                         reservedStorageSpot = getBetterStorageSpotThanSpotIfExists_AssignedBuildingOrPrimaryStorageOnly(reservedStorageSpot);
                     }
-                    gotoNextSubstate();
+                    GotoNextSubstate();
                 }
                 break;
 
             case (int)WorkerTask_GatherResourceSubstate.ReturnToAssignedBuilding: // Walk back to our assigned building
-                if (moveTowards(reservedStorageSpot.WorldLoc, distanceMovedPerSecond * CarryingSpeedMultiplier))
-                    gotoNextSubstate();
+                if (MoveTowards(reservedStorageSpot.WorldLoc, distanceMovedPerSecond * CarryingSpeedMultiplier))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_GatherResourceSubstate.DropGatheredResource: // drop the gathered item; and then done.

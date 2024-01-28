@@ -20,7 +20,7 @@ public class WorkerTask_PickupItemFromBuilding : WorkerTask
 
     public const float secondsToPickup = 0.5f;
 
-    public override bool Debug_IsMovingToTarget => substate == 0;
+    public override bool IsWalkingToTarget => substate == 0;
 
     public override ItemDefn GetTaskItem() => spotWithItemToPickup.ItemInSpot.Defn;
 
@@ -92,8 +92,8 @@ public class WorkerTask_PickupItemFromBuilding : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupItemFromBuildingSubstate.GotoStorageSpotWithItem: // go to resource spot
-                if (moveTowards(spotWithItemToPickup.WorldLoc, distanceMovedPerSecond))
-                    gotoNextSubstate();
+                if (MoveTowards(spotWithItemToPickup.WorldLoc, distanceMovedPerSecond))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_PickupItemFromBuildingSubstate.PickupItemFromStorageSpot: // gather in the building.
