@@ -60,10 +60,39 @@ public class TownTaskMgr
                     case NeedType.PickupAbandonedItem: getHigherPriorityTaskIfExists_PickupAbandonedItem(need, idleWorkers); break;
                     case NeedType.CraftingOrConstructionMaterial: getHigherPriorityTaskIfExists_BuildingWantsAnItem(need, idleWorkers); break;
                     case NeedType.CraftGood: getHigherPriorityTaskIfExists_CraftItem(need, idleWorkers); break;
+                    case NeedType.SellItem: getHigherPriorityTaskIfExists_SellItem(need, idleWorkers); break;
                 }
 
         // Return the highest priority task
         return HighestPriorityTask;
+    }
+
+    private void getHigherPriorityTaskIfExists_SellItem(NeedData need, List<WorkerData> idleWorkers)
+    {
+        // =====================================================================================
+        // FIRST, determine if need is meetable
+        // Get list of storage spots in nee's building that contain need's item and are unreserved
+        var spotsWithItemToSell = need.BuildingWithNeed.GetStorageSpotsWithUnreservedItem(need.NeededItem);
+        if (spotsWithItemToSell.Count == 0) return; // if no storage spots have the item then abort
+
+        // =====================================================================================
+        // SECOND, determine which idle workers can perform the task.
+        float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
+        foreach (var worker in idleWorkers)
+        {
+            if (worker.AssignedBuilding != need.BuildingWithNeed) continue; // worker must be assigned to the building that sells the item
+            if (worker.AssignedBuilding.IsPaused) continue;
+            if (!worker.CanSellItems()) continue;
+
+            var closestSpotWithItemToWorker = need.BuildingWithNeed.GetClosestUnreservedStorageSpotWithItemToReapOrSell(worker.WorldLoc, out float distanceToGatheringSpot);
+            Debug.Assert(closestSpotWithItemToWorker != null, "Should have been caught above");
+            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.WorldLoc, closestSpotWithItemToWorker.WorldLoc);
+            if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
+            {
+                highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
+                HighestPriorityTask.Set(WorkerTask_SellItem.Create(worker, need, closestSpotWithItemToWorker), highestPrioritySoFar);
+            }
+        }
     }
 
     private void getHigherPriorityTaskIfExists_BuildingWantsAnItem(NeedData need, List<WorkerData> idleWorkers)
@@ -95,7 +124,7 @@ public class TownTaskMgr
 
                 // Optimality of getting item from 'building' is based on distance from building-with-need
                 // TOOD: In the future, this is where I would add support for user putting thumb on scale re: which buildings to get from
-                var closestSpotWithItem = building.GetClosestUnreservedStorageSpotWithItemToReap(need.BuildingWithNeed.WorldLoc, out float distanceToGatheringSpot);
+                var closestSpotWithItem = building.GetClosestUnreservedStorageSpotWithItemToReapOrSell(need.BuildingWithNeed.WorldLoc, out float distanceToGatheringSpot);
                 if (closestSpotWithItem == null) continue;
 
                 float distanceImpactOnPriority = getDistanceImpactOnPriority(distanceToGatheringSpot);
@@ -371,8 +400,8 @@ public class TownTaskMgr
             if (building.HasAvailableStorageSpot)
                 foreach (var need in building.Needs)
                     if (!need.IsBeingFullyMet && need.Priority > 0 &&
-                        (need.Type == NeedType.CraftingOrConstructionMaterial || need.Type == NeedType.SellGood || need.Type == NeedType.PersistentBuildingNeed) &&
-                        need.NeededItem.Id == itemDefnId)
+                            (need.Type == NeedType.CraftingOrConstructionMaterial || need.Type == NeedType.SellItem || need.Type == NeedType.PersistentBuildingNeed)
+                             && need.NeededItem.Id == itemDefnId)
                         if (highestNeed == null || need.Priority > highestNeed.Priority)
                             highestNeed = need;
         return highestNeed;

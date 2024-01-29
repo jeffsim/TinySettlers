@@ -342,7 +342,7 @@ public class TownData : BaseData
         NeedData highestNeed = null;
         foreach (var building in Buildings)
             foreach (var need in building.Needs)
-                if ((need.Type == NeedType.CraftingOrConstructionMaterial || need.Type == NeedType.SellGood || need.Type == NeedType.PersistentBuildingNeed) && need.NeededItem.Id == itemDefnId)
+                if ((need.Type == NeedType.CraftingOrConstructionMaterial || need.Type == NeedType.SellItem || need.Type == NeedType.PersistentBuildingNeed) && need.NeededItem.Id == itemDefnId)
                     if (highestNeed == null || need.Priority > highestNeed.Priority)
                         highestNeed = need;
         return highestNeed;

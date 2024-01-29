@@ -9,7 +9,7 @@ public enum NeedType
     GatherResource,
     CraftingOrConstructionMaterial,
     Defend,
-    SellGood,
+    SellItem,
     CraftGood,
 
     PersistentBuildingNeed, // e.g. water for farm
@@ -59,7 +59,7 @@ public class NeedData : BaseData
             NeedType.GatherResource => $"Need: {Type} {NeededItem} {State} {Priority}",
             NeedType.CraftingOrConstructionMaterial => $"Need: {Type} {BuildingWithNeed} {NeededItem} {State} {Priority}",
             NeedType.Defend => $"Need: {Type} {BuildingWithNeed}",
-            NeedType.SellGood => $"Need: {Type} {NeededItem} {State} {Priority}",
+            NeedType.SellItem => $"Need: {Type} {NeededItem} {State} {Priority}",
             NeedType.PersistentBuildingNeed => $"Need: {Type} {NeededItem} {State} {Priority}",
             NeedType.ConstructionWorker => $"Need: {Type} {BuildingWithNeed} {State} {Priority}",
             NeedType.Repair => $"Need: {Type} {BuildingWithNeed} {State} {Priority}",

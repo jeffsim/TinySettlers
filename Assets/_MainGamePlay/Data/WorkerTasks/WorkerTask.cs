@@ -9,8 +9,9 @@ public enum TaskType
     PickupGatherableResource,
     PickupItemInStorageSpot,
     PickupItemFromGround,
+    SellItem,
 
-   CraftGood, SellGood
+   CraftGood//, SellGood
 };
 
 public enum TaskState { Unset, NotStarted, Started, Completed, Abandoned };

@@ -54,7 +54,7 @@ public class NeedDetailsEntry : MonoBehaviour
                 Source.text = Need.AbandonedItemToPickup.ToString();
                 Info.text = Need.State.ToString();
                 break;
-            case NeedType.SellGood:
+            case NeedType.SellItem:
                 Type.text = "Sell good";// " + need.NeededItem;
                 Source.text = Need.BuildingWithNeed.ToString();
                 Info.text = Need.State.ToString();

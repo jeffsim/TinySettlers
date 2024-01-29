@@ -80,6 +80,24 @@ public class Worker : MonoBehaviour
 
         switch (Data.CurrentTask.Type)
         {
+            case TaskType.SellItem:
+                CarriedItem.gameObject.SetActive(true);
+                CarriedItem.text = (Data.CurrentTask as WorkerTask_SellItem).GetTaskItem().Id.Substring(0, 2);
+                switch ((WorkerTask_SellItemSubstate)Data.CurrentTask.substate)
+                {
+                    case WorkerTask_SellItemSubstate.GotoItemToSell:
+                        updateCarriedItem(itemDown, scaleNormal, Color.red);
+                        break;
+                    case WorkerTask_SellItemSubstate.PickupItemToSell:
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.CurrentTask.getPercentSubstateDone(WorkerTask_SellItem.secondsToPickup)), scaleNormal, Color.white);
+                        break;
+                    case WorkerTask_SellItemSubstate.SellItem:
+                        var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_SellItem.secondsToSell);
+                        updateCarriedItem(itemUp, Vector3.Lerp(scaleSmall, scaleNormal, t), Color.Lerp(Color.red, Color.white, t));
+                        break;
+                }
+                break;
+
             case TaskType.PickupGatherableResource:
                 CarriedItem.gameObject.SetActive(true);
                 CarriedItem.text = (Data.CurrentTask as WorkerTask_PickupGatherableResource).GetTaskItem().Id.Substring(0, 2);
@@ -90,7 +108,7 @@ public class Worker : MonoBehaviour
                         break;
                     case WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource:
                         var t = Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupGatherableResource.secondsToReap);
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemDown, t), Vector3.Lerp(scaleSmall, scaleNormal, t), Color.Lerp(Color.red, Color.white, t));
+                        updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, t), Color.Lerp(Color.red, Color.white, t));
                         break;
                     case WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource:
                         updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.CurrentTask.getPercentSubstateDone(WorkerTask_PickupGatherableResource.secondsToPickup)), scaleNormal, Color.white);

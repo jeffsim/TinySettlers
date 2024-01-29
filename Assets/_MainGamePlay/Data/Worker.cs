@@ -176,6 +176,13 @@ public class WorkerData : BaseData
         return AssignedBuilding.Defn.CanCraft;
     }
 
+    internal bool CanSellItems()
+    {
+        // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
+        // worker is assigned to building and/or by worker's defn
+        return AssignedBuilding.Defn.CanSellGoods;
+    }
+
     internal void UnreserveStorageSpotReservedForItemInHand()
     {
         Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");

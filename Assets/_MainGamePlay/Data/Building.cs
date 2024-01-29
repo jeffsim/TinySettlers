@@ -143,15 +143,9 @@ public class BuildingData : BaseData
     // For easy tracking
     // public List<NeedData> ConstructionNeeds;
 
-    // If this building can craft items, then CraftingResourceNeeds contains the priority of
-    // how much we need different resources to craft those items.  priority is depedent on how
-    // many are in storage.
-    // * TODO: If another building has broadcast a need for Crafted good X and we can craft it, then
-    //   increase priority of resources for crafting it.  note that a settlers-like model may ONLY do these.
-    public List<NeedData> CraftingResourceNeeds;
-
-    // If this buidling can sell items, then it needs those items to be in storage so that they can be sold
-    public List<NeedData> SellingGoodNeeds;
+    // If this building can craft items or sell items, then ItemNeeds contains the priority of
+    // how much we need each of those items.  priority is dependent on how many are in storage.
+    public List<NeedData> ItemNeeds;
 
     // How badly we need a courier to clear out our storage
     public NeedData ClearOutStorageNeed;
@@ -178,23 +172,22 @@ public class BuildingData : BaseData
 
         BuildingTaskMgr = new(this);
 
-        GatheringSpots = new List<GatheringSpotData>();
+        GatheringSpots = new();
         for (int i = 0; i < Defn.GatheringSpots.Count; i++)
-            GatheringSpots.Add(new GatheringSpotData(this, i));
+            GatheringSpots.Add(new(this, i));
 
-        CraftingSpots = new List<CraftingSpotData>();
+        CraftingSpots = new();
         for (int i = 0; i < Defn.CraftingSpots.Count; i++)
-            CraftingSpots.Add(new CraftingSpotData(this, i));
+            CraftingSpots.Add(new(this, i));
 
-        StorageAreas = new List<StorageAreaData>();
+        StorageAreas = new();
         for (int i = 0; i < Defn.NumStorageAreas; i++)
-            StorageAreas.Add(new StorageAreaData(this, i));
+            StorageAreas.Add(new(this, i));
 
         Needs = new List<NeedData>();
         // ConstructionNeeds = new List<NeedData>();
         GatheringNeeds = new();
-        CraftingResourceNeeds = new();
-        SellingGoodNeeds = new();
+        ItemNeeds = new();
 
         // Add need for construction and materials if the building needs to be constructed
         // if (!IsConstructed)
@@ -213,6 +206,13 @@ public class BuildingData : BaseData
                 GatheringNeeds.Add(new NeedData(this, NeedType.GatherResource, resource));
             Needs.AddRange(GatheringNeeds);
         }
+
+        if (Defn.CanStoreItems)
+        {
+            ClearOutStorageNeed = new NeedData(this, NeedType.ClearStorage) { NeedCoreType = NeedCoreType.Building };
+            Needs.Add(ClearOutStorageNeed);
+        }
+
         if (Defn.CanCraft)
         {
             // Create needs for all craftables; TBD if priorities are set assuming all are crafted, or if only some are prioritized
@@ -225,15 +225,9 @@ public class BuildingData : BaseData
                 // Add Need for "I need resources to craft"
                 // TODO: If two craftable items use the same resource, then we'll have two needs for that resource.  sum up counts
                 foreach (var resource in item.ResourcesNeededForCrafting)
-                    CraftingResourceNeeds.Add(new NeedData(this, NeedType.CraftingOrConstructionMaterial, resource.Item, resource.Count));
+                    ItemNeeds.Add(new NeedData(this, NeedType.CraftingOrConstructionMaterial, resource.Item, resource.Count));
             }
-            Needs.AddRange(CraftingResourceNeeds);
-        }
-
-        if (Defn.CanStoreItems)
-        {
-            ClearOutStorageNeed = new NeedData(this, NeedType.ClearStorage) { NeedCoreType = NeedCoreType.Building };
-            Needs.Add(ClearOutStorageNeed);
+            Needs.AddRange(ItemNeeds);
         }
 
         if (Defn.CanSellGoods)
@@ -241,13 +235,13 @@ public class BuildingData : BaseData
             foreach (var item in Defn.GoodsThatCanBeSold)
             {
                 // add need to sell (that our assigned sellers can fulfill)
-                Needs.Add(new NeedData(this, NeedType.SellGood, item));
+                Needs.Add(new NeedData(this, NeedType.SellItem, item));
 
                 // add need for items to sell (that other buildings can fulfill)
                 var needForItemToSell = new NeedData(this, NeedType.CraftingOrConstructionMaterial, item, NumStorageSpots);
-                SellingGoodNeeds.Add(needForItemToSell);
-                Needs.Add(needForItemToSell);
+                ItemNeeds.Add(needForItemToSell);
             }
+            Needs.AddRange(ItemNeeds);
         }
     }
 
@@ -362,13 +356,13 @@ public class BuildingData : BaseData
                 var priorityToSellItem = 0f;
                 foreach (var building in Town.Buildings)
                     foreach (var otherNeed in building.Needs)
-                        if (otherNeed.Type == NeedType.SellGood && otherNeed.NeededItem == need.NeededItem)
+                        if (otherNeed.Type == NeedType.SellItem && otherNeed.NeededItem == need.NeededItem)
                             priorityToSellItem += otherNeed.Priority;
 
                 need.Priority = storageImpact / 2f + globalPriorityOfNeedForItem + priorityToSellItem + .3f;
             }
 
-            if (need.Type == NeedType.SellGood)
+            if (need.Type == NeedType.SellItem)
             {
                 if (need.IsBeingFullyMet || IsPaused)
                 {
@@ -381,6 +375,7 @@ public class BuildingData : BaseData
                 // if the item-to-be-sold is highly needed by other buildings, then don't sell it
                 foreach (var building in Town.Buildings)
                 {
+                    if (building == this) continue;
                     foreach (var otherNeed in building.Needs)
                     {
                         if (otherNeed.Type == NeedType.CraftingOrConstructionMaterial && otherNeed.NeededItem == item)
@@ -390,7 +385,7 @@ public class BuildingData : BaseData
                         //   numInStorage += building.NumItemsInStorage(item); // doesn't include ferrying items but :shrug:
                     }
                 }
-                if (globalNeedForItem > 0.25f) // TODO: Allow user to modify this to e.g. effect a 'fire sale' in which even highly needed items are sold
+                if (globalNeedForItem > 0.5f) // TODO: Allow user to modify this to e.g. effect a 'fire sale' in which even highly needed items are sold
                 {
                     need.Priority = 0;
                     continue;
@@ -420,32 +415,7 @@ public class BuildingData : BaseData
                 need.Priority *= .75f; // storage is 25%-50% full of the needed item
         }
 
-        foreach (var need in CraftingResourceNeeds)
-        {
-            if (IsPaused)
-            {
-                need.Priority = 0;
-                continue;
-            }
-            need.Priority = 1;
-            // if we have a lot of them then reduce priority
-            int numOfNeededItemAlreadyInStorage = NumItemsInStorage(need.NeededItem);
-            if (percentFull > .99f)
-                need.Priority = 0; // full
-            else if (percentFull > .75f)
-                need.Priority *= .5f; // storage is mostly full of any items
-            else if (percentFull > .5f)
-                need.Priority *= .75f; // storage is somewhat full of any items
-            else if (percentFull > .25f)
-                need.Priority *= .875f; // storage has some of item already
-            else if (percentFull > .1f)
-                need.Priority *= .9f; // storage has a couple of item already
-            else if (numOfNeededItemAlreadyInStorage > Defn.NumStorageAreas / 2)
-                need.Priority *= .5f; // storage is half+ full of the needed item
-            else if (numOfNeededItemAlreadyInStorage > Defn.NumStorageAreas / 4)
-                need.Priority *= .75f; // storage is 25%-50% full of the needed item
-        }
-        foreach (var need in SellingGoodNeeds)
+        foreach (var need in ItemNeeds)
         {
             if (IsPaused)
             {
@@ -618,7 +588,7 @@ public class BuildingData : BaseData
         return null;
     }
 
-    internal StorageSpotData GetClosestUnreservedStorageSpotWithItemToReap(Vector3 worldLoc, out float distance)
+    internal StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(Vector3 worldLoc, out float distance)
     {
         StorageSpotData closestSpot = null;
         distance = float.MaxValue;
@@ -836,12 +806,21 @@ public class BuildingData : BaseData
                 if (!spot.IsReserved && spot.ItemInSpot != null)
                 {
                     // don't allow returning resources that we need for crafting or selling
-                    if (CraftingResourceNeeds.Find(need => need.NeededItem == spot.ItemInSpot.Defn) != null ||
-                        SellingGoodNeeds.Find(need => need.NeededItem == spot.ItemInSpot.Defn) != null)
+                    if (ItemNeeds.Find(need => need.NeededItem == spot.ItemInSpot.Defn) != null)
                         continue;
                     return spot;
                 }
         return null;
+    }
+
+    internal List<StorageSpotData> GetStorageSpotsWithUnreservedItem(ItemDefn itemDefn)
+    {
+        var spots = new List<StorageSpotData>();
+        foreach (var area in StorageAreas)
+            foreach (var spot in area.StorageSpots)
+                if (!spot.IsReserved && spot.ItemInSpot != null && spot.ItemInSpot.DefnId == itemDefn.Id)
+                    spots.Add(spot);
+        return spots;
     }
 
     internal CraftingSpotData GetAvailableCraftingSpot()

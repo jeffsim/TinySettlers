@@ -46,7 +46,7 @@ public class BuildingDetailsNeedListEntry : MonoBehaviour
                 Type.text = $"Pickup Item ({Need.AbandonedItemToPickup})";
                 Info.text = Need.State.ToString();
                 break;
-            case NeedType.SellGood:
+            case NeedType.SellItem:
                 Type.text = $"Sell good ({Need.NeededItem})";
                 Info.text = Need.State.ToString();
                 break;
