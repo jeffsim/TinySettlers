@@ -16,7 +16,7 @@ public class SelectBuildingToConstructDialog : MonoBehaviour
 
         foreach (var defn in GameDefns.Instance.BuildingDefns.Values)
         {
-            if (!defn.CanBeConstructed) continue;
+            if (!defn.CanBeConstructed || defn.IsTestBuilding) continue;
             var entry = Instantiate(SelectBuildingToConstructEntryPrefab, List.transform);
             entry.InitializeForBuilding(scene, tile, this, defn);
         }

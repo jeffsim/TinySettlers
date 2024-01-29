@@ -14,6 +14,7 @@ public class BuildingDefn : BaseDefn
     public Color BuildingColor;
     public string FriendlyName;
 
+    public bool IsTestBuilding = false;
     public BuildingClass BuildingClass = BuildingClass.Other;
 
     public Color AssignedWorkerColor;
@@ -28,7 +29,8 @@ public class BuildingDefn : BaseDefn
 
     public bool PlayerCanMove = true;
     public bool PlayerCanDestroy = true;
-
+    public bool PlayerCanPause = true;
+    
     public bool CanBeConstructed;
     [ShowIf("CanBeConstructed")]
     public List<ResourceNeededForCraftingOrConstruction> ResourcesNeededForConstruction;

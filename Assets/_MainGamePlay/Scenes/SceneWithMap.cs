@@ -153,9 +153,9 @@ public class SceneWithMap : SceneMgr
         AvailableTasksDialog.Hide();
     }
 
-    public void OnTestMoveClicked(int test)
+    public void OnAddWorkerClicked()
     {
-        Map.Town.TestMoveBuilding(test);
+        Map.Town.CreateWorkerInBuilding(Map.Town.Camp);
     }
 
     public void Debug_OnEmptyBuildingStorage(Building building)

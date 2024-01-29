@@ -43,6 +43,8 @@ public class BuildingData : BaseData
 
     static float TileSize = 10;
 
+    public bool IsPaused;
+
     // Where the Building is located (== TileLoc * TileSize)
     public Vector3 WorldLoc;
 
@@ -317,7 +319,7 @@ public class BuildingData : BaseData
         {
             if (need.Type == NeedType.CraftGood)
             {
-                if (need.IsBeingFullyMet)
+                if (need.IsBeingFullyMet || IsPaused)
                 {
                     need.Priority = 0;
                     continue;
@@ -346,7 +348,7 @@ public class BuildingData : BaseData
 
             if (need.Type == NeedType.SellGood)
             {
-                if (need.IsBeingFullyMet)
+                if (need.IsBeingFullyMet || IsPaused)
                 {
                     need.Priority = 0;
                     continue;
@@ -380,7 +382,7 @@ public class BuildingData : BaseData
         }
         foreach (var need in GatheringNeeds)
         {
-            if (need.IsBeingFullyMet)
+            if (IsPaused)
             {
                 need.Priority = 0;
                 continue;
@@ -398,11 +400,11 @@ public class BuildingData : BaseData
 
         foreach (var need in CraftingResourceNeeds)
         {
-            // if (need.IsBeingFullyMet)
-            // {
-            //     need.Priority = 0;
-            //     continue;
-            // }
+            if (IsPaused)
+            {
+                need.Priority = 0;
+                continue;
+            }
             need.Priority = 1;
             // if we have a lot of them then reduce priority
             int numOfNeededItemAlreadyInStorage = NumItemsInStorage(need.NeededItem);
@@ -778,5 +780,14 @@ public class BuildingData : BaseData
             if (!spot.IsReserved)
                 return spot;
         return null;
+    }
+
+    internal void TogglePaused()
+    {
+        Debug.Assert(Defn.PlayerCanPause, "Toggling paused on building that can't be paused");
+        IsPaused = !IsPaused;
+        if (IsPaused)
+            foreach (var worker in Town.Workers)
+                worker.OnBuildingPaused(this);
     }
 }

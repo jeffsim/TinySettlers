@@ -15,6 +15,7 @@ MonoBehaviour:
   Id: camp
   BuildingColor: {r: 0, g: 0.18073483, b: 0.3962264, a: 1}
   FriendlyName: Camp
+  IsTestBuilding: 0
   BuildingClass: 1
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
   AssignedWorkerFriendlyName: Camper
@@ -23,6 +24,7 @@ MonoBehaviour:
   EditorColor: {r: 0, g: 0.099416494, b: 1, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 0
+  PlayerCanPause: 0
   CanBeConstructed: 0
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0

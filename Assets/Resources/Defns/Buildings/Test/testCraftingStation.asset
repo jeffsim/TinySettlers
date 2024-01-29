@@ -15,6 +15,7 @@ MonoBehaviour:
   Id: testCraftingStation
   BuildingColor: {r: 0.4433962, g: 0, b: 0, a: 1}
   FriendlyName: testCraftingStation
+  IsTestBuilding: 1
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.9622642, g: 0, b: 0, a: 0}
   AssignedWorkerFriendlyName: Crafter

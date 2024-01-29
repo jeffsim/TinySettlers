@@ -112,6 +112,23 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         if (updateWorkerLoc) Worker.WorldLoc += building.WorldLoc - previousWorldLoc;
     }
 
+    public override void OnBuildingPaused(BuildingData building)
+    {
+        // If our worker's building is the one that was paused then cancel this task regardless of substate
+        if (Worker.AssignedBuilding == building)
+        {
+            Worker.CurrentTask.Abandon();
+            return;
+        }
+
+        // If the building from which we are gathering was paused then abandon this task
+        if (building == optimalGatheringSpot.Building)
+        {
+            Worker.CurrentTask.Abandon();
+            return;
+        }
+    }
+
     public override void Update()
     {
         base.Update();

@@ -15,6 +15,7 @@ MonoBehaviour:
   Id: testCamp
   BuildingColor: {r: 0, g: 0.18073483, b: 0.3962264, a: 1}
   FriendlyName: Camp
+  IsTestBuilding: 1
   BuildingClass: 1
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
   AssignedWorkerFriendlyName: Camper

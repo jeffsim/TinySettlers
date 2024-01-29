@@ -15,6 +15,7 @@ MonoBehaviour:
   Id: testMinersHut
   BuildingColor: {r: 0.4245283, g: 0.21407837, b: 0, a: 1}
   FriendlyName: Miners Hut (test)
+  IsTestBuilding: 1
   BuildingClass: 2
   AssignedWorkerColor: {r: 1, g: 0.50591254, b: 0, a: 0}
   AssignedWorkerFriendlyName: 

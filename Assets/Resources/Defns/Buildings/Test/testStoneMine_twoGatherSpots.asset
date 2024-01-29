@@ -15,9 +15,15 @@ MonoBehaviour:
   Id: testStoneMine_twoGatherSpots
   BuildingColor: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 0}
   FriendlyName: s2_testStoneMine_twoGatherSpots
+  IsTestBuilding: 1
   BuildingClass: 2
   AssignedWorkerColor: {r: 0, g: 0, b: 0, a: 0}
+  AssignedWorkerFriendlyName: 
+  HasWorkers: 1
+  MaxWorkers: 4
   EditorColor: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
+  PlayerCanMove: 1
+  PlayerCanDestroy: 1
   CanBeConstructed: 0
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
@@ -25,7 +31,10 @@ MonoBehaviour:
   CraftableItems: []
   CraftingSpots: []
   CanStoreItems: 0
+  IsPrimaryStorage: 0
   StorageAreaLocations: []
+  StorageAreaSize: {x: 3, y: 3}
+  WorkersCanFerryItems: 0
   CanGatherResources: 0
   GatherableResources: []
   ResourcesCanBeGatheredFromHere: 1
@@ -34,3 +43,5 @@ MonoBehaviour:
   GatheringSpots:
   - {x: 2, y: 0, z: 0}
   - {x: 4, y: 0, z: 0}
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

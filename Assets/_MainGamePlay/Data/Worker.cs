@@ -87,6 +87,10 @@ public class WorkerData : BaseData
     {
         CurrentTask?.OnBuildingMoved(building, previousWorldLoc);
     }
+    public void OnBuildingPaused(BuildingData building)
+    {
+        CurrentTask?.OnBuildingPaused(building);
+    }
 
     public void Destroy()
     {

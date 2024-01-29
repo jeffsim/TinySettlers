@@ -285,6 +285,12 @@ public abstract class WorkerTask
     {
     }
 
+    // Called when any building is paused; if this Task involves that building then determine
+    // what we should do (if anything).
+    public virtual void OnBuildingPaused(BuildingData building)
+    {
+    }
+
     protected StorageSpotData getBetterStorageSpotThanSpotIfExists(StorageSpotData sourceSpot)
     {
         float distanceToSourceSpot = Vector2.Distance(Worker.WorldLoc, sourceSpot.WorldLoc);

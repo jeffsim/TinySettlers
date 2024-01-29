@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6e562c03a2d0e4208a50bcf16ad35961, type: 3}
-  m_Name: WoodPlank
+  m_Name: GardenPlot
   m_EditorClassIdentifier: 
-  Id: plank
-  FriendlyName: Wood Plank
-  Color: {r: 0.012415428, g: 0.8773585, b: 0.83962756, a: 0}
+  Id: GardenPlot
+  FriendlyName: GardenPlot
+  Color: {r: 0.06888563, g: 0.509434, b: 0.10565846, a: 0}
   GoodType: 2
   ResourcesNeededForCrafting:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}

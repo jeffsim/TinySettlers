@@ -10,6 +10,7 @@ public class Building : MonoBehaviour
     public TextMeshPro Name;
     public GameObject StorageEditorFolder;
     public GameObject StorageFullIndicator;
+    public GameObject PausedIndicator;
     public GameObject Visual;
     public SceneWithMap scene;
 
@@ -124,6 +125,7 @@ public class Building : MonoBehaviour
     void Update()
     {
         StorageFullIndicator.SetActive(Data.Defn.CanStoreItems && Data.IsStorageFull);
+        PausedIndicator.SetActive(Data.IsPaused);
     }
 
     // void updateItemsInStorage()

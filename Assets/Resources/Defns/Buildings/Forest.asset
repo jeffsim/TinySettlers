@@ -15,6 +15,7 @@ MonoBehaviour:
   Id: forest
   BuildingColor: {r: 0, g: 0.3679245, b: 0.077621974, a: 1}
   FriendlyName: Forest
+  IsTestBuilding: 0
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.002558625, g: 0.4245283, b: 0, a: 0}
   AssignedWorkerFriendlyName: n/a
@@ -23,6 +24,7 @@ MonoBehaviour:
   EditorColor: {r: 0, g: 0.38679248, b: 0.047153078, a: 1}
   PlayerCanMove: 0
   PlayerCanDestroy: 0
+  PlayerCanPause: 0
   CanBeConstructed: 0
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
@@ -32,7 +34,7 @@ MonoBehaviour:
   CanStoreItems: 0
   IsPrimaryStorage: 0
   StorageAreaLocations: []
-  StorageAreaWidthAndHeight: 3
+  StorageAreaSize: {x: 3, y: 3}
   WorkersCanFerryItems: 0
   CanGatherResources: 0
   GatherableResources: []

@@ -44,3 +44,9 @@ MonoBehaviour:
     TileY: 1
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 1
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: d69245655853a409d8735542bd6b725d, type: 2}
+    TileX: 2
+    TileY: 1
+    StartingItemsInBuilding: []
+    NumWorkersStartAtBuilding: 0

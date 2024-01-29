@@ -91,6 +91,7 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.AssignedBuilding != craftingBuilding) continue; // worker must be assigned to the building that crafts the item
+            if (worker.AssignedBuilding.IsPaused) continue;
             if (!worker.CanCraftItems()) continue;
             // if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
             
@@ -124,6 +125,7 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.ItemInHand != null) continue;                    // if worker is already carrying something then skip
+            if (worker.AssignedBuilding.IsPaused) continue;
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
             if (!worker.CanPickupAbandonedItems()) continue;
 
@@ -158,6 +160,7 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.ItemInHand != null) continue;                    // if worker is already carrying something then skip
+            if (worker.AssignedBuilding.IsPaused) continue;
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
 
             // If worker can't cleanup items then skip
@@ -190,7 +193,7 @@ public class TownTaskMgr
         // FIRST, determine if need is meetable
 
         // Generate the list of all buildings that the resource can be gathered from (and have an available gatheringspot); if none then abort
-        var buildingsThatResourceCanBeGatheredFrom = Town.Buildings.Where(building => building.ResourceCanBeGatheredFromHere(need.NeededItem)).ToList();
+        var buildingsThatResourceCanBeGatheredFrom = Town.Buildings.Where(building => building.ResourceCanBeGatheredFromHere(need.NeededItem) && !building.IsPaused).ToList();
         if (buildingsThatResourceCanBeGatheredFrom.Count == 0) return;
 
         // =====================================================================================
@@ -199,6 +202,7 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.ItemInHand != null) continue;                    // if worker is already carrying something then skip
+            if (worker.AssignedBuilding.IsPaused) continue;
             if (!worker.CanGatherResource(need.NeededItem)) continue;   // If worker can't gather [resource] then skip
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
 
@@ -267,6 +271,7 @@ public class TownTaskMgr
         // return true as soon as one worker is assigned
         foreach (var worker in idleWorkers)
         {
+            if (worker.AssignedBuilding.IsPaused) continue;
             if (worker.ItemInHand == null) continue; // idle worker isn't carrying anything
             Debug.Assert(worker.StorageSpotReservedForItemInHand != null, $"Worker {worker} is carrying item {worker.ItemInHand} but doesn't have a storage spot reserved for it");
 
@@ -306,7 +311,7 @@ public class TownTaskMgr
         foreach (var building in Town.Buildings)
             if (building.HasAvailableStorageSpot)
                 foreach (var need in building.Needs)
-                    if (!need.IsBeingFullyMet &&
+                    if (!need.IsBeingFullyMet && need.Priority > 0 &&
                         (need.Type == NeedType.CraftingOrConstructionMaterial || need.Type == NeedType.SellGood || need.Type == NeedType.PersistentBuildingNeed) &&
                         need.NeededItem.Id == itemDefnId)
                         if (highestNeed == null || need.Priority > highestNeed.Priority)

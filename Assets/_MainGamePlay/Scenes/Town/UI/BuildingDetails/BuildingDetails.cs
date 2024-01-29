@@ -12,6 +12,8 @@ public class BuildingDetails : MonoBehaviour
     public Button DestroyButton;
     public Button AssignWorkerButton;
     public Button UnassignWorkerButton;
+    public Button TogglePauseButton;
+    public Button EmptyStorageButton;
     SceneWithMap scene;
 
     public BuildingDetailsItemList BuildingDetailsItemList;
@@ -25,9 +27,18 @@ public class BuildingDetails : MonoBehaviour
         Name.text = building.Data.Defn.FriendlyName + " (" + building.Data.InstanceId + ")";
 
         DestroyButton.interactable = building.Data.Defn.PlayerCanDestroy;
-
+        TogglePauseButton.interactable = building.Data.Defn.PlayerCanPause;
+        EmptyStorageButton.interactable = building.Data.Defn.CanStoreItems;
+        AssignWorkerButton.interactable = building.Data.Defn.HasWorkers;
+        UnassignWorkerButton.interactable = building.Data.Defn.HasWorkers;
         BuildingDetailsItemList.ShowForBuilding(building);
         BuildingDetailsNeedsList.ShowForBuilding(building);
+
+    }
+
+    public void OnBuildingPauseToggleClicked()
+    {
+        building.Data.TogglePaused();
     }
 
     public void Hide()
