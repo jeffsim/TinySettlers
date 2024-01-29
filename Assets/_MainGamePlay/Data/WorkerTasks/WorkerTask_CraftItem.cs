@@ -93,7 +93,15 @@ public class WorkerTask_CraftItem : WorkerTask
 
     public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
-        Debug.Assert(false, "nyi");
+       // Debug.Assert(false, "nyi");
+
+        // TODO: What to do with source resources that were or weren't moved to crafting spot?
+        // TOOD: what to do with item that was crafted if destroyed while building being picked up?
+        if (substate == (int)WorkerTask_CraftItemSubstate.PickupProducedGood)
+        {
+            // Just give the item to the worker
+            generateCraftedItem();
+        }
     }
 
     public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
@@ -150,13 +158,7 @@ public class WorkerTask_CraftItem : WorkerTask
             case (int)WorkerTask_CraftItemSubstate.PickupProducedGood:
                 if (getPercentSubstateDone(secondsToPickupCraftedGood) == 1)
                 {
-                    // Done crafting; let someone else craft in it and goto next substate
-                    // unreserveCraftingSpot(reservedCraftingSpot);
-                    if (itemBeingCrafted.GoodType == GoodType.explicitGood)
-                        Worker.AddItemToHands(new ItemData() { DefnId = CraftingItemDefnId });
-                    else
-                        Worker.AssignedBuilding.Town.Gold += 100; // implicit good (e.g. gold) - done // todo: hardcoded
-                    
+                    generateCraftedItem();
                     CompleteTask();
 
                     // NOTE that completing the task unreserved the storage spot so that others can use them.
@@ -175,5 +177,13 @@ public class WorkerTask_CraftItem : WorkerTask
                 Debug.LogError("unknown substate " + substate);
                 break;
         }
+    }
+
+    private void generateCraftedItem()
+    {
+        if (itemBeingCrafted.GoodType == GoodType.explicitGood)
+            Worker.AddItemToHands(new ItemData() { DefnId = CraftingItemDefnId });
+        else
+            Worker.AssignedBuilding.Town.Gold += 100; // implicit good (e.g. gold) - done // todo: hardcoded
     }
 }

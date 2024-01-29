@@ -9,6 +9,7 @@ public abstract class TestBase
     public BuildingData MinersHut;   // first instance of building found in town
     public BuildingData StoneMine;   // first instance of building found in town
     public BuildingData Market;   // first instance of building found in town
+    public BuildingData CraftingStation;   // first instance of building found in town
 
     public void LoadTestTown(string townDefnName)
     {
@@ -25,15 +26,31 @@ public abstract class TestBase
         Town = new TownData(townDefn, TownState.Available);
         Town.InitializeOnFirstEnter();
 
-        Camp = getBuilding("testCamp");
-        MinersHut = getBuilding("testMinersHut");
+        Camp = getBuilding("testCamp", true);
+        MinersHut = getBuilding("testMinersHut", true);
         Market = getBuilding("testMarket", true);
+        CraftingStation = getBuilding("testCraftingStation", true);
         StoneMine = getBuilding("testStoneMine_oneGatherSpot", true);
         if (StoneMine == null)
-            StoneMine = getBuilding("testStoneMine_twoGatherSpots");
+            StoneMine = getBuilding("testStoneMine_twoGatherSpots", true);
 
         GameTime.timeScale = 16;
     }
+
+    // protected WorkerData addWorkerToBuilding(BuildingData building)
+    // {
+    //     throw new NotImplementedException();
+    // }
+
+    // protected void addItemsToBuilding(BuildingData building, string itemDefnId, int numToAdd)
+    // {
+    //     throw new NotImplementedException();
+    // }
+
+    // protected BuildingData addBuilding(string buildingDefnId, int tileX, int tileY)
+    // {
+    //     throw new NotImplementedException();
+    // }
 
     protected BuildingData getBuilding(string buildingDefnId, bool failureIsOkay = false)
     {
@@ -64,7 +81,13 @@ public abstract class TestBase
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         while (GameTime.time < breakTime && worker.CurrentTask.Type != taskType)
             updateTown();
-        Assert.IsTrue(GameTime.time < breakTime, "stuck in loop in waitUntilTask");
+        Assert.IsTrue(GameTime.time < breakTime, "stuck in loop in waitUntilTask.  CurrentTask = " + worker.CurrentTask.Type + ", expected " + taskType);
+    }
+
+    protected void waitUntilTaskAndSubstate(WorkerData worker, TaskType taskType, int substate, float secondsBeforeExitCheck = 500)
+    {
+        waitUntilTask(worker, taskType, secondsBeforeExitCheck);
+        waitUntilTaskSubstate(worker, substate, secondsBeforeExitCheck);
     }
 
     protected void waitUntilTaskSubstate(WorkerData worker, int substate, float secondsBeforeExitCheck = 500)
@@ -72,7 +95,7 @@ public abstract class TestBase
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         while (GameTime.time < breakTime && worker.CurrentTask.substate != substate)
             updateTown();
-        Assert.IsTrue(GameTime.time < breakTime, "stuck in loop in waitUntilTask");
+        Assert.IsTrue(GameTime.time < breakTime, "stuck in loop in waitUntilTaskSubstate.  CurrentSubstate = " + worker.CurrentTask.substate + ", expected " + substate);
     }
 
     protected void waitUntilNewTask(WorkerData worker, TaskType newTaskType)
@@ -114,6 +137,15 @@ public abstract class TestBase
         Assert.NotNull(worker);
         Assert.NotNull(building);
         Assert.AreEqual(worker.AssignedBuilding, building);
+    }
+
+    protected void verify_ItemInHand(WorkerData worker, string itemDefnId)
+    {
+        Assert.NotNull(worker);
+        if (worker.ItemInHand == null)
+            Assert.AreEqual(itemDefnId, null);
+        else
+            Assert.AreEqual(itemDefnId, worker.ItemInHand.DefnId);
     }
 
     protected void updateTown()

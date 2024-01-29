@@ -76,11 +76,11 @@ public class WorkerData : BaseData
     // what we should do (if anything).
     public void OnBuildingDestroyed(BuildingData building)
     {
+        CurrentTask?.OnBuildingDestroyed(building);
+
         // If we are assigned to the destroyed building, then assign ourselves to the Camp instead
         if (AssignedBuilding == building)
             AssignToBuilding(Town.Camp);
-
-        CurrentTask?.OnBuildingDestroyed(building);
     }
 
     public void OnBuildingMoved(BuildingData building, Vector2 previousWorldLoc)

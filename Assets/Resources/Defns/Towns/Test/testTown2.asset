@@ -20,17 +20,20 @@ MonoBehaviour:
   WorldX: -800
   WorldY: 100
   Buildings:
-  - Building: {fileID: 11400000, guid: 415d393f999da4868a008757ed588cec, type: 2}
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: dda0fe43be1ab4dc695d54f1a2a23154, type: 2}
     TileX: 2
     TileY: 0
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 0
-  - Building: {fileID: 11400000, guid: a8686a94d58b44b0b8400d3c70613146, type: 2}
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: a8686a94d58b44b0b8400d3c70613146, type: 2}
     TileX: 1
     TileY: 1
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 3
-  - Building: {fileID: 11400000, guid: 7494875aee3f5468b92e65b7ae31d238, type: 2}
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: 7494875aee3f5468b92e65b7ae31d238, type: 2}
     TileX: 0
     TileY: 1
     StartingItemsInBuilding: []

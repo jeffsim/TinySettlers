@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: testCamp
   BuildingColor: {r: 0, g: 0.18073483, b: 0.3962264, a: 1}
-  FriendlyName: Camp (test)
+  FriendlyName: Camp
   BuildingClass: 1
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
-  AssignedWorkerFriendlyName: 
+  AssignedWorkerFriendlyName: Camper
   HasWorkers: 1
   MaxWorkers: 4
-  EditorColor: {r: 0.021646384, g: 0, b: 0.6132076, a: 1}
+  EditorColor: {r: 0, g: 0.099416494, b: 1, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 0
   CanBeConstructed: 0
@@ -30,7 +30,7 @@ MonoBehaviour:
   CraftableItems: []
   CraftingSpots: []
   CanStoreItems: 1
-  IsPrimaryStorage: 0
+  IsPrimaryStorage: 1
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
   StorageAreaSize: {x: 3, y: 3}
