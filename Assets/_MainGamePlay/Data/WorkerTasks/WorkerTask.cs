@@ -287,7 +287,7 @@ public abstract class WorkerTask
 
     // Called when any building is paused; if this Task involves that building then determine
     // what we should do (if anything).
-    public virtual void OnBuildingPaused(BuildingData building)
+    public virtual void OnBuildingPauseToggled(BuildingData building)
     {
     }
 
@@ -347,9 +347,9 @@ public abstract class WorkerTask
     //     return reserveStorageSpot(spot.Building);
     // }
 
-    protected StorageSpotData FindNewOptimalStorageSpotToDeliverItemTo(StorageSpotData originalReservedSpot)
+    protected StorageSpotData FindNewOptimalStorageSpotToDeliverItemTo(StorageSpotData originalReservedSpot, Vector3 closestLocation)
     {
-        var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, Worker.WorldLoc, Worker);
+        var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
         if (optimalStorageSpotToDeliverItemTo == null)
             return originalReservedSpot;
 

@@ -786,8 +786,7 @@ public class BuildingData : BaseData
     {
         Debug.Assert(Defn.PlayerCanPause, "Toggling paused on building that can't be paused");
         IsPaused = !IsPaused;
-        if (IsPaused)
-            foreach (var worker in Town.Workers)
-                worker.OnBuildingPaused(this);
+        foreach (var worker in Town.Workers)
+            worker.OnBuildingPauseToggled(this);
     }
 }

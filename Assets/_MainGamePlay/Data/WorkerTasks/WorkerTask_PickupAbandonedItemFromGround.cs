@@ -66,7 +66,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
         // If the building which we have reserved a storage spot in was destroyed then try to find an alternative
         if (destroyedBuilding == reservedSpotToStoreItemIn.Building)
         {
-            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedSpotToStoreItemIn);
+            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedSpotToStoreItemIn, Worker.WorldLoc);
             if (newSpot == null)
                 Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
             else

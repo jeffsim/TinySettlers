@@ -219,7 +219,7 @@ public class TownData : BaseData
 
         foreach (var building in Buildings)
         {
-            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot)
+            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot && !building.IsPaused)
             {
                 var buildingMatchesSearchType = searchType switch
                 {
@@ -250,7 +250,7 @@ public class TownData : BaseData
         dist = float.MaxValue;
         foreach (var building in Buildings)
         {
-            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot)
+            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot && !building.IsPaused)
             {
                 var buildingMatchesSearchType = searchType switch
                 {

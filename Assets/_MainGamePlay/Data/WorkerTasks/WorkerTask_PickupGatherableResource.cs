@@ -84,7 +84,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         // If the building which we have reserved a storage spot in was destroyed then try to find an alternative
         if (destroyedBuilding == reservedStorageSpot.Building)
         {
-            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedStorageSpot);
+            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedStorageSpot, Worker.WorldLoc);
             if (newSpot == null)
                 Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
             else
@@ -112,8 +112,16 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         if (updateWorkerLoc) Worker.WorldLoc += building.WorldLoc - previousWorldLoc;
     }
 
-    public override void OnBuildingPaused(BuildingData building)
+    public override void OnBuildingPauseToggled(BuildingData building)
     {
+        var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedStorageSpot, optimalGatheringSpot.WorldLoc);
+        if (newSpot != reservedStorageSpot)
+        {
+            ReservedStorageSpots.Remove(reservedStorageSpot);
+            reservedStorageSpot = newSpot;
+            ReservedStorageSpots.Add(reservedStorageSpot);
+        }
+
         // If our worker's building is the one that was paused then cancel this task regardless of substate
         if (Worker.AssignedBuilding == building)
         {
@@ -127,6 +135,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
             Worker.CurrentTask.Abandon();
             return;
         }
+        
     }
 
     public override void Update()
