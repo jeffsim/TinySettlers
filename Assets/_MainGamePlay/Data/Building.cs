@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public enum ConstructionState { NotStarted, UnderConstruction, FullyConstructed };
@@ -149,6 +150,9 @@ public class BuildingData : BaseData
     //   increase priority of resources for crafting it.  note that a settlers-like model may ONLY do these.
     public List<NeedData> CraftingResourceNeeds;
 
+    // If this buidling can sell items, then it needs those items to be in storage so that they can be sold
+    public List<NeedData> SellingGoodNeeds;
+
     // How badly we need a courier to clear out our storage
     public NeedData ClearOutStorageNeed;
 
@@ -188,9 +192,9 @@ public class BuildingData : BaseData
 
         Needs = new List<NeedData>();
         // ConstructionNeeds = new List<NeedData>();
-        // CraftingNeeds = new List<NeedData>();
-        GatheringNeeds = new List<NeedData>();
-        CraftingResourceNeeds = new List<NeedData>();
+        GatheringNeeds = new();
+        CraftingResourceNeeds = new();
+        SellingGoodNeeds = new();
 
         // Add need for construction and materials if the building needs to be constructed
         // if (!IsConstructed)
@@ -235,7 +239,15 @@ public class BuildingData : BaseData
         if (Defn.CanSellGoods)
         {
             foreach (var item in Defn.GoodsThatCanBeSold)
+            {
+                // add need to sell (that our assigned sellers can fulfill)
                 Needs.Add(new NeedData(this, NeedType.SellGood, item));
+
+                // add need for items to sell (that other buildings can fulfill)
+                var needForItemToSell = new NeedData(this, NeedType.CraftingOrConstructionMaterial, item, NumStorageSpots);
+                SellingGoodNeeds.Add(needForItemToSell);
+                Needs.Add(needForItemToSell);
+            }
         }
     }
 
@@ -272,6 +284,16 @@ public class BuildingData : BaseData
                     return spot;
 
         return null;
+    }
+
+    public bool HasUnreservedItemOfType(ItemDefn itemDefn)
+    {
+        foreach (var area in StorageAreas)
+            foreach (var spot in area.StorageSpots)
+                if (!spot.IsReserved && spot.ItemInSpot != null && spot.ItemInSpot.DefnId == itemDefn.Id)
+                    return true;
+
+        return false;
     }
 
     /**
@@ -377,7 +399,7 @@ public class BuildingData : BaseData
                 // if here then the item-to-be-sold isn't highly needed.  If there's a lot of it in storage, then sell it
                 int numInStorage = Town.NumTotalItemsInStorage(item);
                 var storageImpact = Mathf.Clamp(numInStorage / 10f, 0, 2);
-                need.Priority = storageImpact / 2f;
+                need.Priority = storageImpact / 2f + .2f;
             }
         }
         foreach (var need in GatheringNeeds)
@@ -399,6 +421,31 @@ public class BuildingData : BaseData
         }
 
         foreach (var need in CraftingResourceNeeds)
+        {
+            if (IsPaused)
+            {
+                need.Priority = 0;
+                continue;
+            }
+            need.Priority = 1;
+            // if we have a lot of them then reduce priority
+            int numOfNeededItemAlreadyInStorage = NumItemsInStorage(need.NeededItem);
+            if (percentFull > .99f)
+                need.Priority = 0; // full
+            else if (percentFull > .75f)
+                need.Priority *= .5f; // storage is mostly full of any items
+            else if (percentFull > .5f)
+                need.Priority *= .75f; // storage is somewhat full of any items
+            else if (percentFull > .25f)
+                need.Priority *= .875f; // storage has some of item already
+            else if (percentFull > .1f)
+                need.Priority *= .9f; // storage has a couple of item already
+            else if (numOfNeededItemAlreadyInStorage > Defn.NumStorageAreas / 2)
+                need.Priority *= .5f; // storage is half+ full of the needed item
+            else if (numOfNeededItemAlreadyInStorage > Defn.NumStorageAreas / 4)
+                need.Priority *= .75f; // storage is 25%-50% full of the needed item
+        }
+        foreach (var need in SellingGoodNeeds)
         {
             if (IsPaused)
             {
@@ -566,6 +613,28 @@ public class BuildingData : BaseData
                     closestSpot = spot;
                 }
             }
+        if (closestSpot != null)
+            return closestSpot;
+        return null;
+    }
+
+    internal StorageSpotData GetClosestUnreservedStorageSpotWithItemToReap(Vector3 worldLoc, out float distance)
+    {
+        StorageSpotData closestSpot = null;
+        distance = float.MaxValue;
+
+        // Find Closest unreserved gathering spot that has an item that needs to be gathered
+        foreach (var area in StorageAreas)
+            foreach (var spot in area.StorageSpots)
+                if (!spot.IsReserved && spot.ItemInSpot != null)
+                {
+                    var distToSpot = Vector3.Distance(worldLoc, spot.WorldLoc);
+                    if (distToSpot < distance)
+                    {
+                        distance = distToSpot;
+                        closestSpot = spot;
+                    }
+                }
         if (closestSpot != null)
             return closestSpot;
         return null;
@@ -766,8 +835,9 @@ public class BuildingData : BaseData
             foreach (var spot in area.StorageSpots)
                 if (!spot.IsReserved && spot.ItemInSpot != null)
                 {
-                    // don't allow returning resources that we need for crafting
-                    if (CraftingResourceNeeds.Find(need => need.NeededItem == spot.ItemInSpot.Defn) != null)
+                    // don't allow returning resources that we need for crafting or selling
+                    if (CraftingResourceNeeds.Find(need => need.NeededItem == spot.ItemInSpot.Defn) != null ||
+                        SellingGoodNeeds.Find(need => need.NeededItem == spot.ItemInSpot.Defn) != null)
                         continue;
                     return spot;
                 }

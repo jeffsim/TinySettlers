@@ -22,7 +22,9 @@ public class BuildingDetailsNeedsList : MonoBehaviour
     {
         List.RemoveAllChildren();
         ListEntries.Clear();
-        foreach(var need in building.Data.Needs)
+        var sortedNeeds = building.Data.Needs;
+        sortedNeeds.Sort((a, b) => b.Priority.CompareTo(a.Priority));
+        foreach(var need in sortedNeeds)
         {
             var listEntry = Instantiate(BuildingDetailsNeedListEntryPrefab, List.transform);
             listEntry.ShowForNeed(need);

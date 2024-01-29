@@ -58,11 +58,69 @@ public class TownTaskMgr
                     case NeedType.GatherResource: getHigherPriorityTaskIfExists_GatherResource(need, idleWorkers); break;
                     case NeedType.ClearStorage: getHigherPriorityTaskIfExists_CleanupStorage(need, idleWorkers); break;
                     case NeedType.PickupAbandonedItem: getHigherPriorityTaskIfExists_PickupAbandonedItem(need, idleWorkers); break;
+                    case NeedType.CraftingOrConstructionMaterial: getHigherPriorityTaskIfExists_BuildingWantsAnItem(need, idleWorkers); break;
                     case NeedType.CraftGood: getHigherPriorityTaskIfExists_CraftItem(need, idleWorkers); break;
                 }
 
         // Return the highest priority task
         return HighestPriorityTask;
+    }
+
+    private void getHigherPriorityTaskIfExists_BuildingWantsAnItem(NeedData need, List<WorkerData> idleWorkers)
+    {
+        // =====================================================================================
+        // FIRST, determine if need is meetable
+
+        // Building that needs the item must have a storage spot available for the item
+        if (!need.BuildingWithNeed.HasAvailableStorageSpot) return;
+
+        // Generate the list of all buildings that the item can be picked up from (ie unreserved and in storage)
+        var buildingsThatHaveItem = Town.Buildings.Where(building => building.HasUnreservedItemOfType(need.NeededItem) && !building.IsPaused).ToList();
+        if (buildingsThatHaveItem.Count == 0) return; // if no buildings have the item then abort
+
+        // =====================================================================================
+        // SECOND, determine which idle workers can gather the resource
+        float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
+        foreach (var worker in idleWorkers)
+        {
+            if (worker.ItemInHand != null) continue;                    // if worker is already carrying something then skip
+            if (worker.AssignedBuilding.IsPaused) continue;
+            if (!worker.CanGoGetItemsBuildingsWant()) continue;
+
+            // Determine which 'building with item' the idle worker can optimally gather from
+            StorageSpotData optimalSpot = null;
+            foreach (var building in buildingsThatHaveItem)
+            {
+                if (building == need.BuildingWithNeed) continue; // don't gather from the building that needs the item
+
+                // Optimality of getting item from 'building' is based on distance from building-with-need
+                // TOOD: In the future, this is where I would add support for user putting thumb on scale re: which buildings to get from
+                var closestSpotWithItem = building.GetClosestUnreservedStorageSpotWithItemToReap(need.BuildingWithNeed.WorldLoc, out float distanceToGatheringSpot);
+                if (closestSpotWithItem == null) continue;
+
+                float distanceImpactOnPriority = getDistanceImpactOnPriority(distanceToGatheringSpot);
+                float priorityOfMeetingNeedWithBuildingsGatheringSpot = need.Priority + distanceImpactOnPriority;
+
+                // If the priority of using this building's gatheringspot is higher than the priority of the highest priority gatheringspot we've found 
+                // so far (and is also higher than the highest priority task we've found so far), then swap
+                if (priorityOfMeetingNeedWithBuildingsGatheringSpot > highestPrioritySoFar)
+                {
+                    optimalSpot = closestSpotWithItem;
+                    highestPrioritySoFar = priorityOfMeetingNeedWithBuildingsGatheringSpot;
+                }
+            }
+
+            // If we have found a gathering spot then we know that the priority of performing this new task is higher than the priority of the
+            // highest priority task we've found so far, so replace the highest priority task with this higher-priority gathering task
+            if (optimalSpot != null)
+            {
+                // NOTE that we do not reserve anything at this point, because although we've found the optimal gathering task to perform,
+                // a better (non gathering) task to perform may still be found by caller.
+                var closestStorageSpot = need.BuildingWithNeed.GetClosestEmptyStorageSpot(optimalSpot.WorldLoc);
+                Debug.Assert(closestStorageSpot != null, "No storage spot found for item that we're about to gather");
+                HighestPriorityTask.Set(WorkerTask_PickupItemFromStorageSpot.Create(worker, need, optimalSpot, closestStorageSpot), highestPrioritySoFar);
+            }
+        }
     }
 
     private void getHigherPriorityTaskIfExists_CraftItem(NeedData need, List<WorkerData> idleWorkers)
@@ -94,12 +152,12 @@ public class TownTaskMgr
             if (worker.AssignedBuilding.IsPaused) continue;
             if (!worker.CanCraftItems()) continue;
             // if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
-            
+
             // StorageSpot only required for explicit items
             StorageSpotData storageSpotForCraftedItem = null;
             if (itemToCraft.GoodType == GoodType.explicitGood)
             {
-                storageSpotForCraftedItem = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary,craftingSpot.WorldLoc, worker);
+                storageSpotForCraftedItem = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, craftingSpot.WorldLoc, worker);
                 if (storageSpotForCraftedItem == null) continue; // No storage spot available for crafted item
             }
 
@@ -142,6 +200,7 @@ public class TownTaskMgr
             }
         }
     }
+
     // If here, then a building has a 'cleanup my storage please' need - see if any idleworkers can do it
     private void getHigherPriorityTaskIfExists_CleanupStorage(NeedData need, List<WorkerData> idleWorkers)
     {

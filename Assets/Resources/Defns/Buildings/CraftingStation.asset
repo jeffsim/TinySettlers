@@ -24,12 +24,11 @@ MonoBehaviour:
   EditorColor: {r: 0.4431373, g: 0.003921569, b: 0, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
+  PlayerCanPause: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
     Count: 4
-  - Item: {fileID: 11400000, guid: 0f7a65437217c4f3c8bdf660e2b482c4, type: 2}
-    Count: 2
   NumConstructorSpots: 2
   CanCraft: 1
   CraftableItems:
