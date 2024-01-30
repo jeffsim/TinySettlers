@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -11,9 +12,10 @@ public abstract class TestBase
     public BuildingData Market;   // first instance of building found in town
     public BuildingData CraftingStation;   // first instance of building found in town
 
-    public void LoadTestTown(string townDefnName)
+    public void LoadTestTown(string townDefnName, int stepNum = -1)
     {
         GameTime.IsTest = true;
+        CurStep = stepNum;
         if (GameDefns.Instance == null)
         {
             var go = new GameObject("GameDefns");
@@ -58,7 +60,7 @@ public abstract class TestBase
             if (building.DefnId == buildingDefnId)
                 return building;
         if (!failureIsOkay)
-            Assert.Fail("failed to get building " + buildingDefnId);
+            Assert.Fail($"stepNum {CurStep}: failed to get building {buildingDefnId}");
         return null;
     }
     protected WorkerData getAssignedWorker(BuildingData building, int num = 0)
@@ -72,7 +74,7 @@ public abstract class TestBase
             if (worker.AssignedBuilding.DefnId == assignedBuildingId)
                 if (--num == -1)
                     return worker;
-        Assert.Fail("failed to get worker " + num + " in building " + assignedBuildingId);
+        Assert.Fail($"stepNum {CurStep}: failed to get worker {num} in building {assignedBuildingId}");
         return null;
     }
 
@@ -80,7 +82,9 @@ public abstract class TestBase
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         while (GameTime.time < breakTime && worker.CurrentTask.Type != taskType)
+        {
             updateTown();
+        }
         Assert.IsTrue(GameTime.time < breakTime, "stuck in loop in waitUntilTask.  CurrentTask = " + worker.CurrentTask.Type + ", expected " + taskType);
     }
 
@@ -94,8 +98,10 @@ public abstract class TestBase
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         while (GameTime.time < breakTime && worker.CurrentTask.substate != substate)
+        {
             updateTown();
-        Assert.IsTrue(GameTime.time < breakTime, "stuck in loop in waitUntilTaskSubstate.  CurrentSubstate = " + worker.CurrentTask.substate + ", expected " + substate);
+        }
+        Assert.IsTrue(GameTime.time < breakTime, $"stepNum {CurStep}: stuck in loop in waitUntilTaskSubstate.  substate = {worker.CurrentTask.substate}, expected substate {substate}");
     }
 
     protected void waitUntilNewTask(WorkerData worker, TaskType newTaskType)
@@ -109,43 +115,59 @@ public abstract class TestBase
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         var startTask = worker.CurrentTask;
         while (GameTime.time < breakTime && worker.CurrentTask == startTask)
+        {
             updateTown();
-        Assert.IsTrue(GameTime.time < breakTime, "stuck in loop in waitUntilTaskDone");
+        }
+        Assert.IsTrue(GameTime.time < breakTime, $"stepNum {CurStep}: stuck in loop in waitUntilTaskDone.  CurrentTask = {worker.CurrentTask.Type}, expected task to change");
+    }
+
+    int CurStep;
+    protected void SetStep(int stepNum)
+    {
+        CurStep = stepNum;
     }
 
     public void verify_LocsAreEqual(Vector3 v1, Vector3 v2, string message = "", float acceptableDelta = 0.01f)
     {
         float dx = Math.Abs(v2.x - v1.x), dy = Math.Abs(v2.y - v1.y);
-        if (message.Length > 0) message += ": ";
-        Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, message + "Locs not equal - " + v1 + ", " + v2);
+        Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, $"stepNum {CurStep}: {message} Locs not equal - {v1} vs {v2}");
     }
 
     public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker)
     {
-        Assert.NotNull(worker.CurrentTask);
-        Assert.AreEqual(expectedType, worker.CurrentTask.Type);
+        Assert.NotNull(worker.CurrentTask, $"stepNum {CurStep}: Expected worker {worker} to have a task, but worker.CurrentTask is null");
+        Assert.AreEqual(expectedType, worker.CurrentTask.Type, $"stepNum {CurStep}: Expected worker {worker} to have task type {expectedType}, but worker.CurrentTask.Type is {worker.CurrentTask.Type}");
     }
 
-    protected void verify_WorkerTaskSubstate(int substate, WorkerData miner)
+    protected void verify_WorkerTaskSubstate(int substate, WorkerData worker)
     {
-        Assert.NotNull(miner.CurrentTask);
-        Assert.AreEqual(substate, miner.CurrentTask.substate);
+        Assert.NotNull(worker.CurrentTask, $"stepNum {CurStep}: Expected worker {worker} to have a task, but worker.CurrentTask is null");
+        Assert.AreEqual(substate, worker.CurrentTask.substate, $"stepNum {CurStep}: Expected worker {worker} to have substate {substate}, but worker.CurrentTask.substate is {worker.CurrentTask.substate}");
     }
 
     protected void verify_AssignedBuilding(WorkerData worker, BuildingData building)
     {
-        Assert.NotNull(worker);
-        Assert.NotNull(building);
-        Assert.AreEqual(worker.AssignedBuilding, building);
+        Assert.NotNull(worker, $"stepNum {CurStep}: Expected worker {worker} to be assigned to {building}, but worker is null");
+        Assert.NotNull(building, $"stepNum {CurStep}: Expected worker {worker} to be assigned to {building}, but building is null");
+        Assert.AreEqual(worker.AssignedBuilding, building, $"stepNum {CurStep}: Expected worker {worker} to be assigned to {building}, but worker is assigned to '{worker.AssignedBuilding}'");
     }
 
     protected void verify_ItemInHand(WorkerData worker, string itemDefnId)
     {
         Assert.NotNull(worker);
         if (worker.ItemInHand == null)
-            Assert.AreEqual(itemDefnId, null);
+            Assert.AreEqual(itemDefnId, null, $"stepNum {CurStep}: Expected item in hand to be null, but is '{itemDefnId}'");
         else
-            Assert.AreEqual(itemDefnId, worker.ItemInHand.DefnId);
+            Assert.AreEqual(itemDefnId, worker.ItemInHand.DefnId, $"stepNum {CurStep}: Expected item in hand to be '{itemDefnId}', but is '{worker.ItemInHand}'");
+    }
+
+    protected void verify_ItemsOnGround(int expectedNumber)
+    {
+        if (Town.ItemsOnGround.Count != expectedNumber)
+        {
+            string itemsFound = string.Join(", ", Town.ItemsOnGround.Select(item => item.DefnId));
+            Assert.AreEqual(expectedNumber, Town.ItemsOnGround.Count, $"stepNum {CurStep}: Expected {expectedNumber} items on ground, but found '{itemsFound}'");
+        }
     }
 
     protected void updateTown()

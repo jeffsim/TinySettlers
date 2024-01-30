@@ -1,4 +1,6 @@
+using System;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace DestroyBuildingTests
 {
@@ -19,7 +21,7 @@ namespace DestroyBuildingTests
             for (int i = 0; i < substates.Length; i++)
             {
                 // Set up town with one crafting building in the middle, enough resources to craft one item, and one worker assigned to the building
-                LoadTestTown("crafting_town1");
+                LoadTestTown("crafting_town1", i);
                 var crafter = getAssignedWorker(CraftingStation);
 
                 waitUntilTaskAndSubstate(crafter, TaskType.CraftGood, (int)substates[i]);
@@ -31,11 +33,12 @@ namespace DestroyBuildingTests
                 verify_WorkerTaskType(TaskType.Idle, crafter);
                 verify_AssignedBuilding(crafter, Camp);
                 verify_WorkerTaskSubstate((int)WorkerTask_IdleSubstate.ChooseHowLongToWait, crafter);
-                
+
                 switch (substates[i])
                 {
                     case WorkerTask_CraftItemSubstate.GotoSpotWithResource:
                         verify_ItemInHand(crafter, null);
+                        verify_ItemsOnGround(2);
                         break;
                     case WorkerTask_CraftItemSubstate.PickupResource:
                         verify_ItemInHand(crafter, null);
@@ -50,7 +53,8 @@ namespace DestroyBuildingTests
                         verify_ItemInHand(crafter, null);
                         break;
                     case WorkerTask_CraftItemSubstate.PickupProducedGood:
-                        verify_ItemInHand(crafter, "woodPlank");
+                        verify_ItemInHand(crafter, "plank");
+                        verify_ItemsOnGround(0);
                         break;
                 }
             }

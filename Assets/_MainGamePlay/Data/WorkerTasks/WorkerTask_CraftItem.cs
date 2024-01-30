@@ -91,17 +91,31 @@ public class WorkerTask_CraftItem : WorkerTask
         nextCraftingResourceStorageSpotToGetFrom = getNextReservedCraftingResourceStorageSpot();
     }
 
-    public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
+    public override void OnBuildingDestroyed(BuildingData building)
     {
-        // Debug.Assert(false, "nyi");
+        if (building != Worker.AssignedBuilding) return; // Only care if our building was the one that was destroyed
 
-        // TODO: What to do with source resources that were or weren't moved to crafting spot?
-        // TOOD: what to do with item that was crafted if destroyed while building being picked up?
-        if (substate == (int)WorkerTask_CraftItemSubstate.PickupProducedGood)
+        switch ((WorkerTask_CraftItemSubstate)substate)
         {
-            // Just give the item to the worker
-            generateCraftedItem();
+            case WorkerTask_CraftItemSubstate.GotoSpotWithResource:
+                // Do nothing
+                break;
+            case WorkerTask_CraftItemSubstate.PickupResource:
+                // Do nothing; haven't fully picked up so it'll just get dropped onto the ground
+                break;
+            case WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
+                // We're carrying an item.
+                break;
+            case WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
+                break;
+            case WorkerTask_CraftItemSubstate.CraftGood:
+                break;
+            case WorkerTask_CraftItemSubstate.PickupProducedGood:
+                // Just give the item to the worker
+                generateCraftedItem();
+                break;
         }
+        Abandon();
     }
 
     public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
@@ -185,6 +199,7 @@ public class WorkerTask_CraftItem : WorkerTask
 
     private void generateCraftedItem()
     {
+        Debug.Log("todo: consume crafting resources?");
         if (itemBeingCrafted.GoodType == GoodType.explicitGood)
             Worker.AddItemToHands(new ItemData() { DefnId = CraftingItemDefnId });
         else
