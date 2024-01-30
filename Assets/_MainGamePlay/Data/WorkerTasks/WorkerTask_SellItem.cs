@@ -64,7 +64,10 @@ public class WorkerTask_SellItem : WorkerTask
 
     public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
     {
-        // NYI
+        if (substate == (int)WorkerTask_SellItemSubstate.GotoItemToSell)
+            LastMoveToTarget += building.WorldLoc - previousWorldLoc;
+        else if (spotWithItemToSell.Building == building)
+            Worker.WorldLoc += building.WorldLoc - previousWorldLoc;
     }
 
     public override void OnBuildingPauseToggled(BuildingData building)
