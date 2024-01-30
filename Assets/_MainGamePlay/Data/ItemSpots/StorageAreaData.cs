@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 [Serializable]
 public class StorageAreaData : BaseData
 {
+    public override string ToString() => "{" + string.Join(", ", StorageSpots.Select(spot => spot)) + "}";
+
     public List<StorageSpotData> StorageSpots;
 
     [SerializeField] Vector3 _localLoc;
@@ -87,5 +90,11 @@ public class StorageAreaData : BaseData
                     spot.ReservedBy.CurrentTask?.Abandon();
                 spot.RemoveItem();
             }
+    }
+
+    internal void OnBuildingDestroyed()
+    {
+        foreach (var spot in StorageSpots)
+            spot.OnBuildingDestroyed();
     }
 }

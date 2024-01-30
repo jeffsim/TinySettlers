@@ -740,22 +740,12 @@ public class BuildingData : BaseData
 
         IsDestroyed = true;
 
-        // Cancel building's needs
-        foreach (var need in Needs)
-            need.Cancel();
+        foreach (var need in Needs) need.Cancel();
 
-        // Update Workers that are assigned to or have Tasks which involve this building.
-        foreach (var worker in Town.Workers)
-            worker.OnBuildingDestroyed(this);
-
-        // Move items that were in storage onto the ground here
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (!spot.IsEmpty)
-                {
-                    Town.AddItemToGround(spot.ItemInSpot, spot.WorldLoc);// + WorldLoc);
-                    spot.RemoveItem();
-                }
+        foreach (var worker in Town.Workers) worker.OnBuildingDestroyed(this);
+        foreach (var spot in CraftingSpots) spot.OnBuildingDestroyed();
+        foreach (var spot in GatheringSpots) spot.OnBuildingDestroyed();
+        foreach (var area in StorageAreas) area.OnBuildingDestroyed();      
     }
 
     internal void MoveTo(int tileX, int tileY)

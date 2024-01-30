@@ -4,12 +4,12 @@ using UnityEngine;
 public delegate void OnItemRemovedFromStorageEvent(ItemData item);
 
 [Serializable]
-public abstract class ItemSpotData : BaseData
+public abstract class ItemSpotData : ReservableData
 {
+    public override string ToString() => $"{(ItemInSpot == null ? "empty" : ItemInSpot)}";
+
     public ItemData ItemInSpot;
-    public WorkerData ReservedBy;
     public bool IsEmpty => ItemInSpot == null;
-    public bool IsReserved => ReservedBy != null;
     public bool IsEmptyAndAvailable => IsEmpty && !IsReserved;
 
     public BuildingData Building;
@@ -37,12 +37,6 @@ public abstract class ItemSpotData : BaseData
         WorldLoc = LocalLoc + Building.WorldLoc;
     }
 
-    public void Unreserve()
-    {
-        Debug.Assert(IsReserved, "Unreserving already unreserved spot (" + InstanceId + ")");
-        ReservedBy = null;
-    }
-
     public void AddItem(ItemData item)
     {
         Debug.Assert(ItemInSpot == null, "Adding item when there already is one (" + InstanceId + ")");
@@ -56,11 +50,12 @@ public abstract class ItemSpotData : BaseData
         return itemToRemove;
     }
 
-    public void ReserveBy(WorkerData worker)
+    internal void OnBuildingDestroyed()
     {
-        Debug.Assert(!IsReserved, "Reserving already reserved storage spot (" + InstanceId + ")");
-        Debug.Assert(worker != null, "Null reserver (" + InstanceId + ")");
-
-        ReservedBy = worker;
+        if (!IsEmpty)
+        {
+            Building.Town.AddItemToGround(ItemInSpot, WorldLoc);
+            RemoveItem();
+        }
     }
 }
