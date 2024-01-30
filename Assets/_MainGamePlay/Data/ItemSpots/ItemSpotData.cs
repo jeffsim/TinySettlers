@@ -51,7 +51,6 @@ public abstract class ItemSpotData : BaseData
 
     public ItemData RemoveItem()
     {
-        Debug.Assert(!IsReserved, "shouldn't be reserved when item removed (" + InstanceId + ")");
         var itemToRemove = ItemInSpot;
         ItemInSpot = null;
         return itemToRemove;

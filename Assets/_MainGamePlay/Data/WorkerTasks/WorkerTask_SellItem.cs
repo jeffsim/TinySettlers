@@ -16,12 +16,12 @@ public class WorkerTask_SellItem : WorkerTask
 
     public override TaskType Type => TaskType.SellItem;
 
-    public override ItemDefn GetTaskItem() => spotWithItemToSell.ItemInSpot.Defn;
+    public override ItemDefn GetTaskItem() => spotWithItemToSell.ItemInSpot != null ? spotWithItemToSell.ItemInSpot.Defn : Worker.ItemInHand.Defn;
 
     [SerializeField] StorageSpotData spotWithItemToSell;
 
     public const float secondsToPickup = 0.5f;
-    public const float secondsToSell = 0.5f;
+    public const float secondsToSell = 2f;
 
     public override bool IsWalkingToTarget => substate == (int)WorkerTask_SellItemSubstate.GotoItemToSell;
 
@@ -53,18 +53,38 @@ public class WorkerTask_SellItem : WorkerTask
     public override void Start()
     {
         base.Start();
-
         reserveStorageSpot(spotWithItemToSell);
     }
 
     public override void OnBuildingDestroyed(BuildingData building)
     {
-        // NYI
+        if (building != spotWithItemToSell.Building) return;
+
+        if (substate == (int)WorkerTask_SellItemSubstate.SellItem)
+        {
+            // We've picked up the item and are trying to sell it; need to find a destination to bring it to, or drop it on the ground
+            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(spotWithItemToSell, Worker.WorldLoc);
+            if (newSpot == spotWithItemToSell)
+            {
+                // Failed to find an alternative; drop the item on the ground for later handling when storage becomes available
+                Worker.Town.AddItemToGround(Worker.RemoveItemFromHands(), Worker.WorldLoc);
+            }
+            else
+            {
+                // We found an alternative spot; the cleanest thing here would be to simply drop the item anyways, but then the 
+                // worker will drop and then on next update pick it back up.  Instead, what we'll do is fake our way into a state
+                // where we continue to hold onto to the item, but are ready to instantly start carrying it to the new spot.
+                ReservedStorageSpots.Remove(spotWithItemToSell);
+                Worker.StorageSpotReservedForItemInHand = newSpot;
+                Worker.OriginalPickupItemNeed = NeedData.CreateAbandonedItemCleanupNeed(Worker.ItemInHand);
+            }
+        }
+        Abandon();
     }
 
     public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
     {
-        if (building != Worker.AssignedBuilding) return;
+        if (building != spotWithItemToSell.Building) return;
         if (IsWalkingToTarget)
             LastMoveToTarget += building.WorldLoc - previousWorldLoc;
         else
@@ -90,14 +110,19 @@ public class WorkerTask_SellItem : WorkerTask
 
             case (int)WorkerTask_SellItemSubstate.PickupItemToSell:
                 if (getPercentSubstateDone(secondsToPickup) == 1)
+                {
+                    Worker.AddItemToHands(spotWithItemToSell.RemoveItem());
+                    Worker.StorageSpotReservedForItemInHand = null; // TODO
                     GotoNextSubstate();
+                }
                 break;
 
             case (int)WorkerTask_SellItemSubstate.SellItem:
                 if (getPercentSubstateDone(secondsToSell) == 1)
                 {
+                    var item = Worker.RemoveItemFromHands();
+                    Worker.Town.ItemSold(item);
                     CompleteTask();
-                    Worker.Town.ItemSold(spotWithItemToSell.RemoveItem());
                 }
                 break;
 

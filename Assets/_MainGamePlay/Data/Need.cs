@@ -96,6 +96,13 @@ public class NeedData : BaseData
     public int MaxNumWorkersThatCanMeetNeed;
     public bool IsBeingFullyMet => WorkersMeetingNeed.Count == MaxNumWorkersThatCanMeetNeed;
 
+    public NeedData(NeedType needType)
+    {
+        Type = needType;
+        WorkersMeetingNeed = new();
+        StartTimeInSeconds = GameTime.time;
+    }
+
     public NeedData(BuildingData buildingData, NeedType needType)
     {
         BuildingWithNeed = buildingData;
@@ -107,14 +114,14 @@ public class NeedData : BaseData
         MaxNumWorkersThatCanMeetNeed = 1;
     }
 
-    public NeedData(ItemData abandonedItem)
+    public static NeedData CreateAbandonedItemCleanupNeed(ItemData abandonedItem)
     {
-        AbandonedItemToPickup = abandonedItem;
-        Type = NeedType.PickupAbandonedItem;
-        Priority = 0.1f;//.5f; // TODO: Remove
-        WorkersMeetingNeed = new List<WorkerData>();
-        StartTimeInSeconds = GameTime.time;
-        MaxNumWorkersThatCanMeetNeed = 1;
+        return new NeedData(NeedType.PickupAbandonedItem)
+        {
+            AbandonedItemToPickup = abandonedItem,
+            Priority = 0.1f,
+            MaxNumWorkersThatCanMeetNeed = 1
+        };
     }
 
     public NeedData(BuildingData buildingData, NeedType needType, ResourceNeededForCraftingOrConstruction resource) : this(buildingData, needType)

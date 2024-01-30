@@ -126,6 +126,14 @@ public class WorkerData : BaseData
         ItemInHand = item;
     }
 
+    internal ItemData RemoveItemFromHands()
+    {
+        Debug.Assert(ItemInHand != null, "No  ItemInHand");
+        var item = ItemInHand;
+        ItemInHand = null;
+        return item;
+    }
+
     internal void DropItemInHandInReservedStorageSpot()
     {
         Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");

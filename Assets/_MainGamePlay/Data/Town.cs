@@ -192,7 +192,7 @@ public class TownData : BaseData
         OnItemAddedToGround?.Invoke(item);
 
         // Add a need to pick up the item.  This will be removed when the item is picked up
-        otherTownNeeds.Add(new NeedData(item));
+        otherTownNeeds.Add(NeedData.CreateAbandonedItemCleanupNeed(item));
     }
 
     public void RemoveItemFromGround(ItemData item)
