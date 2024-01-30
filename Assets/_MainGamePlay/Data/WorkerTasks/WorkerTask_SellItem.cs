@@ -23,7 +23,7 @@ public class WorkerTask_SellItem : WorkerTask
     public const float secondsToPickup = 0.5f;
     public const float secondsToSell = 0.5f;
 
-    public override bool IsWalkingToTarget => substate == 0;
+    public override bool IsWalkingToTarget => substate == (int)WorkerTask_SellItemSubstate.GotoItemToSell;
 
     public override string ToDebugString()
     {
@@ -64,9 +64,10 @@ public class WorkerTask_SellItem : WorkerTask
 
     public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
     {
-        if (substate == (int)WorkerTask_SellItemSubstate.GotoItemToSell)
+        if (building != Worker.AssignedBuilding) return;
+        if (IsWalkingToTarget)
             LastMoveToTarget += building.WorldLoc - previousWorldLoc;
-        else if (spotWithItemToSell.Building == building)
+        else
             Worker.WorldLoc += building.WorldLoc - previousWorldLoc;
     }
 
