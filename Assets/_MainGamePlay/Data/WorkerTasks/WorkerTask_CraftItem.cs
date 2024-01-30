@@ -93,7 +93,7 @@ public class WorkerTask_CraftItem : WorkerTask
 
     public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
-       // Debug.Assert(false, "nyi");
+        // Debug.Assert(false, "nyi");
 
         // TODO: What to do with source resources that were or weren't moved to crafting spot?
         // TOOD: what to do with item that was crafted if destroyed while building being picked up?
@@ -106,7 +106,11 @@ public class WorkerTask_CraftItem : WorkerTask
 
     public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
     {
-        Debug.Assert(false, "nyi");
+        if (building != Worker.AssignedBuilding) return;
+        if (IsWalkingToTarget)
+            LastMoveToTarget += building.WorldLoc - previousWorldLoc;
+        else
+            Worker.WorldLoc += building.WorldLoc - previousWorldLoc;
     }
 
     public override void Update()
