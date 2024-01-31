@@ -122,9 +122,9 @@ public class WorkerTask_CraftItem : WorkerTask
     {
         if (building != Worker.AssignedBuilding) return;
         if (IsWalkingToTarget)
-            LastMoveToTarget += building.WorldLoc - previousWorldLoc;
+            LastMoveToTarget += building.Location.WorldLoc - previousWorldLoc;
         else
-            Worker.WorldLoc += building.WorldLoc - previousWorldLoc;
+            Worker.Location.WorldLoc += building.Location.WorldLoc - previousWorldLoc;
     }
 
     public override void Update()
@@ -134,7 +134,7 @@ public class WorkerTask_CraftItem : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource: // go to resource spot
-                if (MoveTowards(nextCraftingResourceStorageSpotToGetFrom.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(nextCraftingResourceStorageSpotToGetFrom.Location.WorldLoc, distanceMovedPerSecond))
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.PickupResource);
                 break;
 
@@ -143,13 +143,13 @@ public class WorkerTask_CraftItem : WorkerTask
                 {
                     // Remove the item from the spot (and the game, technically), and unreserve the spot so that it can be used by other Workers
                     unreserveBuildingCraftingResourceSpot(nextCraftingResourceStorageSpotToGetFrom);
-                    nextCraftingResourceStorageSpotToGetFrom.RemoveItem();
+                    nextCraftingResourceStorageSpotToGetFrom.ItemContainer.ClearItem();
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot);
                 }
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
-                if (MoveTowards(reservedCraftingSpot.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(reservedCraftingSpot.Location.WorldLoc, distanceMovedPerSecond))
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot);
                 break;
 
@@ -187,7 +187,7 @@ public class WorkerTask_CraftItem : WorkerTask
                     {
                         Worker.StorageSpotReservedForItemInHand = reservedStorageSpot;
                         Worker.OriginalPickupItemNeed = Need;
-                        reservedStorageSpot.ReserveBy(Worker);
+                        reservedStorageSpot.Reservation.ReserveBy(Worker);
                     }
                 }
                 break;

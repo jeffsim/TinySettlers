@@ -30,7 +30,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, ItemToPickup.WorldLocOnGround).ToString("0.0"); break;
+            case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround: str += "; dist: " + Worker.Location.DistanceTo(ItemToPickup.WorldLocOnGround).ToString("0.0"); break;
             case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.PickupItemFromGround: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
             default: Debug.LogError("unknown substate " + substate); break;
         }
@@ -66,7 +66,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
         // If the building which we have reserved a storage spot in was destroyed then try to find an alternative
         if (destroyedBuilding == reservedSpotToStoreItemIn.Building)
         {
-            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedSpotToStoreItemIn, Worker.WorldLoc);
+            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedSpotToStoreItemIn, Worker.Location);
             if (newSpot == null)
                 Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
             else
@@ -103,7 +103,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
                     // for the reasons that I broke them apart in the first place...
                     Worker.StorageSpotReservedForItemInHand = reservedSpotToStoreItemIn;
                     Worker.OriginalPickupItemNeed = Need;
-                    reservedSpotToStoreItemIn.ReserveBy(Worker);
+                    reservedSpotToStoreItemIn.Reservation.ReserveBy(Worker);
                 }
                 break;
 

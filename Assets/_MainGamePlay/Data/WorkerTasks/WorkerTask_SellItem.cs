@@ -16,7 +16,7 @@ public class WorkerTask_SellItem : WorkerTask
 
     public override TaskType Type => TaskType.SellItem;
 
-    public override ItemDefn GetTaskItem() => spotWithItemToSell.ItemInSpot != null ? spotWithItemToSell.ItemInSpot.Defn : Worker.ItemInHand.Defn;
+    public override ItemDefn GetTaskItem() => spotWithItemToSell.ItemContainer.Item != null ? spotWithItemToSell.ItemContainer.Item.Defn : Worker.ItemInHand.Defn;
 
     [SerializeField] StorageSpotData spotWithItemToSell;
 
@@ -31,7 +31,7 @@ public class WorkerTask_SellItem : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_SellItemSubstate.GotoItemToSell: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, spotWithItemToSell.WorldLoc).ToString("0.0"); break;
+            case (int)WorkerTask_SellItemSubstate.GotoItemToSell: str += "; dist: " + Worker.Location.DistanceTo(spotWithItemToSell.Location).ToString("0.0"); break;
             case (int)WorkerTask_SellItemSubstate.PickupItemToSell: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
             case (int)WorkerTask_SellItemSubstate.SellItem: str += "; per = " + getPercentSubstateDone(secondsToSell); break;
             default: Debug.LogError("unknown substate " + substate); break;
@@ -63,11 +63,11 @@ public class WorkerTask_SellItem : WorkerTask
         if (substate == (int)WorkerTask_SellItemSubstate.SellItem)
         {
             // We've picked up the item and are trying to sell it; need to find a destination to bring it to, or drop it on the ground
-            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(spotWithItemToSell, Worker.WorldLoc);
+            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(spotWithItemToSell, Worker.Location);
             if (newSpot == spotWithItemToSell)
             {
                 // Failed to find an alternative; drop the item on the ground for later handling when storage becomes available
-                Worker.Town.AddItemToGround(Worker.RemoveItemFromHands(), Worker.WorldLoc);
+                Worker.Town.AddItemToGround(Worker.RemoveItemFromHands(), Worker.Location);
             }
             else
             {
@@ -86,9 +86,9 @@ public class WorkerTask_SellItem : WorkerTask
     {
         if (building != spotWithItemToSell.Building) return;
         if (IsWalkingToTarget)
-            LastMoveToTarget += building.WorldLoc - previousWorldLoc;
+            LastMoveToTarget += building.Location.WorldLoc - previousWorldLoc;
         else
-            Worker.WorldLoc += building.WorldLoc - previousWorldLoc;
+            Worker.Location.WorldLoc += building.Location.WorldLoc - previousWorldLoc;
     }
 
     public override void OnBuildingPauseToggled(BuildingData building)
@@ -104,14 +104,14 @@ public class WorkerTask_SellItem : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_SellItemSubstate.GotoItemToSell:
-                if (MoveTowards(spotWithItemToSell.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(spotWithItemToSell.Location.WorldLoc, distanceMovedPerSecond))
                     GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_SellItemSubstate.PickupItemToSell:
                 if (getPercentSubstateDone(secondsToPickup) == 1)
                 {
-                    Worker.AddItemToHands(spotWithItemToSell.RemoveItem());
+                    Worker.AddItemToHands(spotWithItemToSell.ItemContainer.ClearItem());
                     Worker.StorageSpotReservedForItemInHand = null; // TODO
                     GotoNextSubstate();
                 }

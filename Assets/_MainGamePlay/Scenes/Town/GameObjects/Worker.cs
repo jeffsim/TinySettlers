@@ -21,7 +21,7 @@ public class Worker : MonoBehaviour
         Data = data;
         carriedItemRectTransform = CarriedItem.GetComponent<RectTransform>();
 
-        transform.position = new Vector3(data.WorldLoc.x, data.WorldLoc.y, WorkerZ);
+        transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, WorkerZ);
         updateVisual();
 
         Data.OnAssignedToBuilding += OnAssignedToBuilding;
@@ -59,7 +59,7 @@ public class Worker : MonoBehaviour
     public void Update()
     {
         // Data.Update();
-        transform.position = new Vector3(Data.WorldLoc.x, Data.WorldLoc.y, WorkerZ);
+        transform.position = new Vector3(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, WorkerZ);
 
         if (scene.Debug_DrawPaths)
             if (Data.CurrentTask.IsWalkingToTarget)
@@ -69,7 +69,7 @@ public class Worker : MonoBehaviour
                 using (Drawing.Draw.ingame.WithColor(Color.blue))
                 {
                     using (Drawing.Draw.ingame.WithLineWidth(3))
-                        Drawing.Draw.ingame.Line(new Vector3(Data.WorldLoc.x, Data.WorldLoc.y, 0) + offset, Data.CurrentTask.LastMoveToTarget + offset);
+                        Drawing.Draw.ingame.Line(new Vector3(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, 0) + offset, Data.CurrentTask.LastMoveToTarget.WorldLoc + offset);
                 }
             }
 

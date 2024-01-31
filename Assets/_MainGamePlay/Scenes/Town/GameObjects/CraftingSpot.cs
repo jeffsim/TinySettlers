@@ -16,7 +16,7 @@ public class CraftingSpot : MonoBehaviour
         this.index = index;
         this.scene = scene;
         name = "Crafting Spot " + index;
-        transform.position = new Vector3(spot.WorldLoc.x, spot.WorldLoc.y, -5);
+        transform.position = new Vector3(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, -5);
     }
 
     public void OnMouseUp()
@@ -28,6 +28,6 @@ public class CraftingSpot : MonoBehaviour
     void Update()
     {
         Debug.Assert(Data != null, "null spot");
-        ReservedIndicator.SetActive(Data.IsReserved);
+        ReservedIndicator.SetActive(Data.Reservation.IsReserved);
     }
 }

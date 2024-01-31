@@ -28,7 +28,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, Worker.StorageSpotReservedForItemInHand.WorldLoc).ToString("0.0"); break;
+            case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo: str += "; dist: " + Vector2.Distance(Worker.Location.WorldLoc, Worker.StorageSpotReservedForItemInHand.Location.WorldLoc).ToString("0.0"); break;
             case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot: str += "; per = " + getPercentSubstateDone(secondsToDrop); break;
             default: Debug.LogError("unknown substate " + substate); break;
         }
@@ -48,7 +48,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         // If the building which we have reserved a storage spot in was destroyed then try to find an alternative
         if (destroyedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
         {
-            Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand, Worker.WorldLoc);
+            Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand, Worker.Location);
             substate = 0; // back to walking again
             if (Worker.StorageSpotReservedForItemInHand == null)
                 Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
@@ -61,14 +61,14 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         // Note that we do this even if a building other than our target building moved, since a better alternative may have moved closer the worker.
         if (IsWalkingToTarget)
         {
-            Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand, Worker.WorldLoc);
+            Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand, Worker.Location);
             if (Worker.StorageSpotReservedForItemInHand == null)
                 Debug.Assert(false, "Failed to find *any* spot to store in.  Shouldn't happen since we already had one reserved");
         }
 
         // If we're standing still and working in the building that was moved, then update our location
         if (substate == (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot && movedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
-            Worker.WorldLoc += movedBuilding.WorldLoc - previousWorldLoc;
+            Worker.Location.WorldLoc += movedBuilding.Location.WorldLoc - previousWorldLoc;
     }
 
     public override void OnBuildingPauseToggled(BuildingData movedBuilding)
@@ -76,7 +76,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         // If we're still moving then determine if there is now a better/closer storage spot to deliver the item to.
         if (IsWalkingToTarget)
         {
-            Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand, Worker.WorldLoc);
+            Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand, Worker.Location);
             if (Worker.StorageSpotReservedForItemInHand == null)
                 Debug.Assert(false, "Failed to find *any* spot to store in.  Shouldn't happen since we already had one reserved");
         }
@@ -89,7 +89,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo: // Walk back to our assigned building
-                if (MoveTowards(Worker.StorageSpotReservedForItemInHand.WorldLoc, Worker.GetMovementSpeed()))
+                if (MoveTowards(Worker.StorageSpotReservedForItemInHand.Location.WorldLoc, Worker.GetMovementSpeed()))
                     GotoNextSubstate();
                 break;
 

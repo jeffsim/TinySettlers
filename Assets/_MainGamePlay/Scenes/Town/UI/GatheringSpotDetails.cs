@@ -28,12 +28,12 @@ public class GatheringSpotDetails : MonoBehaviour
     {
         if (spot == null) return;
 
-        if (spot.Data.IsReserved)
+        if (spot.Data.Reservation.IsReserved)
         {
             Reservation.text = "Reservation:";
-            Reservation.text += "\n    By: " + spot.Data.ReservedBy;
-            Reservation.text += "\n    Task: " + spot.Data.ReservedBy.CurrentTask;
-            Reservation.text += "\n    Item: " + spot.Data.ReservedBy.CurrentTask.GetTaskItem().FriendlyName;
+            Reservation.text += "\n    By: " + spot.Data.Reservation.ReservedBy;
+            Reservation.text += "\n    Task: " + spot.Data.Reservation.ReservedBy.CurrentTask;
+            Reservation.text += "\n    Item: " + spot.Data.Reservation.ReservedBy.CurrentTask.GetTaskItem().FriendlyName;
         }
         else
             Reservation.text = "Not reserved";
@@ -42,7 +42,7 @@ public class GatheringSpotDetails : MonoBehaviour
         foreach (var resource in spot.Data.Building.Defn.ResourcesThatCanBeGatheredFromHere)
             str += "\n    " + resource.Id;
 
-        if (spot.Data.ItemInSpot != null)
+        if (spot.Data.ItemContainer.Item != null)
             str += " (grown)";
         else if (spot.Data.ItemGrownInSpotDefnId != null)
             str += " (" + (spot.Data.PercentGrown * 100).ToString("0.0")  + "% grown)";

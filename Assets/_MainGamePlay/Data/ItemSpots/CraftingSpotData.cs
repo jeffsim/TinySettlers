@@ -4,37 +4,22 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class CraftingSpotData : ReservableData
+public class CraftingSpotData : BaseData
 {
     public override string ToString() => CraftingResourcesInSpot.Count == 0 ? "empty" : "{" + string.Join(", ", CraftingResourcesInSpot.Select(item => item)) + "}";
 
     public BuildingData Building;
     public List<ItemData> CraftingResourcesInSpot = new();
 
-    [SerializeField] Vector2 _localLoc;
-    public Vector3 LocalLoc // relative to our Building
-    {
-        get => _localLoc;
-        set
-        {
-            _localLoc = value;
-            UpdateWorldLoc();
-        }
-    }
+    public LocationComponent Location;
+    public ReservationComponent Reservation = new();
+    public ItemContainerComponent ItemContainer = new();
 
-    public Vector3 WorldLoc; // relative to the world
-
-    public CraftingSpotData(BuildingData buildingData, int index)
+    public CraftingSpotData(BuildingData building, int index)
     {
-        Debug.Assert(buildingData.Defn.CraftingSpots.Count > index, "building " + buildingData.DefnId + " missing CraftingSpotData " + index);
-        Building = buildingData;
-        var loc = buildingData.Defn.CraftingSpots[index];
-        LocalLoc = new Vector3(loc.x, loc.y, 0);
-    }
-
-    public virtual void UpdateWorldLoc()
-    {
-        WorldLoc = LocalLoc + Building.WorldLoc;
+        Debug.Assert(building.Defn.CraftingSpots.Count > index, "building " + building.DefnId + " missing CraftingSpotData " + index);
+        Building = building;
+        Location = new(building.Location, building.Defn.CraftingSpots[index]);
     }
 
     public void AddItem(ItemData item)
@@ -51,7 +36,7 @@ public class CraftingSpotData : ReservableData
     {
         // drop crafting resources onto the ground
         foreach (var item in CraftingResourcesInSpot)
-            Building.Town.AddItemToGround(item, WorldLoc);
+            Building.Town.AddItemToGround(item, Location);
         CraftingResourcesInSpot.Clear();
     }
 }

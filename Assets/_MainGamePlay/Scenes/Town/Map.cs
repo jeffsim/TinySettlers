@@ -136,7 +136,7 @@ public class Map : MonoBehaviour
         foreach (var building in Town.Buildings)
             foreach (var area in building.StorageAreas)
                 foreach (var spot in area.StorageSpots)
-                    if (spot.IsReserved) numReservedStorageSpots++;
+                    if (spot.Reservation.IsReserved) numReservedStorageSpots++;
 
         scene.DebugInfo.text = "Reserved spots: " + numReservedStorageSpots;
     }

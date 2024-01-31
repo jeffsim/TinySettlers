@@ -2,29 +2,35 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class GatheringSpotData : ItemSpotData
+public class GatheringSpotData : BaseData
 {
     public override string ToString() => "GatheringSpot " + InstanceId;
+    public BuildingData Building;
 
     public string ItemGrownInSpotDefnId;
     public float PercentGrown;
 
-    public GatheringSpotData(BuildingData buildingData, int index) : base(buildingData)
+    public LocationComponent Location;
+    public ReservationComponent Reservation = new();
+    public ItemContainerComponent ItemContainer = new();
+
+    public GatheringSpotData(BuildingData building, int index)
     {
-        Debug.Assert(buildingData.Defn.GatheringSpots.Count > index, "building " + buildingData.DefnId + " missing GatheringSpotData " + index);
-        var loc = buildingData.Defn.GatheringSpots[index];
-        LocalLoc = new Vector3(loc.x, loc.y, 0);
+        Building = building;
+        Debug.Assert(building.Defn.GatheringSpots.Count > index, "building " + building.DefnId + " missing GatheringSpotData " + index);
+        var loc = building.Defn.GatheringSpots[index];
+        Location = new(building.Location, new(loc.x, loc.y));
         PercentGrown = 0;
 
         // hack
-        if (buildingData.Defn.ResourcesCanBeGatheredFromHere)
-            ItemGrownInSpotDefnId = buildingData.Defn.ResourcesThatCanBeGatheredFromHere[0].Id;
+        if (building.Defn.ResourcesCanBeGatheredFromHere)
+            ItemGrownInSpotDefnId = building.Defn.ResourcesThatCanBeGatheredFromHere[0].Id;
     }
 
     public void Update()
     {
         // If there's already an item in the spot then we can't further grow until it's reaped
-        if (ItemInSpot != null) return;
+        if (ItemContainer.Item != null) return;
         Debug.Assert(ItemGrownInSpotDefnId != null, "ItemGrownInSpotDefnId is null");
 
         // Grow the item in spot; when fully grown, create an item so that it needs to be reaped
@@ -33,7 +39,16 @@ public class GatheringSpotData : ItemSpotData
         if (PercentGrown >= 1)
         {
             PercentGrown = 0;
-            ItemInSpot = new ItemData() { DefnId = itemDefn.Id };
+            ItemContainer.SetItem(new ItemData() { DefnId = itemDefn.Id });
+        }
+    }
+
+    internal void OnBuildingDestroyed()
+    {
+        if (!ItemContainer.IsEmpty)
+        {
+            var item = ItemContainer.ClearItem();
+            Building.Town.AddItemToGround(item, Location);
         }
     }
 }

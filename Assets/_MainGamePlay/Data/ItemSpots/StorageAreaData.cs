@@ -9,19 +9,7 @@ public class StorageAreaData : BaseData
     public override string ToString() => "{" + string.Join(", ", StorageSpots.Select(spot => spot)) + "}";
 
     public List<StorageSpotData> StorageSpots;
-
-    [SerializeField] Vector3 _localLoc;
-    public Vector3 LocalLoc // relative to our Building
-    {
-        get => _localLoc;
-        set
-        {
-            _localLoc = value;
-            UpdateWorldLoc();
-        }
-    }
-
-    public Vector3 WorldLoc;
+    public LocationComponent Location;
 
     public BuildingData Building;
 
@@ -41,6 +29,9 @@ public class StorageAreaData : BaseData
     {
         Building = buildingData;
 
+        var loc = buildingData.Defn.StorageAreaLocations[index];
+        Location = new(Building.Location, new(loc.x, loc.y));
+
         StorageSpots = new List<StorageSpotData>();
         var width = buildingData.Defn.StorageAreaSize.x;
         var height = buildingData.Defn.StorageAreaSize.y;
@@ -50,14 +41,11 @@ public class StorageAreaData : BaseData
                 Vector2 spotLoc = new((x - (width - 1) / 2f) * 1.1f, (y - (height - 1) / 2f) * 1.1f);
                 StorageSpots.Add(new StorageSpotData(this, spotLoc));
             }
-
-        var loc = buildingData.Defn.StorageAreaLocations[index];
-        LocalLoc = new(loc.x, loc.y);
     }
 
     public void UpdateWorldLoc()
     {
-        WorldLoc = LocalLoc + Building.WorldLoc;
+        Location.UpdateWorldLoc();
         foreach (var spot in StorageSpots)
             spot.UpdateWorldLoc();
     }
@@ -67,7 +55,7 @@ public class StorageAreaData : BaseData
         // TODO (perf): Dictionary lookup
         int count = 0;
         foreach (var spot in StorageSpots)
-            if (!spot.IsEmpty && (itemDefn == null || spot.ItemInSpot.DefnId == itemDefn.Id)) count++;
+            if (!spot.ItemContainer.IsEmpty && (itemDefn == null || spot.ItemContainer.Item.DefnId == itemDefn.Id)) count++;
         return count;
     }
 
@@ -76,19 +64,19 @@ public class StorageAreaData : BaseData
         // TODO (perf): Dictionary lookup
         int count = 0;
         foreach (var spot in StorageSpots)
-            if (!spot.IsEmpty && (itemDefn == null ||
-            (!spot.IsReserved && spot.ItemInSpot.DefnId == itemDefn.Id))) count++;
+            if (!spot.ItemContainer.IsEmpty && (itemDefn == null ||
+            (!spot.Reservation.IsReserved && spot.ItemContainer.Item.DefnId == itemDefn.Id))) count++;
         return count;
     }
 
     internal void Debug_RemoveAllItemsFromStorage()
     {
         foreach (var spot in StorageSpots)
-            if (!spot.IsEmpty)
+            if (!spot.ItemContainer.IsEmpty)
             {
-                if (spot.IsReserved)
-                    spot.ReservedBy.CurrentTask?.Abandon();
-                spot.RemoveItem();
+                if (spot.Reservation.IsReserved)
+                    spot.Reservation.ReservedBy.CurrentTask?.Abandon();
+                spot.ItemContainer.ClearItem();
             }
     }
 

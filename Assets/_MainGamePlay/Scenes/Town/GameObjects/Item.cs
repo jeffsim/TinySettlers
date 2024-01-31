@@ -21,7 +21,7 @@ public class Item : MonoBehaviour
         Name.text = data.Defn.FriendlyName.Substring(0, 1);
 
         GetComponentInChildren<Renderer>().material.color = data.Defn.Color;
-        transform.position = new Vector3(data.WorldLocOnGround.x, data.WorldLocOnGround.y, ItemZ);
+        transform.position = new Vector3(data.WorldLocOnGround.WorldLoc.x, data.WorldLocOnGround.WorldLoc.y, ItemZ);
     }
 
     public void OnMouseUp()

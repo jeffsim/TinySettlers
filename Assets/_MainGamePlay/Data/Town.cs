@@ -80,7 +80,7 @@ public class TownData : BaseData
 
             foreach (var item in tbDefn.StartingItemsInBuilding)
                 for (int i = 0; i < item.Count; i++)
-                    building.AddItemToItemSpot(new ItemData() { DefnId = item.Item.Id }, building.GetEmptyStorageSpot());
+                    building.GetEmptyStorageSpot().ItemContainer.SetItem(new ItemData() { DefnId = item.Item.Id });
         }
         UpdateDistanceToBuildings();
         TownTaskMgr = new(this);
@@ -185,10 +185,10 @@ public class TownData : BaseData
         return closestBuildingWithResourceAndGatheringSpot;
     }
 
-    internal void AddItemToGround(ItemData item, Vector2 pos)
+    internal void AddItemToGround(ItemData item, LocationComponent loc)
     {
         ItemsOnGround.Add(item);
-        item.WorldLocOnGround = pos;
+        item.WorldLocOnGround.SetWorldLoc(loc);
         OnItemAddedToGround?.Invoke(item);
 
         // Add a need to pick up the item.  This will be removed when the item is picked up
@@ -240,8 +240,8 @@ public class TownData : BaseData
         return null;
     }
 
-    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Vector3 worldLoc, WorkerData worker = null) => GetClosestAvailableStorageSpot(searchType, worldLoc, worker, out float _);
-    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Vector3 worldLoc, WorkerData worker, out float dist)
+    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, LocationComponent location, WorkerData worker = null) => GetClosestAvailableStorageSpot(searchType, location, worker, out float _);
+    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, LocationComponent location, WorkerData worker, out float dist)
     {
         if (searchType == StorageSpotSearchType.AssignedBuildingOrPrimary)
             Debug.Assert(worker != null, "worker must be specified for AnyAssignedBuildingOrPrimary");
@@ -262,7 +262,7 @@ public class TownData : BaseData
 
                 if (buildingMatchesSearchType)
                 {
-                    var distanceToBuilding = Vector3.Distance(worldLoc, building.WorldLoc);
+                    var distanceToBuilding = location.DistanceTo(building.Location);
                     if (distanceToBuilding < dist)
                     {
                         closestBuilding = building;
@@ -271,7 +271,7 @@ public class TownData : BaseData
                 }
             }
         }
-        return closestBuilding?.GetClosestEmptyStorageSpot(worldLoc, out dist);
+        return closestBuilding?.GetClosestEmptyStorageSpot(location, out dist);
     }
 
     public StorageSpotData GetClosestItemOfType(ItemDefn itemDefn, ItemClass itemClass, BuildingData startingBuilding)

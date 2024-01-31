@@ -84,9 +84,9 @@ public class TownTaskMgr
             if (worker.AssignedBuilding.IsPaused) continue;
             if (!worker.CanSellItems()) continue;
 
-            var closestSpotWithItemToWorker = need.BuildingWithNeed.GetClosestUnreservedStorageSpotWithItemToReapOrSell(worker.WorldLoc, out float distanceToGatheringSpot);
+            var closestSpotWithItemToWorker = need.BuildingWithNeed.GetClosestUnreservedStorageSpotWithItemToReapOrSell(worker.Location.WorldLoc, out float distanceToGatheringSpot);
             Debug.Assert(closestSpotWithItemToWorker != null, "Should have been caught above");
-            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.WorldLoc, closestSpotWithItemToWorker.WorldLoc);
+            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location.WorldLoc, closestSpotWithItemToWorker.Location.WorldLoc);
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
@@ -124,7 +124,7 @@ public class TownTaskMgr
 
                 // Optimality of getting item from 'building' is based on distance from building-with-need
                 // TOOD: In the future, this is where I would add support for user putting thumb on scale re: which buildings to get from
-                var closestSpotWithItem = building.GetClosestUnreservedStorageSpotWithItemToReapOrSell(need.BuildingWithNeed.WorldLoc, out float distanceToGatheringSpot);
+                var closestSpotWithItem = building.GetClosestUnreservedStorageSpotWithItemToReapOrSell(need.BuildingWithNeed.Location.WorldLoc, out float distanceToGatheringSpot);
                 if (closestSpotWithItem == null) continue;
 
                 float distanceImpactOnPriority = getDistanceImpactOnPriority(distanceToGatheringSpot);
@@ -145,7 +145,7 @@ public class TownTaskMgr
             {
                 // NOTE that we do not reserve anything at this point, because although we've found the optimal gathering task to perform,
                 // a better (non gathering) task to perform may still be found by caller.
-                var closestStorageSpot = need.BuildingWithNeed.GetClosestEmptyStorageSpot(optimalSpot.WorldLoc);
+                var closestStorageSpot = need.BuildingWithNeed.GetClosestEmptyStorageSpot(optimalSpot.Location);
                 Debug.Assert(closestStorageSpot != null, "No storage spot found for item that we're about to gather");
                 HighestPriorityTask.Set(WorkerTask_PickupItemFromStorageSpot.Create(worker, need, optimalSpot, closestStorageSpot), highestPrioritySoFar);
             }
@@ -186,11 +186,11 @@ public class TownTaskMgr
             StorageSpotData storageSpotForCraftedItem = null;
             if (itemToCraft.GoodType == GoodType.explicitGood)
             {
-                storageSpotForCraftedItem = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, craftingSpot.WorldLoc, worker);
+                storageSpotForCraftedItem = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, craftingSpot.Location, worker);
                 if (storageSpotForCraftedItem == null) continue; // No storage spot available for crafted item
             }
 
-            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.WorldLoc, craftingSpot.WorldLoc);
+            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location.WorldLoc, craftingSpot.Location.WorldLoc);
 
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
@@ -217,7 +217,7 @@ public class TownTaskMgr
             if (!worker.CanPickupAbandonedItems()) continue;
 
             // availableTasks.Add(new PrioritizedTask(WorkerTask_PickupAbandonedItem.Create(worker, need), need.Priority));
-            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.WorldLoc, need.AbandonedItemToPickup.WorldLocOnGround);
+            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location.WorldLoc, need.AbandonedItemToPickup.WorldLocOnGround);
 
             var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, need.AbandonedItemToPickup.WorldLocOnGround);
             Debug.Assert(closestStorageSpot != null, "Should have been caught above");
@@ -257,13 +257,13 @@ public class TownTaskMgr
             var nonPrimaryBuildingWorkerWantsToCleanupOwnBuilding = worker.AssignedBuilding == need.BuildingWithNeed && !worker.AssignedBuilding.HasAvailableStorageSpot;
             if (!workerCanCleanUpStorage && !nonPrimaryBuildingWorkerWantsToCleanupOwnBuilding) continue;
 
-            float distanceToSpotWithItemToCleanup = Vector3.Distance(worker.WorldLoc, need.BuildingWithNeed.WorldLoc); // TODO: Ideally would be "storage spot" not "building"
+            float distanceToSpotWithItemToCleanup = worker.Location.DistanceTo(need.BuildingWithNeed.Location); // TODO: Ideally would be "storage spot" not "building"
             float distanceImpactOnPriority = getDistanceImpactOnPriority(distanceToSpotWithItemToCleanup);
             float priorityOfMeetingNeedWithThisWorker = need.Priority + distanceImpactOnPriority;
 
             // Optimality of gathering from 'building' is based on distance from building-with-need
             // TOOD: In the future, this is where I would add support for user putting thumb on scale re: which buildings to gather/not gather from
-            var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, need.BuildingWithNeed.WorldLoc);
+            var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, need.BuildingWithNeed.Location);
             Debug.Assert(closestStorageSpot != null, "Should have been caught above");
 
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
@@ -300,7 +300,7 @@ public class TownTaskMgr
             {
                 // Optimality of gathering from 'building' is based on distance from building-with-need
                 // TOOD: In the future, this is where I would add support for user putting thumb on scale re: which buildings to gather/not gather from
-                var closestGatheringSpot = building.GetClosestUnreservedGatheringSpotWithItemToReap(need.BuildingWithNeed.WorldLoc, out float distanceToGatheringSpot);
+                var closestGatheringSpot = building.GetClosestUnreservedGatheringSpotWithItemToReap(need.BuildingWithNeed.Location.WorldLoc, out float distanceToGatheringSpot);
                 if (closestGatheringSpot == null) continue; // if building has no gathering spots then skip
 
                 float distanceImpactOnPriority = getDistanceImpactOnPriority(distanceToGatheringSpot);
@@ -321,7 +321,7 @@ public class TownTaskMgr
             {
                 // NOTE that we do not reserve anything at this point, because although we've found the optimal gathering task to perform,
                 // a better (non gathering) task to perform may still be found by caller.
-                var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, optimalGatheringSpot.WorldLoc, worker);
+                var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, optimalGatheringSpot.Location, worker);
                 Debug.Assert(closestStorageSpot != null, "No storage spot found for item that we're about to gather");
                 HighestPriorityTask.Set(WorkerTask_PickupGatherableResource.Create(worker, need, optimalGatheringSpot, closestStorageSpot), highestPrioritySoFar);
             }
@@ -372,11 +372,11 @@ public class TownTaskMgr
             {
                 // found a building that needs the item and can store it.  Swap out the storage spot reserved for the item with the building's storage spot
                 // unreserve the original storage spot
-                worker.StorageSpotReservedForItemInHand.Unreserve();
+                worker.StorageSpotReservedForItemInHand.Reservation.Unreserve();
 
                 // Get the nearest storage spot in the building that needs the item and reserve it for this worker to carry the item-in-hand to.
-                worker.StorageSpotReservedForItemInHand = highestNeed.BuildingWithNeed.GetClosestEmptyStorageSpot(worker.WorldLoc);
-                worker.StorageSpotReservedForItemInHand.ReserveBy(worker);
+                worker.StorageSpotReservedForItemInHand = highestNeed.BuildingWithNeed.GetClosestEmptyStorageSpot(worker.Location);
+                worker.StorageSpotReservedForItemInHand.Reservation.ReserveBy(worker);
 
                 // Tell the Need that we'll be fulfilling it now.
                 highestNeed.AssignWorkerToMeetNeed(worker);

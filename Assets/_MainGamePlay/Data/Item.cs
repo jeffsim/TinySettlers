@@ -5,7 +5,7 @@ using UnityEngine;
 public class ItemData : BaseData
 {
     public override string ToString() => DefnId + " (" + InstanceId + ")";
-    
+
     private ItemDefn _defn;
     public ItemDefn Defn
     {
@@ -17,6 +17,10 @@ public class ItemData : BaseData
         }
     }
     public string DefnId;
+    public LocationComponent WorldLocOnGround;
 
-    public Vector3 WorldLocOnGround;
+    public ItemData()
+    {
+        WorldLocOnGround = new(null, Vector2.zero);
+    }
 }

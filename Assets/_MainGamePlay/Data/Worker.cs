@@ -9,7 +9,7 @@ public class WorkerData : BaseData
     public override string ToString() => AssignedBuilding.Defn.AssignedWorkerFriendlyName + " (" + InstanceId + ")";// + "-" + worker.Data.UniqueId;
 
     // Position within the current Map
-    public Vector3 WorldLoc;
+    public LocationComponent Location;
 
     public WorkerTask CurrentTask;
     public BuildingData AssignedBuilding;
@@ -30,7 +30,7 @@ public class WorkerData : BaseData
 
     public WorkerData(BuildingData buildingToStartIn)
     {
-        WorldLoc = Utilities.LocationWithinDistance(new Vector2(buildingToStartIn.WorldLoc.x, buildingToStartIn.WorldLoc.y), 1);
+        Location = new(null, Utilities.LocationWithinDistance(buildingToStartIn.Location.WorldLoc, 1));
 
         Town = buildingToStartIn.Town;
 
@@ -62,10 +62,7 @@ public class WorkerData : BaseData
         CurrentTask.Update();
     }
 
-    internal float DistanceToBuilding(BuildingData target)
-    {
-        return Vector2.Distance(WorldLoc, target.WorldLoc);
-    }
+    internal float DistanceToBuilding(BuildingData building) => Location.DistanceTo(building.Location);
 
     internal void OnNeedBeingMetCancelled()
     {
@@ -142,7 +139,7 @@ public class WorkerData : BaseData
         Debug.Assert(ItemInHand != null, "No ItemInHand");
 
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
-        StorageSpotReservedForItemInHand.Building.AddItemToItemSpot(ItemInHand, StorageSpotReservedForItemInHand);
+        StorageSpotReservedForItemInHand.ItemContainer.SetItem(ItemInHand);
         ItemInHand = null;
         UnreserveStorageSpotReservedForItemInHand();
     }
@@ -194,9 +191,9 @@ public class WorkerData : BaseData
     internal void UnreserveStorageSpotReservedForItemInHand()
     {
         Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
-        Debug.Assert(StorageSpotReservedForItemInHand.ReservedBy == this, "StorageSpotReservedForItemInHand.ReservedBy != this");
+        Debug.Assert(StorageSpotReservedForItemInHand.Reservation.ReservedBy == this, "StorageSpotReservedForItemInHand.ReservedBy != this");
 
-        StorageSpotReservedForItemInHand.Unreserve();
+        StorageSpotReservedForItemInHand.Reservation.Unreserve();
         StorageSpotReservedForItemInHand = null;
     }
 }

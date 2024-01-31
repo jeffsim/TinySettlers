@@ -19,7 +19,7 @@ public class GatheringSpot : MonoBehaviour
         this.index = index;
         this.scene = scene;
         name = "Gathering Spot " + index;
-        transform.position = new Vector3(data.WorldLoc.x, data.WorldLoc.y, -5);
+        transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, -5);
 
         // spot.OnItemRemoved += OnItemRemoved;
     }
@@ -49,7 +49,7 @@ public class GatheringSpot : MonoBehaviour
         //     GetComponentInChildren<Renderer>().material.color = spot.ItemInStorage.Defn.Color;
         //     name = "Storage " + index + " - " + spot.ItemInStorage.Defn.FriendlyName;
         // }
-        ReservedIndicator.SetActive(Data.IsReserved);
+        ReservedIndicator.SetActive(Data.Reservation.IsReserved);
 
         // highlight this spot if this gathering spot is reserved by the currently selected worker
         bool showHighlight = false;
@@ -60,9 +60,9 @@ public class GatheringSpot : MonoBehaviour
         var scaleSmall = new Vector3(0, 0, 0);
         var scaleNormal = new Vector3(1, 1, 1);
         var ItemInSpotRectTransform = ItemInSpot.GetComponent<RectTransform>();
-        if (Data.ItemInSpot != null)
+        if (Data.ItemContainer.Item != null)
         {
-            ItemInSpot.text = Data.ItemInSpot.Defn.Id.Substring(0, 2);
+            ItemInSpot.text = Data.ItemContainer.Item.Defn.Id.Substring(0, 2);
             ItemInSpot.color = Color.green;
             ItemInSpotRectTransform.localScale = scaleNormal;
         }

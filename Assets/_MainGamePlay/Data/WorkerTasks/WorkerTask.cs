@@ -11,7 +11,7 @@ public enum TaskType
     PickupItemFromGround,
     SellItem,
 
-   CraftGood//, SellGood
+    CraftGood//, SellGood
 };
 
 public enum TaskState { Unset, NotStarted, Started, Completed, Abandoned };
@@ -32,7 +32,7 @@ public abstract class WorkerTask
     public float timeStartedSubstate;
     public int substate;
 
-    public Vector3 LastMoveToTarget;
+    public LocationComponent LastMoveToTarget;
 
     [SerializeField] List<GatheringSpotData> ReservedGatheringSpots;
     [SerializeField] protected List<StorageSpotData> ReservedStorageSpots;
@@ -134,32 +134,32 @@ public abstract class WorkerTask
 
     protected void reserveGatheringSpot(GatheringSpotData spot)
     {
-        spot.ReserveBy(Worker);
+        spot.Reservation.ReserveBy(Worker);
         ReservedGatheringSpots.Add(spot);
     }
 
     protected void unreserveGatheringSpot(GatheringSpotData spot)
     {
-        spot.Unreserve();
+        spot.Reservation.Unreserve();
         ReservedGatheringSpots.Remove(spot);
     }
 
 
     // ==== STORAGE ===================================================
 
-    protected StorageSpotData reserveStorageSpotClosestToWorldLoc_AssignedBuildingOrPrimaryStorageOnly(Vector3 worldLoc)
+    protected StorageSpotData reserveStorageSpotClosestToWorldLoc_AssignedBuildingOrPrimaryStorageOnly(LocationComponent location)
     {
-        var spot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worldLoc, Worker);
-        Debug.Assert(spot != null, "Caller neesd to ensure that we can reserve storage spot close to " + worldLoc);
+        var spot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, location, Worker);
+        Debug.Assert(spot != null, "Caller neesd to ensure that we can reserve storage spot close to " + location);
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
         reserveStorageSpot(spot);
         return spot;
     }
 
-    protected StorageSpotData reserveStorageSpotClosestToWorldLoc(Vector3 worldLoc)
+    protected StorageSpotData reserveStorageSpotClosestToWorldLoc(LocationComponent location)
     {
-        var spot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Any, worldLoc);
-        Debug.Assert(spot != null, "Failed to reserve storage spot close to " + worldLoc);
+        var spot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Any, location);
+        Debug.Assert(spot != null, "Failed to reserve storage spot close to " + location);
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
         reserveStorageSpot(spot);
         return spot;
@@ -179,14 +179,14 @@ public abstract class WorkerTask
     {
         Debug.Assert(spot != null, "Failed to reserve storage spot in " + spot.Building.DefnId);
         Debug.Assert(!ReservedStorageSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedStorageSpots");
-        spot.ReserveBy(Worker);
+        spot.Reservation.ReserveBy(Worker);
         ReservedStorageSpots.Add(spot);
         return spot;
     }
 
     protected void unreserveStorageSpot(StorageSpotData spot)
     {
-        spot.Unreserve();
+        spot.Reservation.Unreserve();
         ReservedStorageSpots.Remove(spot);
     }
 
@@ -197,16 +197,16 @@ public abstract class WorkerTask
     {
         // var spot = buildingToCraftIn.ReserveCraftingSpot(Worker);
         // Debug.Assert(spot != null, "Failed to reserve crafting spot in " + buildingToCraftIn.DefnId);
-        
+
         Debug.Assert(!ReservedCraftingSpots.Contains(spot), "Reserved spot " + spot.InstanceId + " already in ReservedCraftingSpots");
-        spot.ReserveBy(Worker);
+        spot.Reservation.ReserveBy(Worker);
         ReservedCraftingSpots.Add(spot);
         return spot;
     }
 
     protected void unreserveCraftingSpot(CraftingSpotData spot)
     {
-        spot.Unreserve();
+        spot.Reservation.Unreserve();
         ReservedCraftingSpots.Remove(spot);
     }
 
@@ -223,13 +223,13 @@ public abstract class WorkerTask
         var spot = Worker.AssignedBuilding.GetStorageSpotWithUnreservedItem(itemDefn);
         Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.AssignedBuilding.DefnId);
 
-        spot.ReserveBy(Worker);
+        spot.Reservation.ReserveBy(Worker);
         ReservedCraftingResourceStorageSpots.Add(spot);
     }
 
     protected void unreserveBuildingCraftingResourceSpot(StorageSpotData spot)
     {
-        spot.Unreserve();
+        spot.Reservation.Unreserve();
         ReservedCraftingResourceStorageSpots.Remove(spot);
     }
 
@@ -243,26 +243,26 @@ public abstract class WorkerTask
     public virtual void Cleanup()
     {
         foreach (var spot in ReservedStorageSpots)
-            spot.Unreserve();
+            spot.Reservation.Unreserve();
         foreach (var spot in ReservedGatheringSpots)
-            spot.Unreserve();
+            spot.Reservation.Unreserve();
         foreach (var spot in ReservedCraftingSpots)
-            spot.Unreserve();
+            spot.Reservation.Unreserve();
         foreach (var spot in ReservedCraftingResourceStorageSpots)
-            spot.Unreserve();
+            spot.Reservation.Unreserve();
     }
 
-    protected bool MoveTowards(Vector2 target, float distanceMovedPerSecond, float closeEnough = .1f)
+    protected bool MoveTowards(LocationComponent location, float distanceMovedPerSecond, float closeEnough = .1f)
     {
-        LastMoveToTarget = target;
+        LastMoveToTarget = location;
 
         // Move towards target
-        Worker.WorldLoc = Vector2.MoveTowards(Worker.WorldLoc, target, distanceMovedPerSecond * GameTime.deltaTime);
+        Worker.Location.WorldLoc = Vector2.MoveTowards(Worker.Location.WorldLoc, location.WorldLoc, distanceMovedPerSecond * GameTime.deltaTime);
 
-        float distance = Vector2.Distance(Worker.WorldLoc, target);
+        float distance = Worker.Location.DistanceTo(location);
         if (distance <= closeEnough)
         {
-            Worker.WorldLoc = target;
+            Worker.Location.SetWorldLoc(location);
             return true; // reached dest
         }
 
@@ -271,7 +271,7 @@ public abstract class WorkerTask
 
     protected bool moveTowards(BuildingData target, float distanceMovedPerSecond)
     {
-        return MoveTowards(target.WorldLoc, distanceMovedPerSecond);
+        return MoveTowards(target.Location, distanceMovedPerSecond);
     }
 
     // Called when any building is destroyed; if this Task involves that building then determine
@@ -294,8 +294,8 @@ public abstract class WorkerTask
 
     protected StorageSpotData getBetterStorageSpotThanSpotIfExists(StorageSpotData sourceSpot)
     {
-        float distanceToSourceSpot = Vector2.Distance(Worker.WorldLoc, sourceSpot.WorldLoc);
-        var closestSpot = sourceSpot.Building.GetClosestEmptyStorageSpot(Worker.WorldLoc, out float distanceToNewSpot);
+        float distanceToSourceSpot = Worker.Location.DistanceTo(sourceSpot.Location);
+        var closestSpot = sourceSpot.Building.GetClosestEmptyStorageSpot(Worker.Location, out float distanceToNewSpot);
         if (distanceToNewSpot >= distanceToSourceSpot)
             return sourceSpot;// there isn't a better one
 
@@ -308,7 +308,7 @@ public abstract class WorkerTask
     {
         var bestSpot = getClosestBestStorageSpot_AssignedBuildingOrPrimaryStorageOnly(out float distanceToBestSpot);
 
-        var distanceToReservedStorageSpot = Vector2.Distance(Worker.WorldLoc, sourceSpot.WorldLoc);
+        var distanceToReservedStorageSpot = Worker.Location.DistanceTo(sourceSpot.Location);
         if (distanceToBestSpot < distanceToReservedStorageSpot)
         {
             unreserveStorageSpot(sourceSpot);
@@ -321,8 +321,8 @@ public abstract class WorkerTask
 
     private StorageSpotData getClosestBestStorageSpot_AssignedBuildingOrPrimaryStorageOnly(out float distance)
     {
-        var closestAssignedBuildingSpot = Worker.AssignedBuilding.GetClosestEmptyStorageSpot(Worker.WorldLoc, out float distanceToClosestAssignedBuildingSpot);
-        var closestPrimaryStorageSpot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, Worker.WorldLoc, null, out float distanceToClosestPrimaryStorageSpot);
+        var closestAssignedBuildingSpot = Worker.AssignedBuilding.GetClosestEmptyStorageSpot(Worker.Location, out float distanceToClosestAssignedBuildingSpot);
+        var closestPrimaryStorageSpot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, Worker.Location, null, out float distanceToClosestPrimaryStorageSpot);
         if (distanceToClosestAssignedBuildingSpot < distanceToClosestPrimaryStorageSpot)
         {
             distance = distanceToClosestAssignedBuildingSpot;
@@ -348,7 +348,7 @@ public abstract class WorkerTask
     //     return reserveStorageSpot(spot.Building);
     // }
 
-    protected StorageSpotData FindNewOptimalStorageSpotToDeliverItemTo(StorageSpotData originalReservedSpot, Vector3 closestLocation)
+    protected StorageSpotData FindNewOptimalStorageSpotToDeliverItemTo(StorageSpotData originalReservedSpot, LocationComponent closestLocation)
     {
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
         if (optimalStorageSpotToDeliverItemTo == null)
@@ -356,9 +356,9 @@ public abstract class WorkerTask
 
         if (optimalStorageSpotToDeliverItemTo != originalReservedSpot)
         {
-            originalReservedSpot.Unreserve();
+            originalReservedSpot.Reservation.Unreserve();
             originalReservedSpot = optimalStorageSpotToDeliverItemTo;
-            originalReservedSpot.ReserveBy(Worker);
+            originalReservedSpot.Reservation.ReserveBy(Worker);
         }
         return originalReservedSpot;
     }

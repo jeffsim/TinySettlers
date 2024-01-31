@@ -33,7 +33,7 @@ public class Building : MonoBehaviour
 
         Name.text = data.Defn.FriendlyName;
         GetComponentInChildren<Renderer>().material.color = data.Defn.BuildingColor;
-        transform.position = new Vector3(data.WorldLoc.x, data.WorldLoc.y, BuildingZ);
+        transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, BuildingZ);
 
         for (int i = 0; i < Data.Defn.NumStorageAreas; i++)
         {
@@ -65,7 +65,7 @@ public class Building : MonoBehaviour
 
     private void TileLocChanged()
     {
-        transform.position = new Vector3(Data.WorldLoc.x, Data.WorldLoc.y, BuildingZ);
+        transform.position = new Vector3(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, BuildingZ);
     }
 
     public void OnMouseDown()

@@ -16,7 +16,7 @@ public class StorageSpot : MonoBehaviour
         this.index = index;
         this.scene = scene;
         name = "Storage " + index;
-        transform.position = new Vector3(spot.WorldLoc.x, spot.WorldLoc.y, -5);
+        transform.position = new Vector3(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, -5);
 
         // spot.OnItemRemoved += OnItemRemoved;
     }
@@ -39,13 +39,13 @@ public class StorageSpot : MonoBehaviour
 
     void Update()
     {
-        if (Data.IsEmpty)
+        if (Data.ItemContainer.IsEmpty)
             GetComponentInChildren<Renderer>().material.color = Color.black;
         else
         {
-            GetComponentInChildren<Renderer>().material.color = Data.ItemInSpot.Defn.Color;
-            name = "Storage " + index + " - " + Data.ItemInSpot.Defn.FriendlyName;
+            GetComponentInChildren<Renderer>().material.color = Data.ItemContainer.Item.Defn.Color;
+            name = "Storage " + index + " - " + Data.ItemContainer.Item.Defn.FriendlyName;
         }
-        ReservedIndicator.SetActive(Data.IsReserved);
+        ReservedIndicator.SetActive(Data.Reservation.IsReserved);
     }
 }

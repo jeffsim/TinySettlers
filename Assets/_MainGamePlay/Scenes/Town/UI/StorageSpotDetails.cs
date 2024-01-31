@@ -29,18 +29,18 @@ public class StorageSpotDetails : MonoBehaviour
         if (spot == null) return;
 
         var str = "Item:\n";
-        if (spot.Data.ItemInSpot != null)
-            str += spot.Data.ItemInSpot.DefnId;
+        if (spot.Data.ItemContainer.Item != null)
+            str += spot.Data.ItemContainer.Item.DefnId;
         else
             str += "empty";
         Item.text = str + "\n";
 
-        if (spot.Data.IsReserved)
+        if (spot.Data.Reservation.IsReserved)
         {
             Reservation.text = "Reserved";
-            Reservation.text += "\n    By: " + spot.Data.ReservedBy;
-            Reservation.text += "\n    Task: " + spot.Data.ReservedBy.CurrentTask;
-            Reservation.text += "\n    Item: " + spot.Data.ReservedBy.CurrentTask.GetTaskItem()?.FriendlyName;
+            Reservation.text += "\n    By: " + spot.Data.Reservation.ReservedBy;
+            Reservation.text += "\n    Task: " + spot.Data.Reservation.ReservedBy.CurrentTask;
+            Reservation.text += "\n    Item: " + spot.Data.Reservation.ReservedBy.CurrentTask.GetTaskItem()?.FriendlyName;
         }
         else
             Reservation.text = "Not reserved";

@@ -15,7 +15,7 @@ public class WorkerTask_Idle : WorkerTask
     public override TaskType Type => TaskType.Idle;
 
     [SerializeField] float secondsToWait;
-    [SerializeField] Vector3 idleMoveToDest;
+    [SerializeField] LocationComponent idleMoveToDest = new();
 
     public override bool IsWalkingToTarget => substate == (int)WorkerTask_IdleSubstate.GoToNewSpot;
 
@@ -35,7 +35,7 @@ public class WorkerTask_Idle : WorkerTask
         // If we're moving towards the building that was moved, then update our movement target
         if (building == Worker.AssignedBuilding)
             if (IsWalkingToTarget)
-                idleMoveToDest += building.WorldLoc - previousWorldLoc;
+                idleMoveToDest.WorldLoc += building.Location.WorldLoc - previousWorldLoc;
             else
             {
                 // idle our way back to our assigned building's new location
@@ -57,7 +57,7 @@ public class WorkerTask_Idle : WorkerTask
             case (int)WorkerTask_IdleSubstate.WaitToGoToNewSpot: // wait to go to a new spot
                 if (getPercentSubstateDone(secondsToWait) == 1)
                 {
-                    idleMoveToDest = Utilities.LocationWithinDistance(Worker.AssignedBuilding.WorldLoc, 3f);
+                    idleMoveToDest.SetWorldLoc(Utilities.LocationWithinDistance(Worker.AssignedBuilding.Location.WorldLoc, 3f));
                     distanceMovedPerSecond = 3 + (UnityEngine.Random.value - .5f) * 1f;
                     GotoNextSubstate();
                 }

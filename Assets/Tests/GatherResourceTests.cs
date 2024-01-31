@@ -17,11 +17,11 @@ public class GatherResourceTests : TestBase
 
         // Verify Worker reserved a gathering spot in the mine
         Assert.AreEqual(StoneMine.NumReservedGatheringSpots, 1);
-        Assert.AreEqual(StoneMine.GatheringSpots[0].ReservedBy, miner);
+        Assert.AreEqual(StoneMine.GatheringSpots[0].Reservation.ReservedBy, miner);
 
         // Verify Worker reserved a storage spot in the Miners hut (which is closer to the mine than the camp)
         Assert.AreEqual(MinersHut.NumReservedStorageSpots, 1);
-        Assert.AreEqual((miner.CurrentTask as WorkerTask_PickupGatherableResource).ReservedStorageSpot.ReservedBy, miner);
+        Assert.AreEqual((miner.CurrentTask as WorkerTask_PickupGatherableResource).ReservedStorageSpot.Reservation.ReservedBy, miner);
 
         // wait until actually gathering (reaping) resource in target building
         waitUntilTaskSubstate(miner, (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource);
@@ -36,7 +36,7 @@ public class GatherResourceTests : TestBase
         // wait until restarted task; should be reserved again
         waitUntilTask(miner, TaskType.PickupGatherableResource);
         Assert.AreEqual(StoneMine.NumReservedGatheringSpots, 1);
-        Assert.AreEqual(StoneMine.GatheringSpots[0].ReservedBy, miner);
+        Assert.AreEqual(StoneMine.GatheringSpots[0].Reservation.ReservedBy, miner);
     }
 
     [Test]
@@ -88,7 +88,7 @@ public class GatherResourceTests : TestBase
     private void verify_anyGatheringSpotInBuildingReservedByWorker(BuildingData building, WorkerData worker)
     {
         foreach (var spot in building.GatheringSpots)
-            if (spot.IsReserved && spot.ReservedBy == worker)
+            if (spot.Reservation.IsReserved && spot.Reservation.ReservedBy == worker)
                 return;
         Assert.Fail("spot not reserved by worker in " + building.DefnId);
     }

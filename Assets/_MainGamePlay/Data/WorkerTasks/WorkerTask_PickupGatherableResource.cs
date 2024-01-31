@@ -29,7 +29,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
 
     public override bool IsWalkingToTarget => substate == 0;
 
-    public override ItemDefn GetTaskItem() => optimalGatheringSpot?.ItemInSpot.Defn;
+    public override ItemDefn GetTaskItem() => optimalGatheringSpot?.ItemContainer.Item.Defn;
 
     public override string ToDebugString()
     {
@@ -38,7 +38,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, optimalGatheringSpot.WorldLoc).ToString("0.0"); break;
+            case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: str += "; dist: " + Vector2.Distance(Worker.Location.WorldLoc, optimalGatheringSpot.Location.WorldLoc).ToString("0.0"); break;
             case (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource: str += "; per = " + getPercentSubstateDone(secondsToReap); break;
             case (int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
             default: Debug.LogError("unknown substate " + substate); break;
@@ -84,7 +84,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         // If the building which we have reserved a storage spot in was destroyed then try to find an alternative
         if (destroyedBuilding == reservedStorageSpot.Building)
         {
-            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedStorageSpot, Worker.WorldLoc);
+            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedStorageSpot, Worker.Location);
             if (newSpot == null)
                 Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
             else
@@ -108,13 +108,13 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
             case WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource: updateWorkerLoc = building == optimalGatheringSpot.Building; break;
             case WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource: updateWorkerLoc = building == optimalGatheringSpot.Building; break;
         }
-        if (updateMoveToLoc) LastMoveToTarget += building.WorldLoc - previousWorldLoc;
-        if (updateWorkerLoc) Worker.WorldLoc += building.WorldLoc - previousWorldLoc;
+        if (updateMoveToLoc) LastMoveToTarget += building.Location.WorldLoc - previousWorldLoc;
+        if (updateWorkerLoc) Worker.Location.WorldLoc += building.Location.WorldLoc - previousWorldLoc;
     }
 
     public override void OnBuildingPauseToggled(BuildingData building)
     {
-        var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedStorageSpot, optimalGatheringSpot.WorldLoc);
+        var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedStorageSpot, optimalGatheringSpot.Location);
         if (newSpot != reservedStorageSpot)
         {
             ReservedStorageSpots.Remove(reservedStorageSpot);
@@ -145,7 +145,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: // go to resource spot
-                if (MoveTowards(optimalGatheringSpot.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(optimalGatheringSpot.Location.WorldLoc, distanceMovedPerSecond))
                     GotoNextSubstate();
                 break;
 
@@ -162,7 +162,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
                 {
                     // Remove item from gathering spot and put it in Worker's hand, and we're done
                     CompleteTask();
-                    Worker.AddItemToHands(optimalGatheringSpot.RemoveItem());
+                    Worker.AddItemToHands(optimalGatheringSpot.ItemContainer.ClearItem());
 
                     // NOTE that completing the task unreserved both the gathering spot and the storage spot so that others can use them.
                     // However, we don't actually want to unreserve the storage spot yet since the worker is now holding the item and may need
@@ -170,7 +170,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
                     // for the reasons that I broke them apart in the first place...
                     Worker.StorageSpotReservedForItemInHand = reservedStorageSpot;
                     Worker.OriginalPickupItemNeed = Need;
-                    reservedStorageSpot.ReserveBy(Worker);
+                    reservedStorageSpot.Reservation.ReserveBy(Worker);
                 }
                 break;
 

@@ -28,9 +28,9 @@ public class BuildingDetailsItemList : MonoBehaviour
         ItemCounts.Clear();
         foreach (var area in building.Data.StorageAreas)
             foreach (var spot in area.StorageSpots)
-                if (spot.ItemInSpot != null)
+                if (spot.ItemContainer.Item != null)
                 {
-                    var key = spot.ItemInSpot.Defn;
+                    var key = spot.ItemContainer.Item.Defn;
                     if (ItemCounts.ContainsKey(key))
                         ItemCounts[key]++;
                     else
