@@ -14,10 +14,10 @@ public class GameDataMgr : MonoBehaviour
 
     void Awake()
     {
-        GameDataMgr[] objs = GameObject.FindObjectsByType<GameDataMgr>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+        GameDataMgr[] objs = FindObjectsByType<GameDataMgr>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
         if (objs.Length > 1)
-            Destroy(this.gameObject);
-        DontDestroyOnLoad(this.gameObject);
+            Destroy(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 
     internal void OnEnable()

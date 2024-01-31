@@ -30,7 +30,7 @@ public class WorkerData : BaseData
 
     public WorkerData(BuildingData buildingToStartIn)
     {
-        Location = new(null, Utilities.LocationWithinDistance(buildingToStartIn.Location.WorldLoc, 1));
+        Location = new(Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f));
 
         Town = buildingToStartIn.Town;
 
@@ -80,9 +80,9 @@ public class WorkerData : BaseData
             AssignToBuilding(Town.Camp);
     }
 
-    public void OnBuildingMoved(BuildingData building, Vector2 previousWorldLoc)
+    public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
-        CurrentTask?.OnBuildingMoved(building, previousWorldLoc);
+        CurrentTask?.OnBuildingMoved(building, previousLoc);
     }
     public void OnBuildingPauseToggled(BuildingData building)
     {

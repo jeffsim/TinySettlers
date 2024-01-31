@@ -31,7 +31,7 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem: str += "; dist: " + Vector2.Distance(Worker.Location.WorldLoc, spotWithItemToPickup.Location.WorldLoc).ToString("0.0"); break;
+            case (int)WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem: str += "; dist: " + Worker.Location.DistanceTo(spotWithItemToPickup.Location).ToString("0.0"); break;
             case (int)WorkerTask_PickupItemFromStorageSpotSubstate.PickupItemFromItemSpot: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
             default: Debug.LogError("unknown substate " + substate); break;
         }
@@ -87,7 +87,7 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
         }
     }
 
-    public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
+    public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
         // If we're moving towards the building that was moved, then update our movement target
         // If we're working in the building that was moved, then update our location
@@ -97,8 +97,8 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
             case WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem: updateMoveToLoc = building == spotWithItemToPickup.Building; break;
             case WorkerTask_PickupItemFromStorageSpotSubstate.PickupItemFromItemSpot: updateWorkerLoc = building == spotWithItemToPickup.Building; break;
         }
-        if (updateMoveToLoc) LastMoveToTarget += building.Location.WorldLoc - previousWorldLoc;
-        if (updateWorkerLoc) Worker.Location.WorldLoc += building.Location.WorldLoc - previousWorldLoc;
+        if (updateMoveToLoc) LastMoveToTarget += building.Location - previousLoc;
+        if (updateWorkerLoc) Worker.Location += building.Location - previousLoc;
     }
 
     public override void Update()
@@ -108,7 +108,7 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem: // go to resource spot
-                if (MoveTowards(spotWithItemToPickup.Location.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(spotWithItemToPickup.Location, distanceMovedPerSecond))
                     GotoNextSubstate();
                 break;
 

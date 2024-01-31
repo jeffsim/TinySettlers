@@ -34,8 +34,6 @@ public class BuildingData : BaseData
     // The Town which this Building is in
     public TownData Town;
 
-    public BuildingTaskMgrData BuildingTaskMgr;
-
     public bool IsDestroyed;
 
     // Which Tile the Building is in
@@ -163,14 +161,12 @@ public class BuildingData : BaseData
         DefnId = buildingDefn.Id;
         TileX = tileX;
         TileY = tileY;
-        Location = new(null, new(TileX * TileSize, TileY * TileSize));
+        Location = new(TileX * TileSize, TileY * TileSize);
     }
 
     internal void Initialize(TownData town)
     {
         Town = town;
-
-        BuildingTaskMgr = new(this);
 
         GatheringSpots = new();
         for (int i = 0; i < Defn.GatheringSpots.Count; i++)
@@ -243,11 +239,7 @@ public class BuildingData : BaseData
             }
             Needs.AddRange(ItemNeeds);
         }
-    }
-
-    internal void GetAvailableTasksForWorker(List<PrioritizedTask> availableTasks, WorkerData worker, List<NeedData> allTownNeeds)
-    {
-        BuildingTaskMgr.GetAvailableTasksForWorker(availableTasks, worker, allTownNeeds);
+        UpdateWorldLoc();
     }
 
     public int GetStorageSpotIndex(StorageSpotData spotToCheck)
@@ -495,75 +487,13 @@ public class BuildingData : BaseData
         return closestSpot;
     }
 
-    // internal void RemoveItemFromStorage(ItemData item)
-    // {
-    //     foreach (var spot in StorageSpots)
-    //         if (spot.ItemInStorage == item)
-    //         {
-    //             removeItemFromSpot(spot);
-    //             return;
-    //         }
-    //     Debug.Assert(false, "removed item that isn't in storage");
-    // }
-
     internal void Debug_RemoveAllItemsFromStorage()
     {
         foreach (var area in StorageAreas)
             area.Debug_RemoveAllItemsFromStorage();
     }
 
-    // private void removeItemFromSpot(StorageSpotData spot)
-    // {
-    //     Debug.Assert(!spot.IsReserved, "Debug_RemoveAllItemsFromStorage: Got a reserved spot");
-    //     var item = spot.ItemInStorage;
-    //     spot.ItemInStorage = null;
-    //     // spot.OnItemRemoved?.Invoke(item);
-    // }
-
-    // public void SelectItemToCraft(ItemDefn item)
-    // {
-    //     Debug.Assert(Defn.CanCraft, "must be able to craft");
-
-    //     // Clear out current crafting need in case item has changed
-    //     CraftingNeeds.ForEach(need => need.Cancel());
-    //     CraftingNeeds.Clear();
-
-    //     // Add needs for each of the resources needed to craft the item
-    //     foreach (var resource in item.ResourcesNeededForCrafting)
-    //         CraftingNeeds.Add(new NeedData(this, NeedType.CraftingOrConstructionMaterial, resource));
-    //     Needs.AddRange(CraftingNeeds);
-    // }
-
-    // public void OnConstructionComplete()
-    // {
-    //     ConstructionState = ConstructionState.FullyConstructed;
-    //     PercentBuilt = 1;
-    //     ConstructionNeeds.ForEach(need => need.Cancel());
-    //     ConstructionNeeds.Clear();
-    // }
-
-    internal GatheringSpotData GetClosestGatheringSpot(Vector3 worldLoc, out float distance)
-    {
-        GatheringSpotData closestSpot = null;
-        distance = float.MaxValue;
-
-        // Find Closest unreserved gathering spot
-        foreach (var spot in GatheringSpots)
-            if (!spot.Reservation.IsReserved)
-            {
-                var distToSpot = Vector3.Distance(worldLoc, spot.Location.WorldLoc);
-                if (distToSpot < distance)
-                {
-                    distance = distToSpot;
-                    closestSpot = spot;
-                }
-            }
-        if (closestSpot != null)
-            return closestSpot;
-        return null;
-    }
-
-    internal GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(Vector3 worldLoc, out float distance)
+    internal GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent location, out float distance)
     {
         GatheringSpotData closestSpot = null;
         distance = float.MaxValue;
@@ -572,7 +502,7 @@ public class BuildingData : BaseData
         foreach (var spot in GatheringSpots)
             if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
             {
-                var distToSpot = Vector3.Distance(worldLoc, spot.Location.WorldLoc);
+                var distToSpot = location.DistanceTo(spot.Location);
                 if (distToSpot < distance)
                 {
                     distance = distToSpot;
@@ -584,7 +514,7 @@ public class BuildingData : BaseData
         return null;
     }
 
-    internal StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(Vector3 worldLoc, out float distance)
+    internal StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(LocationComponent location, out float distance)
     {
         StorageSpotData closestSpot = null;
         distance = float.MaxValue;
@@ -594,7 +524,7 @@ public class BuildingData : BaseData
             foreach (var spot in area.StorageSpots)
                 if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
                 {
-                    var distToSpot = Vector3.Distance(worldLoc, spot.Location.WorldLoc);
+                    var distToSpot = location.DistanceTo(spot.Location);
                     if (distToSpot < distance)
                     {
                         distance = distToSpot;
@@ -606,7 +536,7 @@ public class BuildingData : BaseData
         return null;
     }
 
-    internal GatheringSpotData ReserveClosestGatheringSpot(WorkerData worker, Vector3 worldLoc)
+    internal GatheringSpotData ReserveClosestGatheringSpot(WorkerData worker, LocationComponent location)
     {
         GatheringSpotData closestSpot = null;
         float dist = float.MaxValue;
@@ -615,7 +545,7 @@ public class BuildingData : BaseData
         foreach (var spot in GatheringSpots)
             if (!spot.Reservation.IsReserved)
             {
-                var distToSpot = Vector3.Distance(worldLoc, spot.Location.WorldLoc);
+                var distToSpot = location.DistanceTo(spot.Location);
                 if (distToSpot < dist)
                 {
                     dist = distToSpot;
@@ -750,8 +680,8 @@ public class BuildingData : BaseData
         TileX = tileX;
         TileY = tileY;
 
-        Vector2 previousWorldLoc = Location.WorldLoc;
-        Location.WorldLoc = new(TileX * TileSize, TileY * TileSize);
+        LocationComponent previousWorldLoc = new (Location);
+        Location.SetWorldLoc(TileX * TileSize, TileY * TileSize);
         UpdateWorldLoc();
 
         // Update Workers that are assigned to or have Tasks which involve this building.

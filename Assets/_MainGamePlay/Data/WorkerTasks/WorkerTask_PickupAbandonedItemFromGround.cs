@@ -30,7 +30,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround: str += "; dist: " + Worker.Location.DistanceTo(ItemToPickup.WorldLocOnGround).ToString("0.0"); break;
+            case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround: str += "; dist: " + Worker.Location.DistanceTo(ItemToPickup.Location).ToString("0.0"); break;
             case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.PickupItemFromGround: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
             default: Debug.LogError("unknown substate " + substate); break;
         }
@@ -86,7 +86,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround: // go to resource spot
-                if (MoveTowards(ItemToPickup.WorldLocOnGround, distanceMovedPerSecond))
+                if (MoveTowards(ItemToPickup.Location, distanceMovedPerSecond))
                     GotoNextSubstate();
                 break;
 

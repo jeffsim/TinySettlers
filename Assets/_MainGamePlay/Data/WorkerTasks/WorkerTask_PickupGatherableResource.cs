@@ -38,7 +38,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: str += "; dist: " + Vector2.Distance(Worker.Location.WorldLoc, optimalGatheringSpot.Location.WorldLoc).ToString("0.0"); break;
+            case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: str += "; dist: " + Worker.Location.DistanceTo(optimalGatheringSpot.Location).ToString("0.0"); break;
             case (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource: str += "; per = " + getPercentSubstateDone(secondsToReap); break;
             case (int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
             default: Debug.LogError("unknown substate " + substate); break;
@@ -97,7 +97,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         }
     }
 
-    public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
+    public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
         // If we're moving towards the building that was moved, then update our movement target
         // If we're working in the building that was moved, then update our location
@@ -108,8 +108,8 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
             case WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource: updateWorkerLoc = building == optimalGatheringSpot.Building; break;
             case WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource: updateWorkerLoc = building == optimalGatheringSpot.Building; break;
         }
-        if (updateMoveToLoc) LastMoveToTarget += building.Location.WorldLoc - previousWorldLoc;
-        if (updateWorkerLoc) Worker.Location.WorldLoc += building.Location.WorldLoc - previousWorldLoc;
+        if (updateMoveToLoc) LastMoveToTarget += building.Location - previousLoc;
+        if (updateWorkerLoc) Worker.Location += building.Location - previousLoc;
     }
 
     public override void OnBuildingPauseToggled(BuildingData building)
@@ -145,7 +145,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: // go to resource spot
-                if (MoveTowards(optimalGatheringSpot.Location.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(optimalGatheringSpot.Location, distanceMovedPerSecond))
                     GotoNextSubstate();
                 break;
 

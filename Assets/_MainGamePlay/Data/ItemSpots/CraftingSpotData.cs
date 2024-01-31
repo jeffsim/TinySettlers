@@ -19,7 +19,7 @@ public class CraftingSpotData : BaseData
     {
         Debug.Assert(building.Defn.CraftingSpots.Count > index, "building " + building.DefnId + " missing CraftingSpotData " + index);
         Building = building;
-        Location = new(building.Location, building.Defn.CraftingSpots[index]);
+        Location = new(building.Location, building.Defn.CraftingSpots[index].x, building.Defn.CraftingSpots[index].y);
     }
 
     public void AddItem(ItemData item)

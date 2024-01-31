@@ -17,10 +17,5 @@ public class ItemData : BaseData
         }
     }
     public string DefnId;
-    public LocationComponent WorldLocOnGround;
-
-    public ItemData()
-    {
-        WorldLocOnGround = new(null, Vector2.zero);
-    }
+    public LocationComponent Location = new();
 }

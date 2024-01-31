@@ -82,13 +82,13 @@ public class WorkerTask_SellItem : WorkerTask
         Abandon();
     }
 
-    public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
+    public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
         if (building != spotWithItemToSell.Building) return;
         if (IsWalkingToTarget)
-            LastMoveToTarget += building.Location.WorldLoc - previousWorldLoc;
+            LastMoveToTarget += building.Location - previousLoc;
         else
-            Worker.Location.WorldLoc += building.Location.WorldLoc - previousWorldLoc;
+            Worker.Location += building.Location - previousLoc;
     }
 
     public override void OnBuildingPauseToggled(BuildingData building)
@@ -104,7 +104,7 @@ public class WorkerTask_SellItem : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_SellItemSubstate.GotoItemToSell:
-                if (MoveTowards(spotWithItemToSell.Location.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(spotWithItemToSell.Location, distanceMovedPerSecond))
                     GotoNextSubstate();
                 break;
 

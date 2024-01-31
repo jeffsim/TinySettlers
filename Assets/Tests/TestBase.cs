@@ -133,6 +133,12 @@ public abstract class TestBase
         Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, $"stepNum {CurStep}: {message} Locs not equal - {v1} vs {v2}");
     }
 
+    public void verify_LocsAreEqual(LocationComponent loc1, LocationComponent loc2, string message = "", float acceptableDelta = 0.01f)
+    {
+        float dx = Math.Abs(loc2.WorldLoc.x - loc1.WorldLoc.x), dy = Math.Abs(loc2.WorldLoc.y - loc1.WorldLoc.y);
+        Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, $"stepNum {CurStep}: {message} Locs not equal - {loc1} vs {loc2}");
+    }
+
     public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker)
     {
         Assert.NotNull(worker.CurrentTask, $"stepNum {CurStep}: Expected worker {worker} to have a task, but worker.CurrentTask is null");

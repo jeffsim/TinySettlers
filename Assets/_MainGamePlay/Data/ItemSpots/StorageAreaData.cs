@@ -30,16 +30,16 @@ public class StorageAreaData : BaseData
         Building = buildingData;
 
         var loc = buildingData.Defn.StorageAreaLocations[index];
-        Location = new(Building.Location, new(loc.x, loc.y));
+        Location = new(Building.Location, loc.x, loc.y);
 
-        StorageSpots = new List<StorageSpotData>();
+        StorageSpots = new();
         var width = buildingData.Defn.StorageAreaSize.x;
         var height = buildingData.Defn.StorageAreaSize.y;
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
             {
                 Vector2 spotLoc = new((x - (width - 1) / 2f) * 1.1f, (y - (height - 1) / 2f) * 1.1f);
-                StorageSpots.Add(new StorageSpotData(this, spotLoc));
+                StorageSpots.Add(new(this, spotLoc));
             }
     }
 
@@ -52,7 +52,6 @@ public class StorageAreaData : BaseData
 
     public int NumItemsInStorage(ItemDefn itemDefn = null)
     {
-        // TODO (perf): Dictionary lookup
         int count = 0;
         foreach (var spot in StorageSpots)
             if (!spot.ItemContainer.IsEmpty && (itemDefn == null || spot.ItemContainer.Item.DefnId == itemDefn.Id)) count++;

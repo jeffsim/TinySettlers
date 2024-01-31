@@ -19,7 +19,7 @@ public class GatheringSpotData : BaseData
         Building = building;
         Debug.Assert(building.Defn.GatheringSpots.Count > index, "building " + building.DefnId + " missing GatheringSpotData " + index);
         var loc = building.Defn.GatheringSpots[index];
-        Location = new(building.Location, new(loc.x, loc.y));
+        Location = new(building.Location, loc.x, loc.y);
         PercentGrown = 0;
 
         // hack

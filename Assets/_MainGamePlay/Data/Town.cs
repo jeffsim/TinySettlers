@@ -188,7 +188,7 @@ public class TownData : BaseData
     internal void AddItemToGround(ItemData item, LocationComponent loc)
     {
         ItemsOnGround.Add(item);
-        item.WorldLocOnGround.SetWorldLoc(loc);
+        item.Location.SetWorldLoc(loc);
         OnItemAddedToGround?.Invoke(item);
 
         // Add a need to pick up the item.  This will be removed when the item is picked up

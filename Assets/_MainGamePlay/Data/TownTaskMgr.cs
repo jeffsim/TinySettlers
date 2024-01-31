@@ -84,9 +84,9 @@ public class TownTaskMgr
             if (worker.AssignedBuilding.IsPaused) continue;
             if (!worker.CanSellItems()) continue;
 
-            var closestSpotWithItemToWorker = need.BuildingWithNeed.GetClosestUnreservedStorageSpotWithItemToReapOrSell(worker.Location.WorldLoc, out float distanceToGatheringSpot);
+            var closestSpotWithItemToWorker = need.BuildingWithNeed.GetClosestUnreservedStorageSpotWithItemToReapOrSell(worker.Location, out float distanceToGatheringSpot);
             Debug.Assert(closestSpotWithItemToWorker != null, "Should have been caught above");
-            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location.WorldLoc, closestSpotWithItemToWorker.Location.WorldLoc);
+            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location, closestSpotWithItemToWorker.Location);
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
@@ -124,7 +124,7 @@ public class TownTaskMgr
 
                 // Optimality of getting item from 'building' is based on distance from building-with-need
                 // TOOD: In the future, this is where I would add support for user putting thumb on scale re: which buildings to get from
-                var closestSpotWithItem = building.GetClosestUnreservedStorageSpotWithItemToReapOrSell(need.BuildingWithNeed.Location.WorldLoc, out float distanceToGatheringSpot);
+                var closestSpotWithItem = building.GetClosestUnreservedStorageSpotWithItemToReapOrSell(need.BuildingWithNeed.Location, out float distanceToGatheringSpot);
                 if (closestSpotWithItem == null) continue;
 
                 float distanceImpactOnPriority = getDistanceImpactOnPriority(distanceToGatheringSpot);
@@ -164,14 +164,6 @@ public class TownTaskMgr
         var craftingSpot = craftingBuilding.GetAvailableCraftingSpot();
         if (craftingSpot == null) return; // No crafting spot available
 
-        // StorageSpot only required for explicit items
-        // StorageSpotData storageSpotForCraftedItem = null;
-        // if (itemToCraft.GoodType == GoodType.explicitGood)
-        // {
-        //     storageSpotForCraftedItem = craftingBuilding.GetClosestEmptyStorageSpot(craftingSpot.WorldLoc);
-        //     if (storageSpotForCraftedItem == null) return; // No storage spot available for crafted item
-        // }
-
         // =====================================================================================
         // SECOND, determine which idle workers can perform the task.
         float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
@@ -190,7 +182,7 @@ public class TownTaskMgr
                 if (storageSpotForCraftedItem == null) continue; // No storage spot available for crafted item
             }
 
-            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location.WorldLoc, craftingSpot.Location.WorldLoc);
+            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location, craftingSpot.Location);
 
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
@@ -217,9 +209,9 @@ public class TownTaskMgr
             if (!worker.CanPickupAbandonedItems()) continue;
 
             // availableTasks.Add(new PrioritizedTask(WorkerTask_PickupAbandonedItem.Create(worker, need), need.Priority));
-            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location.WorldLoc, need.AbandonedItemToPickup.WorldLocOnGround);
+            float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location, need.AbandonedItemToPickup.Location);
 
-            var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, need.AbandonedItemToPickup.WorldLocOnGround);
+            var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, need.AbandonedItemToPickup.Location);
             Debug.Assert(closestStorageSpot != null, "Should have been caught above");
 
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
@@ -300,7 +292,7 @@ public class TownTaskMgr
             {
                 // Optimality of gathering from 'building' is based on distance from building-with-need
                 // TOOD: In the future, this is where I would add support for user putting thumb on scale re: which buildings to gather/not gather from
-                var closestGatheringSpot = building.GetClosestUnreservedGatheringSpotWithItemToReap(need.BuildingWithNeed.Location.WorldLoc, out float distanceToGatheringSpot);
+                var closestGatheringSpot = building.GetClosestUnreservedGatheringSpotWithItemToReap(need.BuildingWithNeed.Location, out float distanceToGatheringSpot);
                 if (closestGatheringSpot == null) continue; // if building has no gathering spots then skip
 
                 float distanceImpactOnPriority = getDistanceImpactOnPriority(distanceToGatheringSpot);
@@ -328,7 +320,8 @@ public class TownTaskMgr
         }
     }
 
-    float getDistanceImpactOnPriority(Vector3 loc1, Vector3 loc2) => getDistanceImpactOnPriority(Vector3.Distance(loc1, loc2));
+    // float getDistanceImpactOnPriority(Vector3 loc1, Vector3 loc2) => getDistanceImpactOnPriority(Vector3.Distance(loc1, loc2));
+    float getDistanceImpactOnPriority(LocationComponent loc1, LocationComponent loc2) => getDistanceImpactOnPriority(loc1.DistanceTo(loc2));
 
     private float getDistanceImpactOnPriority(float distance)
     {

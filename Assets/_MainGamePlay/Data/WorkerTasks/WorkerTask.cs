@@ -124,9 +124,9 @@ public abstract class WorkerTask
 
     // ==== GATHERING ===================================================
 
-    protected GatheringSpotData reserveClosestBuildingGatheringSpot(BuildingData buildingGatheringFrom, Vector3 worldLoc)
+    protected GatheringSpotData reserveClosestBuildingGatheringSpot(BuildingData buildingGatheringFrom, LocationComponent location)
     {
-        var spot = buildingGatheringFrom.ReserveClosestGatheringSpot(Worker, worldLoc);
+        var spot = buildingGatheringFrom.ReserveClosestGatheringSpot(Worker, location);
         Debug.Assert(spot != null, "Failed to reserve gathering spot in " + buildingGatheringFrom.DefnId);
         reserveGatheringSpot(spot);
         return spot;
@@ -257,7 +257,7 @@ public abstract class WorkerTask
         LastMoveToTarget = location;
 
         // Move towards target
-        Worker.Location.WorldLoc = Vector2.MoveTowards(Worker.Location.WorldLoc, location.WorldLoc, distanceMovedPerSecond * GameTime.deltaTime);
+        Worker.Location.MoveTowards(Worker.Location, location, distanceMovedPerSecond * GameTime.deltaTime);
 
         float distance = Worker.Location.DistanceTo(location);
         if (distance <= closeEnough)
@@ -282,7 +282,7 @@ public abstract class WorkerTask
 
     // Called when any building is moved; if this Task involves that building then determine
     // what we should do (if anything).
-    public virtual void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
+    public virtual void OnBuildingMoved(BuildingData building, LocationComponent previousLocw)
     {
     }
 
@@ -334,19 +334,6 @@ public abstract class WorkerTask
             return closestPrimaryStorageSpot;
         }
     }
-
-    // protected bool betterStorageSpotExists(StorageSpotData spot)
-    // {
-    //     float distanceToSpot = Vector2.Distance(Worker.WorldLoc, spot.WorldLoc);
-    //     var firstEmptySpot = spot.Building.GetClosestEmptyStorageSpot(Worker.WorldLoc, out float distanceToNewSpot);
-    //     return firstEmptySpot != null && distanceToNewSpot < distanceToSpot;
-    // }
-
-    // protected StorageSpotData getBetterStorageSpot(StorageSpotData spot)
-    // {
-    //     unreserveStorageSpot(spot);
-    //     return reserveStorageSpot(spot.Building);
-    // }
 
     protected StorageSpotData FindNewOptimalStorageSpotToDeliverItemTo(StorageSpotData originalReservedSpot, LocationComponent closestLocation)
     {

@@ -28,7 +28,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo: str += "; dist: " + Vector2.Distance(Worker.Location.WorldLoc, Worker.StorageSpotReservedForItemInHand.Location.WorldLoc).ToString("0.0"); break;
+            case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo: str += "; dist: " + Worker.Location.DistanceTo(Worker.StorageSpotReservedForItemInHand.Location).ToString("0.0"); break;
             case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot: str += "; per = " + getPercentSubstateDone(secondsToDrop); break;
             default: Debug.LogError("unknown substate " + substate); break;
         }
@@ -55,7 +55,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         }
     }
 
-    public override void OnBuildingMoved(BuildingData movedBuilding, Vector3 previousWorldLoc)
+    public override void OnBuildingMoved(BuildingData movedBuilding, LocationComponent previousLoc)
     {
         // If we're still walking, then determine if there is now a better/closer storage spot to deliver the item to. e.g. if user moved building far away
         // Note that we do this even if a building other than our target building moved, since a better alternative may have moved closer the worker.
@@ -68,7 +68,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
 
         // If we're standing still and working in the building that was moved, then update our location
         if (substate == (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot && movedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
-            Worker.Location.WorldLoc += movedBuilding.Location.WorldLoc - previousWorldLoc;
+            Worker.Location += movedBuilding.Location - previousLoc;
     }
 
     public override void OnBuildingPauseToggled(BuildingData movedBuilding)
@@ -89,7 +89,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo: // Walk back to our assigned building
-                if (MoveTowards(Worker.StorageSpotReservedForItemInHand.Location.WorldLoc, Worker.GetMovementSpeed()))
+                if (MoveTowards(Worker.StorageSpotReservedForItemInHand.Location, Worker.GetMovementSpeed()))
                     GotoNextSubstate();
                 break;
 

@@ -46,15 +46,7 @@ public class WorkerTask_CraftItem : WorkerTask
     public override string ToDebugString()
     {
         var str = "Craft item\n";
-        // str += "  Gather from: " + optimalGatheringSpot + " (" + optimalGatheringSpot.Building + "), gatherspot: " + optimalGatheringSpot.InstanceId + "\n";
         str += "  substate: " + substate;
-        // switch (substate)
-        // {
-        //     case (int)WorkerTask_CraftItemSubstate.GotoGatheringSpot: str += "; dist: " + Vector2.Distance(Worker.WorldLoc, optimalGatheringSpot.WorldLoc).ToString("0.0"); break;
-        //     case (int)WorkerTask_CraftItemSubstate.ReapGatherableResource: str += "; per = " + getPercentSubstateDone(secondsToReap); break;
-        //     case (int)WorkerTask_CraftItemSubstate.PickupGatherableResource: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
-        //     default: Debug.LogError("unknown substate " + substate); break;
-        // }
         return str;
     }
 
@@ -118,13 +110,13 @@ public class WorkerTask_CraftItem : WorkerTask
         Abandon();
     }
 
-    public override void OnBuildingMoved(BuildingData building, Vector3 previousWorldLoc)
+    public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
         if (building != Worker.AssignedBuilding) return;
         if (IsWalkingToTarget)
-            LastMoveToTarget += building.Location.WorldLoc - previousWorldLoc;
+            LastMoveToTarget += building.Location - previousLoc;
         else
-            Worker.Location.WorldLoc += building.Location.WorldLoc - previousWorldLoc;
+            Worker.Location += building.Location - previousLoc;
     }
 
     public override void Update()
@@ -134,7 +126,7 @@ public class WorkerTask_CraftItem : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource: // go to resource spot
-                if (MoveTowards(nextCraftingResourceStorageSpotToGetFrom.Location.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(nextCraftingResourceStorageSpotToGetFrom.Location, distanceMovedPerSecond))
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.PickupResource);
                 break;
 
@@ -149,7 +141,7 @@ public class WorkerTask_CraftItem : WorkerTask
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
-                if (MoveTowards(reservedCraftingSpot.Location.WorldLoc, distanceMovedPerSecond))
+                if (MoveTowards(reservedCraftingSpot.Location, distanceMovedPerSecond))
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot);
                 break;
 

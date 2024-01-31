@@ -10,7 +10,7 @@ public class MoveBuildingTests : TestBase
         // i = 2 ==> move random other building (but not in a way that impacts where we would choose to gather)
         for (int i = 0; i < 3; i++)
         {
-            LoadTestTown("testTown1");
+            LoadTestTown("testTown1", i);
 
             // Start gathering task
             var miner = getAssignedWorker(MinersHut.DefnId);
@@ -31,7 +31,7 @@ public class MoveBuildingTests : TestBase
             Assert.AreEqual(StoneMine.GatheringSpots[0].Reservation.ReservedBy, miner);
 
             // verify miner is moving to new gathering location
-            verify_LocsAreEqual(miner.CurrentTask.LastMoveToTarget, StoneMine.GatheringSpots[0].Location.WorldLoc);
+            verify_LocsAreEqual(miner.CurrentTask.LastMoveToTarget, StoneMine.GatheringSpots[0].Location);
 
             // verify miner's task remains the same
             Assert.AreEqual(TaskType.PickupGatherableResource, miner.CurrentTask.Type);
