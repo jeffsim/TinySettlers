@@ -60,7 +60,7 @@ public abstract class TestBase
             if (building.DefnId == buildingDefnId)
                 return building;
         if (!failureIsOkay)
-            Assert.Fail($"stepNum {CurStep}: failed to get building {buildingDefnId}");
+            Assert.Fail($"{preface()} failed to get building {buildingDefnId}");
         return null;
     }
     protected WorkerData getAssignedWorker(BuildingData building, int num = 0)
@@ -74,7 +74,7 @@ public abstract class TestBase
             if (worker.AssignedBuilding.DefnId == assignedBuildingId)
                 if (--num == -1)
                     return worker;
-        Assert.Fail($"stepNum {CurStep}: failed to get worker {num} in building {assignedBuildingId}");
+        Assert.Fail($"{preface()} failed to get worker {num} in building {assignedBuildingId}");
         return null;
     }
 
@@ -85,7 +85,7 @@ public abstract class TestBase
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, "stuck in loop in waitUntilTask.  CurrentTask = " + worker.CurrentTask.Type + ", expected " + taskType);
+        Assert.IsTrue(GameTime.time < breakTime, "{preface()} stuck in loop in waitUntilTask.  CurrentTask = " + worker.CurrentTask.Type + ", expected " + taskType);
     }
 
     protected void waitUntilTaskAndSubstate(WorkerData worker, TaskType taskType, int substate, float secondsBeforeExitCheck = 500)
@@ -101,7 +101,7 @@ public abstract class TestBase
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, $"stepNum {CurStep}: stuck in loop in waitUntilTaskSubstate.  substate = {worker.CurrentTask.substate}, expected substate {substate}");
+        Assert.IsTrue(GameTime.time < breakTime, $"{preface()} stuck in loop in waitUntilTaskSubstate.  substate = {worker.CurrentTask.substate}, expected substate {substate}");
     }
 
     protected void waitUntilNewTask(WorkerData worker, TaskType newTaskType)
@@ -118,7 +118,7 @@ public abstract class TestBase
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, $"stepNum {CurStep}: stuck in loop in waitUntilTaskDone.  CurrentTask = {worker.CurrentTask.Type}, expected task to change");
+        Assert.IsTrue(GameTime.time < breakTime, $"s{preface()} stuck in loop in waitUntilTaskDone.  CurrentTask = {worker.CurrentTask.Type}, expected task to change");
     }
 
     int CurStep;
@@ -127,44 +127,47 @@ public abstract class TestBase
         CurStep = stepNum;
     }
 
+    private string preface(string message = "") => preface(new System.Diagnostics.StackTrace(true).GetFrame(2).GetFileLineNumber(), message);
+    private string preface(int lineNum, string message = "") => $"StepNum {CurStep}, line {lineNum}: {(message != "" ? message + ": " : "")}";
+
     public void verify_LocsAreEqual(Vector3 v1, Vector3 v2, string message = "", float acceptableDelta = 0.01f)
     {
         float dx = Math.Abs(v2.x - v1.x), dy = Math.Abs(v2.y - v1.y);
-        Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, $"stepNum {CurStep}: {message} Locs not equal - {v1} vs {v2}");
+        Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, $"{preface(message)} Locs not equal - {v1} vs {v2}");
     }
 
     public void verify_LocsAreEqual(LocationComponent loc1, LocationComponent loc2, string message = "", float acceptableDelta = 0.01f)
     {
         float dx = Math.Abs(loc2.WorldLoc.x - loc1.WorldLoc.x), dy = Math.Abs(loc2.WorldLoc.y - loc1.WorldLoc.y);
-        Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, $"stepNum {CurStep}: {message} Locs not equal - {loc1} vs {loc2}");
+        Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, $"{preface(message)} Locs not equal - {loc1} vs {loc2}");
     }
 
     public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker)
     {
-        Assert.NotNull(worker.CurrentTask, $"stepNum {CurStep}: Expected worker {worker} to have a task, but worker.CurrentTask is null");
-        Assert.AreEqual(expectedType, worker.CurrentTask.Type, $"stepNum {CurStep}: Expected worker {worker} to have task type {expectedType}, but worker.CurrentTask.Type is {worker.CurrentTask.Type}");
+        Assert.NotNull(worker.CurrentTask, $"{preface()}: Expected worker {worker} to have a task, but worker.CurrentTask is null");
+        Assert.AreEqual(expectedType, worker.CurrentTask.Type, $"{preface()} Expected worker {worker} to have task type {expectedType}, but worker.CurrentTask.Type is {worker.CurrentTask.Type}");
     }
 
     protected void verify_WorkerTaskSubstate(int substate, WorkerData worker)
     {
-        Assert.NotNull(worker.CurrentTask, $"stepNum {CurStep}: Expected worker {worker} to have a task, but worker.CurrentTask is null");
-        Assert.AreEqual(substate, worker.CurrentTask.substate, $"stepNum {CurStep}: Expected worker {worker} to have substate {substate}, but worker.CurrentTask.substate is {worker.CurrentTask.substate}");
+        Assert.NotNull(worker.CurrentTask, $"{preface()} Expected worker {worker} to have a task, but worker.CurrentTask is null");
+        Assert.AreEqual(substate, worker.CurrentTask.substate, $"{preface()} Expected worker {worker} to have substate {substate}, but worker.CurrentTask.substate is {worker.CurrentTask.substate}");
     }
 
     protected void verify_AssignedBuilding(WorkerData worker, BuildingData building)
     {
-        Assert.NotNull(worker, $"stepNum {CurStep}: Expected worker {worker} to be assigned to {building}, but worker is null");
-        Assert.NotNull(building, $"stepNum {CurStep}: Expected worker {worker} to be assigned to {building}, but building is null");
-        Assert.AreEqual(worker.AssignedBuilding, building, $"stepNum {CurStep}: Expected worker {worker} to be assigned to {building}, but worker is assigned to '{worker.AssignedBuilding}'");
+        Assert.NotNull(worker, $"{preface()} Expected worker {worker} to be assigned to {building}, but worker is null");
+        Assert.NotNull(building, $"{preface()} Expected worker {worker} to be assigned to {building}, but building is null");
+        Assert.AreEqual(worker.AssignedBuilding, building, $"{preface()} Expected worker {worker} to be assigned to {building}, but worker is assigned to '{worker.AssignedBuilding}'");
     }
 
     protected void verify_ItemInHand(WorkerData worker, string itemDefnId)
     {
         Assert.NotNull(worker);
         if (worker.ItemInHand == null)
-            Assert.AreEqual(itemDefnId, null, $"stepNum {CurStep}: Expected item in hand to be null, but is '{itemDefnId}'");
+            Assert.AreEqual(itemDefnId, null, $"{preface()} Expected item in hand to be null, but is '{itemDefnId}'");
         else
-            Assert.AreEqual(itemDefnId, worker.ItemInHand.DefnId, $"stepNum {CurStep}: Expected item in hand to be '{itemDefnId}', but is '{worker.ItemInHand}'");
+            Assert.AreEqual(itemDefnId, worker.ItemInHand.DefnId, $"{preface()} Expected item in hand to be '{itemDefnId}', but is '{worker.ItemInHand}'");
     }
 
     protected void verify_ItemsOnGround(int expectedNumber)
@@ -172,7 +175,7 @@ public abstract class TestBase
         if (Town.ItemsOnGround.Count != expectedNumber)
         {
             string itemsFound = string.Join(", ", Town.ItemsOnGround.Select(item => item.DefnId));
-            Assert.AreEqual(expectedNumber, Town.ItemsOnGround.Count, $"stepNum {CurStep}: Expected {expectedNumber} items on ground, but found '{itemsFound}'");
+            Assert.AreEqual(expectedNumber, Town.ItemsOnGround.Count, $"{preface()} Expected {expectedNumber} items on ground, but found '{itemsFound}'");
         }
     }
 
