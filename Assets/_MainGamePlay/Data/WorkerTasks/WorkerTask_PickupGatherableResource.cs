@@ -128,7 +128,6 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
             Worker.CurrentTask.Abandon();
             return;
         }
-
     }
 
     public override void Update()

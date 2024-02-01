@@ -130,6 +130,9 @@ public class BuildingData : BaseData
     public int NumAvailableCraftingSpots => Defn.CraftingSpots.Count - NumReservedCraftingSpots;
     public bool HasAvailableCraftingSpot => NumAvailableCraftingSpots > 0;
 
+    // TODO: Track this in building instead of recalculating
+    public int NumWorkers => Town.NumBuildingWorkers(this);
+ 
     // For easy tracking
     // public List<NeedData> ConstructionNeeds;
 
@@ -277,7 +280,7 @@ public class BuildingData : BaseData
     /**
         returns true if this building supports gathering the required resource AND there's
         an available gathering spot
-    */
+*/
     internal bool ResourceCanBeGatheredFromHere(ItemDefn itemDefn)
     {
         return Defn.ResourcesCanBeGatheredFromHere &&
@@ -485,6 +488,28 @@ public class BuildingData : BaseData
             area.Debug_RemoveAllItemsFromStorage();
     }
 
+
+    internal StorageSpotData GetClosestUnreservedStorageSpotWithItem(LocationComponent location, ItemDefn itemDefn, out float distance)
+    {
+        StorageSpotData closestSpot = null;
+        distance = float.MaxValue;
+
+        // Find Closest unreserved gathering spot that has an item that needs to be gathered
+        foreach (var area in StorageAreas)
+            foreach (var spot in area.StorageSpots)
+                if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
+                {
+                    var distToSpot = location.DistanceTo(spot.Location);
+                    if (distToSpot < distance)
+                    {
+                        distance = distToSpot;
+                        closestSpot = spot;
+                    }
+                }
+        if (closestSpot != null)
+            return closestSpot;
+        return null;
+    }
     internal GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent location, out float distance)
     {
         GatheringSpotData closestSpot = null;
@@ -672,7 +697,7 @@ public class BuildingData : BaseData
         TileX = tileX;
         TileY = tileY;
 
-        LocationComponent previousWorldLoc = new (Location);
+        LocationComponent previousWorldLoc = new(Location);
         Location.SetWorldLoc(TileX * TileSize, TileY * TileSize);
         UpdateWorldLoc();
 
@@ -712,8 +737,9 @@ public class BuildingData : BaseData
             foreach (var spot in area.StorageSpots)
                 if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
                 {
-                    // don't allow returning resources that we need for crafting or selling
-                    if (ItemNeeds.Find(need => need.NeededItem == spot.ItemContainer.Item.Defn) != null)
+                    // Allow returning resources that we need for crafting or selling if we're paused or have no workers assigned
+                    var allowRemovingNeededItems = IsPaused || NumWorkers == 0;
+                    if (!allowRemovingNeededItems && ItemNeeds.Find(need => need.NeededItem == spot.ItemContainer.Item.Defn) != null)
                         continue;
                     return spot;
                 }

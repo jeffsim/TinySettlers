@@ -108,11 +108,9 @@ public abstract class WorkerTask
 
     protected void gotoSubstate(int num)
     {
-
         substate = num;
         timeStartedSubstate = GameTime.time;
         //  Update();
-        Debug.Log("set substate " + substate);
     }
 
     protected void GotoNextSubstate() => gotoSubstate(substate + 1);

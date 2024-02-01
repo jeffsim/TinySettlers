@@ -103,8 +103,11 @@ public class TownTaskMgr
         // Building that needs the item must have a storage spot available for the item
         if (!need.BuildingWithNeed.HasAvailableStorageSpot) return;
 
+        if (need.BuildingWithNeed.IsPaused || need.BuildingWithNeed.NumWorkers == 0) return;
+
         // Generate the list of all buildings that the item can be picked up from (ie unreserved and in storage)
-        var buildingsThatHaveItem = Town.Buildings.Where(building => building.HasUnreservedItemOfType(need.NeededItem) && !building.IsPaused).ToList();
+        // Note: we allow taking items from buildings that need them IF the building is paused
+        var buildingsThatHaveItem = Town.Buildings.Where(building => building.HasUnreservedItemOfType(need.NeededItem)).ToList();
         if (buildingsThatHaveItem.Count == 0) return; // if no buildings have the item then abort
 
         // =====================================================================================
@@ -123,8 +126,8 @@ public class TownTaskMgr
                 if (building == need.BuildingWithNeed) continue; // don't gather from the building that needs the item
 
                 // Optimality of getting item from 'building' is based on distance from building-with-need
-                // TOOD: In the future, this is where I would add support for user putting thumb on scale re: which buildings to get from
-                var closestSpotWithItem = building.GetClosestUnreservedStorageSpotWithItemToReapOrSell(need.BuildingWithNeed.Location, out float distanceToGatheringSpot);
+                // TODO: In the future, this is where I would add support for user putting thumb on scale re: which buildings to get from
+                var closestSpotWithItem = building.GetClosestUnreservedStorageSpotWithItem(need.BuildingWithNeed.Location, need.NeededItem, out float distanceToGatheringSpot);
                 if (closestSpotWithItem == null) continue;
 
                 float distanceImpactOnPriority = getDistanceImpactOnPriority(distanceToGatheringSpot);
@@ -160,6 +163,8 @@ public class TownTaskMgr
         // =====================================================================================
         // FIRST, determine if need is meetable
         if (!craftingBuilding.HasUnreservedResourcesInStorageToCraftItem(itemToCraft)) return; // Confirm we have all the resources necessary to craft the item in our storage
+
+        if (craftingBuilding.IsPaused || craftingBuilding.NumWorkers == 0) return;
 
         var craftingSpot = craftingBuilding.GetAvailableCraftingSpot();
         if (craftingSpot == null) return; // No crafting spot available
@@ -376,8 +381,19 @@ public class TownTaskMgr
             }
             else
             {
-                // No building needs it; continue on and deliver this item to whatever originally requested it.  Note again that we've already reserved storage for it
+                // No building needs it; fulfill the original need.
                 highestNeed = worker.OriginalPickupItemNeed;
+                if (worker.StorageSpotReservedForItemInHand == null)
+                {
+                    // We didn't have a storage spot reserved; find the nearest storage spot and reserve it.  If we can't find one, then abandon (drop) the item and abort
+                    worker.StorageSpotReservedForItemInHand = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, worker.Location);
+                    if (worker.StorageSpotReservedForItemInHand == null)
+                    {
+                        Town.AddItemToGround(worker.RemoveItemFromHands(), worker.Location);
+                        worker.CurrentTask = null;
+                        return false;
+                    }
+                }
             }
             WorkerTask_DeliverItemInHandToStorageSpot.CreateAndStart(worker, highestNeed);
             return true;
@@ -392,11 +408,23 @@ public class TownTaskMgr
         foreach (var building in Town.Buildings)
             if (building.HasAvailableStorageSpot)
                 foreach (var need in building.Needs)
-                    if (!need.IsBeingFullyMet && need.Priority > 0 &&
-                            (need.Type == NeedType.CraftingOrConstructionMaterial || need.Type == NeedType.SellItem || need.Type == NeedType.PersistentBuildingNeed)
-                             && need.NeededItem.Id == itemDefnId)
-                        if (highestNeed == null || need.Priority > highestNeed.Priority)
-                            highestNeed = need;
+                {
+                    // only fulfill itemneeds
+                    if (need.Type != NeedType.CraftingOrConstructionMaterial && need.Type != NeedType.SellItem && need.Type != NeedType.PersistentBuildingNeed)
+                        continue;
+
+                    // don't fulfill item needs if the building that needs the item is paused or has no workers
+                    if (need.Type == NeedType.CraftingOrConstructionMaterial && (need.BuildingWithNeed.IsPaused || need.BuildingWithNeed.NumWorkers == 0))
+                        continue;
+
+                    // don't fulfill item needs that are already being fulfilled or are for other items
+                    if (need.IsBeingFullyMet || need.Priority == 0 || need.NeededItem.Id != itemDefnId)
+                        continue;
+
+                    // If here then this is an item need that would like to be fulfilled; is it the highest priority?
+                    if (highestNeed == null || need.Priority > highestNeed.Priority)
+                        highestNeed = need;
+                }
         return highestNeed;
     }
 }

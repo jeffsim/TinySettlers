@@ -59,6 +59,8 @@ public class WorkerTask_SellItem : WorkerTask
     // Note: this is called when any building is destroyed, not just "this task's" building
     public override void OnBuildingDestroyed(BuildingData building)
     {
+        if (building != Worker.AssignedBuilding) return; // This task only cares if our building was the one that was destroyed
+
         if (substate == (int)WorkerTask_SellItemSubstate.SellItem)
         {
             // We've picked up the item and are trying to sell it; need to find a destination to bring it to, or drop it on the ground

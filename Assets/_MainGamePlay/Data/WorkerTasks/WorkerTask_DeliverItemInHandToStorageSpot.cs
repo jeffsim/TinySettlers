@@ -72,9 +72,25 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
             Worker.Location += movedBuilding.Location - previousLoc;
     }
 
-    public override void OnBuildingPauseToggled(BuildingData movedBuilding)
+    public override void OnBuildingPauseToggled(BuildingData building)
     {
-        // If we're still moving then determine if there is now a better/closer storage spot to deliver the item to.
+        // If the building we're delivering to is now paused then abort delivering the item to them and carry it somewhere else
+        // This *should* look for a better need...
+        if (building == Worker.StorageSpotReservedForItemInHand.Building)
+        {
+            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand, Worker.Location);
+            if (newSpot == null)
+                Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
+            else
+            {
+                // Swap for new storage spot
+                ReservedStorageSpots.Remove(Worker.StorageSpotReservedForItemInHand);
+                Worker.StorageSpotReservedForItemInHand = newSpot;
+                ReservedStorageSpots.Add(Worker.StorageSpotReservedForItemInHand);
+            }
+            return;
+        }
+        // Regardless of what building we're delivering to, if we're still moving then determine if there is now a better/closer storage spot to deliver the item to.
         if (IsWalkingToTarget)
         {
             Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand, Worker.Location);

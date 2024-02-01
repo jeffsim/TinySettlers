@@ -66,7 +66,6 @@ public class WorkerTask_CraftItem : WorkerTask
     public override void Start()
     {
         base.Start();
-        Debug.Log("Start");
         // Reserve our storage spots with resources that we will consume to craft the good
         foreach (var resource in itemBeingCrafted.ResourcesNeededForCrafting)
             for (int i = 0; i < resource.Count; i++)
@@ -87,7 +86,6 @@ public class WorkerTask_CraftItem : WorkerTask
     public override void OnBuildingDestroyed(BuildingData building)
     {
         if (building != Worker.AssignedBuilding) return; // Only care if our building was the one that was destroyed
-        Debug.Log("Destroyed");
 
         switch ((WorkerTask_CraftItemSubstate)substate)
         {
@@ -96,15 +94,25 @@ public class WorkerTask_CraftItem : WorkerTask
                 break;
             case WorkerTask_CraftItemSubstate.PickupResource:
                 // Do nothing; haven't fully picked up so it'll just get dropped onto the ground
+                // An alternative I considered was to have the worker continue picking up the item so that they could
+                // then carry it to another storage spot; that would avoid the item being dropped on the ground and immediately
+                // re-picked up; but it's an edge case and I don't want to complicate the code for it.
                 break;
+
             case WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
                 // We're carrying an item.
                 break;
+
             case WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
+                // We're currently dropping a resource into the Crafting Spot.
                 break;
+
             case WorkerTask_CraftItemSubstate.CraftGood:
+                // We're currently crafting a good from the resources that have already been carried to the crafting spot
                 break;
+
             case WorkerTask_CraftItemSubstate.PickupProducedGood:
+                // We're picking up the good that we just crafted.
                 // Just give the item to the worker
                 generateCraftedItem();
                 break;
@@ -121,20 +129,22 @@ public class WorkerTask_CraftItem : WorkerTask
             Worker.Location += building.Location - previousLoc;
     }
 
+    public override void OnBuildingPauseToggled(BuildingData building)
+    {
+        // TODO (FUTURE): This causes the player to lose items if the building is paused e.g. mid-crafting.  Not ideal, but will accept for now to keep code simpler
+        if (building == Worker.AssignedBuilding)
+            Abandon();
+    }
+
     public override void Update()
     {
-        Debug.Log("Update substate " + substate);
         base.Update();
 
         switch (substate)
         {
             case (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource: // go to resource spot
-                Debug.Log(" move");
                 if (MoveTowards(nextCraftingResourceStorageSpotToGetFrom.Location, distanceMovedPerSecond))
-                {
-                    Debug.Log(" target");
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.PickupResource);
-                }
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.PickupResource:
@@ -155,6 +165,8 @@ public class WorkerTask_CraftItem : WorkerTask
             case (int)WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
                 if (getPercentSubstateDone(secondsToDropSourceResource) == 1)
                 {
+                    // The resource has been dropped.  We don't actually put the resource anywhere and act like it's been 'consumed'. 
+                    // so it disappears from the game automatically.
                     if (HasMoreCraftingResourcesToGet())
                     {
                         nextCraftingResourceStorageSpotToGetFrom = getNextReservedCraftingResourceStorageSpot();
@@ -198,7 +210,7 @@ public class WorkerTask_CraftItem : WorkerTask
 
     private void generateCraftedItem()
     {
-        Debug.Log("todo: consume crafting resources?");
+        // Crafting resources were silently/automatically consumed above when we cleared them from their storagespots during pickup
         if (itemBeingCrafted.GoodType == GoodType.explicitGood)
             Worker.AddItemToHands(new ItemData() { DefnId = CraftingItemDefnId });
         else

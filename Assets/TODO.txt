@@ -1,2 +1,9 @@
+* crafting station
+    pause woodcutter
+    let wood drop in it
+    pause
+    wait until worker comes to remove the wood
+    while that worker is approaching, unpause
 
-* eliminate building crafting needs if no assigned workers.  TBD: clear out resources proactively and/or allow other needs to 'take' from it?
+    worker should abandon task
+    instead: worker continues, picks up, and hten immediately drops back down the item.

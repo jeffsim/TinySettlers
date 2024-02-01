@@ -66,7 +66,7 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
     public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
         // If our target spot's building was destroyed and we're still walking to it, then abandon
-        if (destroyedBuilding == spotWithItemToPickup.Building && substate == 0)
+        if (destroyedBuilding == spotWithItemToPickup.Building && substate == (int)WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem)
         {
             Abandon();
             return;

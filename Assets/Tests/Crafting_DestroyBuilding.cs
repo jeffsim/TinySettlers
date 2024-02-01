@@ -38,20 +38,36 @@ namespace DestroyBuildingTests
                 switch (substates[i])
                 {
                     case WorkerTask_CraftItemSubstate.GotoSpotWithResource:
+                        // Worker hasn't yet done anything in the building; after destroying the building, they should 
+                        // be holding nothing and the crafting resources still in storage should be abandoned the ground
                         verify_ItemInHand(crafter, null);
                         verify_ItemsOnGround(2);
                         break;
                     case WorkerTask_CraftItemSubstate.PickupResource:
+                        // Worker reached the first resource and is in the process of picking it up; after destroying the building, they should 
+                        // be holding nothing and the crafting resources still in storage should be abandoned the ground
                         verify_ItemInHand(crafter, null);
+                        verify_ItemsOnGround(2);
                         break;
                     case WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
+                        // The Crafting code 'cheats' a bit in that: we don't actually pick up the item, and we we automatically consume it when its picked up
+                        // So if the building is destroyed at this point, the worker should be holding nothing and only the second (not yet picked up) crafting
+                        // resource should be on the ground
                         verify_ItemInHand(crafter, null);
+                        verify_ItemsOnGround(1);
                         break;
                     case WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
+                        // The Crafting code 'cheats' a bit in that: we don't actually pick up the item, and we we automatically consume it when its picked up
+                        // So if the building is destroyed at this point, the worker should be holding nothing and only the second (not yet picked up) crafting
+                        // resource should be on the ground
                         verify_ItemInHand(crafter, null);
+                        verify_ItemsOnGround(1);
                         break;
                     case WorkerTask_CraftItemSubstate.CraftGood:
+                        // The Crafting code 'cheats' a bit in that: we don't actually pick up the item, and we we automatically consume it when its picked up.
+                        // So if the building is destroyed at this point, the worker should be holding nothing and the crafting resources should not be on the ground
                         verify_ItemInHand(crafter, null);
+                        verify_ItemsOnGround(0);
                         break;
                     case WorkerTask_CraftItemSubstate.PickupProducedGood:
                         verify_ItemInHand(crafter, "plank");
