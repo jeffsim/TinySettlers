@@ -5,15 +5,7 @@ using System.Diagnostics;
 public class TileData : BaseData
 {
     private TileDefn _defn;
-    public TileDefn Defn
-    {
-        get
-        {
-            if (_defn == null)
-                _defn = GameDefns.Instance.TileDefns[DefnId];
-            return _defn;
-        }
-    }
+    public TileDefn Defn => _defn = _defn != null ? _defn : GameDefns.Instance.TileDefns[DefnId];
     public string DefnId;
     public int TileX;
     public int TileY;

@@ -20,15 +20,7 @@ public class BuildingData : BaseData
     public override string ToString() => Defn.FriendlyName + " (" + InstanceId + ")";
 
     private BuildingDefn _defn;
-    public BuildingDefn Defn
-    {
-        get
-        {
-            if (_defn == null)
-                _defn = GameDefns.Instance.BuildingDefns[DefnId];
-            return _defn;
-        }
-    }
+    public BuildingDefn Defn => _defn = _defn != null ? _defn : GameDefns.Instance.BuildingDefns[DefnId];
     public string DefnId;
 
     // The Town which this Building is in

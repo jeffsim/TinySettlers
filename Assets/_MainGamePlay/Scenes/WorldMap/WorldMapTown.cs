@@ -13,7 +13,7 @@ public class WorldMapTown : MonoBehaviour
     {
         this.scene = scene;
         this.town = town;
-        transform.position = new Vector3(town.WorldX, town.WorldY, 0);
+        transform.position = new Vector3(town.Defn.WorldX, town.Defn.WorldY, 0);
         Button.interactable = town.CanEnter;
         Name.text = town.Defn.FriendlyName;
     }

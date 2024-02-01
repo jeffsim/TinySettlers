@@ -11,20 +11,8 @@ public enum StorageSpotSearchType { Any, Primary, AssignedBuildingOrPrimary }
 public class TownData : BaseData
 {
     private TownDefn _defn;
-    public TownDefn Defn
-    {
-        get
-        {
-            if (_defn == null)
-                _defn = GameDefns.Instance.TownDefns[DefnId];
-            return _defn;
-        }
-    }
+    public TownDefn Defn => _defn = _defn != null ? _defn : GameDefns.Instance.TownDefns[DefnId];
     public string DefnId;
-
-    // Position in the WorldMap
-    public int WorldX => Defn.WorldX;
-    public int WorldY => Defn.WorldY;
 
     public int Gold;
     [NonSerialized] public OnItemAddedToGroundEvent OnItemAddedToGround;
@@ -40,12 +28,10 @@ public class TownData : BaseData
     public bool CanEnter => State == TownState.Available || State == TownState.InProgress;
 
     // Current Map
+    public BuildingData Camp;
     public List<TileData> Tiles = new();
     public List<WorkerData> Workers = new();
-
     public List<BuildingData> Buildings = new();
-
-    public BuildingData Camp;
     public List<ItemData> ItemsOnGround = new();
     public List<NeedData> otherTownNeeds = new();
 
