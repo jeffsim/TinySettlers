@@ -23,6 +23,7 @@ namespace DestroyBuildingTests
                 // Set up town with one crafting building in the middle, enough resources to craft one item, and one worker assigned to the building
                 LoadTestTown("crafting_town1", i);
                 var crafter = getAssignedWorker(CraftingStation);
+                forceMoveWorkerAwayFromAssignedBuilding(crafter); // ensure that worker task works predictably below.
 
                 waitUntilTaskAndSubstate(crafter, TaskType.CraftGood, (int)substates[i]);
 

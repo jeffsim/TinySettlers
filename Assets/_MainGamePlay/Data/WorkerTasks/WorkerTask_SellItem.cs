@@ -56,10 +56,9 @@ public class WorkerTask_SellItem : WorkerTask
         reserveStorageSpot(spotWithItemToSell);
     }
 
+    // Note: this is called when any building is destroyed, not just "this task's" building
     public override void OnBuildingDestroyed(BuildingData building)
     {
-        if (building != spotWithItemToSell.Building) return;
-
         if (substate == (int)WorkerTask_SellItemSubstate.SellItem)
         {
             // We've picked up the item and are trying to sell it; need to find a destination to bring it to, or drop it on the ground
@@ -78,8 +77,8 @@ public class WorkerTask_SellItem : WorkerTask
                 Worker.StorageSpotReservedForItemInHand = newSpot;
                 Worker.OriginalPickupItemNeed = NeedData.CreateAbandonedItemCleanupNeed(Worker.ItemInHand);
             }
+            Abandon();
         }
-        Abandon();
     }
 
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)

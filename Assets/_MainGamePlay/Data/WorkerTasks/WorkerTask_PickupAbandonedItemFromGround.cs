@@ -61,6 +61,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
         reserveStorageSpot(reservedSpotToStoreItemIn);
     }
 
+    // Note: this is called when any building is destroyed, not just "this task's" building
     public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
         // If the building which we have reserved a storage spot in was destroyed then try to find an alternative

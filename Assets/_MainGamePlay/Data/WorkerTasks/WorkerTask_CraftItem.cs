@@ -66,7 +66,7 @@ public class WorkerTask_CraftItem : WorkerTask
     public override void Start()
     {
         base.Start();
-
+        Debug.Log("Start");
         // Reserve our storage spots with resources that we will consume to craft the good
         foreach (var resource in itemBeingCrafted.ResourcesNeededForCrafting)
             for (int i = 0; i < resource.Count; i++)
@@ -83,9 +83,11 @@ public class WorkerTask_CraftItem : WorkerTask
         nextCraftingResourceStorageSpotToGetFrom = getNextReservedCraftingResourceStorageSpot();
     }
 
+    // Note: this is called when any building is destroyed, not just "this task's" building
     public override void OnBuildingDestroyed(BuildingData building)
     {
         if (building != Worker.AssignedBuilding) return; // Only care if our building was the one that was destroyed
+        Debug.Log("Destroyed");
 
         switch ((WorkerTask_CraftItemSubstate)substate)
         {
@@ -121,13 +123,18 @@ public class WorkerTask_CraftItem : WorkerTask
 
     public override void Update()
     {
+        Debug.Log("Update substate " + substate);
         base.Update();
 
         switch (substate)
         {
             case (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource: // go to resource spot
+                Debug.Log(" move");
                 if (MoveTowards(nextCraftingResourceStorageSpotToGetFrom.Location, distanceMovedPerSecond))
+                {
+                    Debug.Log(" target");
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.PickupResource);
+                }
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.PickupResource:

@@ -54,8 +54,9 @@ public class LocationComponent
     public static LocationComponent operator -(LocationComponent loc1, LocationComponent loc2) => new(loc1.WorldLoc - loc2.WorldLoc);
     public static LocationComponent operator +(LocationComponent loc1, LocationComponent loc2) => new(loc1.WorldLoc + loc2.WorldLoc);
 
-    internal void SetWorldLoc(LocationComponent location) => WorldLoc = location.WorldLoc;
-    internal void SetWorldLoc(float x, float y) => WorldLoc.Set(x, y, 0);
+    // todo: following doesn't account for ParentLoc
+    public void SetWorldLoc(LocationComponent location) => WorldLoc = location.WorldLoc;
+    public void SetWorldLoc(float x, float y) => WorldLoc.Set(x, y, 0);
 
     public LocationComponent(LocationComponent parentLoc, float localX, float localY)
     {

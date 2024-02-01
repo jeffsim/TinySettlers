@@ -62,6 +62,7 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
         reserveStorageSpot(reservedSpotToStoreItemIn);
     }
 
+    // Note: this is called when any building is destroyed, not just "this task's" building
     public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
         // If our target spot's building was destroyed and we're still walking to it, then abandon

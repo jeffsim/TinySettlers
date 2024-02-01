@@ -97,6 +97,7 @@ public abstract class TestBase
     protected void waitUntilTaskSubstate(WorkerData worker, int substate, float secondsBeforeExitCheck = 500)
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
+        Debug.Log($"wait2 {worker.CurrentTask.substate} {substate} {GameTime.time < breakTime} {GameTime.time} {breakTime}");
         while (GameTime.time < breakTime && worker.CurrentTask.substate != substate)
         {
             updateTown();
@@ -175,8 +176,14 @@ public abstract class TestBase
         if (Town.ItemsOnGround.Count != expectedNumber)
         {
             string itemsFound = string.Join(", ", Town.ItemsOnGround.Select(item => item.DefnId));
-            Assert.AreEqual(expectedNumber, Town.ItemsOnGround.Count, $"{preface()} Expected {expectedNumber} items on ground, but found '{itemsFound}'");
+            Assert.AreEqual(expectedNumber, Town.ItemsOnGround.Count, $"{preface()} Expected {expectedNumber} items on ground, but found only {Town.ItemsOnGround.Count} ({itemsFound})");
         }
+    }
+
+    protected void forceMoveWorkerAwayFromAssignedBuilding(WorkerData worker)
+    {
+        var loc = worker.AssignedBuilding.Location.WorldLoc + new Vector3(1, 0, 0);
+        worker.Location.SetWorldLoc(loc.x, loc.y);
     }
 
     protected void updateTown()

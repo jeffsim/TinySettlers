@@ -43,6 +43,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         base.Start();
     }
 
+    // Note: this is called when any building is destroyed, not just "this task's" building
     public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
         // If the building which we have reserved a storage spot in was destroyed then try to find an alternative
@@ -51,7 +52,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
             Worker.StorageSpotReservedForItemInHand = FindNewOptimalStorageSpotToDeliverItemTo(Worker.StorageSpotReservedForItemInHand, Worker.Location);
             substate = 0; // back to walking again
             if (Worker.StorageSpotReservedForItemInHand == null)
-                Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
+                Abandon();
         }
     }
 
