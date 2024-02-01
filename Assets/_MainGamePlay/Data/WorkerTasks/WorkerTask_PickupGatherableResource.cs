@@ -99,17 +99,11 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
 
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
-        // If we're moving towards the building that was moved, then update our movement target
-        // If we're working in the building that was moved, then update our location
-        bool updateMoveToLoc = false, updateWorkerLoc = false;
-        switch ((WorkerTask_PickupGatherableResourceSubstate)substate)
-        {
-            case WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: updateMoveToLoc = building == optimalGatheringSpot.Building; break;
-            case WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource: updateWorkerLoc = building == optimalGatheringSpot.Building; break;
-            case WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource: updateWorkerLoc = building == optimalGatheringSpot.Building; break;
-        }
-        if (updateMoveToLoc) LastMoveToTarget += building.Location - previousLoc;
-        if (updateWorkerLoc) Worker.Location += building.Location - previousLoc;
+        if (building != optimalGatheringSpot.Building) return;
+        if (IsWalkingToTarget)
+            LastMoveToTarget += building.Location - previousLoc;
+        else
+            Worker.Location += building.Location - previousLoc;
     }
 
     public override void OnBuildingPauseToggled(BuildingData building)

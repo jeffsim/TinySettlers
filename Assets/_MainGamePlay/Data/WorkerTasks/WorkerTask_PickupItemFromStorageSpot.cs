@@ -89,16 +89,11 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
 
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
-        // If we're moving towards the building that was moved, then update our movement target
-        // If we're working in the building that was moved, then update our location
-        bool updateMoveToLoc = false, updateWorkerLoc = false;
-        switch ((WorkerTask_PickupItemFromStorageSpotSubstate)substate)
-        {
-            case WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem: updateMoveToLoc = building == spotWithItemToPickup.Building; break;
-            case WorkerTask_PickupItemFromStorageSpotSubstate.PickupItemFromItemSpot: updateWorkerLoc = building == spotWithItemToPickup.Building; break;
-        }
-        if (updateMoveToLoc) LastMoveToTarget += building.Location - previousLoc;
-        if (updateWorkerLoc) Worker.Location += building.Location - previousLoc;
+        if (building != spotWithItemToPickup.Building) return;
+        if (IsWalkingToTarget)
+            LastMoveToTarget += building.Location - previousLoc;
+        else
+            Worker.Location += building.Location - previousLoc;
     }
 
     public override void Update()

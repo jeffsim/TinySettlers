@@ -32,7 +32,7 @@ public abstract class WorkerTask
     public float timeStartedSubstate;
     public int substate;
 
-    public LocationComponent LastMoveToTarget;
+    public LocationComponent LastMoveToTarget = new();
 
     [SerializeField] List<GatheringSpotData> ReservedGatheringSpots;
     [SerializeField] protected List<StorageSpotData> ReservedStorageSpots;
@@ -254,7 +254,7 @@ public abstract class WorkerTask
 
     protected bool MoveTowards(LocationComponent location, float distanceMovedPerSecond, float closeEnough = .1f)
     {
-        LastMoveToTarget = location;
+        LastMoveToTarget.SetWorldLoc(location);
 
         // Move towards target
         Worker.Location.MoveTowards(Worker.Location, location, distanceMovedPerSecond * GameTime.deltaTime);
