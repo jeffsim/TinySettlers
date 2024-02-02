@@ -30,7 +30,7 @@ public class StoragePileData : BaseData
 
         for (int i = 0, y1 = 0; y1 < areaDefn.StoragePileSize.y; y1++)
             for (int x1 = 0; x1 < areaDefn.StoragePileSize.x; x1++, i++)
-                StorageSpots.Add(new(this, localLoc, i));
+                StorageSpots.Add(new(this, i));
     }
 
     public int NumItemsInStorage(ItemDefn itemDefn = null)

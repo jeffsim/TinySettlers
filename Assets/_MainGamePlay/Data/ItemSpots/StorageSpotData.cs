@@ -16,12 +16,12 @@ public class StorageSpotData : BaseData
     public bool HasItem => ItemContainer.HasItem;
     public bool IsEmptyAndAvailable => ItemContainer.IsEmpty && !Reservation.IsReserved;
 
-    public StorageSpotData(StoragePileData pile, Vector2 localLoc, int pileIndex)
+    public StorageSpotData(StoragePileData pile, int pileIndex)
     {
         Pile = pile;
         IndexInStoragePile = pileIndex;
         Building = pile.Building;
-        Location = new LocationComponent(pile.Location, localLoc.x, localLoc.y);
+        Location = new LocationComponent(pile.Location, 0, 0);
     }
 
     internal void OnBuildingDestroyed()
