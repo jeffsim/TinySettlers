@@ -1,3 +1,6 @@
+* add: primary storage: specify per-building hwt can be stored (defaults to 'anything')
+
+
 * crafting station
     pause woodcutter
     let wood drop in it

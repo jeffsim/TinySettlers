@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum WorkerTask_CraftItemSubstate
@@ -26,12 +27,11 @@ public class WorkerTask_CraftItem : WorkerTask
     ItemDefn itemBeingCrafted => GameDefns.Instance.ItemDefns[CraftingItemDefnId];
 
     [SerializeField] CraftingSpotData reservedCraftingSpot;
-    [SerializeField] StorageSpotData reservedStorageSpot;
+    [SerializeField] StorageSpotData storageSpotForCraftedGood;
     [SerializeField] StorageSpotData nextCraftingResourceStorageSpotToGetFrom;
 
 #if UNITY_INCLUDE_TESTS
     public CraftingSpotData CraftingSpot => reservedCraftingSpot;
-    public StorageSpotData ReservedStorageSpot => reservedStorageSpot;
 #endif
 
     public const float secondsToPickupSourceResource = 0.5f;
@@ -39,9 +39,24 @@ public class WorkerTask_CraftItem : WorkerTask
     public const float secondsToCraft = 1;
     public const float secondsToPickupCraftedGood = 0.5f;
 
+    [SerializeField] string lastPickedUpResourceDefnId;
+
     public override bool IsWalkingToTarget => substate == (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource || substate == (int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot;
 
-    public override ItemDefn GetTaskItem() => CraftingItemDefnId == null ? null : GameDefns.Instance.ItemDefns[CraftingItemDefnId];
+    public override ItemDefn GetTaskItem()
+    {
+        var craftingItem = GameDefns.Instance.ItemDefns[CraftingItemDefnId];
+        switch ((WorkerTask_CraftItemSubstate)substate)
+        {
+            case WorkerTask_CraftItemSubstate.GotoSpotWithResource: return nextCraftingResourceStorageSpotToGetFrom.ItemContainer.Item.Defn;
+            case WorkerTask_CraftItemSubstate.PickupResource: return nextCraftingResourceStorageSpotToGetFrom.ItemContainer.Item.Defn;
+            case WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot: return GameDefns.Instance.ItemDefns[lastPickedUpResourceDefnId];
+            case WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot: return GameDefns.Instance.ItemDefns[lastPickedUpResourceDefnId];
+            case WorkerTask_CraftItemSubstate.CraftGood: return craftingItem;
+            case WorkerTask_CraftItemSubstate.PickupProducedGood: return craftingItem;
+            default: return null;
+        }
+    }
 
     public override string ToDebugString()
     {
@@ -51,34 +66,34 @@ public class WorkerTask_CraftItem : WorkerTask
     }
 
     // TODO: Pooling
-    public static WorkerTask_CraftItem Create(WorkerData worker, NeedData needData, CraftingSpotData craftingSpot, StorageSpotData storageSpotToStoreCraftedItemIn)
+    public static WorkerTask_CraftItem Create(WorkerData worker, NeedData needData, CraftingSpotData craftingSpot)
     {
-        return new WorkerTask_CraftItem(worker, needData, craftingSpot, storageSpotToStoreCraftedItemIn);
+        return new WorkerTask_CraftItem(worker, needData, craftingSpot);
     }
 
-    private WorkerTask_CraftItem(WorkerData worker, NeedData needData, CraftingSpotData craftingSpot, StorageSpotData storageSpotToStoreCraftedItemIn) : base(worker, needData)
+    private WorkerTask_CraftItem(WorkerData worker, NeedData needData, CraftingSpotData craftingSpot) : base(worker, needData)
     {
         CraftingItemDefnId = needData.NeededItem.Id;
         reservedCraftingSpot = craftingSpot;
-        reservedStorageSpot = storageSpotToStoreCraftedItemIn; // will be null for implicit goods
     }
 
     public override void Start()
     {
         base.Start();
-        // Reserve our storage spots with resources that we will consume to craft the good
-        foreach (var resource in itemBeingCrafted.ResourcesNeededForCrafting)
-            for (int i = 0; i < resource.Count; i++)
-                reserveCraftingResourceStorageSpotForItem(resource.Item);
 
         // Reserve a spot to do the crafting
         reserveCraftingSpot(reservedCraftingSpot);
 
-        // If the crafted item can be stored (vs e.g. gold), then reserve the spot to store it
-        if (itemBeingCrafted.GoodType == GoodType.explicitGood)
-            reserveStorageSpot(reservedStorageSpot);
+        // Reserve our storage spots with resources that we will consume to craft the good
+        foreach (var resource in itemBeingCrafted.ResourcesNeededForCrafting)
+            for (int i = 0; i < resource.Count; i++)
+                reserveCraftingResourceStorageSpotForItem(resource.Item, reservedCraftingSpot.Location);
 
-        // Start out walking to the storage spot with the first resource wek'll use for crafting
+        // Determine the resource spot that is closest to the crafting spot; we'll keep the reservation for that spot until the end of the task
+        // so that it can be used to store the crafted item
+        storageSpotForCraftedGood = getClosestStorageSpotTo(ReservedCraftingResourceStorageSpots, reservedCraftingSpot.Location);
+
+        // Start out walking to the storage spot with the first resource we'll use for crafting
         nextCraftingResourceStorageSpotToGetFrom = getNextReservedCraftingResourceStorageSpot();
     }
 
@@ -152,6 +167,12 @@ public class WorkerTask_CraftItem : WorkerTask
                 {
                     // Remove the item from the spot (and the game, technically), and unreserve the spot so that it can be used by other Workers
                     unreserveBuildingCraftingResourceSpot(nextCraftingResourceStorageSpotToGetFrom);
+
+                    // Note: retain the last spot since we'll use it to transport the crafted good to.
+                    if (nextCraftingResourceStorageSpotToGetFrom == storageSpotForCraftedGood)
+                        storageSpotForCraftedGood.Reservation.ReserveBy(Worker);
+
+                    lastPickedUpResourceDefnId = nextCraftingResourceStorageSpotToGetFrom.ItemContainer.Item.DefnId;
                     nextCraftingResourceStorageSpotToGetFrom.ItemContainer.ClearItem();
                     gotoSubstate((int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot);
                 }
@@ -194,11 +215,10 @@ public class WorkerTask_CraftItem : WorkerTask
                     // However, we don't actually want to unreserve the storage spot yet since the worker is now holding the item and may need
                     // to store in that spot if no building needs it.  So: re-reserve it (ick).  I don't want to combine pickup and deliver tasks into one
                     // for the reasons that I broke them apart in the first place...
-                    if (reservedStorageSpot != null) // explicit good
+                    if (itemBeingCrafted.GoodType == GoodType.explicitGood)
                     {
-                        Worker.StorageSpotReservedForItemInHand = reservedStorageSpot;
+                        Worker.StorageSpotReservedForItemInHand = storageSpotForCraftedGood;
                         Worker.OriginalPickupItemNeed = Need;
-                        reservedStorageSpot.Reservation.ReserveBy(Worker);
                     }
                 }
                 break;

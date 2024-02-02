@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: default
   m_EditorClassIdentifier: 
   Id: default
-  Debug_StartingCameraPosition: {x: 9.119991, y: 11.380022, z: 86.125}
-  Debug_StartingCameraZoom: 35.875
+  Debug_StartingCameraPosition: {x: 9.119991, y: 11.380022, z: 109.375}
+  Debug_StartingCameraZoom: 12.625

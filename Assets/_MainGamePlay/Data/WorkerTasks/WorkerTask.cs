@@ -45,8 +45,8 @@ public abstract class WorkerTask
 
     public virtual bool IsCarryingItem(string itemId) => false;
 
-    [SerializeField] List<StorageSpotData> ReservedCraftingResourceStorageSpots;
-    [SerializeField] List<CraftingSpotData> ReservedCraftingSpots;
+    [SerializeField] protected List<StorageSpotData> ReservedCraftingResourceStorageSpots;
+    [SerializeField] protected List<CraftingSpotData> ReservedCraftingSpots;
 
     [SerializeField] protected float distanceMovedPerSecond = 5;
 
@@ -218,13 +218,14 @@ public abstract class WorkerTask
         return ReservedCraftingResourceStorageSpots.Count > 0;
     }
 
-    protected void reserveCraftingResourceStorageSpotForItem(ItemDefn itemDefn)
+    protected StorageSpotData reserveCraftingResourceStorageSpotForItem(ItemDefn itemDefn, LocationComponent location)
     {
-        var spot = Worker.AssignedBuilding.GetStorageSpotWithUnreservedItem(itemDefn);
+        var spot = Worker.AssignedBuilding.GetClosestUnreservedStorageSpotWithItem(location, itemDefn, out float _);
         Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.AssignedBuilding.DefnId);
 
         spot.Reservation.ReserveBy(Worker);
         ReservedCraftingResourceStorageSpots.Add(spot);
+        return spot;
     }
 
     protected void unreserveBuildingCraftingResourceSpot(StorageSpotData spot)
@@ -348,5 +349,21 @@ public abstract class WorkerTask
             originalReservedSpot.Reservation.ReserveBy(Worker);
         }
         return originalReservedSpot;
+    }
+
+    protected StorageSpotData getClosestStorageSpotTo(List<StorageSpotData> spots, LocationComponent location)
+    {
+        StorageSpotData closest = null;
+        float closestDist = float.MaxValue;
+        foreach (var spot in spots)
+        {
+            float dist = spot.Location.DistanceTo(location);
+            if (dist < closestDist)
+            {
+                closest = spot;
+                closestDist = dist;
+            }
+        }
+        return closest;
     }
 }

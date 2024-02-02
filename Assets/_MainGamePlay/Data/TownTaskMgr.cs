@@ -180,19 +180,20 @@ public class TownTaskMgr
             // if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
 
             // StorageSpot only required for explicit items
-            StorageSpotData storageSpotForCraftedItem = null;
-            if (itemToCraft.GoodType == GoodType.explicitGood)
-            {
-                storageSpotForCraftedItem = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, craftingSpot.Location, worker);
-                if (storageSpotForCraftedItem == null) continue; // No storage spot available for crafted item
-            }
+            // No Need: we'll use one of the crafting resources' storage spots
+            // StorageSpotData storageSpotForCraftedItem = null;
+            // if (itemToCraft.GoodType == GoodType.explicitGood)
+            // {
+            //     storageSpotForCraftedItem = worker.AssignedBuilding.GetClosestEmptyStorageSpot(craftingSpot.Location);
+            //     if (storageSpotForCraftedItem == null) continue; // No storage spot available for crafted item
+            // }
 
             float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location, craftingSpot.Location);
 
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(WorkerTask_CraftItem.Create(worker, need, craftingSpot, storageSpotForCraftedItem), highestPrioritySoFar);
+                HighestPriorityTask.Set(WorkerTask_CraftItem.Create(worker, need, craftingSpot), highestPrioritySoFar);
             }
         }
     }
