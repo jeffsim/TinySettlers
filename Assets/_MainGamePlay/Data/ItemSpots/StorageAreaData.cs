@@ -6,82 +6,54 @@ using UnityEngine;
 [Serializable]
 public class StorageAreaData : BaseData
 {
-    public override string ToString() => "{" + string.Join(", ", StorageSpots.Select(spot => spot)) + "}";
+    public override string ToString() => "{" + string.Join(", ", StoragePiles.Select(spot => spot)) + "}";
 
-    public List<StorageSpotData> StorageSpots;
     public LocationComponent Location;
+    public List<StoragePileData> StoragePiles;
 
     public BuildingData Building;
 
-    public int NumAvailableSpots
-    {
-        get
-        {
-            int count = 0;
-            foreach (var spot in StorageSpots)
-                if (spot.IsEmptyAndAvailable) count++;
-            return count;
-        }
-    }
-    public bool HasAvailableSpot => NumAvailableSpots > 0;
+    public int NumStorageSpots => StoragePiles.Sum(spot => spot.NumStorageSpots);
+    public int NumAvailableSpots => StoragePiles.Sum(spot => spot.NumAvailableSpots);
+    public int NumReservedSpots => StoragePiles.Sum(spot => spot.NumReservedSpots);
+    public bool HasAvailableSpot => StoragePiles.Any(spot => spot.HasAvailableSpot);
 
-    public StorageAreaData(BuildingData buildingData, int index)
+    public StorageAreaData(BuildingData buildingData, StorageAreaDefn storageAreaDefn)
     {
         Building = buildingData;
 
-        var loc = buildingData.Defn.StorageAreaLocations[index];
-        Location = new(Building.Location, loc.x, loc.y);
-
-        StorageSpots = new();
-        var width = buildingData.Defn.StorageAreaSize.x;
-        var height = buildingData.Defn.StorageAreaSize.y;
-        for (int y = 0; y < height; y++)
-            for (int x = 0; x < width; x++)
+        Location = new(Building.Location, storageAreaDefn.Location.x, storageAreaDefn.Location.y);
+        StoragePiles = new();
+        var width = storageAreaDefn.StorageAreaSize.x;
+        var height = storageAreaDefn.StorageAreaSize.y;
+        for (int i = 0, y = 0; y < height; y++)
+            for (int x = 0; x < width; x++, i++)
             {
-                Vector2 spotLoc = new((x - (width - 1) / 2f) * 1.1f, (y - (height - 1) / 2f) * 1.1f);
-                StorageSpots.Add(new(this, spotLoc));
+                Vector2 pileLocation = new((x - (width - 1) / 2f) * 1.1f, (y - (height - 1) / 2f) * 1.1f);
+                StoragePiles.Add(new(this, storageAreaDefn, pileLocation, i));
             }
     }
 
     public void UpdateWorldLoc()
     {
         Location.UpdateWorldLoc();
-        foreach (var spot in StorageSpots)
-            spot.UpdateWorldLoc();
+        foreach (var pile in StoragePiles)
+            pile.UpdateWorldLoc();
     }
 
-    public int NumItemsInStorage(ItemDefn itemDefn = null)
-    {
-        int count = 0;
-        foreach (var spot in StorageSpots)
-            if (!spot.ItemContainer.IsEmpty && (itemDefn == null || spot.ItemContainer.Item.DefnId == itemDefn.Id)) count++;
-        return count;
-    }
+    public int NumItemsInStorage(ItemDefn itemDefn = null) => StoragePiles.Sum(spot => spot.NumItemsInStorage(itemDefn));
 
-    public int NumUnreservedItemsInStorage(ItemDefn itemDefn = null)
-    {
-        // TODO (perf): Dictionary lookup
-        int count = 0;
-        foreach (var spot in StorageSpots)
-            if (!spot.ItemContainer.IsEmpty && (itemDefn == null ||
-            (!spot.Reservation.IsReserved && spot.ItemContainer.Item.DefnId == itemDefn.Id))) count++;
-        return count;
-    }
+    public int NumUnreservedItemsInStorage(ItemDefn itemDefn = null) => StoragePiles.Sum(spot => spot.NumUnreservedItemsInStorage(itemDefn));
 
     internal void Debug_RemoveAllItemsFromStorage()
     {
-        foreach (var spot in StorageSpots)
-            if (!spot.ItemContainer.IsEmpty)
-            {
-                if (spot.Reservation.IsReserved)
-                    spot.Reservation.ReservedBy.CurrentTask?.Abandon();
-                spot.ItemContainer.ClearItem();
-            }
+        foreach (var pile in StoragePiles)
+            pile.Debug_RemoveAllItemsFromStorage();
     }
 
     internal void OnBuildingDestroyed()
     {
-        foreach (var spot in StorageSpots)
-            spot.OnBuildingDestroyed();
+        foreach (var pile in StoragePiles)
+            pile.OnBuildingDestroyed();
     }
 }

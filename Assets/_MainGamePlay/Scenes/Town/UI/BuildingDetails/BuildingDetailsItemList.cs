@@ -26,16 +26,15 @@ public class BuildingDetailsItemList : MonoBehaviour
     {
         // First what items we have and aggregate counts
         ItemCounts.Clear();
-        foreach (var area in building.Data.StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (spot.ItemContainer.Item != null)
-                {
-                    var key = spot.ItemContainer.Item.Defn;
-                    if (ItemCounts.ContainsKey(key))
-                        ItemCounts[key]++;
-                    else
-                        ItemCounts[key] = 1;
-                }
+        foreach (var spot in building.Data.StorageSpots)
+            if (spot.ItemContainer.Item != null)
+            {
+                var key = spot.ItemContainer.Item.Defn;
+                if (ItemCounts.ContainsKey(key))
+                    ItemCounts[key]++;
+                else
+                    ItemCounts[key] = 1;
+            }
 
         // Now that we know what we have:
         //  if an item-in-storage isn't in ListEntries then it's a new item and we need a new list entry

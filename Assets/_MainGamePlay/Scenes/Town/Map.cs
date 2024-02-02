@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 public class Map : MonoBehaviour
@@ -88,7 +89,7 @@ public class Map : MonoBehaviour
     private void OnItemRemovedFromGround(ItemData item)
     {
         if (this == null) return; // destroyed
-        
+
         var itemGO = getItemGO(item);
         if (itemGO != null)
             Destroy(itemGO.gameObject);
@@ -132,12 +133,7 @@ public class Map : MonoBehaviour
         scene.Gold.text = "Gold: " + Town.Gold.ToString();
         scene.Gold.text += "\nTime: " + GameTime.time.ToString("0.0");
 
-        int numReservedStorageSpots = 0;
-        foreach (var building in Town.Buildings)
-            foreach (var area in building.StorageAreas)
-                foreach (var spot in area.StorageSpots)
-                    if (spot.Reservation.IsReserved) numReservedStorageSpots++;
-
+        var numReservedStorageSpots = Town.Buildings.Sum(b => b.NumReservedStorageSpots);
         scene.DebugInfo.text = "Reserved spots: " + numReservedStorageSpots;
     }
 

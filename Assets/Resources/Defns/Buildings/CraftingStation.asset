@@ -40,6 +40,10 @@ MonoBehaviour:
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
   StorageAreaSize: {x: 2, y: 2}
+  StorageAreas:
+  - Location: {x: 0, y: 0, z: 0}
+    StorageAreaSize: {x: 2, y: 2}
+    StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 0
   CanGatherResources: 0
   GatherableResources: []

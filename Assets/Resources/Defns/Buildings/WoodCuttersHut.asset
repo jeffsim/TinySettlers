@@ -15,10 +15,16 @@ MonoBehaviour:
   Id: woodCutter
   BuildingColor: {r: 0.122475155, g: 0.0041384757, b: 0.2924528, a: 1}
   FriendlyName: Wood Cutter
+  IsTestBuilding: 0
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.30000722, g: 0, b: 0.5943396, a: 0}
   AssignedWorkerFriendlyName: Wood cutter
+  HasWorkers: 1
+  MaxWorkers: 4
   EditorColor: {r: 0.24574943, g: 0, b: 0.5566038, a: 1}
+  PlayerCanMove: 1
+  PlayerCanDestroy: 1
+  PlayerCanPause: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
@@ -27,9 +33,10 @@ MonoBehaviour:
   CraftingSpots: []
   CanStoreItems: 1
   IsPrimaryStorage: 0
-  StorageAreaLocations:
-  - {x: 0, y: 0, z: 0}
-  StorageAreaWidthAndHeight: 3
+  StorageAreas:
+  - Location: {x: 0, y: 0, z: 0}
+    StorageAreaSize: {x: 3, y: 3}
+    StoragePileSize: {x: 3, y: 3, z: 3}
   WorkersCanFerryItems: 0
   CanGatherResources: 1
   GatherableResources:
@@ -37,3 +44,5 @@ MonoBehaviour:
   ResourcesCanBeGatheredFromHere: 0
   ResourcesThatCanBeGatheredFromHere: []
   GatheringSpots: []
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

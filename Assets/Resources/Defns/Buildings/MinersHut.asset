@@ -15,6 +15,7 @@ MonoBehaviour:
   Id: minersHut
   BuildingColor: {r: 0.42352942, g: 0.21568628, b: 0, a: 1}
   FriendlyName: Miners Hut
+  IsTestBuilding: 0
   BuildingClass: 2
   AssignedWorkerColor: {r: 1, g: 0.50591254, b: 0, a: 0}
   AssignedWorkerFriendlyName: Miner
@@ -23,6 +24,7 @@ MonoBehaviour:
   EditorColor: {r: 0.3018868, g: 0.12629957, b: 0, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
+  PlayerCanPause: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
@@ -33,11 +35,18 @@ MonoBehaviour:
   CraftingSpots: []
   CanStoreItems: 1
   IsPrimaryStorage: 0
-  StorageAreaLocations:
-  - {x: -2.5, y: 0.9, z: 0}
-  - {x: 0, y: 0.9, z: 0}
-  - {x: 2.5, y: 0.9, z: 0}
-  StorageAreaSize: {x: 2, y: 5}
+  StorageAreaLocations: []
+  StorageAreaSize: {x: 3, y: 3}
+  StorageAreas:
+  - Location: {x: -2.5, y: 0.9, z: 0}
+    StorageAreaSize: {x: 2, y: 5}
+    StoragePileSize: {x: 1, y: 1, z: 1}
+  - Location: {x: 0, y: 0.9, z: 0}
+    StorageAreaSize: {x: 2, y: 5}
+    StoragePileSize: {x: 1, y: 1, z: 1}
+  - Location: {x: 2.5, y: 0.9, z: 0}
+    StorageAreaSize: {x: 2, y: 5}
+    StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 0
   CanGatherResources: 1
   GatherableResources:

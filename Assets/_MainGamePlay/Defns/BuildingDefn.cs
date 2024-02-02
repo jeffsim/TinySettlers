@@ -8,6 +8,18 @@ public enum BuildingClass
     Unset, Camp, Other
 }
 
+[Serializable]
+public class StorageAreaDefn
+{
+    public Vector3 Location;
+    public Vector2Int StorageAreaSize = new(3, 3);
+
+    // A storageArea is displayed as an NxM grid; before each cell was a single storagespot.  However, I want to support storing multiple items
+    // in each 'cell' e.g. a 3x3x3 pile of woodplanks.  Rather than dealing with multiple reserverations per StorageSpot, at storagearea
+    // creation time, I'll create a [3x3x3 grid] of storage spot in each cell, and the View can render them accordingly.
+    public Vector3Int StoragePileSize = new(3, 3, 3);
+}
+
 [CreateAssetMenu(fileName = "BuildingDefn")]
 public class BuildingDefn : BaseDefn
 {
@@ -30,7 +42,7 @@ public class BuildingDefn : BaseDefn
     public bool PlayerCanMove = true;
     public bool PlayerCanDestroy = true;
     public bool PlayerCanPause = true;
-    
+
     public bool CanBeConstructed;
     [ShowIf("CanBeConstructed")]
     public List<ResourceNeededForCraftingOrConstruction> ResourcesNeededForConstruction;
@@ -47,11 +59,7 @@ public class BuildingDefn : BaseDefn
     [ShowIf("CanStoreItems")]
     public bool IsPrimaryStorage; // If true, then don't move items out of this storage unless critical.  applies to storage, camp.
     [ShowIf("CanStoreItems")]
-    public List<Vector3> StorageAreaLocations;
-    [ShowIf("CanStoreItems")]
-    public int NumStorageAreas => StorageAreaLocations.Count;
-    [ShowIf("CanStoreItems")]
-    public Vector2Int StorageAreaSize = new Vector2Int(3, 3);
+    public List<StorageAreaDefn> StorageAreas = new();
 
     public bool WorkersCanFerryItems;
 

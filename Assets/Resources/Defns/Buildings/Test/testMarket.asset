@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: testMarket
   BuildingColor: {r: 0.7484276, g: 0.65758735, b: 0.035303097, a: 1}
-  FriendlyName: Test Market
-  IsTestBuilding: 1
+  FriendlyName: Market
+  IsTestBuilding: 0
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.8796489, g: 1, b: 0, a: 0}
   AssignedWorkerFriendlyName: Marketer
@@ -24,17 +24,22 @@ MonoBehaviour:
   EditorColor: {r: 1, g: 0.6673894, b: 0.009433806, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
+  PlayerCanPause: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 2
   CanCraft: 0
   CraftableItems: []
   CraftingSpots: []
-  CanStoreItems: 0
+  CanStoreItems: 1
   IsPrimaryStorage: 0
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
   StorageAreaSize: {x: 3, y: 3}
+  StorageAreas:
+  - Location: {x: 0, y: 0, z: 0}
+    StorageAreaSize: {x: 3, y: 3}
+    StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 0
   CanGatherResources: 0
   GatherableResources:

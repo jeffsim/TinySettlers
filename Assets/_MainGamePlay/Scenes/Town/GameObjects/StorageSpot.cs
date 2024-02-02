@@ -28,8 +28,8 @@ public class StorageSpot : MonoBehaviour
 
     public void OnMouseUp()
     {
-        if (!EventSystem.current.IsPointerOverGameObject())
-            scene.OnStorageSpotClicked(this);
+        // if (!EventSystem.current.IsPointerOverGameObject())
+        //     scene.OnStorageSpotClicked(this);
     }
 
     private void OnItemRemoved(ItemData item)

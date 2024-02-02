@@ -15,6 +15,7 @@ MonoBehaviour:
   Id: stoneCutter
   BuildingColor: {r: 0.5019608, g: 0.49517393, b: 0, a: 1}
   FriendlyName: Stone Cutter
+  IsTestBuilding: 0
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.9246069, g: 1, b: 0, a: 0}
   AssignedWorkerFriendlyName: Stone Cutter
@@ -23,6 +24,7 @@ MonoBehaviour:
   EditorColor: {r: 0.6320754, g: 0.5255832, b: 0.08646317, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
+  PlayerCanPause: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
@@ -41,6 +43,10 @@ MonoBehaviour:
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
   StorageAreaSize: {x: 3, y: 3}
+  StorageAreas:
+  - Location: {x: 0, y: 0, z: 0}
+    StorageAreaSize: {x: 3, y: 3}
+    StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 0
   CanGatherResources: 0
   GatherableResources: []

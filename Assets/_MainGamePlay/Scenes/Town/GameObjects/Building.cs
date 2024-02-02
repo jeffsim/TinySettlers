@@ -35,11 +35,11 @@ public class Building : MonoBehaviour
         GetComponentInChildren<Renderer>().material.color = data.Defn.BuildingColor;
         transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, BuildingZ);
 
-        for (int i = 0; i < Data.Defn.NumStorageAreas; i++)
+        for (int i = 0; i < Data.Defn.StorageAreas.Count; i++)
         {
             var item = Instantiate(scene.BuildingStorageAreaPrefab);
             item.transform.SetParent(StorageEditorFolder.transform, false);
-            item.Initialize(Data.StorageAreas[i], this, scene.BuildingStorageSpotPrefab, StorageEditorFolder.transform);
+            item.Initialize(Data.StorageAreas[i], Data.Defn.StorageAreas[i], this, scene.BuildingStoragePilePrefab, StorageEditorFolder.transform);
         }
 
         for (int i = 0; i < Data.Defn.GatheringSpots.Count; i++)

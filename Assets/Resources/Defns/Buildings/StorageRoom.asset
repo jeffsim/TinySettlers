@@ -15,6 +15,7 @@ MonoBehaviour:
   Id: storageRoom
   BuildingColor: {r: 0.20154905, g: 0.29411766, b: 0.003921565, a: 1}
   FriendlyName: Storage Room
+  IsTestBuilding: 0
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.09818679, g: 0.59607846, b: 0, a: 0}
   AssignedWorkerFriendlyName: Courier
@@ -23,6 +24,7 @@ MonoBehaviour:
   EditorColor: {r: 0.11972148, g: 0.24528301, b: 0, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
+  PlayerCanPause: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
@@ -31,9 +33,12 @@ MonoBehaviour:
   CraftingSpots: []
   CanStoreItems: 1
   IsPrimaryStorage: 1
-  StorageAreaLocations:
-  - {x: 0, y: 0.5, z: 0}
-  StorageAreaSize: {x: 6, y: 5}
+  StorageAreaLocations: []
+  StorageAreaSize: {x: 3, y: 3}
+  StorageAreas:
+  - Location: {x: 0, y: 0.5, z: 0}
+    StorageAreaSize: {x: 6, y: 5}
+    StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 1
   CanGatherResources: 0
   GatherableResources:

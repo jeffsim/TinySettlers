@@ -24,6 +24,7 @@ MonoBehaviour:
   EditorColor: {r: 0, g: 0.099416494, b: 1, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 0
+  PlayerCanPause: 1
   CanBeConstructed: 0
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
@@ -35,6 +36,10 @@ MonoBehaviour:
   StorageAreaLocations:
   - {x: 0, y: 0, z: 0}
   StorageAreaSize: {x: 3, y: 3}
+  StorageAreas:
+  - Location: {x: 0, y: 0, z: 0}
+    StorageAreaSize: {x: 3, y: 3}
+    StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 1
   CanGatherResources: 0
   GatherableResources: []

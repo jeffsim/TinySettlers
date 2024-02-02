@@ -12127,6 +12127,7 @@ MonoBehaviour:
   WorkerPrefab: {fileID: 6794300061091766363, guid: b483223481775422e944c15510898483, type: 3}
   BuildingStorageAreaPrefab: {fileID: 7994943468849512291, guid: fdca9a12c94b642149b01e2aff5e7990, type: 3}
   BuildingStorageSpotPrefab: {fileID: 4692928927181142577, guid: 48ab31553e73c466ca2a6cb2e0574a88, type: 3}
+  BuildingStoragePilePrefab: {fileID: 1910754369159479611, guid: 8ba92c26b0a22ca4bad79cbb7dc0dae0, type: 3}
   GatheringSpotPrefab: {fileID: 145167861813597606, guid: e1e88e46a27c640f3afcb75df2152372, type: 3}
   CraftingSpotPrefab: {fileID: 4006523581432375862, guid: 1b0f7997cefd64697a1a2427ca45ec51, type: 3}
   ItemOnGroundPrefab: {fileID: 7043519063053432247, guid: 3ac5bc85675874831b356ee795afd80b, type: 3}

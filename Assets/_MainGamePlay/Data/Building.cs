@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework.Constraints;
 using UnityEngine;
 
@@ -54,38 +55,11 @@ public class BuildingData : BaseData
 
     // Storage related fields
     public List<StorageAreaData> StorageAreas;
-    public int NumAvailableStorageSpots
-    {
-        get
-        {
-            // TODO (PERF): Cache
-            int count = 0;
-            foreach (var area in StorageAreas) count += area.NumAvailableSpots;
-            return count;
-        }
-    }
-    public int NumStorageSpots
-    {
-        get
-        {
-            // TODO (PERF): Cache
-            int count = 0;
-            foreach (var area in StorageAreas) count += area.StorageSpots.Count;
-            return count;
-        }
-    }
-
-    public bool HasAvailableStorageSpot
-    {
-        get
-        {
-            // TODO (PERF): Cache
-            foreach (var area in StorageAreas) if (area.HasAvailableSpot) return true;
-            return false;
-        }
-    }
-
+    public int NumAvailableStorageSpots => StorageAreas.Sum(area => area.NumAvailableSpots);
+    public int NumStorageSpots => StorageAreas.Sum(area => area.NumStorageSpots);
+    public bool HasAvailableStorageSpot => StorageAreas.Any(area => area.HasAvailableSpot);
     public bool IsStorageFull => NumAvailableStorageSpots == 0;
+    [SerializeReference] public List<StorageSpotData> StorageSpots;
 
     // Resource gathering fields
     public int NumReservedGatheringSpots
@@ -102,19 +76,8 @@ public class BuildingData : BaseData
     public bool HasAvailableGatheringSpot => NumAvailableGatheringSpots > 0;
 
     // storage
-    public int NumReservedStorageSpots
-    {
-        get
-        {
-            // TODO (PERF): Cache
-            int count = 0;
-            foreach (var area in StorageAreas)
-                foreach (var spot in area.StorageSpots)
-                    if (spot.Reservation.IsReserved)
-                        count++;
-            return count;
-        }
-    }
+    public int NumReservedStorageSpots => StorageAreas.Sum(area => area.NumReservedSpots);
+
 
     // Crafting fields
     public int NumReservedCraftingSpots
@@ -132,7 +95,7 @@ public class BuildingData : BaseData
 
     // TODO: Track this in building instead of recalculating
     public int NumWorkers => Town.NumBuildingWorkers(this);
- 
+
     // For easy tracking
     // public List<NeedData> ConstructionNeeds;
 
@@ -172,8 +135,14 @@ public class BuildingData : BaseData
             CraftingSpots.Add(new(this, i));
 
         StorageAreas = new();
-        for (int i = 0; i < Defn.NumStorageAreas; i++)
-            StorageAreas.Add(new(this, i));
+        foreach (var areaDefn in Defn.StorageAreas)
+            StorageAreas.Add(new(this, areaDefn));
+
+        // Create a unified list of storage spots since I don't want to iteratve over all areas.piles.spots every time
+        StorageSpots = new();
+        foreach (var area in StorageAreas)
+            foreach (var pile in area.StoragePiles)
+                StorageSpots.AddRange(pile.StorageSpots);
 
         Needs = new List<NeedData>();
         // ConstructionNeeds = new List<NeedData>();
@@ -241,12 +210,11 @@ public class BuildingData : BaseData
     {
         Debug.Assert(spotToCheck.Building == this, "wrong building");
         var index = 0;
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (spot == spotToCheck)
-                    return index;
-                else
-                    index++;
+        foreach (var spot in StorageSpots)
+            if (spot == spotToCheck)
+                return index;
+            else
+                index++;
         Debug.Assert(false, "Failed to find storage spot");
         return -1;
     }
@@ -259,20 +227,18 @@ public class BuildingData : BaseData
 
     public StorageSpotData GetStorageSpotWithUnreservedItemOfType(ItemDefn itemDefn, ItemClass itemClass = ItemClass.Unset)
     {
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)// && spot.ItemInStorage.Defn.ItemClass == itemClass)
-                    return spot;
+        foreach (var spot in StorageSpots)
+            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)// && spot.ItemInStorage.Defn.ItemClass == itemClass)
+                return spot;
 
         return null;
     }
 
     public bool HasUnreservedItemOfType(ItemDefn itemDefn)
     {
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
-                    return true;
+        foreach (var spot in StorageSpots)
+            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
+                return true;
 
         return false;
     }
@@ -299,8 +265,9 @@ public class BuildingData : BaseData
 
     public void UpdateNeedPriorities()
     {
-        // Hardcoded 9 storage spots per storage area
-        float percentFull = 1 - (float)(NumAvailableStorageSpots) / (Defn.NumStorageAreas * Defn.StorageAreaSize.x * Defn.StorageAreaSize.y);
+        int totalNumStorageSpot = StorageAreas.Sum(area => area.NumStorageSpots);
+
+        float percentFull = 1 - (float)NumAvailableStorageSpots / totalNumStorageSpot;
 
         if (Defn.CanStoreItems)
         {
@@ -422,9 +389,9 @@ public class BuildingData : BaseData
                 need.Priority *= .875f; // storage has some of item already
             else if (percentFull > .1f)
                 need.Priority *= .9f; // storage has a couple of item already
-            else if (numOfNeededItemAlreadyInStorage > Defn.NumStorageAreas / 2)
+            else if (numOfNeededItemAlreadyInStorage > totalNumStorageSpot / 2)
                 need.Priority *= .5f; // storage is half+ full of the needed item
-            else if (numOfNeededItemAlreadyInStorage > Defn.NumStorageAreas / 4)
+            else if (numOfNeededItemAlreadyInStorage > totalNumStorageSpot / 4)
                 need.Priority *= .75f; // storage is 25%-50% full of the needed item
         }
     }
@@ -456,10 +423,9 @@ public class BuildingData : BaseData
 
     public StorageSpotData GetEmptyStorageSpot()
     {
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (spot.IsEmptyAndAvailable)
-                    return spot;
+        foreach (var spot in StorageSpots)
+            if (spot.IsEmptyAndAvailable)
+                return spot;
         return null;
     }
 
@@ -468,17 +434,16 @@ public class BuildingData : BaseData
     {
         StorageSpotData closestSpot = null;
         dist = float.MaxValue;
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (spot.IsEmptyAndAvailable)
+        foreach (var spot in StorageSpots)
+            if (spot.IsEmptyAndAvailable)
+            {
+                var spotDist = location.DistanceTo(spot.Location);
+                if (spotDist < dist)
                 {
-                    var spotDist = location.DistanceTo(spot.Location);
-                    if (spotDist < dist)
-                    {
-                        dist = spotDist;
-                        closestSpot = spot;
-                    }
+                    dist = spotDist;
+                    closestSpot = spot;
                 }
+            }
         return closestSpot;
     }
 
@@ -495,17 +460,16 @@ public class BuildingData : BaseData
         distance = float.MaxValue;
 
         // Find Closest unreserved gathering spot that has an item that needs to be gathered
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
+        foreach (var spot in StorageSpots)
+            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
+            {
+                var distToSpot = location.DistanceTo(spot.Location);
+                if (distToSpot < distance)
                 {
-                    var distToSpot = location.DistanceTo(spot.Location);
-                    if (distToSpot < distance)
-                    {
-                        distance = distToSpot;
-                        closestSpot = spot;
-                    }
+                    distance = distToSpot;
+                    closestSpot = spot;
                 }
+            }
         if (closestSpot != null)
             return closestSpot;
         return null;
@@ -537,17 +501,16 @@ public class BuildingData : BaseData
         distance = float.MaxValue;
 
         // Find Closest unreserved gathering spot that has an item that needs to be gathered
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
+        foreach (var spot in StorageSpots)
+            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
+            {
+                var distToSpot = location.DistanceTo(spot.Location);
+                if (distToSpot < distance)
                 {
-                    var distToSpot = location.DistanceTo(spot.Location);
-                    if (distToSpot < distance)
-                    {
-                        distance = distToSpot;
-                        closestSpot = spot;
-                    }
+                    distance = distToSpot;
+                    closestSpot = spot;
                 }
+            }
         if (closestSpot != null)
             return closestSpot;
         return null;
@@ -659,19 +622,17 @@ public class BuildingData : BaseData
 
     internal ItemData GetUnreservedItemInStorage(ItemDefn item)
     {
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == item.Id)
-                    return spot.ItemContainer.Item;
+        foreach (var spot in StorageSpots)
+            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == item.Id)
+                return spot.ItemContainer.Item;
         return null;
     }
 
     internal StorageSpotData GetStorageSpotWithUnreservedItem(ItemDefn item)
     {
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == item.Id)
-                    return spot;
+        foreach (var spot in StorageSpots)
+            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == item.Id)
+                return spot;
         return null;
     }
 
@@ -733,26 +694,24 @@ public class BuildingData : BaseData
 
     internal StorageSpotData GetFirstStorageSpotWithUnreservedItemToRemove()
     {
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
-                {
-                    // Allow returning resources that we need for crafting or selling if we're paused or have no workers assigned
-                    var allowRemovingNeededItems = IsPaused || NumWorkers == 0;
-                    if (!allowRemovingNeededItems && ItemNeeds.Find(need => need.NeededItem == spot.ItemContainer.Item.Defn) != null)
-                        continue;
-                    return spot;
-                }
+        foreach (var spot in StorageSpots)
+            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
+            {
+                // Allow returning resources that we need for crafting or selling if we're paused or have no workers assigned
+                var allowRemovingNeededItems = IsPaused || NumWorkers == 0;
+                if (!allowRemovingNeededItems && ItemNeeds.Find(need => need.NeededItem == spot.ItemContainer.Item.Defn) != null)
+                    continue;
+                return spot;
+            }
         return null;
     }
 
     internal List<StorageSpotData> GetStorageSpotsWithUnreservedItem(ItemDefn itemDefn)
     {
         var spots = new List<StorageSpotData>();
-        foreach (var area in StorageAreas)
-            foreach (var spot in area.StorageSpots)
-                if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
-                    spots.Add(spot);
+        foreach (var spot in StorageSpots)
+            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
+                spots.Add(spot);
         return spots;
     }
 

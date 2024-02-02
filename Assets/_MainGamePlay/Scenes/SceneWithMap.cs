@@ -15,6 +15,7 @@ public class SceneWithMap : SceneMgr
 
     public StorageArea BuildingStorageAreaPrefab;
     public StorageSpot BuildingStorageSpotPrefab;
+    public StoragePile BuildingStoragePilePrefab;
     public GatheringSpot GatheringSpotPrefab;
     public CraftingSpot CraftingSpotPrefab;
     public Item ItemOnGroundPrefab;
@@ -104,10 +105,16 @@ public class SceneWithMap : SceneMgr
         BuildingDetails.ShowForBuilding(this, building);
     }
 
-    public void OnStorageSpotClicked(StorageSpot storageSpot)
+    // public void OnStorageSpotClicked(StorageSpot storageSpot)
+    // {
+    //     HideAllDialogs();
+    //     StorageSpotDetails.ShowForStoragePile(this, storageSpot);
+    // }
+
+    public void OnStoragePileClicked(StoragePile pile)
     {
         HideAllDialogs();
-        StorageSpotDetails.ShowForStorageSpot(this, storageSpot);
+        StorageSpotDetails.ShowForStoragePile(this, pile);
     }
 
     public void OnGatheringSpotClicked(GatheringSpot spot)
