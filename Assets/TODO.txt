@@ -1,12 +1,34 @@
 * add: primary storage: specify per-building hwt can be stored (defaults to 'anything')
+    - silo: can only store items of type 'food'
 
+* major change would be: instead of fixed spots per storagepile, make it based on the item type in the pile. can store 4 logs or 16 cups or 2 stone...
 
-* crafting station
-    pause woodcutter
-    let wood drop in it
-    pause
-    wait until worker comes to remove the wood
-    while that worker is approaching, unpause
+* Do economic chains work?
+  - add buildings: farm+wheatfield (=>wheat); well (=>water. one gatherspot); bakery (water+wheat=>bread)
+  - add worker hunger
 
-    worker should abandon task
-    instead: worker continues, picks up, and hten immediately drops back down the item.
+* Add building: house?
+
+* Add buildings: forest-with-animals, and Hunter
+    animals wander in tile.  new worker type.
+    hunter goes and gathers them just like miner gathers stone, except the animals move.  maybe fake an arrow?
+* new building forester
+    goes to neighboring forest and plants trees
+        that adds new gatheringspots
+    also make gatheringspots run out.
+
+* Add building: silo
+    only stores type 'food'
+    worker only gathers from farm spots.
+
+* Add building: farm
+    6x6 growing spots.
+    can specify what type of food to growing
+    
+    instead of plant grow spots on farm, have them separate and farmer walks to them.
+        plants grow after sowing.  different than farm
+        plant spot = storagepile. can have e.g. up to 4 reapable 'storagespot' of potatoes per pile.  or I can opt to make it one.
+        on the farm, have... cows/sheep.
+            animal = new 'worker' type!
+            farmer slaughters them to create food  
+                essentially same as craftingbuilding: farmer picks up pick from [roaming] spot, carries to 'craftingspot' and slaughters it, generating meat which is carried to storage
