@@ -14,7 +14,6 @@ public class SceneWithMap : SceneMgr
     public Worker WorkerPrefab;
 
     public StorageArea BuildingStorageAreaPrefab;
-    public StorageSpot BuildingStorageSpotPrefab;
     public StoragePile BuildingStoragePilePrefab;
     public GatheringSpot GatheringSpotPrefab;
     public CraftingSpot CraftingSpotPrefab;
