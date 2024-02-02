@@ -706,6 +706,28 @@ public class BuildingData : BaseData
         return null;
     }
 
+    internal StorageSpotData GetClosestStorageSpotWithUnreservedItemToRemove(LocationComponent location)
+    {
+        StorageSpotData closestSpot = null;
+        float closestDist = float.MaxValue;
+        foreach (var spot in StorageSpots)
+            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
+            {
+                // Allow returning resources that we need for crafting or selling if we're paused or have no workers assigned
+                var allowRemovingNeededItems = IsPaused || NumWorkers == 0;
+                if (!allowRemovingNeededItems && ItemNeeds.Find(need => need.NeededItem == spot.ItemContainer.Item.Defn) != null)
+                    continue;
+
+                var dist = location.DistanceTo(spot.Location);
+                if (dist < closestDist)
+                {
+                    closestDist = dist;
+                    closestSpot = spot;
+                }
+            }
+        return closestSpot;
+    }
+
     internal List<StorageSpotData> GetStorageSpotsWithUnreservedItem(ItemDefn itemDefn)
     {
         var spots = new List<StorageSpotData>();

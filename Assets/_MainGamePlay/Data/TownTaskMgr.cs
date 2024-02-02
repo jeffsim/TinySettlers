@@ -248,6 +248,7 @@ public class TownTaskMgr
             if (worker.ItemInHand != null) continue;                    // if worker is already carrying something then skip
             if (worker.AssignedBuilding.IsPaused) continue;
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
+            spotWithItem = need.BuildingWithNeed.GetClosestStorageSpotWithUnreservedItemToRemove(worker.Location);
 
             // If worker can't cleanup items then skip
             // Allow workers that are in a non-primary building that needs cleanup to cleanup items in that building IFF that building is full

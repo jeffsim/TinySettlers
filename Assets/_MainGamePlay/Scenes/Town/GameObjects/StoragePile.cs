@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -41,14 +42,16 @@ public class StoragePile : MonoBehaviour
         Count.text = Data.NumItemsInPile.ToString();
         // Set color to first item, assumes all are same itemtype.  
         // TODO: render as 'pile'; e.g. render 3x3 smaller items.
-        var spot = Data.StorageSpots[0];
-        if (spot.HasItem)
+        bool isAnySpotReserved = Data.StorageSpots.Any(s => s.Reservation.IsReserved);
+        if (Data.NumItemsInPile > 0)
         {
-            GetComponentInChildren<Renderer>().material.color = spot.ItemContainer.Item.Defn.Color;
-            name = "Storage " + Data.IndexInStorageArea + " - " + spot.ItemContainer.Item.Defn.FriendlyName;
+            var firstSpotWithItem = Data.StorageSpots.FirstOrDefault(s => s.HasItem);
+            Debug.Assert(firstSpotWithItem != null);
+            GetComponentInChildren<Renderer>().material.color = firstSpotWithItem.ItemContainer.Item.Defn.Color;
+            name = "Storage " + Data.IndexInStorageArea + " - " + firstSpotWithItem.ItemContainer.Item.Defn.FriendlyName;
         }
         else
             GetComponentInChildren<Renderer>().material.color = Color.black;
-        ReservedIndicator.SetActive(spot.Reservation.IsReserved);
+        ReservedIndicator.SetActive(isAnySpotReserved);
     }
 }

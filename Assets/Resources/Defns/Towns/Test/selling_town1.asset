@@ -21,7 +21,7 @@ MonoBehaviour:
   WorldY: 100
   Buildings:
   - IsEnabled: 1
-    Building: {fileID: 11400000, guid: eef494576fad2e04ea538a65b27e8670, type: 2}
+    Building: {fileID: 11400000, guid: 5166dfc13ba45214dae5135b910646f6, type: 2}
     TileX: 1
     TileY: 1
     StartingItemsInBuilding:
