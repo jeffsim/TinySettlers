@@ -1,6 +1,11 @@
 using System;
 using UnityEngine;
 
+public interface IReservationProvider
+{
+    ReservationComponent Reservation { get; }
+}
+
 [Serializable]
 public class ReservationComponent : BaseData
 {

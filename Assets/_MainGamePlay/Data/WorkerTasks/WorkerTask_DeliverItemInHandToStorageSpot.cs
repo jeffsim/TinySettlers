@@ -39,8 +39,8 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
 
     private WorkerTask_DeliverItemInHandToStorageSpot(WorkerData worker, NeedData need) : base(worker, need)
     {
-        worker.CurrentTask = this;
         base.Start();
+        worker.CurrentTask = this;
     }
 
     // Note: this is called when any building is destroyed, not just "this task's" building
@@ -84,9 +84,9 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
             else
             {
                 // Swap for new storage spot
-                ReservedStorageSpots.Remove(Worker.StorageSpotReservedForItemInHand);
+                ReservedSpots.Remove(Worker.StorageSpotReservedForItemInHand);
                 Worker.StorageSpotReservedForItemInHand = newSpot;
-                ReservedStorageSpots.Add(Worker.StorageSpotReservedForItemInHand);
+                ReservedSpots.Add(Worker.StorageSpotReservedForItemInHand);
             }
             return;
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum WorkerTask_PickupItemFromStorageSpotSubstate
@@ -41,25 +42,13 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
     // TODO: Pooling
     public static WorkerTask_PickupItemFromStorageSpot Create(WorkerData worker, NeedData needData, StorageSpotData spotWithItem, StorageSpotData spotToReserve)
     {
-        return new WorkerTask_PickupItemFromStorageSpot(worker, needData, spotWithItem, spotToReserve);
+        return new(worker, needData, spotWithItem, spotToReserve);
     }
 
     private WorkerTask_PickupItemFromStorageSpot(WorkerData worker, NeedData needData, StorageSpotData spotWithItemToPickup, StorageSpotData reservedSpotToStoreItemIn) : base(worker, needData)
     {
-        this.spotWithItemToPickup = spotWithItemToPickup;
-
-        // While this task is simply to go pick up an item, we wouldn't start the task if we didn't know that there was at least one place that we could bring the
-        // resource to; we reserve that so that if no building needs it after we pick it up, we can still store it somewhere
-        this.reservedSpotToStoreItemIn = reservedSpotToStoreItemIn;
-    }
-
-    public override void Start()
-    {
-        base.Start();
-
-        // Now that we've actually started the task, we can reserve the spots that were passed in above.
-        reserveStorageSpot(spotWithItemToPickup);
-        reserveStorageSpot(reservedSpotToStoreItemIn);
+        this.spotWithItemToPickup = ReserveSpotOnStart(spotWithItemToPickup);
+        this.reservedSpotToStoreItemIn = ReserveSpotOnStart(reservedSpotToStoreItemIn);
     }
 
     // Note: this is called when any building is destroyed, not just "this task's" building
@@ -79,11 +68,11 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
             if (newSpot == null)
                 Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
             else
-            { 
+            {
                 // Swap for new storage spot
-                ReservedStorageSpots.Remove(reservedSpotToStoreItemIn);
+                ReservedSpots.Remove(reservedSpotToStoreItemIn);
                 reservedSpotToStoreItemIn = newSpot;
-                ReservedStorageSpots.Add(reservedSpotToStoreItemIn);
+                ReservedSpots.Add(reservedSpotToStoreItemIn);
             }
         }
     }
@@ -109,7 +98,7 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
                 break;
 
             case (int)WorkerTask_PickupItemFromStorageSpotSubstate.PickupItemFromItemSpot: // gather in the building.
-                if (getPercentSubstateDone(secondsToPickup) == 1)
+                if (IsSubstateDone(secondsToPickup))
                 {
                     // Remove item from gathering spot and put it in Worker's hand, and we're done
                     CompleteTask();

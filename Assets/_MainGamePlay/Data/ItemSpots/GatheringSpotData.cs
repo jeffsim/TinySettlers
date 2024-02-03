@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class GatheringSpotData : BaseData, ILocationProvider
+public class GatheringSpotData : BaseData, ILocationProvider, IReservationProvider
 {
     public override string ToString() => "GatheringSpot " + InstanceId;
     public BuildingData Building;
@@ -11,7 +11,7 @@ public class GatheringSpotData : BaseData, ILocationProvider
     public float PercentGrown;
 
     [SerializeField] public LocationComponent Location { get; set; }
-    public ReservationComponent Reservation = new();
+    [SerializeField] public ReservationComponent Reservation { get; set; } = new();
     public ItemContainerComponent ItemContainer = new();
 
     public GatheringSpotData(BuildingData building, int index)

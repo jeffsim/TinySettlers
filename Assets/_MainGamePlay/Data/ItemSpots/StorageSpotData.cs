@@ -2,14 +2,14 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class StorageSpotData : BaseData, ILocationProvider
+public class StorageSpotData : BaseData, ILocationProvider, IReservationProvider
 {
     public BuildingData Building;
     [SerializeField] StoragePileData Pile;
     public int IndexInStoragePile;
 
-    [SerializeField] public LocationComponent Location { get; set;  }
-    public ReservationComponent Reservation = new();
+    [SerializeField] public LocationComponent Location { get; set; }
+    [SerializeField] public ReservationComponent Reservation { get; set; } = new();
     public ItemContainerComponent ItemContainer = new();
 
     public virtual void UpdateWorldLoc() => Location.WorldLoc = Pile.Location.WorldLoc + Location.LocalLoc;

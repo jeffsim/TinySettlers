@@ -12,33 +12,28 @@ public enum WorkerTask_PickupGatherableResourceSubstate
 public class WorkerTask_PickupGatherableResource : WorkerTask
 {
     public override string ToString() => "Pickup gatherable resource";
-    internal override string getDebuggerString() => $"Pickup gatherable resource from {optimalGatheringSpot}";
+    internal override string getDebuggerString() => $"Pickup gatherable resource from {OptimalGatheringSpot}";
 
     public override TaskType Type => TaskType.PickupGatherableResource;
 
-    [SerializeField] GatheringSpotData optimalGatheringSpot;
-    [SerializeField] StorageSpotData reservedStorageSpot;
-
-#if UNITY_INCLUDE_TESTS
-    public GatheringSpotData OptimalGatheringSpot => optimalGatheringSpot;
-    public StorageSpotData ReservedStorageSpot => reservedStorageSpot;
-#endif
+    [SerializeField] public GatheringSpotData OptimalGatheringSpot;
+    [SerializeField] public StorageSpotData ReservedStorageSpot;
 
     public const float secondsToReap = 1;
     public const float secondsToPickup = 0.5f;
 
     public override bool IsWalkingToTarget => substate == 0;
 
-    public override ItemDefn GetTaskItem() => optimalGatheringSpot?.ItemContainer.Item.Defn;
+    public override ItemDefn GetTaskItem() => OptimalGatheringSpot?.ItemContainer.Item.Defn;
 
     public override string ToDebugString()
     {
         var str = "Pickup gatherable resource\n";
-        str += "  Gather from: " + optimalGatheringSpot + " (" + optimalGatheringSpot.Building + "), gatherspot: " + optimalGatheringSpot.InstanceId + "\n";
+        str += "  Gather from: " + OptimalGatheringSpot + " (" + OptimalGatheringSpot.Building + "), gatherspot: " + OptimalGatheringSpot.InstanceId + "\n";
         str += "  substate: " + substate;
         switch (substate)
         {
-            case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: str += "; dist: " + Worker.Location.DistanceTo(optimalGatheringSpot.Location).ToString("0.0"); break;
+            case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: str += "; dist: " + Worker.Location.DistanceTo(OptimalGatheringSpot.Location).ToString("0.0"); break;
             case (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource: str += "; per = " + getPercentSubstateDone(secondsToReap); break;
             case (int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
             default: Debug.LogError("unknown substate " + substate); break;
@@ -49,56 +44,44 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
     // TODO: Pooling
     public static WorkerTask_PickupGatherableResource Create(WorkerData worker, NeedData needData, GatheringSpotData optimalGatheringSpot, StorageSpotData storageSpotToReserve)
     {
-        return new WorkerTask_PickupGatherableResource(worker, needData, optimalGatheringSpot, storageSpotToReserve);
+        return new(worker, needData, optimalGatheringSpot, storageSpotToReserve);
     }
 
     private WorkerTask_PickupGatherableResource(WorkerData worker, NeedData needData, GatheringSpotData optimalGatheringSpot, StorageSpotData storageSpotToReserve) : base(worker, needData)
     {
-        this.optimalGatheringSpot = optimalGatheringSpot;
-
-        // While this task is simply to go pick up a gatherable resource, we wouldn't start the task if we didn't know that there was at least one place that we could bring the
-        // resource to; we reserve that so that if no building needs it after we pick it up, we can still store it somewhere
-        reservedStorageSpot = storageSpotToReserve;
-    }
-
-    public override void Start()
-    {
-        base.Start();
-
-        // Now that we've actually started the task, we can reserve the already-determined-to-be optimal gathering spot that was passed in above.
-        reserveGatheringSpot(optimalGatheringSpot);
-        reserveStorageSpot(reservedStorageSpot);
+        OptimalGatheringSpot = ReserveSpotOnStart(optimalGatheringSpot);
+        ReservedStorageSpot = ReserveSpotOnStart(storageSpotToReserve);
     }
 
     // Note: this is called when any building is destroyed, not just "this task's" building
     public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
         // If our target resource-gathering building was destroyed and then abandon
-        if (destroyedBuilding == optimalGatheringSpot.Building && substate < 2)
+        if (destroyedBuilding == OptimalGatheringSpot.Building && substate < 2)
         {
             Abandon();
             return;
         }
 
         // If the building which we have reserved a storage spot in was destroyed then try to find an alternative
-        if (destroyedBuilding == reservedStorageSpot.Building)
+        if (destroyedBuilding == ReservedStorageSpot.Building)
         {
-            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedStorageSpot, Worker.Location);
+            var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(ReservedStorageSpot, Worker.Location);
             if (newSpot == null)
                 Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
             else
             {
                 // Swap for new storage spot
-                ReservedStorageSpots.Remove(reservedStorageSpot);
-                reservedStorageSpot = newSpot;
-                ReservedStorageSpots.Add(reservedStorageSpot);
+                ReservedSpots.Remove(ReservedStorageSpot);
+                ReservedStorageSpot = newSpot;
+                ReservedSpots.Add(ReservedStorageSpot);
             }
         }
     }
 
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
-        if (building != optimalGatheringSpot.Building) return;
+        if (building != OptimalGatheringSpot.Building) return;
         if (IsWalkingToTarget)
             LastMoveToTarget += building.Location - previousLoc;
         else
@@ -107,12 +90,12 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
 
     public override void OnBuildingPauseToggled(BuildingData building)
     {
-        var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(reservedStorageSpot, optimalGatheringSpot.Location);
-        if (newSpot != reservedStorageSpot)
+        var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(ReservedStorageSpot, OptimalGatheringSpot.Location);
+        if (newSpot != ReservedStorageSpot)
         {
-            ReservedStorageSpots.Remove(reservedStorageSpot);
-            reservedStorageSpot = newSpot;
-            ReservedStorageSpots.Add(reservedStorageSpot);
+            ReservedSpots.Remove(ReservedStorageSpot);
+            ReservedStorageSpot = newSpot;
+            ReservedSpots.Add(ReservedStorageSpot);
         }
 
         // If our worker's building is the one that was paused then cancel this task regardless of substate
@@ -123,7 +106,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         }
 
         // If the building from which we are gathering was paused then abandon this task
-        if (building == optimalGatheringSpot.Building)
+        if (building == OptimalGatheringSpot.Building)
         {
             Worker.CurrentTask.Abandon();
             return;
@@ -137,12 +120,12 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: // go to resource spot
-                if (MoveTowards(optimalGatheringSpot.Location, distanceMovedPerSecond))
+                if (MoveTowards(OptimalGatheringSpot.Location, distanceMovedPerSecond))
                     GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource: // reap item (e.g. cut down tree)
-                if (getPercentSubstateDone(secondsToReap) == 1)
+                if (IsSubstateDone(secondsToReap))
                 {
                     // Done reaping.
                     GotoNextSubstate();
@@ -150,19 +133,19 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
                 break;
 
             case (int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource: // gather in the building.
-                if (getPercentSubstateDone(secondsToPickup) == 1)
+                if (IsSubstateDone(secondsToPickup))
                 {
                     // Remove item from gathering spot and put it in Worker's hand, and we're done
                     CompleteTask();
-                    Worker.AddItemToHands(optimalGatheringSpot.ItemContainer.ClearItem());
+                    Worker.AddItemToHands(OptimalGatheringSpot.ItemContainer.ClearItem());
 
                     // NOTE that completing the task unreserved both the gathering spot and the storage spot so that others can use them.
                     // However, we don't actually want to unreserve the storage spot yet since the worker is now holding the item and may need
                     // to store in that spot if no building needs it.  So: re-reserve it (ick).  I don't want to combine pickup and deliver tasks into one
                     // for the reasons that I broke them apart in the first place...
-                    Worker.StorageSpotReservedForItemInHand = reservedStorageSpot;
+                    Worker.StorageSpotReservedForItemInHand = ReservedStorageSpot;
                     Worker.OriginalPickupItemNeed = Need;
-                    reservedStorageSpot.Reservation.ReserveBy(Worker);
+                    ReservedStorageSpot.Reservation.ReserveBy(Worker);
                 }
                 break;
 

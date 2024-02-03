@@ -27,8 +27,14 @@ public class WorkerTask_Idle : WorkerTask
     }
 
     // TODO: Pooling
-    public static WorkerTask_Idle Create(WorkerData worker) => new(worker);
-    private WorkerTask_Idle(WorkerData worker) : base(worker) { }
+    public static WorkerTask_Idle Create(WorkerData worker)
+    {
+        return new(worker);
+    }
+
+    private WorkerTask_Idle(WorkerData worker) : base(worker, null)
+    {
+    }
 
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
@@ -55,7 +61,7 @@ public class WorkerTask_Idle : WorkerTask
                 break;
 
             case (int)WorkerTask_IdleSubstate.WaitToGoToNewSpot: // wait to go to a new spot
-                if (getPercentSubstateDone(secondsToWait) == 1)
+                if (IsSubstateDone(secondsToWait))
                 {
                     idleMoveToDest.SetWorldLoc(Utilities.LocationWithinDistance(Worker.AssignedBuilding.Location, 3f));
                     distanceMovedPerSecond = 3 + (UnityEngine.Random.value - .5f) * 1f;

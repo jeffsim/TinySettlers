@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public class ValuesAtTime
 {
@@ -49,6 +50,7 @@ public class NeedsGraph : MonoBehaviour
 
     void Update()
     {
+        if (scene == null || scene.Map == null || scene.Map.Town == null) return;
         if (!GameTime.IsPaused)
             updateSupplyAndDemandHistoricalView();
 

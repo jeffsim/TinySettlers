@@ -1,16 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class CraftingSpotData : BaseData
+public class CraftingSpotData : BaseData, ILocationProvider, IReservationProvider
 {
     public override string ToString() => ItemsContainer.ToString();
 
     public BuildingData Building;
-    public LocationComponent Location;
-    public ReservationComponent Reservation = new();
+    
+    [SerializeField] public LocationComponent Location { get; set; }
+    [SerializeField] public ReservationComponent Reservation { get; set; } = new();
     public MultipleItemContainerComponent ItemsContainer = new();
 
     public CraftingSpotData(BuildingData building, int index)

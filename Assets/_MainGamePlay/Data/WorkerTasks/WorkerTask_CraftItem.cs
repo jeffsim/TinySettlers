@@ -68,21 +68,18 @@ public class WorkerTask_CraftItem : WorkerTask
     // TODO: Pooling
     public static WorkerTask_CraftItem Create(WorkerData worker, NeedData needData, CraftingSpotData craftingSpot)
     {
-        return new WorkerTask_CraftItem(worker, needData, craftingSpot);
+        return new(worker, needData, craftingSpot);
     }
 
     private WorkerTask_CraftItem(WorkerData worker, NeedData needData, CraftingSpotData craftingSpot) : base(worker, needData)
     {
         CraftingItemDefnId = needData.NeededItem.Id;
-        reservedCraftingSpot = craftingSpot;
+        reservedCraftingSpot = ReserveSpotOnStart(craftingSpot);
     }
 
     public override void Start()
     {
         base.Start();
-
-        // Reserve a spot to do the crafting
-        reserveCraftingSpot(reservedCraftingSpot);
 
         // Reserve our storage spots with resources that we will consume to craft the good
         foreach (var resource in itemBeingCrafted.ResourcesNeededForCrafting)
@@ -159,11 +156,11 @@ public class WorkerTask_CraftItem : WorkerTask
         {
             case (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource: // go to resource spot
                 if (MoveTowards(nextCraftingResourceStorageSpotToGetFrom.Location, distanceMovedPerSecond))
-                    gotoSubstate((int)WorkerTask_CraftItemSubstate.PickupResource);
+                    GotoSubstate((int)WorkerTask_CraftItemSubstate.PickupResource);
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.PickupResource:
-                if (getPercentSubstateDone(secondsToPickupSourceResource) == 1)
+                if (IsSubstateDone(secondsToPickupSourceResource))
                 {
                     // Remove the item from the spot (and the game, technically), and unreserve the spot so that it can be used by other Workers
                     unreserveBuildingCraftingResourceSpot(nextCraftingResourceStorageSpotToGetFrom);
@@ -174,39 +171,39 @@ public class WorkerTask_CraftItem : WorkerTask
 
                     lastPickedUpResourceDefnId = nextCraftingResourceStorageSpotToGetFrom.ItemContainer.Item.DefnId;
                     nextCraftingResourceStorageSpotToGetFrom.ItemContainer.ClearItem();
-                    gotoSubstate((int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot);
+                    GotoSubstate((int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot);
                 }
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
                 if (MoveTowards(reservedCraftingSpot.Location, distanceMovedPerSecond))
-                    gotoSubstate((int)WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot);
+                    GotoSubstate((int)WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot);
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
-                if (getPercentSubstateDone(secondsToDropSourceResource) == 1)
+                if (IsSubstateDone(secondsToDropSourceResource))
                 {
                     // The resource has been dropped.  We don't actually put the resource anywhere and act like it's been 'consumed'. 
                     // so it disappears from the game automatically.
                     if (HasMoreCraftingResourcesToGet())
                     {
                         nextCraftingResourceStorageSpotToGetFrom = getNextReservedCraftingResourceStorageSpot();
-                        gotoSubstate((int)WorkerTask_CraftItemSubstate.GotoSpotWithResource);
+                        GotoSubstate((int)WorkerTask_CraftItemSubstate.GotoSpotWithResource);
                     }
                     else
-                        gotoSubstate((int)WorkerTask_CraftItemSubstate.CraftGood);
+                        GotoSubstate((int)WorkerTask_CraftItemSubstate.CraftGood);
                 }
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.CraftGood: // craft
-                if (getPercentSubstateDone(secondsToCraft) == 1)
+                if (IsSubstateDone(secondsToCraft))
                 {
-                    gotoSubstate((int)WorkerTask_CraftItemSubstate.PickupProducedGood);
+                    GotoSubstate((int)WorkerTask_CraftItemSubstate.PickupProducedGood);
                 }
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.PickupProducedGood:
-                if (getPercentSubstateDone(secondsToPickupCraftedGood) == 1)
+                if (IsSubstateDone(secondsToPickupCraftedGood))
                 {
                     generateCraftedItem();
                     CompleteTask();
@@ -235,5 +232,32 @@ public class WorkerTask_CraftItem : WorkerTask
             Worker.AddItemToHands(new ItemData() { DefnId = CraftingItemDefnId });
         else
             Worker.AssignedBuilding.Town.Gold += 100; // implicit good (e.g. gold) - done // todo: hardcoded
+    }
+
+    bool HasMoreCraftingResourcesToGet()
+    {
+        return ReservedCraftingResourceStorageSpots.Count > 0;
+    }
+
+    StorageSpotData reserveCraftingResourceStorageSpotForItem(ItemDefn itemDefn, LocationComponent location)
+    {
+        var spot = Worker.AssignedBuilding.GetClosestUnreservedStorageSpotWithItem(location, itemDefn, out float _);
+        Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.AssignedBuilding.DefnId);
+
+        spot.Reservation.ReserveBy(Worker);
+        ReservedCraftingResourceStorageSpots.Add(spot);
+        return spot;
+    }
+
+    void unreserveBuildingCraftingResourceSpot(StorageSpotData spot)
+    {
+        spot.Reservation.Unreserve();
+        ReservedCraftingResourceStorageSpots.Remove(spot);
+    }
+
+    StorageSpotData getNextReservedCraftingResourceStorageSpot()
+    {
+        Debug.Assert(ReservedCraftingResourceStorageSpots.Count > 0, "getting crafting resource spot, but none remain");
+        return ReservedCraftingResourceStorageSpots[0];
     }
 }

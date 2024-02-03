@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public delegate void OnAssignedToBuildingEvent();
@@ -196,4 +197,32 @@ public class WorkerData : BaseData
         StorageSpotReservedForItemInHand.Reservation.Unreserve();
         StorageSpotReservedForItemInHand = null;
     }
+
+
+    public void UnreserveFirstReservedByWorker<T>(List<T> reservablesToCheck) where T : IReservationProvider
+    {
+        foreach (var reservable in reservablesToCheck)
+            if (reservable.Reservation.ReservedBy == this)
+            {
+                Debug.Assert(reservable.Reservation.IsReserved, "Spot has reservedby but isreserved=false");
+                reservable.Reservation.Unreserve();
+                return;
+            }
+
+        Debug.Assert(false, "Unreserving spot which isn't reserved by Worker");
+    }
+
+    public T ReserveFirstReservable<T>(List<T> reservablesToCheck) where T : IReservationProvider
+    {
+        foreach (var reservable in reservablesToCheck)
+            if (!reservable.Reservation.IsReserved)
+            {
+                reservable.Reservation.ReserveBy(this);
+                return reservable;
+            }
+
+        Debug.Assert(false, "Reserving craftingspot but none available");
+        return default;
+    }
+
 }

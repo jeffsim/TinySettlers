@@ -42,18 +42,12 @@ public class WorkerTask_SellItem : WorkerTask
     // TODO: Pooling
     public static WorkerTask_SellItem Create(WorkerData worker, NeedData needData, StorageSpotData spotWithItemToSell)
     {
-        return new WorkerTask_SellItem(worker, needData, spotWithItemToSell);
+        return new(worker, needData, spotWithItemToSell);
     }
 
     private WorkerTask_SellItem(WorkerData worker, NeedData needData, StorageSpotData spotWithItemToSell) : base(worker, needData)
     {
-        this.spotWithItemToSell = spotWithItemToSell;
-    }
-
-    public override void Start()
-    {
-        base.Start();
-        reserveStorageSpot(spotWithItemToSell);
+        this.spotWithItemToSell = ReserveSpotOnStart(spotWithItemToSell);
     }
 
     // Note: this is called when any building is destroyed, not just "this task's" building
@@ -75,7 +69,7 @@ public class WorkerTask_SellItem : WorkerTask
                 // We found an alternative spot; the cleanest thing here would be to simply drop the item anyways, but then the 
                 // worker will drop and then on next update pick it back up.  Instead, what we'll do is fake our way into a state
                 // where we continue to hold onto to the item, but are ready to instantly start carrying it to the new spot.
-                ReservedStorageSpots.Remove(spotWithItemToSell);
+                ReservedSpots.Remove(spotWithItemToSell);
                 Worker.StorageSpotReservedForItemInHand = newSpot;
                 Worker.OriginalPickupItemNeed = NeedData.CreateAbandonedItemCleanupNeed(Worker.ItemInHand);
             }
@@ -110,7 +104,7 @@ public class WorkerTask_SellItem : WorkerTask
                 break;
 
             case (int)WorkerTask_SellItemSubstate.PickupItemToSell:
-                if (getPercentSubstateDone(secondsToPickup) == 1)
+                if (IsSubstateDone(secondsToPickup))
                 {
                     Worker.AddItemToHands(spotWithItemToSell.ItemContainer.ClearItem());
                     Worker.StorageSpotReservedForItemInHand = null; // TODO
@@ -119,7 +113,7 @@ public class WorkerTask_SellItem : WorkerTask
                 break;
 
             case (int)WorkerTask_SellItemSubstate.SellItem:
-                if (getPercentSubstateDone(secondsToSell) == 1)
+                if (IsSubstateDone(secondsToSell))
                 {
                     var item = Worker.RemoveItemFromHands();
                     Worker.Town.ItemSold(item);

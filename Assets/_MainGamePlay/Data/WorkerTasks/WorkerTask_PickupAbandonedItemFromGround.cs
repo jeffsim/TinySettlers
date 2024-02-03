@@ -40,7 +40,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
     // TODO: Pooling
     public static WorkerTask_PickupAbandonedItemFromGround Create(WorkerData worker, NeedData needData, StorageSpotData spotToReserve)
     {
-        return new WorkerTask_PickupAbandonedItemFromGround(worker, needData, spotToReserve);
+        return new(worker, needData, spotToReserve);
     }
 
     private WorkerTask_PickupAbandonedItemFromGround(WorkerData worker, NeedData needData, StorageSpotData reservedSpotToStoreItemIn) : base(worker, needData)
@@ -49,16 +49,13 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
 
         // While this task is simply to go pick up an item, we wouldn't start the task if we didn't know that there was at least one place that we could bring the
         // resource to; we reserve that so that if no building needs it after we pick it up, we can still store it somewhere
-        this.reservedSpotToStoreItemIn = reservedSpotToStoreItemIn;
+        this.reservedSpotToStoreItemIn = ReserveSpotOnStart(reservedSpotToStoreItemIn);
     }
 
     public override void Start()
     {
         base.Start();
-
-        // Now that we've actually started the task, we can reserve the spots that were passed in above.
         Need.AssignWorkerToMeetNeed(Worker);
-        reserveStorageSpot(reservedSpotToStoreItemIn);
     }
 
     // Note: this is called when any building is destroyed, not just "this task's" building
@@ -71,11 +68,11 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
             if (newSpot == null)
                 Abandon(); // Failed to find an alternative.  TODO: Test this; e.g. town storage is full, destroy building that last item is being delivered to.
             else
-            { 
+            {
                 // Swap for new storage spot
-                ReservedStorageSpots.Remove(reservedSpotToStoreItemIn);
+                ReservedSpots.Remove(reservedSpotToStoreItemIn);
                 reservedSpotToStoreItemIn = newSpot;
-                ReservedStorageSpots.Add(reservedSpotToStoreItemIn);
+                ReservedSpots.Add(reservedSpotToStoreItemIn);
             }
         }
     }
@@ -92,7 +89,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
                 break;
 
             case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.PickupItemFromGround: // gather in the building.
-                if (getPercentSubstateDone(secondsToPickup) == 1)
+                if (IsSubstateDone(secondsToPickup))
                 {
                     CompleteTask();
                     Worker.Town.RemoveItemFromGround(ItemToPickup);
