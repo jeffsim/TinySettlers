@@ -192,7 +192,7 @@ public class TownData : BaseData
                 {
                     StorageSpotSearchType.Any => true,
                     StorageSpotSearchType.Primary => building.Defn.IsPrimaryStorage,
-                    StorageSpotSearchType.AssignedBuildingOrPrimary => building.Defn.IsPrimaryStorage || building == worker.AssignedBuilding,
+                    StorageSpotSearchType.AssignedBuildingOrPrimary => building.Defn.IsPrimaryStorage || building == worker.Assignment.AssignedTo,
                     _ => throw new Exception("unhandled search type " + searchType),
                 };
 
@@ -223,7 +223,7 @@ public class TownData : BaseData
                 {
                     StorageSpotSearchType.Any => true,
                     StorageSpotSearchType.Primary => building.Defn.IsPrimaryStorage,
-                    StorageSpotSearchType.AssignedBuildingOrPrimary => building.Defn.IsPrimaryStorage || building == worker.AssignedBuilding,
+                    StorageSpotSearchType.AssignedBuildingOrPrimary => building.Defn.IsPrimaryStorage || building == worker.Assignment.AssignedTo,
                     _ => throw new Exception("unhandled search type " + searchType),
                 };
 
@@ -317,11 +317,11 @@ public class TownData : BaseData
 
     // ====================================================================================================
     // Assign/Unassign worker from building
-    internal void UnassignWorkerFromBuilding(BuildingData data) => GetWorkerInBuilding(data)?.AssignToBuilding(Camp);
-    internal void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.AssignToBuilding(data);
+    internal void UnassignWorkerFromBuilding(BuildingData data) => GetWorkerInBuilding(data)?.Assignment.AssignTo(Camp);
+    internal void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.Assignment.AssignTo(data);
 
-    private WorkerData GetWorkerInBuilding(BuildingData building) => Workers.FirstOrDefault(worker => worker.AssignedBuilding == building);
-    internal int NumBuildingWorkers(BuildingData building) => Workers.Count(worker => worker.AssignedBuilding == building);
+    private WorkerData GetWorkerInBuilding(BuildingData building) => Workers.FirstOrDefault(worker => worker.Assignment.AssignedTo == building);
+    internal int NumBuildingWorkers(BuildingData building) => Workers.Count(worker => worker.Assignment.AssignedTo == building);
     internal int NumTotalItemsInStorage(ItemDefn neededItem) => Buildings.Sum(building => building.NumItemsOfTypeInStorage(neededItem));
     internal int NumTotalStorageSpots() => Buildings.Sum(building => building.NumStorageSpots);
 

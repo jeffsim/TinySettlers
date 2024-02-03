@@ -33,7 +33,7 @@ public class WorkerTask_Idle : WorkerTask
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
         // If we're moving towards the building that was moved, then update our movement target
-        if (building == Worker.AssignedBuilding)
+        if (building == Worker.Assignment.AssignedTo)
             if (IsWalkingToTarget)
                 idleMoveToDest += building.Location - previousLoc;
             else
@@ -57,7 +57,7 @@ public class WorkerTask_Idle : WorkerTask
             case (int)WorkerTask_IdleSubstate.WaitToGoToNewSpot: // wait to go to a new spot
                 if (IsSubstateDone(secondsToWait))
                 {
-                    idleMoveToDest.SetWorldLoc(Utilities.LocationWithinDistance(Worker.AssignedBuilding.Location, 3f));
+                    idleMoveToDest.SetWorldLoc(Utilities.LocationWithinDistance(Worker.Assignment.AssignedTo.Location, 3f));
              //       distanceMovedPerSecond = 3 + (UnityEngine.Random.value - .5f) * 1f;
                     GotoNextSubstate();
                 }
@@ -75,6 +75,6 @@ public class WorkerTask_Idle : WorkerTask
 
     private bool shouldMoveToAssignedBuilding()
     {
-        return Worker.Location.DistanceTo(Worker.AssignedBuilding.Location) > 5;
+        return Worker.Location.DistanceTo(Worker.Assignment.AssignedTo.Location) > 5;
     }
 }

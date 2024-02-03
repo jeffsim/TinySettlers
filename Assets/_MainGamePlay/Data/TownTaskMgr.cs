@@ -80,8 +80,8 @@ public class TownTaskMgr
         float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
         foreach (var worker in idleWorkers)
         {
-            if (worker.AssignedBuilding != need.BuildingWithNeed) continue; // worker must be assigned to the building that sells the item
-            if (worker.AssignedBuilding.IsPaused) continue;
+            if (worker.Assignment.AssignedTo != need.BuildingWithNeed) continue; // worker must be assigned to the building that sells the item
+            if (worker.Assignment.AssignedTo.IsPaused) continue;
             if (!worker.CanSellItems()) continue;
 
             var closestSpotWithItemToWorker = need.BuildingWithNeed.GetClosestUnreservedStorageSpotWithItemToReapOrSell(worker.Location, out float distanceToGatheringSpot);
@@ -116,7 +116,7 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
-            if (worker.AssignedBuilding.IsPaused) continue;
+            if (worker.Assignment.AssignedTo.IsPaused) continue;
             if (!worker.CanGoGetItemsBuildingsWant()) continue;
 
             // Determine which 'building with item' the idle worker can optimally gather from
@@ -174,8 +174,8 @@ public class TownTaskMgr
         float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
         foreach (var worker in idleWorkers)
         {
-            if (worker.AssignedBuilding != craftingBuilding) continue; // worker must be assigned to the building that crafts the item
-            if (worker.AssignedBuilding.IsPaused) continue;
+            if (worker.Assignment.AssignedTo != craftingBuilding) continue; // worker must be assigned to the building that crafts the item
+            if (worker.Assignment.AssignedTo.IsPaused) continue;
             if (!worker.CanCraftItems()) continue;
             // if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
 
@@ -210,7 +210,7 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
-            if (worker.AssignedBuilding.IsPaused) continue;
+            if (worker.Assignment.AssignedTo.IsPaused) continue;
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
             if (!worker.CanPickupAbandonedItems()) continue;
 
@@ -246,14 +246,14 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
-            if (worker.AssignedBuilding.IsPaused) continue;
+            if (worker.Assignment.AssignedTo.IsPaused) continue;
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
             spotWithItem = need.BuildingWithNeed.GetClosestStorageSpotWithUnreservedItemToRemove(worker.Location);
 
             // If worker can't cleanup items then skip
             // Allow workers that are in a non-primary building that needs cleanup to cleanup items in that building IFF that building is full
             var workerCanCleanUpStorage = worker.CanCleanupStorage();
-            var nonPrimaryBuildingWorkerWantsToCleanupOwnBuilding = worker.AssignedBuilding == need.BuildingWithNeed && !worker.AssignedBuilding.HasAvailableStorageSpot;
+            var nonPrimaryBuildingWorkerWantsToCleanupOwnBuilding = worker.Assignment.AssignedTo == need.BuildingWithNeed && !worker.Assignment.AssignedTo.HasAvailableStorageSpot;
             if (!workerCanCleanUpStorage && !nonPrimaryBuildingWorkerWantsToCleanupOwnBuilding) continue;
 
             float distanceToSpotWithItemToCleanup = worker.Location.DistanceTo(need.BuildingWithNeed.Location); // TODO: Ideally would be "storage spot" not "building"
@@ -289,7 +289,7 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
-            if (worker.AssignedBuilding.IsPaused) continue;
+            if (worker.Assignment.AssignedTo.IsPaused) continue;
             if (!worker.CanGatherResource(need.NeededItem)) continue;   // If worker can't gather [resource] then skip
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
 
@@ -359,7 +359,7 @@ public class TownTaskMgr
         // return true as soon as one worker is assigned
         foreach (var worker in idleWorkers)
         {
-            if (worker.AssignedBuilding.IsPaused) continue;
+            if (worker.Assignment.AssignedTo.IsPaused) continue;
             if (!worker.Hands.HasItem) continue; // idle worker isn't carrying anything
             Debug.Assert(worker.StorageSpotReservedForItemInHand != null, $"Worker {worker} is carrying item {worker.Hands.Item} but doesn't have a storage spot reserved for it");
 

@@ -74,7 +74,7 @@ public abstract class WorkerTask
     public virtual void Update()
     {
         Debug.Assert(IsRunning, "Updating nonrunning task (state = " + TaskState + ")");
-        Debug.Assert(Worker.AssignedBuilding != null, "Failed to cancel task when assigned building cleared");
+        Debug.Assert(Worker.Assignment.IsAssigned, "Failed to cancel task when assigned building cleared");
     }
 
     // ====================================================================================================================
@@ -139,14 +139,14 @@ public abstract class WorkerTask
     // ====================================================================================================================
     // Task completion
 
-    protected virtual void CompleteTask() => finishTask(TaskState.Completed, false);
-    public virtual void Abandon() => finishTask(TaskState.Abandoned, true);
+    protected virtual void CompleteTask() => finishTask(TaskState.Completed);
+    public virtual void Abandon() => finishTask(TaskState.Abandoned);
 
-    void finishTask(TaskState newState, bool abandoned)
+    void finishTask(TaskState newState)
     {
         ReservedSpots.ForEach(spot => spot.Reservation.Unreserve());
         TaskState = newState;
-        Worker.OnTaskCompleted(abandoned);
+        Worker.OnTaskCompleted();
     }
 
     // ====================================================================================================================

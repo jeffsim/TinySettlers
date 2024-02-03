@@ -24,13 +24,13 @@ public class Worker : MonoBehaviour
         transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, WorkerZ);
         updateVisual();
 
-        Data.OnAssignedToBuilding += OnAssignedToBuilding;
+        Data.Assignment.OnAssignedToChanged += OnAssignedToBuilding;
     }
 
     void OnDestroy()
     {
         if (Data != null)
-            Data.OnAssignedToBuilding -= OnAssignedToBuilding;
+            Data.Assignment.OnAssignedToChanged -= OnAssignedToBuilding;
     }
 
     public void OnMouseUp()
@@ -52,8 +52,8 @@ public class Worker : MonoBehaviour
 
     void updateVisual()
     {
-        GetComponentInChildren<Renderer>().material.color = Data.AssignedBuilding.Defn.AssignedWorkerColor;
-        name = "Worker - " + (Data.AssignedBuilding == null ? "none" : Data.AssignedBuilding.Defn.AssignedWorkerFriendlyName) + " (" + Data.InstanceId + ")";
+        GetComponentInChildren<Renderer>().material.color = Data.Assignment.AssignedTo.Defn.AssignedWorkerColor;
+        name = "Worker - " + (Data.Assignment.IsAssigned ? Data.Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + Data.InstanceId + ")" : "none");
     }
 
     public void Update()
@@ -215,7 +215,7 @@ public class Worker : MonoBehaviour
         // If this worker is assigned to currently selected building then highlight
         bool showHighlight = scene.BuildingDetails.isActiveAndEnabled &&
                              scene.BuildingDetails.building != null &&
-                             scene.BuildingDetails.building.Data == Data.AssignedBuilding;
+                             scene.BuildingDetails.building.Data == Data.Assignment.AssignedTo;
 
         // If this worker is currently selected then highlight
         if (scene.WorkerDetails.gameObject.activeSelf && scene.WorkerDetails.worker == this)

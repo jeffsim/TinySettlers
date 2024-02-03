@@ -23,7 +23,7 @@ public class MoveBuildingTests : TestBase
 
             // Move the building, verify new state
             if (i == 0) Town.MoveBuilding(StoneMine, 2, 0);
-            else if (i == 1) Town.MoveBuilding(miner.AssignedBuilding, 2, 0);
+            else if (i == 1) Town.MoveBuilding(miner.Assignment.AssignedTo, 2, 0);
             else Town.MoveBuilding(Camp, 2, 0);
 
             // Verify reserved spots remain so
@@ -63,7 +63,7 @@ public class MoveBuildingTests : TestBase
 
             // Move the building, verify new state
             if (i == 0) Town.MoveBuilding(StoneMine, 2, 0);
-            else if (i == 1) Town.MoveBuilding(miner.AssignedBuilding, 2, 0);
+            else if (i == 1) Town.MoveBuilding(miner.Assignment.AssignedTo, 2, 0);
             else Town.MoveBuilding(Camp, 2, 0);
 
             // verify miner's task remains the same
@@ -97,7 +97,7 @@ public class MoveBuildingTests : TestBase
 
             // Move the building, verify new state
             if (i == 0) Town.MoveBuilding(StoneMine, 2, 0);
-            else if (i == 1) Town.MoveBuilding(miner.AssignedBuilding, 2, 0);
+            else if (i == 1) Town.MoveBuilding(miner.Assignment.AssignedTo, 2, 0);
             else Town.MoveBuilding(Camp, 2, 0);
 
             // verify miner's task remains the same
@@ -129,7 +129,7 @@ public class MoveBuildingTests : TestBase
 
             // Move the building, verify new state
             if (i == 0) Town.MoveBuilding(StoneMine, 2, 0);
-            else if (i == 1) Town.MoveBuilding(miner.AssignedBuilding, 2, 0);
+            else if (i == 1) Town.MoveBuilding(miner.Assignment.AssignedTo, 2, 0);
             else Town.MoveBuilding(Camp, 2, 0);
 
             // verify miner is moving to the new storage loc
@@ -177,7 +177,7 @@ public class MoveBuildingTests : TestBase
 
             // Move the building, verify new state
             if (i == 0) Town.MoveBuilding(StoneMine, 2, 0);
-            else if (i == 1) Town.MoveBuilding(miner.AssignedBuilding, 2, 0);
+            else if (i == 1) Town.MoveBuilding(miner.Assignment.AssignedTo, 2, 0);
             else Town.MoveBuilding(Camp, 2, 0);
 
             // verify miner's task remains the same

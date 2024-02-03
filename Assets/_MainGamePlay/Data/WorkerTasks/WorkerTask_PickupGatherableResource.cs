@@ -84,7 +84,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         }
 
         // If our worker's building is the one that was paused then cancel this task regardless of substate
-        if (Worker.AssignedBuilding == building)
+        if (Worker.Assignment.AssignedTo == building)
         {
             Worker.CurrentTask.Abandon();
             return;

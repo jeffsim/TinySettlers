@@ -92,7 +92,7 @@ public class WorkerTask_CraftItem : WorkerTask
     // Note: this is called when any building is destroyed, not just "this task's" building
     public override void OnBuildingDestroyed(BuildingData building)
     {
-        if (building != Worker.AssignedBuilding) return; // Only care if our building was the one that was destroyed
+        if (building != Worker.Assignment.AssignedTo) return; // Only care if our building was the one that was destroyed
 
         switch ((WorkerTask_CraftItemSubstate)substate)
         {
@@ -129,7 +129,7 @@ public class WorkerTask_CraftItem : WorkerTask
 
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
-        if (building != Worker.AssignedBuilding) return;
+        if (building != Worker.Assignment.AssignedTo) return;
         if (IsWalkingToTarget)
             LastMoveToTarget += building.Location - previousLoc;
         else
@@ -139,7 +139,7 @@ public class WorkerTask_CraftItem : WorkerTask
     public override void OnBuildingPauseToggled(BuildingData building)
     {
         // TODO (FUTURE): This causes the player to lose items if the building is paused e.g. mid-crafting.  Not ideal, but will accept for now to keep code simpler
-        if (building == Worker.AssignedBuilding)
+        if (building == Worker.Assignment.AssignedTo)
             Abandon();
     }
 
@@ -224,7 +224,7 @@ public class WorkerTask_CraftItem : WorkerTask
         if (itemBeingCrafted.GoodType == GoodType.explicitGood)
             Worker.Hands.SetItem(new ItemData() { DefnId = CraftingItemDefnId });
         else
-            Worker.AssignedBuilding.Town.Gold += 100; // implicit good (e.g. gold) - done // todo: hardcoded
+            Worker.Assignment.AssignedTo.Town.Gold += 100; // implicit good (e.g. gold) - done // todo: hardcoded
     }
 
     bool HasMoreCraftingResourcesToGet()
@@ -234,8 +234,8 @@ public class WorkerTask_CraftItem : WorkerTask
 
     IReservationProvider reserveCraftingResourceStorageSpotForItem(ItemDefn itemDefn, LocationComponent location)
     {
-        var spot = Worker.AssignedBuilding.GetClosestUnreservedStorageSpotWithItem(location, itemDefn);
-        Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.AssignedBuilding.DefnId);
+        var spot = Worker.Assignment.AssignedTo.GetClosestUnreservedStorageSpotWithItem(location, itemDefn);
+        Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.Assignment.AssignedTo.DefnId);
         ReserveSpot(spot);
         return spot;
     }

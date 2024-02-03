@@ -1,5 +1,14 @@
+
+
+
+
+* BUG: rapidly pause/unpause crafting station or storageroom; get "unrserving alreayd reserved spot"
+
+
+
 * add: primary storage: specify per-building hwt can be stored (defaults to 'anything')
     - silo: can only store items of type 'food'
+
 
 * Add building construction
 * if two workers are going to pick up items from the same storagepile then have the second one wait while the first-to-arrive is picking up their item

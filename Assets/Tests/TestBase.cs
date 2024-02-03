@@ -71,7 +71,7 @@ public abstract class TestBase
     protected WorkerData getAssignedWorker(string assignedBuildingId, int num = 0)
     {
         foreach (var worker in Town.Workers)
-            if (worker.AssignedBuilding.DefnId == assignedBuildingId)
+            if (worker.Assignment.AssignedTo.DefnId == assignedBuildingId)
                 if (--num == -1)
                     return worker;
         Assert.Fail($"{preface()} failed to get worker {num} in building {assignedBuildingId}");
@@ -158,7 +158,7 @@ public abstract class TestBase
     {
         Assert.NotNull(worker, $"{preface()} Expected worker {worker} to be assigned to {building}, but worker is null");
         Assert.NotNull(building, $"{preface()} Expected worker {worker} to be assigned to {building}, but building is null");
-        Assert.AreEqual(worker.AssignedBuilding, building, $"{preface()} Expected worker {worker} to be assigned to {building}, but worker is assigned to '{worker.AssignedBuilding}'");
+        Assert.AreEqual(worker.Assignment.AssignedTo, building, $"{preface()} Expected worker {worker} to be assigned to {building}, but worker is assigned to '{worker.Assignment.AssignedTo}'");
     }
 
     protected void verify_ItemInHand(WorkerData worker, string itemDefnId)
@@ -178,7 +178,7 @@ public abstract class TestBase
 
     protected void forceMoveWorkerAwayFromAssignedBuilding(WorkerData worker)
     {
-        var loc = worker.AssignedBuilding.Location.WorldLoc + new Vector3(1, 0, 0);
+        var loc = worker.Assignment.AssignedTo.Location.WorldLoc + new Vector3(1, 0, 0);
         worker.Location.SetWorldLoc(loc.x, loc.y);
     }
 

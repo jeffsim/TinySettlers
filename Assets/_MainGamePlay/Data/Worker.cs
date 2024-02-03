@@ -1,32 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
-public delegate void OnAssignedToBuildingEvent();
-
 [Serializable]
-public class WorkerData : BaseData
+public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
 {
-    public override string ToString() => AssignedBuilding.Defn.AssignedWorkerFriendlyName + " (" + InstanceId + ")";// + "-" + worker.Data.UniqueId;
+    public override string ToString() => Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + InstanceId + ")";// + "-" + worker.Data.UniqueId;
 
-    public LocationComponent Location;
-    public ItemContainerComponent Hands = new();
+    [SerializeField] public LocationComponent Location { get; set; }
+    [SerializeField] public AssignmentComponent Assignment { get; set; } = new();
+    [SerializeField] public ItemContainerComponent Hands { get; set; } = new();
 
     public WorkerTask CurrentTask;
-    public BuildingData AssignedBuilding;
 
     public bool IsIdle => CurrentTask.Type == TaskType.Idle;
 
     public WorkerTask_Idle IdleTask;
 
-    // The Town which this Worker is in
     public TownData Town;
 
     public StorageSpotData StorageSpotReservedForItemInHand;
 
     public NeedData OriginalPickupItemNeed;
-
-    [NonSerialized] public OnAssignedToBuildingEvent OnAssignedToBuilding;
 
     public WorkerData(BuildingData buildingToStartIn)
     {
@@ -34,32 +30,17 @@ public class WorkerData : BaseData
 
         Town = buildingToStartIn.Town;
 
-        if (buildingToStartIn != null)
-            AssignToBuilding(buildingToStartIn);
+        Assignment.AssignTo(buildingToStartIn);
+        Assignment.OnAssignedToChanged += () => CurrentTask?.Abandon();  // TODO: I *think* this doesn't need to be cleaned up on destroy (?)
 
         CurrentTask = IdleTask = WorkerTask_Idle.Create(this);
         CurrentTask.Start(); // start out idling
     }
 
-    internal void AssignToBuilding(BuildingData building)
-    {
-        Debug.Assert(building != AssignedBuilding, "Reassigning to same building");
-        Debug.Assert(building != null, "Assigning to null building");
-
-        CurrentTask?.Abandon();
-        AssignedBuilding = building;
-        OnAssignedToBuilding?.Invoke();
-    }
-
-    internal void OnTaskCompleted(bool wasAbandoned)
+    internal void OnTaskCompleted()
     {
         CurrentTask = IdleTask;
         CurrentTask.Start();
-    }
-
-    public void Update()
-    {
-        CurrentTask.Update();
     }
 
     internal void OnNeedBeingMetCancelled()
@@ -71,29 +52,17 @@ public class WorkerData : BaseData
     // what we should do (if anything).
     public void OnBuildingDestroyed(BuildingData building)
     {
-        CurrentTask?.OnBuildingDestroyed(building);
+        CurrentTask.OnBuildingDestroyed(building);
 
         // If we are assigned to the destroyed building, then assign ourselves to the Camp instead
-        if (AssignedBuilding == building)
-            AssignToBuilding(Town.Camp);
+        if (Assignment.AssignedTo == building)
+            Assignment.AssignTo(Town.Camp);
     }
 
-    public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
-    {
-        CurrentTask?.OnBuildingMoved(building, previousLoc);
-    }
-
-    public void OnBuildingPauseToggled(BuildingData building)
-    {
-        CurrentTask?.OnBuildingPauseToggled(building);
-    }
-
-    public void Destroy()
-    {
-        // Unassign from building; this will abandon current Task
-        if (AssignedBuilding != null)
-            AssignToBuilding(null);
-    }
+    // pass throughs to current task
+    public void Update() => CurrentTask.Update();
+    public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc) => CurrentTask.OnBuildingMoved(building, previousLoc);
+    public void OnBuildingPauseToggled(BuildingData building) => CurrentTask.OnBuildingPauseToggled(building);
 
     internal bool HasPathToBuilding(BuildingData buildingWithNeed)
     {
@@ -116,112 +85,56 @@ public class WorkerData : BaseData
         return distanceMovedPerSecond;
     }
 
-    // internal void AddItemToHands(ItemData item)
-    // {
-    //     Debug.Assert(item != null, "null item");
-    //     Debug.Assert(ItemInHand == null, "Already have ItemInHand (" + ItemInHand + ")");
-    //     ItemInHand = item;
-    // }
-
-    // internal ItemData RemoveItemFromHands()
-    // {
-    //     Debug.Assert(ItemInHand != null, "No  ItemInHand");
-    //     var item = ItemInHand;
-    //     ItemInHand = null;
-    //     return item;
-    // }
-
     internal void DropItemInHandInReservedStorageSpot()
     {
         Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
         Debug.Assert(StorageSpotReservedForItemInHand.Building != null, "No ItemInHand");
         Debug.Assert(!StorageSpotReservedForItemInHand.Building.IsDestroyed, "Building destroyed");
-        Debug.Assert(Hands != null, "No ItemInHand");
+        Debug.Assert(Hands.HasItem, "No ItemInHand");
 
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
-        StorageSpotReservedForItemInHand.ItemContainer.SetItem(Hands.Item);
-        Hands.ClearItem();
-        UnreserveStorageSpotReservedForItemInHand();
-    }
-
-    internal bool CanGatherResource(ItemDefn neededItem)
-    {
-        // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
-        // worker is assigned to building and/or by worker's defn
-        return (AssignedBuilding.Defn.CanGatherResources && AssignedBuilding.Defn.GatherableResources.Contains(neededItem))
-                 //  || AssignedBuilding.Defn.IsPrimaryStorage
-                 ;
-    }
-
-    internal bool CanCleanupStorage()
-    {
-        // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
-        // worker is assigned to building and/or by worker's defn
-        return AssignedBuilding.Defn.WorkersCanFerryItems;
-    }
-
-    internal bool CanPickupAbandonedItems()
-    {
-        // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
-        // worker is assigned to building and/or by worker's defn
-        return AssignedBuilding.Defn.WorkersCanFerryItems;
-    }
-
-    internal bool CanGoGetItemsBuildingsWant()
-    {
-        // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
-        // worker is assigned to building and/or by worker's defn
-        return AssignedBuilding.Defn.WorkersCanFerryItems;
-    }
-
-    internal bool CanCraftItems()
-    {
-        // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
-        // worker is assigned to building and/or by worker's defn
-        return AssignedBuilding.Defn.CanCraft;
-    }
-
-    internal bool CanSellItems()
-    {
-        // TODO: Rather than tie to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
-        // worker is assigned to building and/or by worker's defn
-        return AssignedBuilding.Defn.CanSellGoods;
-    }
-
-    internal void UnreserveStorageSpotReservedForItemInHand()
-    {
-        Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
-        Debug.Assert(StorageSpotReservedForItemInHand.Reservation.ReservedBy == this, "StorageSpotReservedForItemInHand.ReservedBy != this");
-
+        StorageSpotReservedForItemInHand.ItemContainer.SetItem(Hands.ClearItem());
         StorageSpotReservedForItemInHand.Reservation.Unreserve();
         StorageSpotReservedForItemInHand = null;
     }
 
+    // TODO: Rather than tie following to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
+    // worker is assigned to building and/or by worker's defn
+    internal bool CanCleanupStorage() => Assignment.AssignedTo.Defn.WorkersCanFerryItems;
+    internal bool CanPickupAbandonedItems() => Assignment.AssignedTo.Defn.WorkersCanFerryItems;
+    internal bool CanGoGetItemsBuildingsWant() => Assignment.AssignedTo.Defn.WorkersCanFerryItems;
+    internal bool CanCraftItems() => Assignment.AssignedTo.Defn.CanCraft;
+    internal bool CanSellItems() => Assignment.AssignedTo.Defn.CanSellGoods;
+    internal bool CanGatherResource(ItemDefn neededItem) => Assignment.AssignedTo.Defn.CanGatherResources && Assignment.AssignedTo.Defn.GatherableResources.Contains(neededItem);
 
     public void UnreserveFirstReservedByWorker<T>(List<T> reservablesToCheck) where T : IReservationProvider
     {
-        foreach (var reservable in reservablesToCheck)
-            if (reservable.Reservation.ReservedBy == this)
-            {
-                Debug.Assert(reservable.Reservation.IsReserved, "Spot has reservedby but isreserved=false");
-                reservable.Reservation.Unreserve();
-                return;
-            }
+        var firstReservedByWorker = reservablesToCheck.FirstOrDefault(reservable => reservable.Reservation.ReservedBy == this);
+        if (firstReservedByWorker != null)
+        {
+            firstReservedByWorker.Reservation.Unreserve();
+            return;
+        }
 
         Debug.Assert(false, "Unreserving spot which isn't reserved by Worker");
     }
 
     public T ReserveFirstReservable<T>(List<T> reservablesToCheck) where T : IReservationProvider
     {
-        foreach (var reservable in reservablesToCheck)
-            if (!reservable.Reservation.IsReserved)
-            {
-                reservable.Reservation.ReserveBy(this);
-                return reservable;
-            }
+        var firstReservable = reservablesToCheck.First(reservable => !reservable.Reservation.IsReserved);
+        if (firstReservable != null)
+        {
+            firstReservable.Reservation.ReserveBy(this);
+            return firstReservable;
+        }
 
         Debug.Assert(false, "Reserving craftingspot but none available");
         return default;
     }
 
+    public void Destroy()
+    {
+        if (Assignment.IsAssigned)
+            Assignment.UnassignFrom();
+    }
 }
