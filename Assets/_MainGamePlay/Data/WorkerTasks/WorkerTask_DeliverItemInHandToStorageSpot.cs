@@ -52,6 +52,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
                 Debug.Assert(false, "Failed to find *any* spot to store in.  Shouldn't happen since we already had one reserved");
         }
 
+        if (movedBuilding != Worker.AssignedBuilding) return;
         if (IsWalkingToTarget)
             LastMoveToTarget += movedBuilding.Location - previousLoc;
         else

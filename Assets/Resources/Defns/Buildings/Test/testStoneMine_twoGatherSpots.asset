@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: testStoneMine_twoGatherSpots
   m_EditorClassIdentifier: 
   Id: testStoneMine_twoGatherSpots
-  BuildingColor: {r: 0.4433962, g: 0.4433962, b: 0.4433962, a: 0}
+  BuildingColor: {r: 0.44313726, g: 0.44313726, b: 0.44313726, a: 1}
   FriendlyName: s2_testStoneMine_twoGatherSpots
   IsTestBuilding: 1
   BuildingClass: 2
@@ -24,6 +24,7 @@ MonoBehaviour:
   EditorColor: {r: 0.3207547, g: 0.3207547, b: 0.3207547, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
+  PlayerCanPause: 1
   CanBeConstructed: 0
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
@@ -32,8 +33,7 @@ MonoBehaviour:
   CraftingSpots: []
   CanStoreItems: 0
   IsPrimaryStorage: 0
-  StorageAreaLocations: []
-  StorageAreaSize: {x: 3, y: 3}
+  StorageAreas: []
   WorkersCanFerryItems: 0
   CanGatherResources: 0
   GatherableResources: []

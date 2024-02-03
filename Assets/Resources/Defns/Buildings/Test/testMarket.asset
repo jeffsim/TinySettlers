@@ -18,7 +18,7 @@ MonoBehaviour:
   IsTestBuilding: 0
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.8796489, g: 1, b: 0, a: 0}
-  AssignedWorkerFriendlyName: Marketer
+  AssignedWorkerFriendlyName: test Marketer
   HasWorkers: 1
   MaxWorkers: 2
   EditorColor: {r: 1, g: 0.6673894, b: 0.009433806, a: 1}
@@ -33,9 +33,6 @@ MonoBehaviour:
   CraftingSpots: []
   CanStoreItems: 1
   IsPrimaryStorage: 0
-  StorageAreaLocations:
-  - {x: 0, y: 0, z: 0}
-  StorageAreaSize: {x: 3, y: 3}
   StorageAreas:
   - Location: {x: 0, y: 0, z: 0}
     StorageAreaSize: {x: 3, y: 3}

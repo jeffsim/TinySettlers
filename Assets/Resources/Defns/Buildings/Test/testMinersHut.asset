@@ -18,7 +18,7 @@ MonoBehaviour:
   IsTestBuilding: 1
   BuildingClass: 2
   AssignedWorkerColor: {r: 1, g: 0.50591254, b: 0, a: 0}
-  AssignedWorkerFriendlyName: 
+  AssignedWorkerFriendlyName: test Miner
   HasWorkers: 1
   MaxWorkers: 4
   EditorColor: {r: 0.24528301, g: 0.12491265, b: 0, a: 1}
@@ -33,9 +33,6 @@ MonoBehaviour:
   CraftingSpots: []
   CanStoreItems: 1
   IsPrimaryStorage: 0
-  StorageAreaLocations:
-  - {x: 0, y: 0, z: 0}
-  StorageAreaSize: {x: 3, y: 3}
   StorageAreas:
   - Location: {x: 0, y: 0, z: 0}
     StorageAreaSize: {x: 3, y: 3}
