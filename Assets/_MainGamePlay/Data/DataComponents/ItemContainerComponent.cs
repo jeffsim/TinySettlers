@@ -9,6 +9,7 @@ public class ItemContainerComponent : BaseData
     public ItemData Item;
     public bool IsEmpty => Item == null;
     public bool HasItem => Item != null;
+    internal bool ContainsItem(ItemDefn itemDefn) => Item != null && Item.DefnId == itemDefn.Id;
 
     public void SetItem(ItemData item)
     {
@@ -22,4 +23,5 @@ public class ItemContainerComponent : BaseData
         Item = null;
         return itemToRemove;
     }
+
 }

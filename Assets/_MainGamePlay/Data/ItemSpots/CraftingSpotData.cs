@@ -6,14 +6,12 @@ using UnityEngine;
 [Serializable]
 public class CraftingSpotData : BaseData
 {
-    public override string ToString() => CraftingResourcesInSpot.Count == 0 ? "empty" : "{" + string.Join(", ", CraftingResourcesInSpot.Select(item => item)) + "}";
+    public override string ToString() => ItemsContainer.ToString();
 
     public BuildingData Building;
-    public List<ItemData> CraftingResourcesInSpot = new();
-
     public LocationComponent Location;
     public ReservationComponent Reservation = new();
-    public ItemContainerComponent ItemContainer = new();
+    public MultipleItemContainerComponent ItemsContainer = new();
 
     public CraftingSpotData(BuildingData building, int index)
     {
@@ -22,21 +20,11 @@ public class CraftingSpotData : BaseData
         Location = new(building.Location, building.Defn.CraftingSpots[index].x, building.Defn.CraftingSpots[index].y);
     }
 
-    public void AddItem(ItemData item)
-    {
-        CraftingResourcesInSpot.Add(item);
-    }
-
-    public void ConsumeAllCraftingResources()
-    {
-        CraftingResourcesInSpot.Clear();
-    }
-
     internal void OnBuildingDestroyed()
     {
         // drop crafting resources onto the ground
-        foreach (var item in CraftingResourcesInSpot)
+        foreach (var item in ItemsContainer.Items)
             Building.Town.AddItemToGround(item, Location);
-        CraftingResourcesInSpot.Clear();
+        ItemsContainer.ClearItems();
     }
 }

@@ -1,6 +1,8 @@
 * add: primary storage: specify per-building hwt can be stored (defaults to 'anything')
     - silo: can only store items of type 'food'
 
+* Add building construction
+
 * major change would be: instead of fixed spots per storagepile, make it based on the item type in the pile. can store 4 logs or 16 cups or 2 stone...
 
 * Do economic chains work?

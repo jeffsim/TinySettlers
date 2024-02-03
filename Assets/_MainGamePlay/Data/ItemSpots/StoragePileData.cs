@@ -26,11 +26,11 @@ public class StoragePileData : BaseData
         Area = area;
         IndexInStorageArea = pileIndex;
         Building = area.Building;
-        Location = new LocationComponent(area.Location, localLoc.x, localLoc.y);
+        Location = new LocationComponent(area.Location, localLoc);
 
-        for (int i = 0, y1 = 0; y1 < areaDefn.StoragePileSize.y; y1++)
-            for (int x1 = 0; x1 < areaDefn.StoragePileSize.x; x1++, i++)
-                StorageSpots.Add(new(this, i));
+        var numSpots = areaDefn.StoragePileSize.x * areaDefn.StoragePileSize.y;
+        for (int i = 0; i < numSpots; i++)
+            StorageSpots.Add(new(this, i));
     }
 
     public int NumItemsInStorage(ItemDefn itemDefn = null)
@@ -43,12 +43,9 @@ public class StoragePileData : BaseData
 
     public int NumUnreservedItemsInStorage(ItemDefn itemDefn = null)
     {
-        // TODO (perf): Dictionary lookup
-        int count = 0;
-        foreach (var spot in StorageSpots)
-            if (!spot.ItemContainer.IsEmpty && (itemDefn == null ||
-            (!spot.Reservation.IsReserved && spot.ItemContainer.Item.DefnId == itemDefn.Id))) count++;
-        return count;
+        if (itemDefn == null)
+            return StorageSpots.Count(spot => !spot.Reservation.IsReserved && !spot.ItemContainer.IsEmpty);
+        return StorageSpots.Count(spot => !spot.Reservation.IsReserved && spot.ItemContainer.ContainsItem(itemDefn));
     }
 
     internal void OnBuildingDestroyed()
@@ -56,6 +53,7 @@ public class StoragePileData : BaseData
         foreach (var spot in StorageSpots)
             spot.OnBuildingDestroyed();
     }
+    
     internal void Debug_RemoveAllItemsFromStorage()
     {
         foreach (var spot in StorageSpots)
