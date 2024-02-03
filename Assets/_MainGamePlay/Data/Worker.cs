@@ -9,9 +9,8 @@ public class WorkerData : BaseData
 {
     public override string ToString() => AssignedBuilding.Defn.AssignedWorkerFriendlyName + " (" + InstanceId + ")";// + "-" + worker.Data.UniqueId;
 
-
-    // Position within the current Map
     public LocationComponent Location;
+    public ItemContainerComponent Hands = new();
 
     public WorkerTask CurrentTask;
     public BuildingData AssignedBuilding;
@@ -23,7 +22,6 @@ public class WorkerData : BaseData
     // The Town which this Worker is in
     public TownData Town;
 
-    public ItemContainerComponent Hands = new();
     public StorageSpotData StorageSpotReservedForItemInHand;
 
     public NeedData OriginalPickupItemNeed;
