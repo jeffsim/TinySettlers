@@ -28,4 +28,10 @@ public class AssignmentComponent : BaseData
         AssignedTo = null;
         OnAssignedToChanged?.Invoke();
     }
+
+    public void OnDestroyed()
+    {
+        if (IsAssigned)
+            UnassignFrom();
+    }
 }

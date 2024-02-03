@@ -109,7 +109,7 @@ public class TownData : BaseData
     public void DestroyWorker(WorkerData worker)
     {
         Workers.Remove(worker);
-        worker.Destroy();
+        worker.OnDestroyed();
     }
 
     public void MoveBuilding(BuildingData building, int tileX, int tileY)

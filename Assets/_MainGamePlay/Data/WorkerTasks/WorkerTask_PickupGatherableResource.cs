@@ -42,7 +42,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
     public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     {
         // If our target resource-gathering building was destroyed and then abandon
-        if (destroyedBuilding == OptimalGatheringSpot.Building && substate < 2)
+        if (destroyedBuilding == OptimalGatheringSpot.Building && substate < (int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource)
         {
             Abandon();
             return;
@@ -75,26 +75,20 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
 
     public override void OnBuildingPauseToggled(BuildingData building)
     {
+        // If (a) our worker's building is the one that was paused or (b) the building from which we are gathering was paused, then abandon this task
+        if (building.IsPaused && (Worker.Assignment.AssignedTo == building || building == OptimalGatheringSpot.Building))
+        {
+            Worker.AI.CurrentTask.Abandon();
+            return;
+        }
+
         var newSpot = FindNewOptimalStorageSpotToDeliverItemTo(ReservedStorageSpot, OptimalGatheringSpot.Location);
         if (newSpot != ReservedStorageSpot)
         {
+            // Swap for new, more optimal storage spot
             ReservedSpots.Remove(ReservedStorageSpot);
             ReservedStorageSpot = newSpot;
             ReservedSpots.Add(ReservedStorageSpot);
-        }
-
-        // If our worker's building is the one that was paused then cancel this task regardless of substate
-        if (Worker.Assignment.AssignedTo == building)
-        {
-            Worker.AI.CurrentTask.Abandon();
-            return;
-        }
-
-        // If the building from which we are gathering was paused then abandon this task
-        if (building == OptimalGatheringSpot.Building)
-        {
-            Worker.AI.CurrentTask.Abandon();
-            return;
         }
     }
 
@@ -111,10 +105,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
 
             case (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource: // reap item (e.g. cut down tree)
                 if (IsSubstateDone(secondsToReap))
-                {
-                    // Done reaping.
                     GotoNextSubstate();
-                }
                 break;
 
             case (int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource: // gather in the building.

@@ -51,18 +51,6 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc) => AI.CurrentTask.OnBuildingMoved(building, previousLoc);
     public void OnBuildingPauseToggled(BuildingData building) => AI.CurrentTask.OnBuildingPauseToggled(building);
 
-    internal bool HasPathToBuilding(BuildingData buildingWithNeed)
-    {
-        // TODO
-        return true;
-    }
-
-    internal bool HasPathToItemOnGround(ItemData itemOnGround)
-    {
-        // TODO
-        return true;
-    }
-
     internal float GetMovementSpeed()
     {
         // todo: can be modified via e.g. research, town upgrades, ...
@@ -119,9 +107,8 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
         return default;
     }
 
-    public void Destroy()
+    public void OnDestroyed()
     {
-        if (Assignment.IsAssigned)
-            Assignment.UnassignFrom();
+        Assignment.OnDestroyed();
     }
 }
