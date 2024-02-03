@@ -5,7 +5,7 @@
 //     [Test]
 //     public void BasicCraftingWorks()
 //     {
-//         LoadTestTown("testTown1");
+//         LoadTestTown("testTown1", i);
 
 //         // Verify starting state
 //         var miner = getAssignedWorker(MinersHut.DefnId);

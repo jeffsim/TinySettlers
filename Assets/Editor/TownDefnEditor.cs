@@ -54,8 +54,9 @@ public class TownDefnEditor : OdinEditor
 
         foreach (var buildingDefn in mapDefn.Buildings)
         {
+            if (!buildingDefn.IsEnabled) continue;
             var finalX = rect.x + buildingDefn.TileX * tileSize;
-            var finalY = rect.y + buildingDefn.TileY * tileSize;
+            var finalY = rect.y + ((mapDefn.Height - 1) * tileSize - buildingDefn.TileY * tileSize);
             var buildingRect = new Rect(finalX + 2, finalY + 2, tileSize - 1 - 4, tileSize - 1 - 4);
             EditorGUI.DrawRect(buildingRect, buildingDefn.Building.EditorColor);
             var name = buildingDefn.Building.FriendlyName;

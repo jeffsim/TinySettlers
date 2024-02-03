@@ -18,7 +18,7 @@ namespace DestroyBuildingTests
             for (int i = 0; i < substates.Length; i++)
             {
                 // Set up town with one market building in the middle, one item to sell in the market's storage, and one worker assigned to the building
-                LoadTestTown("selling_town1");
+                LoadTestTown("selling_town1", i);
                 var seller = getAssignedWorker(Market);
 
                 waitUntilTaskAndSubstate(seller, TaskType.SellItem, (int)substates[i]);

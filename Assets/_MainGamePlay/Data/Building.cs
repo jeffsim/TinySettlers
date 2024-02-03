@@ -358,7 +358,7 @@ public class BuildingData : BaseData, ILocationProvider
             }
             need.Priority = .1f;
             // if we have a lot of them then reduce priority
-            int numOfNeededItemAlreadyInStorage = NumItemsInStorage(need.NeededItem);
+            int numOfNeededItemAlreadyInStorage = NumItemsOfTypeInStorage(need.NeededItem);
             numOfNeededItemAlreadyInStorage = Town.NumTotalItemsInStorage(need.NeededItem);
 
             if (numOfNeededItemAlreadyInStorage > Town.NumTotalStorageSpots() / 2)
@@ -376,7 +376,7 @@ public class BuildingData : BaseData, ILocationProvider
             }
             need.Priority = 1;
             // if we have a lot of them then reduce priority
-            int numOfNeededItemAlreadyInStorage = NumItemsInStorage(need.NeededItem);
+            int numOfNeededItemAlreadyInStorage = NumItemsInStorage;
             if (percentFull > .99f)
                 need.Priority = 0; // full
             else if (percentFull > .75f)
@@ -406,19 +406,13 @@ public class BuildingData : BaseData, ILocationProvider
     {
         int num = 0;
         foreach (var area in StorageAreas)
-            num += area.NumUnreservedItemsInStorage(itemDefn);
+            num += area.NumUnreservedItemsOfTypeInStorage(itemDefn);
         return num >= count;
     }
 
-    public int NumItemsInStorage(ItemDefn itemDefn = null)
-    {
-        // TODO (perf): Dictionary lookup
-        int count = 0;
-        foreach (var area in StorageAreas)
-            count += area.NumItemsInStorage(itemDefn);
-        return count;
-    }
-
+    public int NumItemsInStorage => StorageAreas.Sum(area => area.NumItemsInStorage);
+    public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StorageAreas.Sum(area => area.NumItemsOfTypeInStorage(itemDefn));
+  
     public StorageSpotData GetEmptyStorageSpot() => StorageSpots.First(spot => spot.IsEmptyAndAvailable);
 
     public StorageSpotData GetClosestEmptyStorageSpot(LocationComponent loc) => GetClosestEmptyStorageSpot(loc, out float _);

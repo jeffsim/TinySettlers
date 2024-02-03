@@ -5,7 +5,7 @@
 //     [Test]
 //     public void DestroyBuilding_StoredResourcesRemainBehindOnGround()
 //     {
-//         LoadTestTown("testTown1");
+//         LoadTestTown("testTown1", i);
 
 //         // Add items to storage
 //         var item = new ItemData() { DefnId = "wood" };
@@ -27,7 +27,7 @@
 //         // i = 1; carrying item to drop in building that is destroyed; no available storage - destroy item for simplicity (could also drop it)
 //         for (int i = 0; i < 2; i++)
 //         {
-//             LoadTestTown("testTown1");
+//             LoadTestTown("testTown1", i);
 
 //             // TODO
 //         }
@@ -40,7 +40,7 @@
 
 //         for (int i = 0; i < 2; i++)
 //         {
-//             LoadTestTown("testTown1");
+//             LoadTestTown("testTown1", i);
 
 //             // TODO
 //         }
@@ -53,7 +53,7 @@
 //         // i = 1 ==> destroy building which the miner is assigned to
 //         for (int i = 0; i < 2; i++)
 //         {
-//             LoadTestTown("testTown1");
+//             LoadTestTown("testTown1", i);
 
 //             // Start gathering task
 //             var miner = getAssignedWorker(MinersHut.DefnId);
@@ -101,7 +101,7 @@
 //         // i = 1 ==> destroy building which the miner is assigned to
 //         for (int i = 0; i < 2; i++)
 //         {
-//             LoadTestTown("testTown1");
+//             LoadTestTown("testTown1", i);
 
 //             // Start gathering task
 //             var miner = getAssignedWorker(MinersHut.DefnId);
@@ -146,7 +146,7 @@
 //         // i = 1 ==> destroy building which the miner is assigned to
 //         for (int i = 0; i < 2; i++)
 //         {
-//             LoadTestTown("testTown1");
+//             LoadTestTown("testTown1", i);
 
 //             // Start gathering task
 //             var miner = getAssignedWorker(MinersHut.DefnId);
@@ -195,7 +195,7 @@
 //         // i = 1 ==> destroy building which the miner is assigned to
 //         for (int i = 0; i < 2; i++)
 //         {
-//             LoadTestTown("testTown1");
+//             LoadTestTown("testTown1", i);
 
 //             // Start gathering task
 //             var miner = getAssignedWorker(MinersHut.DefnId);

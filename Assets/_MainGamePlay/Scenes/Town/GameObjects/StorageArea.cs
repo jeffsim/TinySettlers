@@ -19,13 +19,5 @@ public class StorageArea : MonoBehaviour
 
     void Update()
     {
-        // if (spot.IsEmpty)
-        //     GetComponentInChildren<Renderer>().material.color = Color.black;
-        // else
-        // {
-        //     GetComponentInChildren<Renderer>().material.color = spot.ItemInStorage.Defn.Color;
-        //     name = "Storage " + index + " - " + spot.ItemInStorage.Defn.FriendlyName;
-        // }
-        // ReservedIndicator.SetActive(spot.IsReserved);
     }
 }

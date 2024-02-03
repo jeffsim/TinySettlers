@@ -18,6 +18,11 @@ public class StorageAreaData : BaseData
     public int NumReservedSpots => StoragePiles.Sum(spot => spot.NumReservedSpots);
     public bool HasAvailableSpot => StoragePiles.Any(spot => spot.HasAvailableSpot);
 
+    public int NumItemsInStorage => StoragePiles.Sum(spot => spot.NumItemsInStorage());
+    public int NumUnreservedItemsInStorage => StoragePiles.Sum(spot => spot.NumUnreservedItemsInStorage());
+    public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StoragePiles.Sum(spot => spot.NumItemsOfTypeInStorage(itemDefn));
+    public int NumUnreservedItemsOfTypeInStorage(ItemDefn itemDefn) => StoragePiles.Sum(spot => spot.NumUnreservedItemsOfTypeInStorage(itemDefn));
+
     public StorageAreaData(BuildingData buildingData, StorageAreaDefn storageAreaDefn)
     {
         Building = buildingData;
@@ -40,10 +45,6 @@ public class StorageAreaData : BaseData
         foreach (var pile in StoragePiles)
             pile.UpdateWorldLoc();
     }
-
-    public int NumItemsInStorage(ItemDefn itemDefn = null) => StoragePiles.Sum(spot => spot.NumItemsInStorage(itemDefn));
-
-    public int NumUnreservedItemsInStorage(ItemDefn itemDefn = null) => StoragePiles.Sum(spot => spot.NumUnreservedItemsInStorage(itemDefn));
 
     internal void Debug_RemoveAllItemsFromStorage()
     {

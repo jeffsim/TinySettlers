@@ -50,7 +50,7 @@ public class MoveBuildingTests : TestBase
         // i = 2 ==> move random other building
         for (int i = 0; i < 3; i++)
         {
-            LoadTestTown("testTown1");
+            LoadTestTown("testTown1", i);
 
             // Start gathering task
             var miner = getAssignedWorker(MinersHut.DefnId);
@@ -84,7 +84,7 @@ public class MoveBuildingTests : TestBase
         // i = 2 ==> move random other building
         for (int i = 0; i < 3; i++)
         {
-            LoadTestTown("testTown1");
+            LoadTestTown("testTown1", i);
 
             // Start gathering task
             var miner = getAssignedWorker(MinersHut.DefnId);
@@ -118,7 +118,7 @@ public class MoveBuildingTests : TestBase
         // i = 2 ==> move random other building
         for (int i = 0; i < 3; i++)
         {
-            LoadTestTown("testTown1");
+            LoadTestTown("testTown1", i);
             var miner = getAssignedWorker(MinersHut.DefnId);
 
             // wait until task is to drop off resource in mind
@@ -164,7 +164,7 @@ public class MoveBuildingTests : TestBase
         // i = 2 ==> move random other building
         for (int i = 0; i < 3; i++)
         {
-            LoadTestTown("testTown1");
+            LoadTestTown("testTown1", i);
             var miner = getAssignedWorker(MinersHut.DefnId);
 
             // wait until task is to drop off resource in mind

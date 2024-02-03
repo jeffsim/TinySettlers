@@ -12,7 +12,7 @@ namespace DestroyBuildingTests
             // i = 2 ==> destroy random other building
             for (int i = 0; i < 3; i++)
             {
-                LoadTestTown("testTown4");
+                LoadTestTown("testTown4", i);
 
                 // Start gathering task
                 var miner = getAssignedWorker(MinersHut.DefnId);
@@ -55,7 +55,7 @@ namespace DestroyBuildingTests
             // i = 2 ==> destroy random other building
             for (int i = 0; i < 3; i++)
             {
-                LoadTestTown("testTown4");
+                LoadTestTown("testTown4", i);
 
                 // Start gathering task
                 var miner = getAssignedWorker(MinersHut.DefnId);
@@ -97,7 +97,7 @@ namespace DestroyBuildingTests
             // i = 2 ==> destroy random other building
             for (int i = 0; i < 3; i++)
             {
-                LoadTestTown("testTown4");
+                LoadTestTown("testTown4", i);
 
                 // Start gathering task
                 var miner = getAssignedWorker(MinersHut.DefnId);

@@ -14,7 +14,6 @@ public class StorageSpotData : BaseData, ILocationProvider, IReservationProvider
     [SerializeField] public ReservationComponent Reservation { get; set; } = new();
     public ItemContainerComponent ItemContainer = new();
 
-    public virtual void UpdateWorldLoc() => Location.WorldLoc = Pile.Location.WorldLoc + Location.LocalLoc;
     public bool HasItem => ItemContainer.HasItem;
     public bool IsEmptyAndAvailable => ItemContainer.IsEmpty && !Reservation.IsReserved;
 

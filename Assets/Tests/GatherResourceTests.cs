@@ -48,11 +48,11 @@ public class GatherResourceTests : TestBase
 
         // Gather until 9 items in miner's hut storage; at that point, miner should be idle
         float breakTime = GameTime.time + 100;
-        while (GameTime.time < breakTime && MinersHut.NumItemsInStorage() < 9)
+        while (GameTime.time < breakTime && MinersHut.NumItemsInStorage < 9)
             updateTown();
 
         Assert.AreEqual(miner.CurrentTask.Type, TaskType.Idle);
-        Assert.AreEqual(MinersHut.StorageAreas[0].NumItemsInStorage(StoneMine.Defn.ResourcesThatCanBeGatheredFromHere[0]), 9);
+        Assert.AreEqual(MinersHut.StorageAreas[0].NumItemsOfTypeInStorage(StoneMine.Defn.ResourcesThatCanBeGatheredFromHere[0]), 9);
     }
 
     // [Test]

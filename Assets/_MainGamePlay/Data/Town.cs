@@ -283,7 +283,7 @@ public class TownData : BaseData
     {
         int numInStorage = 0;
         foreach (var building in Buildings)
-            numInStorage += building.NumItemsInStorage(GameDefns.Instance.ItemDefns[itemId]);
+            numInStorage += building.NumItemsOfTypeInStorage(GameDefns.Instance.ItemDefns[itemId]);
 
         // see how many are being carried
         var numBeingCarried = 0;
@@ -315,42 +315,19 @@ public class TownData : BaseData
         return highestNeed;
     }
 
-    internal void UnassignWorkerFromBuilding(BuildingData data)
-    {
-        WorkerData worker = GetWorkerInBuilding(data);
-        worker?.AssignToBuilding(Camp);
-    }
+    // ====================================================================================================
+    // Assign/Unassign worker from building
+    internal void UnassignWorkerFromBuilding(BuildingData data) => GetWorkerInBuilding(data)?.AssignToBuilding(Camp);
+    internal void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.AssignToBuilding(data);
 
-    internal void AssignWorkerToBuilding(BuildingData data)
-    {
-        WorkerData worker = GetWorkerInBuilding(Camp);
-        worker?.AssignToBuilding(data);
-    }
+    private WorkerData GetWorkerInBuilding(BuildingData building) => Workers.FirstOrDefault(worker => worker.AssignedBuilding == building);
+    internal int NumBuildingWorkers(BuildingData building) => Workers.Count(worker => worker.AssignedBuilding == building);
+    internal int NumTotalItemsInStorage(ItemDefn neededItem) => Buildings.Sum(building => building.NumItemsOfTypeInStorage(neededItem));
+    internal int NumTotalStorageSpots() => Buildings.Sum(building => building.NumStorageSpots);
 
-    private WorkerData GetWorkerInBuilding(BuildingData building)
-    {
-        foreach (var worker in Workers)
-            if (worker.AssignedBuilding == building)
-                return worker;
-        return null;
-    }
-
-    internal int NumBuildingWorkers(BuildingData building)
-    {
-        // TODO: Store in buidlingdata instead
-        int num = 0;
-        foreach (var worker in Workers)
-            if (worker.AssignedBuilding == building)
-                num++;
-        return num;
-    }
-
-    internal bool WorkerIsAvailable()
-    {
-        // called when a building is requesting an available worker be assigned to it
-        // For now, assignment is done from Camp, so just check if Camp has any workers
-        return NumBuildingWorkers(Camp) > 0;
-    }
+    // called when a building is requesting an available worker be assigned to it
+    // For now, assignment is done from Camp, so just check if Camp has any workers
+    internal bool WorkerIsAvailable() => NumBuildingWorkers(Camp) > 0;
 
     internal void ItemSold(ItemData item)
     {
@@ -369,21 +346,5 @@ public class TownData : BaseData
                 return false;
         }
         return true;
-    }
-
-    internal int NumTotalItemsInStorage(ItemDefn neededItem)
-    {
-        int numInStorage = 0;
-        foreach (var building in Buildings)
-            numInStorage += building.NumItemsInStorage(neededItem);
-        return numInStorage;
-    }
-
-    internal int NumTotalStorageSpots()
-    {
-        int numSpots = 0;
-        foreach (var building in Buildings)
-            numSpots += building.NumStorageSpots;
-        return numSpots;
     }
 }
