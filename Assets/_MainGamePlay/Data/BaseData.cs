@@ -9,9 +9,6 @@ public class BaseData
     // Globally unique identifier for this data
     public int InstanceId;
 
-    // For script management of this data
-    public string ScriptId;
-
     /// <summary>
     /// Constructor.  Generates a globally unique identifier
     /// </summary>
