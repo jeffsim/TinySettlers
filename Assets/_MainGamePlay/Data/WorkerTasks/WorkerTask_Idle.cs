@@ -75,6 +75,6 @@ public class WorkerTask_Idle : WorkerTask
 
     private bool shouldMoveToAssignedBuilding()
     {
-        return Worker.DistanceToBuilding(Worker.AssignedBuilding) > 5;
+        return Worker.Location.DistanceTo(Worker.AssignedBuilding.Location) > 5;
     }
 }

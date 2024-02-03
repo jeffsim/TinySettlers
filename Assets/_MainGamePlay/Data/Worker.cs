@@ -63,11 +63,9 @@ public class WorkerData : BaseData
         CurrentTask.Update();
     }
 
-    internal float DistanceToBuilding(BuildingData building) => Location.DistanceTo(building.Location);
-
     internal void OnNeedBeingMetCancelled()
     {
-        throw new NotImplementedException();
+        throw new NotImplementedException("nyi");
     }
 
     // Called when any building is destroyed; if this Task involves that building then determine
@@ -85,6 +83,7 @@ public class WorkerData : BaseData
     {
         CurrentTask?.OnBuildingMoved(building, previousLoc);
     }
+    
     public void OnBuildingPauseToggled(BuildingData building)
     {
         CurrentTask?.OnBuildingPauseToggled(building);
@@ -102,6 +101,7 @@ public class WorkerData : BaseData
         // TODO
         return true;
     }
+    
     internal bool HasPathToItemOnGround(ItemData itemOnGround)
     {
         // TODO
