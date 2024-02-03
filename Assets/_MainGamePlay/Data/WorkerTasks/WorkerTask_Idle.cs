@@ -16,15 +16,9 @@ public class WorkerTask_Idle : WorkerTask
 
     [SerializeField] float secondsToWait;
     [SerializeField] LocationComponent idleMoveToDest = new();
+    public override ItemDefn GetTaskItem() => null;
 
     public override bool IsWalkingToTarget => substate == (int)WorkerTask_IdleSubstate.GoToNewSpot;
-
-    public override string ToDebugString()
-    {
-        var str = "Idle\n";
-        str += "  substate: " + substate;
-        return str;
-    }
 
     // TODO: Pooling
     public static WorkerTask_Idle Create(WorkerData worker)
@@ -64,13 +58,13 @@ public class WorkerTask_Idle : WorkerTask
                 if (IsSubstateDone(secondsToWait))
                 {
                     idleMoveToDest.SetWorldLoc(Utilities.LocationWithinDistance(Worker.AssignedBuilding.Location, 3f));
-                    distanceMovedPerSecond = 3 + (UnityEngine.Random.value - .5f) * 1f;
+             //       distanceMovedPerSecond = 3 + (UnityEngine.Random.value - .5f) * 1f;
                     GotoNextSubstate();
                 }
                 break;
 
             case (int)WorkerTask_IdleSubstate.GoToNewSpot: // go to new spot
-                if (MoveTowards(idleMoveToDest, distanceMovedPerSecond, .1f))
+                if (MoveTowards(idleMoveToDest, .1f))
                 {
                     // repeat until interrupted
                     Start();

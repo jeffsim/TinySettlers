@@ -3,7 +3,7 @@ using System;
 
 public class PrioritizedTask
 {
-    public override string ToString() => $"{Priority:F1} {Task.getDebuggerString()}";
+    public override string ToString() => $"{Priority:F1} {Task.GetDebuggerString()}";
 
     internal void Set(WorkerTask task, float priority)
     {

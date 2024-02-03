@@ -12,7 +12,7 @@ public enum WorkerTask_PickupGatherableResourceSubstate
 public class WorkerTask_PickupGatherableResource : WorkerTask
 {
     public override string ToString() => "Pickup gatherable resource";
-    internal override string getDebuggerString() => $"Pickup gatherable resource from {OptimalGatheringSpot}";
+    internal override string GetDebuggerString() => $"Pickup gatherable resource from {OptimalGatheringSpot}";
 
     public override TaskType Type => TaskType.PickupGatherableResource;
 
@@ -25,21 +25,6 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
     public override bool IsWalkingToTarget => substate == 0;
 
     public override ItemDefn GetTaskItem() => OptimalGatheringSpot?.ItemContainer.Item.Defn;
-
-    public override string ToDebugString()
-    {
-        var str = "Pickup gatherable resource\n";
-        str += "  Gather from: " + OptimalGatheringSpot + " (" + OptimalGatheringSpot.Building + "), gatherspot: " + OptimalGatheringSpot.InstanceId + "\n";
-        str += "  substate: " + substate;
-        switch (substate)
-        {
-            case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: str += "; dist: " + Worker.Location.DistanceTo(OptimalGatheringSpot.Location).ToString("0.0"); break;
-            case (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource: str += "; per = " + getPercentSubstateDone(secondsToReap); break;
-            case (int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
-            default: Debug.LogError("unknown substate " + substate); break;
-        }
-        return str;
-    }
 
     // TODO: Pooling
     public static WorkerTask_PickupGatherableResource Create(WorkerData worker, NeedData needData, GatheringSpotData optimalGatheringSpot, StorageSpotData storageSpotToReserve)
@@ -120,7 +105,7 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot: // go to resource spot
-                if (MoveTowards(OptimalGatheringSpot.Location, distanceMovedPerSecond))
+                if (MoveTowards(OptimalGatheringSpot.Location))
                     GotoNextSubstate();
                 break;
 

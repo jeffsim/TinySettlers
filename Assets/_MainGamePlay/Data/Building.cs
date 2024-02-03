@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework.Constraints;
 using UnityEngine;
 
 public enum ConstructionState { NotStarted, UnderConstruction, FullyConstructed };
 
-public delegate void OnBuildingTileLocChangedEvent();
+public delegate void OnLocationChangedEvent();
 
 [Serializable]
 public class DistanceToBuilding
@@ -39,7 +38,7 @@ public class BuildingData : BaseData, ILocationProvider
 
     [SerializeField] public LocationComponent Location { get; set; }
 
-    [NonSerialized] public OnBuildingTileLocChangedEvent OnBuildingTileLocChanged;
+    [NonSerialized] public OnLocationChangedEvent OnLocationChanged;
 
     // public ConstructionState ConstructionState;
     // public float PercentBuilt; 
@@ -513,7 +512,7 @@ public class BuildingData : BaseData, ILocationProvider
         foreach (var worker in Town.Workers)
             worker.OnBuildingMoved(this, previousWorldLoc);
 
-        OnBuildingTileLocChanged?.Invoke();
+        OnLocationChanged?.Invoke();
     }
 
     public void UpdateWorldLoc()

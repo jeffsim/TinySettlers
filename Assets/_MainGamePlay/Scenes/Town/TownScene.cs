@@ -34,6 +34,9 @@ public class TownScene : SceneWithMap
         if (GameTime.timeScale == 0) return;
         gameDataMgr.GameData.CurrentTown.Update();
 
+        // right click = hide all dialogs
+        if (Input.GetMouseButtonDown(1)) HideAllDialogs();
+
         if (Input.GetKeyDown(KeyCode.Alpha0)) SetGameSpeed(.25f);
         if (Input.GetKeyDown(KeyCode.Alpha1)) SetGameSpeed(1);
         if (Input.GetKeyDown(KeyCode.Alpha2)) SetGameSpeed(2);

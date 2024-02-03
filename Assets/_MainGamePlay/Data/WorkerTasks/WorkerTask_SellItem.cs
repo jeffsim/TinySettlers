@@ -12,7 +12,7 @@ public enum WorkerTask_SellItemSubstate
 public class WorkerTask_SellItem : WorkerTask
 {
     public override string ToString() => $"Sell item {GetTaskItem()}";
-    internal override string getDebuggerString() => $"Sell item {GetTaskItem()}";
+    internal override string GetDebuggerString() => $"Sell item {GetTaskItem()}";
 
     public override TaskType Type => TaskType.SellItem;
 
@@ -24,20 +24,6 @@ public class WorkerTask_SellItem : WorkerTask
     public const float secondsToSell = 2f;
 
     public override bool IsWalkingToTarget => substate == (int)WorkerTask_SellItemSubstate.GotoItemToSell;
-
-    public override string ToDebugString()
-    {
-        var str = "Sell item\n";
-        str += "  substate: " + substate;
-        switch (substate)
-        {
-            case (int)WorkerTask_SellItemSubstate.GotoItemToSell: str += "; dist: " + Worker.Location.DistanceTo(spotWithItemToSell.Location).ToString("0.0"); break;
-            case (int)WorkerTask_SellItemSubstate.PickupItemToSell: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
-            case (int)WorkerTask_SellItemSubstate.SellItem: str += "; per = " + getPercentSubstateDone(secondsToSell); break;
-            default: Debug.LogError("unknown substate " + substate); break;
-        }
-        return str;
-    }
 
     // TODO: Pooling
     public static WorkerTask_SellItem Create(WorkerData worker, NeedData needData, StorageSpotData spotWithItemToSell)
@@ -99,7 +85,7 @@ public class WorkerTask_SellItem : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_SellItemSubstate.GotoItemToSell:
-                if (MoveTowards(spotWithItemToSell.Location, distanceMovedPerSecond))
+                if (MoveTowards(spotWithItemToSell.Location))
                     GotoNextSubstate();
                 break;
 

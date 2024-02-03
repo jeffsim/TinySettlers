@@ -12,7 +12,7 @@ public enum WorkerTask_PickupItemFromStorageSpotSubstate
 public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
 {
     public override string ToString() => "Pickup item from item spot";
-    internal override string getDebuggerString() => $"Pickup item from {spotWithItemToPickup}";
+    internal override string GetDebuggerString() => $"Pickup item from {spotWithItemToPickup}";
 
     public override TaskType Type => TaskType.PickupItemInStorageSpot;
 
@@ -24,20 +24,6 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
     public override bool IsWalkingToTarget => substate == 0;
 
     public override ItemDefn GetTaskItem() => spotWithItemToPickup.ItemContainer.Item.Defn;
-
-    public override string ToDebugString()
-    {
-        var str = "Pickup item from itemspot\n";
-        str += "  Pick up from: " + spotWithItemToPickup + " (" + spotWithItemToPickup.Building + "), gatherspot: " + spotWithItemToPickup.InstanceId + "\n";
-        str += "  substate: " + substate;
-        switch (substate)
-        {
-            case (int)WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem: str += "; dist: " + Worker.Location.DistanceTo(spotWithItemToPickup.Location).ToString("0.0"); break;
-            case (int)WorkerTask_PickupItemFromStorageSpotSubstate.PickupItemFromItemSpot: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
-            default: Debug.LogError("unknown substate " + substate); break;
-        }
-        return str;
-    }
 
     // TODO: Pooling
     public static WorkerTask_PickupItemFromStorageSpot Create(WorkerData worker, NeedData needData, StorageSpotData spotWithItem, StorageSpotData spotToReserve)
@@ -93,7 +79,7 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem: // go to resource spot
-                if (MoveTowards(spotWithItemToPickup.Location, distanceMovedPerSecond))
+                if (MoveTowards(spotWithItemToPickup.Location))
                     GotoNextSubstate();
                 break;
 

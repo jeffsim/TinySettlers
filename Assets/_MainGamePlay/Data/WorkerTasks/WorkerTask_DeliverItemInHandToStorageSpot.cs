@@ -20,21 +20,6 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
     public override ItemDefn GetTaskItem() => Worker.ItemInHand?.Defn;
     public override bool IsCarryingItem(string itemId) => true;
 
-    public override string ToDebugString()
-    {
-        var str = "Deliver\n";
-        str += "  Item: " + Worker.ItemInHand.DefnId + "\n";
-        str += "  TargetStorage: " + Worker.StorageSpotReservedForItemInHand.InstanceId + " (" + Worker.StorageSpotReservedForItemInHand.Building.DefnId + ")\n";
-        str += "  substate: " + substate;
-        switch (substate)
-        {
-            case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo: str += "; dist: " + Worker.Location.DistanceTo(Worker.StorageSpotReservedForItemInHand.Location).ToString("0.0"); break;
-            case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot: str += "; per = " + getPercentSubstateDone(secondsToDrop); break;
-            default: Debug.LogError("unknown substate " + substate); break;
-        }
-        return str;
-    }
-
     public static WorkerTask_DeliverItemInHandToStorageSpot CreateAndStart(WorkerData worker, NeedData need) => new(worker, need);
 
     private WorkerTask_DeliverItemInHandToStorageSpot(WorkerData worker, NeedData need) : base(worker, need)
@@ -67,8 +52,9 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
                 Debug.Assert(false, "Failed to find *any* spot to store in.  Shouldn't happen since we already had one reserved");
         }
 
-        // If we're standing still and working in the building that was moved, then update our location
-        if (substate == (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot && movedBuilding == Worker.StorageSpotReservedForItemInHand.Building)
+        if (IsWalkingToTarget)
+            LastMoveToTarget += movedBuilding.Location - previousLoc;
+        else
             Worker.Location += movedBuilding.Location - previousLoc;
     }
 
@@ -106,7 +92,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo: // Walk back to our assigned building
-                if (MoveTowards(Worker.StorageSpotReservedForItemInHand.Location, Worker.GetMovementSpeed()))
+                if (MoveTowards(Worker.StorageSpotReservedForItemInHand.Location))
                     GotoNextSubstate();
                 break;
 

@@ -29,7 +29,7 @@ public class Building : MonoBehaviour
 
         name = data.DefnId + " " + data.InstanceId;
 
-        Data.OnBuildingTileLocChanged += TileLocChanged;
+        Data.OnLocationChanged += OnLocationChanged;
 
         Name.text = data.Defn.FriendlyName;
         GetComponentInChildren<Renderer>().material.color = data.Defn.BuildingColor;
@@ -60,10 +60,10 @@ public class Building : MonoBehaviour
     void OnDestroy()
     {
         if (Data != null)
-            Data.OnBuildingTileLocChanged -= TileLocChanged;
+            Data.OnLocationChanged -= OnLocationChanged;
     }
 
-    private void TileLocChanged()
+    private void OnLocationChanged()
     {
         transform.position = new Vector3(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, BuildingZ);
     }

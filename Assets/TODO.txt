@@ -2,6 +2,7 @@
     - silo: can only store items of type 'food'
 
 * Add building construction
+* if two workers are going to pick up items from the same storagepile then have the second one wait while the first-to-arrive is picking up their item
 
 * major change would be: instead of fixed spots per storagepile, make it based on the item type in the pile. can store 4 logs or 16 cups or 2 stone...
 

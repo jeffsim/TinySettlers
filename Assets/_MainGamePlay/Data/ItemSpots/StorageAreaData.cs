@@ -6,7 +6,7 @@ using UnityEngine;
 [Serializable]
 public class StorageAreaData : BaseData
 {
-    public override string ToString() => "{" + string.Join(", ", StoragePiles.Select(spot => spot)) + "}";
+    public override string ToString() => Location + "{" + string.Join(", ", StoragePiles.Select(pile => pile)) + "}";
 
     public LocationComponent Location;
     public List<StoragePileData> StoragePiles;

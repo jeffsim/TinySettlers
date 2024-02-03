@@ -11,7 +11,7 @@ public enum WorkerTask_PickupAbandonedItemFromGroundSubstate
 public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
 {
     public override string ToString() => "Pickup item from ground";
-    internal override string getDebuggerString() => $"Pickup item {ItemToPickup} from ground";
+    internal override string GetDebuggerString() => $"Pickup item {ItemToPickup} from ground";
 
     public override TaskType Type => TaskType.PickupItemFromGround;
     [SerializeField] public ItemData ItemToPickup;
@@ -23,19 +23,6 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
     public override bool IsWalkingToTarget => substate == 0;
 
     public override ItemDefn GetTaskItem() => ItemToPickup.Defn;
-
-    public override string ToDebugString()
-    {
-        var str = "Pickup item from ground\n";
-        str += "  substate: " + substate;
-        switch (substate)
-        {
-            case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround: str += "; dist: " + Worker.Location.DistanceTo(ItemToPickup.Location).ToString("0.0"); break;
-            case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.PickupItemFromGround: str += "; per = " + getPercentSubstateDone(secondsToPickup); break;
-            default: Debug.LogError("unknown substate " + substate); break;
-        }
-        return str;
-    }
 
     // TODO: Pooling
     public static WorkerTask_PickupAbandonedItemFromGround Create(WorkerData worker, NeedData needData, StorageSpotData spotToReserve)
@@ -84,7 +71,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround: // go to resource spot
-                if (MoveTowards(ItemToPickup.Location, distanceMovedPerSecond))
+                if (MoveTowards(ItemToPickup.Location))
                     GotoNextSubstate();
                 break;
 

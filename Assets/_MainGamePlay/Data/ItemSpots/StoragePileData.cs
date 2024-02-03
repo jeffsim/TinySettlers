@@ -6,6 +6,8 @@ using UnityEngine;
 [Serializable]
 public class StoragePileData : BaseData
 {
+    public override string ToString() => "{" + string.Join(", ", StorageSpots.Select(spot => spot)) + "}";
+
     public BuildingData Building;
     [SerializeField] StorageAreaData Area;
     public int IndexInStorageArea;
@@ -19,7 +21,12 @@ public class StoragePileData : BaseData
 
     public LocationComponent Location;
 
-    public virtual void UpdateWorldLoc() => Location.WorldLoc = Area.Location.WorldLoc + Location.LocalLoc;
+    public virtual void UpdateWorldLoc()
+    {
+        Location.WorldLoc = Area.Location.WorldLoc + Location.LocalLoc;
+        foreach (var spot in StorageSpots)
+            spot.UpdateWorldLoc();
+    }
 
     public StoragePileData(StorageAreaData area, StorageAreaDefn areaDefn, Vector2 localLoc, int pileIndex)
     {

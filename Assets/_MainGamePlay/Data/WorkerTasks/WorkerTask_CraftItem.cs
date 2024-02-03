@@ -16,7 +16,7 @@ public enum WorkerTask_CraftItemSubstate
 public class WorkerTask_CraftItem : WorkerTask
 {
     public override string ToString() => "Craft item";
-    internal override string getDebuggerString() => $"Craft Item {CraftingItemDefnId}";
+    internal override string GetDebuggerString() => $"Craft Item {CraftingItemDefnId}";
 
     public override TaskType Type => TaskType.CraftGood;
 
@@ -28,6 +28,8 @@ public class WorkerTask_CraftItem : WorkerTask
 
     [SerializeField] CraftingSpotData reservedCraftingSpot;
     [SerializeField] StorageSpotData storageSpotForCraftedGood;
+
+    [SerializeField] List<StorageSpotData> craftingResourceSpots = new();
     [SerializeField] StorageSpotData nextCraftingResourceStorageSpotToGetFrom;
 
 #if UNITY_INCLUDE_TESTS
@@ -58,13 +60,6 @@ public class WorkerTask_CraftItem : WorkerTask
         }
     }
 
-    public override string ToDebugString()
-    {
-        var str = "Craft item\n";
-        str += "  substate: " + substate;
-        return str;
-    }
-
     // TODO: Pooling
     public static WorkerTask_CraftItem Create(WorkerData worker, NeedData needData, CraftingSpotData craftingSpot)
     {
@@ -84,11 +79,11 @@ public class WorkerTask_CraftItem : WorkerTask
         // Reserve our storage spots with resources that we will consume to craft the good
         foreach (var resource in itemBeingCrafted.ResourcesNeededForCrafting)
             for (int i = 0; i < resource.Count; i++)
-                reserveCraftingResourceStorageSpotForItem(resource.Item, reservedCraftingSpot.Location);
+                craftingResourceSpots.Add((StorageSpotData)reserveCraftingResourceStorageSpotForItem(resource.Item, reservedCraftingSpot.Location));
 
         // Determine the resource spot that is closest to the crafting spot; we'll keep the reservation for that spot until
         // the end of the task so that it can be used to store the crafted item
-        storageSpotForCraftedGood = reservedCraftingSpot.Location.GetClosest(ReservedCraftingResourceStorageSpots);
+        storageSpotForCraftedGood = reservedCraftingSpot.Location.GetClosest(craftingResourceSpots);
 
         // Start out walking to the storage spot with the first resource we'll use for crafting
         nextCraftingResourceStorageSpotToGetFrom = getNextReservedCraftingResourceStorageSpot();
@@ -155,8 +150,8 @@ public class WorkerTask_CraftItem : WorkerTask
         switch (substate)
         {
             case (int)WorkerTask_CraftItemSubstate.GotoSpotWithResource: // go to resource spot
-                if (MoveTowards(nextCraftingResourceStorageSpotToGetFrom.Location, distanceMovedPerSecond))
-                    GotoSubstate((int)WorkerTask_CraftItemSubstate.PickupResource);
+                if (MoveTowards(nextCraftingResourceStorageSpotToGetFrom.Location))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.PickupResource:
@@ -171,13 +166,13 @@ public class WorkerTask_CraftItem : WorkerTask
 
                     lastPickedUpResourceDefnId = nextCraftingResourceStorageSpotToGetFrom.ItemContainer.Item.DefnId;
                     nextCraftingResourceStorageSpotToGetFrom.ItemContainer.ClearItem();
-                    GotoSubstate((int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot);
+                    GotoNextSubstate();
                 }
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
-                if (MoveTowards(reservedCraftingSpot.Location, distanceMovedPerSecond))
-                    GotoSubstate((int)WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot);
+                if (MoveTowards(reservedCraftingSpot.Location))
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
@@ -191,15 +186,13 @@ public class WorkerTask_CraftItem : WorkerTask
                         GotoSubstate((int)WorkerTask_CraftItemSubstate.GotoSpotWithResource);
                     }
                     else
-                        GotoSubstate((int)WorkerTask_CraftItemSubstate.CraftGood);
+                        GotoNextSubstate();
                 }
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.CraftGood: // craft
                 if (IsSubstateDone(secondsToCraft))
-                {
-                    GotoSubstate((int)WorkerTask_CraftItemSubstate.PickupProducedGood);
-                }
+                    GotoNextSubstate();
                 break;
 
             case (int)WorkerTask_CraftItemSubstate.PickupProducedGood:
@@ -236,28 +229,26 @@ public class WorkerTask_CraftItem : WorkerTask
 
     bool HasMoreCraftingResourcesToGet()
     {
-        return ReservedCraftingResourceStorageSpots.Count > 0;
+        return craftingResourceSpots.Count > 0;
     }
 
-    StorageSpotData reserveCraftingResourceStorageSpotForItem(ItemDefn itemDefn, LocationComponent location)
+    IReservationProvider reserveCraftingResourceStorageSpotForItem(ItemDefn itemDefn, LocationComponent location)
     {
-        var spot = Worker.AssignedBuilding.GetClosestUnreservedStorageSpotWithItem(location, itemDefn, out float _);
+        var spot = Worker.AssignedBuilding.GetClosestUnreservedStorageSpotWithItem(location, itemDefn);
         Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.AssignedBuilding.DefnId);
-
-        spot.Reservation.ReserveBy(Worker);
-        ReservedCraftingResourceStorageSpots.Add(spot);
+        ReserveSpot(spot);
         return spot;
     }
 
     void unreserveBuildingCraftingResourceSpot(StorageSpotData spot)
     {
-        spot.Reservation.Unreserve();
-        ReservedCraftingResourceStorageSpots.Remove(spot);
+        UnreserveSpot(spot);
+        craftingResourceSpots.Remove(spot);
     }
 
     StorageSpotData getNextReservedCraftingResourceStorageSpot()
     {
-        Debug.Assert(ReservedCraftingResourceStorageSpots.Count > 0, "getting crafting resource spot, but none remain");
-        return ReservedCraftingResourceStorageSpots[0];
+        Debug.Assert(craftingResourceSpots.Count > 0, "getting crafting resource spot, but none remain");
+        return craftingResourceSpots[0];
     }
 }
