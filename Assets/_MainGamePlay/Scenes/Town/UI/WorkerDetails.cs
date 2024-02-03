@@ -26,7 +26,7 @@ public class WorkerDetails : MonoBehaviour
     {
         if (worker == null)
             return;
-        Task.text = "Task: " + worker.Data.CurrentTask;
+        Task.text = "Task: " + worker.Data.AI.CurrentTask;
         if (worker.Data.Hands.HasItem)
             Items.text = "In hand: " + worker.Data.Hands.Item + "\n";
         else

@@ -24,8 +24,7 @@ public class TownTaskMgr
         if (HighestPriorityTask.Task != null)
         {
             var task = HighestPriorityTask.Task;
-            task.Worker.CurrentTask = task;
-            task.Worker.CurrentTask.Start();
+            task.Worker.AI.StartTask(task);
         }
     }
 
@@ -35,7 +34,7 @@ public class TownTaskMgr
         // Assume we find no task
         HighestPriorityTask.Task = null;
 
-        List<WorkerData> idleWorkers = new(Town.Workers.FindAll(w => w.IsIdle)); // todo (perf): keep list of idle
+        List<WorkerData> idleWorkers = new(Town.Workers.FindAll(w => w.AI.IsIdle)); // todo (perf): keep list of idle
         if (idleWorkers.Count == 0) return null;
 
         // =====================================================================================
@@ -392,7 +391,7 @@ public class TownTaskMgr
                     if (worker.StorageSpotReservedForItemInHand == null)
                     {
                         Town.AddItemToGround(worker.Hands.ClearItem(), worker.Location);
-                        worker.CurrentTask = null;
+                        worker.AI.CurrentTask = null; // TODO: hm.
                         return false;
                     }
                 }

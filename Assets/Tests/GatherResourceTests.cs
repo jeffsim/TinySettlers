@@ -10,7 +10,7 @@ public class GatherResourceTests : TestBase
 
         // Verify starting state
         var miner = getAssignedWorker(MinersHut.DefnId);
-        Assert.AreEqual(miner.CurrentTask.Type, TaskType.Idle);
+        Assert.AreEqual(miner.AI.CurrentTask.Type, TaskType.Idle);
 
         // Start gathering task
         waitUntilTask(miner, TaskType.PickupGatherableResource);
@@ -21,7 +21,7 @@ public class GatherResourceTests : TestBase
 
         // Verify Worker reserved a storage spot in the Miners hut (which is closer to the mine than the camp)
         Assert.AreEqual(MinersHut.NumReservedStorageSpots, 1);
-        Assert.AreEqual((miner.CurrentTask as WorkerTask_PickupGatherableResource).ReservedStorageSpot.Reservation.ReservedBy, miner);
+        Assert.AreEqual((miner.AI.CurrentTask as WorkerTask_PickupGatherableResource).ReservedStorageSpot.Reservation.ReservedBy, miner);
 
         // wait until actually gathering (reaping) resource in target building
         waitUntilTaskSubstate(miner, (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource);
@@ -51,7 +51,7 @@ public class GatherResourceTests : TestBase
         while (GameTime.time < breakTime && MinersHut.NumItemsInStorage < 9)
             updateTown();
 
-        Assert.AreEqual(miner.CurrentTask.Type, TaskType.Idle);
+        Assert.AreEqual(miner.AI.CurrentTask.Type, TaskType.Idle);
         Assert.AreEqual(MinersHut.StorageAreas[0].NumItemsOfTypeInStorage(StoneMine.Defn.ResourcesThatCanBeGatheredFromHere[0]), 9);
     }
 
@@ -103,9 +103,9 @@ public class GatherResourceTests : TestBase
     //     {
     //         updateTown();
     //         foreach (var worker in Town.Workers)
-    //             if (worker.CurrentTask.Type == TaskType.GatherResource)
+    //             if (worker.AI.CurrentTask.Type == TaskType.GatherResource)
     //                 gatherers.Add(worker);
-    //             else if (worker.CurrentTask.Type == TaskType.Idle)
+    //             else if (worker.AI.CurrentTask.Type == TaskType.Idle)
     //                 idlers.Add(worker);
     //         if (gatherers.Count == numGatherers && idlers.Count == numIdlers)
     //             break;

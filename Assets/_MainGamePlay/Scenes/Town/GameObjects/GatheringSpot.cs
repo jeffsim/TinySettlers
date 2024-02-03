@@ -53,7 +53,7 @@ public class GatheringSpot : MonoBehaviour
 
         // highlight this spot if this gathering spot is reserved by the currently selected worker
         bool showHighlight = false;
-        if (scene.WorkerDetails.gameObject.activeSelf && scene.WorkerDetails.worker != null && scene.WorkerDetails.worker.Data.CurrentTask.HasReservedSpot(Data))
+        if (scene.WorkerDetails.gameObject.activeSelf && scene.WorkerDetails.worker != null && scene.WorkerDetails.worker.Data.AI.CurrentTask.HasReservedSpot(Data))
             showHighlight = true;
         Highlight.SetActive(showHighlight);
 

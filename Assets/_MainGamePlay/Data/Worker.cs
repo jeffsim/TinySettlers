@@ -11,12 +11,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     [SerializeField] public LocationComponent Location { get; set; }
     [SerializeField] public AssignmentComponent Assignment { get; set; } = new();
     [SerializeField] public ItemContainerComponent Hands { get; set; } = new();
-
-    public WorkerTask CurrentTask;
-
-    public bool IsIdle => CurrentTask.Type == TaskType.Idle;
-
-    public WorkerTask_Idle IdleTask;
+    [SerializeField] public AIComponent AI { get; set; }
 
     public TownData Town;
 
@@ -27,20 +22,12 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     public WorkerData(BuildingData buildingToStartIn)
     {
         Location = new(Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f));
+        AI = new(this);
 
         Town = buildingToStartIn.Town;
 
         Assignment.AssignTo(buildingToStartIn);
-        Assignment.OnAssignedToChanged += () => CurrentTask?.Abandon();  // TODO: I *think* this doesn't need to be cleaned up on destroy (?)
-
-        CurrentTask = IdleTask = WorkerTask_Idle.Create(this);
-        CurrentTask.Start(); // start out idling
-    }
-
-    internal void OnTaskCompleted()
-    {
-        CurrentTask = IdleTask;
-        CurrentTask.Start();
+        Assignment.OnAssignedToChanged += () => AI.CurrentTask.Abandon();  // TODO: I *think* this doesn't need to be cleaned up on destroy (?)
     }
 
     internal void OnNeedBeingMetCancelled()
@@ -52,7 +39,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     // what we should do (if anything).
     public void OnBuildingDestroyed(BuildingData building)
     {
-        CurrentTask.OnBuildingDestroyed(building);
+        AI.CurrentTask.OnBuildingDestroyed(building);
 
         // If we are assigned to the destroyed building, then assign ourselves to the Camp instead
         if (Assignment.AssignedTo == building)
@@ -60,9 +47,9 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     }
 
     // pass throughs to current task
-    public void Update() => CurrentTask.Update();
-    public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc) => CurrentTask.OnBuildingMoved(building, previousLoc);
-    public void OnBuildingPauseToggled(BuildingData building) => CurrentTask.OnBuildingPauseToggled(building);
+    public void Update() => AI.Update();
+    public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc) => AI.CurrentTask.OnBuildingMoved(building, previousLoc);
+    public void OnBuildingPauseToggled(BuildingData building) => AI.CurrentTask.OnBuildingPauseToggled(building);
 
     internal bool HasPathToBuilding(BuildingData buildingWithNeed)
     {

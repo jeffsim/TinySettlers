@@ -146,7 +146,7 @@ public abstract class WorkerTask
     {
         ReservedSpots.ForEach(spot => spot.Reservation.Unreserve());
         TaskState = newState;
-        Worker.OnTaskCompleted();
+        Worker.AI.StartIdling();
     }
 
     // ====================================================================================================================

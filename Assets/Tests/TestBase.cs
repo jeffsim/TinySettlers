@@ -81,11 +81,11 @@ public abstract class TestBase
     protected void waitUntilTask(WorkerData worker, TaskType taskType, float secondsBeforeExitCheck = 50)
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
-        while (GameTime.time < breakTime && worker.CurrentTask.Type != taskType)
+        while (GameTime.time < breakTime && worker.AI.CurrentTask.Type != taskType)
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, "{preface()} stuck in loop in waitUntilTask.  CurrentTask = " + worker.CurrentTask.Type + ", expected " + taskType);
+        Assert.IsTrue(GameTime.time < breakTime, "{preface()} stuck in loop in waitUntilTask.  AI.CurrentTask = " + worker.AI.CurrentTask.Type + ", expected " + taskType);
     }
 
     protected void waitUntilTaskAndSubstate(WorkerData worker, TaskType taskType, int substate, float secondsBeforeExitCheck = 500)
@@ -97,11 +97,11 @@ public abstract class TestBase
     protected void waitUntilTaskSubstate(WorkerData worker, int substate, float secondsBeforeExitCheck = 500)
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
-        while (GameTime.time < breakTime && worker.CurrentTask.substate != substate)
+        while (GameTime.time < breakTime && worker.AI.CurrentTask.substate != substate)
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, $"{preface()} stuck in loop in waitUntilTaskSubstate.  substate = {worker.CurrentTask.substate}, expected substate {substate}");
+        Assert.IsTrue(GameTime.time < breakTime, $"{preface()} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.substate}, expected substate {substate}");
     }
 
     protected void waitUntilNewTask(WorkerData worker, TaskType newTaskType)
@@ -113,12 +113,12 @@ public abstract class TestBase
     protected void waitUntilTaskDone(WorkerData worker, float secondsBeforeExitCheck = 50)
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
-        var startTask = worker.CurrentTask;
-        while (GameTime.time < breakTime && worker.CurrentTask == startTask)
+        var startTask = worker.AI.CurrentTask;
+        while (GameTime.time < breakTime && worker.AI.CurrentTask == startTask)
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, $"s{preface()} stuck in loop in waitUntilTaskDone.  CurrentTask = {worker.CurrentTask.Type}, expected task to change");
+        Assert.IsTrue(GameTime.time < breakTime, $"s{preface()} stuck in loop in waitUntilTaskDone.  AI.CurrentTask = {worker.AI.CurrentTask.Type}, expected task to change");
     }
 
     int CurStep;
@@ -144,14 +144,14 @@ public abstract class TestBase
 
     public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker)
     {
-        Assert.NotNull(worker.CurrentTask, $"{preface()}: Expected worker {worker} to have a task, but worker.CurrentTask is null");
-        Assert.AreEqual(expectedType, worker.CurrentTask.Type, $"{preface()} Expected worker {worker} to have task type {expectedType}, but worker.CurrentTask.Type is {worker.CurrentTask.Type}");
+        Assert.NotNull(worker.AI.CurrentTask, $"{preface()}: Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
+        Assert.AreEqual(expectedType, worker.AI.CurrentTask.Type, $"{preface()} Expected worker {worker} to have task type {expectedType}, but worker.AI.CurrentTask.Type is {worker.AI.CurrentTask.Type}");
     }
 
     protected void verify_WorkerTaskSubstate(int substate, WorkerData worker)
     {
-        Assert.NotNull(worker.CurrentTask, $"{preface()} Expected worker {worker} to have a task, but worker.CurrentTask is null");
-        Assert.AreEqual(substate, worker.CurrentTask.substate, $"{preface()} Expected worker {worker} to have substate {substate}, but worker.CurrentTask.substate is {worker.CurrentTask.substate}");
+        Assert.NotNull(worker.AI.CurrentTask, $"{preface()} Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
+        Assert.AreEqual(substate, worker.AI.CurrentTask.substate, $"{preface()} Expected worker {worker} to have substate {substate}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.substate}");
     }
 
     protected void verify_AssignedBuilding(WorkerData worker, BuildingData building)

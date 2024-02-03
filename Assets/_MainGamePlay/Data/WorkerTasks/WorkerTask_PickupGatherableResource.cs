@@ -86,14 +86,14 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         // If our worker's building is the one that was paused then cancel this task regardless of substate
         if (Worker.Assignment.AssignedTo == building)
         {
-            Worker.CurrentTask.Abandon();
+            Worker.AI.CurrentTask.Abandon();
             return;
         }
 
         // If the building from which we are gathering was paused then abandon this task
         if (building == OptimalGatheringSpot.Building)
         {
-            Worker.CurrentTask.Abandon();
+            Worker.AI.CurrentTask.Abandon();
             return;
         }
     }

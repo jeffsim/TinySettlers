@@ -55,7 +55,7 @@ public class StoragePileData : BaseData
             if (!spot.ItemContainer.IsEmpty)
             {
                 if (spot.Reservation.IsReserved)
-                    spot.Reservation.ReservedBy.CurrentTask?.Abandon();
+                    spot.Reservation.ReservedBy.AI.CurrentTask.Abandon();
                 spot.ItemContainer.ClearItem();
             }
     }

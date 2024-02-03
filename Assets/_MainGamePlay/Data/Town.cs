@@ -288,7 +288,7 @@ public class TownData : BaseData
         // see how many are being carried
         var numBeingCarried = 0;
         foreach (var worker in Workers)
-            if (worker.CurrentTask.IsCarryingItem(itemId))
+            if (worker.AI.CurrentTask.IsCarryingItem(itemId))
                 numBeingCarried++;
         return numInStorage + numBeingCarried;
     }

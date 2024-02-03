@@ -30,10 +30,11 @@ public class GatheringSpotDetails : MonoBehaviour
 
         if (spot.Data.Reservation.IsReserved)
         {
+            var reservedBy = spot.Data.Reservation.ReservedBy;
             Reservation.text = "Reservation:";
-            Reservation.text += "\n    By: " + spot.Data.Reservation.ReservedBy;
-            Reservation.text += "\n    Task: " + spot.Data.Reservation.ReservedBy.CurrentTask;
-            Reservation.text += "\n    Item: " + spot.Data.Reservation.ReservedBy.CurrentTask.GetTaskItem().FriendlyName;
+            Reservation.text += "\n    By: " + reservedBy;
+            Reservation.text += "\n    Task: " + reservedBy.AI.CurrentTask;
+            Reservation.text += "\n    Item: " + reservedBy.AI.CurrentTask.GetTaskItem().FriendlyName;
         }
         else
             Reservation.text = "Not reserved";

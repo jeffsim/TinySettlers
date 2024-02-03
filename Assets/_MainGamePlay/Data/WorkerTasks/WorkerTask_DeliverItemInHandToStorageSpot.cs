@@ -24,8 +24,8 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
 
     private WorkerTask_DeliverItemInHandToStorageSpot(WorkerData worker, NeedData need) : base(worker, need)
     {
-        base.Start();
-        worker.CurrentTask = this;
+        // Unlike other tasks, we start this one immediately. TODO: cleanup; should I?
+        worker.AI.StartTask(this);
     }
 
     // Note: this is called when any building is destroyed, not just "this task's" building
