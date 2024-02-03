@@ -9,6 +9,7 @@ public class WorkerData : BaseData
 {
     public override string ToString() => AssignedBuilding.Defn.AssignedWorkerFriendlyName + " (" + InstanceId + ")";// + "-" + worker.Data.UniqueId;
 
+
     // Position within the current Map
     public LocationComponent Location;
 
@@ -22,7 +23,7 @@ public class WorkerData : BaseData
     // The Town which this Worker is in
     public TownData Town;
 
-    public ItemData ItemInHand;
+    public ItemContainerComponent Hands = new();
     public StorageSpotData StorageSpotReservedForItemInHand;
 
     public NeedData OriginalPickupItemNeed;
@@ -83,7 +84,7 @@ public class WorkerData : BaseData
     {
         CurrentTask?.OnBuildingMoved(building, previousLoc);
     }
-    
+
     public void OnBuildingPauseToggled(BuildingData building)
     {
         CurrentTask?.OnBuildingPauseToggled(building);
@@ -101,7 +102,7 @@ public class WorkerData : BaseData
         // TODO
         return true;
     }
-    
+
     internal bool HasPathToItemOnGround(ItemData itemOnGround)
     {
         // TODO
@@ -112,36 +113,36 @@ public class WorkerData : BaseData
     {
         // todo: can be modified via e.g. research, town upgrades, ...
         var distanceMovedPerSecond = 5f;
-        if (ItemInHand != null)
-            distanceMovedPerSecond *= ItemInHand.Defn.CarryingSpeedModifier;
+        if (Hands.HasItem)
+            distanceMovedPerSecond *= Hands.Item.Defn.CarryingSpeedModifier;
         return distanceMovedPerSecond;
     }
 
-    internal void AddItemToHands(ItemData item)
-    {
-        Debug.Assert(item != null, "null item");
-        Debug.Assert(ItemInHand == null, "Already have ItemInHand (" + ItemInHand + ")");
-        ItemInHand = item;
-    }
+    // internal void AddItemToHands(ItemData item)
+    // {
+    //     Debug.Assert(item != null, "null item");
+    //     Debug.Assert(ItemInHand == null, "Already have ItemInHand (" + ItemInHand + ")");
+    //     ItemInHand = item;
+    // }
 
-    internal ItemData RemoveItemFromHands()
-    {
-        Debug.Assert(ItemInHand != null, "No  ItemInHand");
-        var item = ItemInHand;
-        ItemInHand = null;
-        return item;
-    }
+    // internal ItemData RemoveItemFromHands()
+    // {
+    //     Debug.Assert(ItemInHand != null, "No  ItemInHand");
+    //     var item = ItemInHand;
+    //     ItemInHand = null;
+    //     return item;
+    // }
 
     internal void DropItemInHandInReservedStorageSpot()
     {
         Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
         Debug.Assert(StorageSpotReservedForItemInHand.Building != null, "No ItemInHand");
         Debug.Assert(!StorageSpotReservedForItemInHand.Building.IsDestroyed, "Building destroyed");
-        Debug.Assert(ItemInHand != null, "No ItemInHand");
+        Debug.Assert(Hands != null, "No ItemInHand");
 
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
-        StorageSpotReservedForItemInHand.ItemContainer.SetItem(ItemInHand);
-        ItemInHand = null;
+        StorageSpotReservedForItemInHand.ItemContainer.SetItem(Hands.Item);
+        Hands.ClearItem();
         UnreserveStorageSpotReservedForItemInHand();
     }
 

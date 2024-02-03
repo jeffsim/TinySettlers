@@ -164,10 +164,10 @@ public abstract class TestBase
     protected void verify_ItemInHand(WorkerData worker, string itemDefnId)
     {
         Assert.NotNull(worker);
-        if (worker.ItemInHand == null)
-            Assert.AreEqual(itemDefnId, null, $"{preface()} Expected item in hand to be null, but is '{itemDefnId}'");
+        if (worker.Hands.HasItem)
+            Assert.AreEqual(itemDefnId, worker.Hands.Item.DefnId, $"{preface()} Expected item in hand to be '{itemDefnId}', but is '{worker.Hands.Item}'");
         else
-            Assert.AreEqual(itemDefnId, worker.ItemInHand.DefnId, $"{preface()} Expected item in hand to be '{itemDefnId}', but is '{worker.ItemInHand}'");
+            Assert.AreEqual(itemDefnId, null, $"{preface()} Expected item in hand to be null, but is '{itemDefnId}'");
     }
 
     protected void verify_ItemsOnGround(int expectedNumber)

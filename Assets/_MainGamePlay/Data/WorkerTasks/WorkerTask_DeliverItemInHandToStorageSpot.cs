@@ -17,7 +17,7 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
     public const float secondsToDrop = 0.5f;
     public override bool IsWalkingToTarget => substate == 0;
 
-    public override ItemDefn GetTaskItem() => Worker.ItemInHand?.Defn;
+    public override ItemDefn GetTaskItem() => Worker.Hands.HasItem ? Worker.Hands.Item.Defn : null;
     public override bool IsCarryingItem(string itemId) => true;
 
     public static WorkerTask_DeliverItemInHandToStorageSpot CreateAndStart(WorkerData worker, NeedData need) => new(worker, need);

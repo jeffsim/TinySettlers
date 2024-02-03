@@ -222,7 +222,7 @@ public class WorkerTask_CraftItem : WorkerTask
     {
         // Crafting resources were silently/automatically consumed above when we cleared them from their storagespots during pickup
         if (itemBeingCrafted.GoodType == GoodType.explicitGood)
-            Worker.AddItemToHands(new ItemData() { DefnId = CraftingItemDefnId });
+            Worker.Hands.SetItem(new ItemData() { DefnId = CraftingItemDefnId });
         else
             Worker.AssignedBuilding.Town.Gold += 100; // implicit good (e.g. gold) - done // todo: hardcoded
     }

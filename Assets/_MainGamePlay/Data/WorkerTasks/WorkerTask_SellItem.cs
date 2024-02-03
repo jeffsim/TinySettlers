@@ -16,7 +16,14 @@ public class WorkerTask_SellItem : WorkerTask
 
     public override TaskType Type => TaskType.SellItem;
 
-    public override ItemDefn GetTaskItem() => spotWithItemToSell.ItemContainer.Item != null ? spotWithItemToSell.ItemContainer.Item.Defn : Worker.ItemInHand.Defn;
+    public override ItemDefn GetTaskItem()
+    {
+        if (spotWithItemToSell.ItemContainer.Item != null)
+            return spotWithItemToSell.ItemContainer.Item.Defn;
+        if (Worker.Hands.HasItem)
+            return Worker.Hands.Item.Defn;
+        return null;
+    }
 
     [SerializeField] StorageSpotData spotWithItemToSell;
 
@@ -48,7 +55,7 @@ public class WorkerTask_SellItem : WorkerTask
             if (newSpot == spotWithItemToSell)
             {
                 // Failed to find an alternative; drop the item on the ground for later handling when storage becomes available
-                Worker.Town.AddItemToGround(Worker.RemoveItemFromHands(), Worker.Location);
+                Worker.Town.AddItemToGround(Worker.Hands.ClearItem(), Worker.Location);
             }
             else
             {
@@ -57,7 +64,7 @@ public class WorkerTask_SellItem : WorkerTask
                 // where we continue to hold onto to the item, but are ready to instantly start carrying it to the new spot.
                 ReservedSpots.Remove(spotWithItemToSell);
                 Worker.StorageSpotReservedForItemInHand = newSpot;
-                Worker.OriginalPickupItemNeed = NeedData.CreateAbandonedItemCleanupNeed(Worker.ItemInHand);
+                Worker.OriginalPickupItemNeed = NeedData.CreateAbandonedItemCleanupNeed(Worker.Hands.Item);
             }
             Abandon();
         }
@@ -92,7 +99,7 @@ public class WorkerTask_SellItem : WorkerTask
             case (int)WorkerTask_SellItemSubstate.PickupItemToSell:
                 if (IsSubstateDone(secondsToPickup))
                 {
-                    Worker.AddItemToHands(spotWithItemToSell.ItemContainer.ClearItem());
+                    Worker.Hands.SetItem(spotWithItemToSell.ItemContainer.ClearItem());
                     Worker.StorageSpotReservedForItemInHand = null; // TODO
                     GotoNextSubstate();
                 }
@@ -101,7 +108,7 @@ public class WorkerTask_SellItem : WorkerTask
             case (int)WorkerTask_SellItemSubstate.SellItem:
                 if (IsSubstateDone(secondsToSell))
                 {
-                    var item = Worker.RemoveItemFromHands();
+                    var item = Worker.Hands.ClearItem();
                     Worker.Town.ItemSold(item);
                     CompleteTask();
                 }

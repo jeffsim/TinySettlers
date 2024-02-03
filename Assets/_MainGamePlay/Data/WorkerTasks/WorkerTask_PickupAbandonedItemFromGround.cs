@@ -80,7 +80,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
                 {
                     CompleteTask();
                     Worker.Town.RemoveItemFromGround(ItemToPickup);
-                    Worker.AddItemToHands(ItemToPickup);
+                    Worker.Hands.SetItem(ItemToPickup);
 
                     // NOTE that completing the task unreserved the storage spot so that others can use them.
                     // However, we don't actually want to unreserve the storage spot yet since the worker is now holding the item and may need

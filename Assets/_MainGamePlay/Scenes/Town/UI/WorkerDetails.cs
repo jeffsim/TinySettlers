@@ -27,8 +27,8 @@ public class WorkerDetails : MonoBehaviour
         if (worker == null)
             return;
         Task.text = "Task: " + worker.Data.CurrentTask;
-        if (worker.Data.ItemInHand != null)
-            Items.text = "In hand: " + worker.Data.ItemInHand + "\n";
+        if (worker.Data.Hands.HasItem)
+            Items.text = "In hand: " + worker.Data.Hands.Item + "\n";
         else
             Items.text = "empty handed";
     }

@@ -23,5 +23,4 @@ public class ItemContainerComponent : BaseData
         Item = null;
         return itemToRemove;
     }
-
 }

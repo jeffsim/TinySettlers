@@ -115,7 +115,7 @@ public class TownTaskMgr
         float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
         foreach (var worker in idleWorkers)
         {
-            if (worker.ItemInHand != null) continue;                    // if worker is already carrying something then skip
+            if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
             if (worker.AssignedBuilding.IsPaused) continue;
             if (!worker.CanGoGetItemsBuildingsWant()) continue;
 
@@ -209,7 +209,7 @@ public class TownTaskMgr
         float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
         foreach (var worker in idleWorkers)
         {
-            if (worker.ItemInHand != null) continue;                    // if worker is already carrying something then skip
+            if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
             if (worker.AssignedBuilding.IsPaused) continue;
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
             if (!worker.CanPickupAbandonedItems()) continue;
@@ -245,7 +245,7 @@ public class TownTaskMgr
         float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
         foreach (var worker in idleWorkers)
         {
-            if (worker.ItemInHand != null) continue;                    // if worker is already carrying something then skip
+            if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
             if (worker.AssignedBuilding.IsPaused) continue;
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
             spotWithItem = need.BuildingWithNeed.GetClosestStorageSpotWithUnreservedItemToRemove(worker.Location);
@@ -288,7 +288,7 @@ public class TownTaskMgr
         float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
         foreach (var worker in idleWorkers)
         {
-            if (worker.ItemInHand != null) continue;                    // if worker is already carrying something then skip
+            if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
             if (worker.AssignedBuilding.IsPaused) continue;
             if (!worker.CanGatherResource(need.NeededItem)) continue;   // If worker can't gather [resource] then skip
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
@@ -360,14 +360,14 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.AssignedBuilding.IsPaused) continue;
-            if (worker.ItemInHand == null) continue; // idle worker isn't carrying anything
-            Debug.Assert(worker.StorageSpotReservedForItemInHand != null, $"Worker {worker} is carrying item {worker.ItemInHand} but doesn't have a storage spot reserved for it");
+            if (!worker.Hands.HasItem) continue; // idle worker isn't carrying anything
+            Debug.Assert(worker.StorageSpotReservedForItemInHand != null, $"Worker {worker} is carrying item {worker.Hands.Item} but doesn't have a storage spot reserved for it");
 
             // 'worker' is idle and holding an item.  This is because they were recently sent on a task to pick up an item, and 
             // they picked it up but haven't yet been assigned a new task to bring it anywhere.  In this case, they have already
             // reserved a storage spot for the item, but we'll first look around to see if any building needs the item.  If so, 
             // we'll assign the worker to that building.  If not, we'll deliver the item to the reserved storage spot.
-            NeedData highestNeed = GetHighestUnmetNeedForItemInBuildingWithAvailableStorage(worker.ItemInHand.DefnId);
+            NeedData highestNeed = GetHighestUnmetNeedForItemInBuildingWithAvailableStorage(worker.Hands.Item.DefnId);
             if (highestNeed != null)
             {
                 // found a building that needs the item and can store it.  Swap out the storage spot reserved for the item with the building's storage spot
@@ -391,7 +391,7 @@ public class TownTaskMgr
                     worker.StorageSpotReservedForItemInHand = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, worker.Location);
                     if (worker.StorageSpotReservedForItemInHand == null)
                     {
-                        Town.AddItemToGround(worker.RemoveItemFromHands(), worker.Location);
+                        Town.AddItemToGround(worker.Hands.ClearItem(), worker.Location);
                         worker.CurrentTask = null;
                         return false;
                     }
