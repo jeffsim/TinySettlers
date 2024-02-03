@@ -89,9 +89,9 @@ public class WorkerTask_CraftItem : WorkerTask
             for (int i = 0; i < resource.Count; i++)
                 reserveCraftingResourceStorageSpotForItem(resource.Item, reservedCraftingSpot.Location);
 
-        // Determine the resource spot that is closest to the crafting spot; we'll keep the reservation for that spot until the end of the task
-        // so that it can be used to store the crafted item
-        storageSpotForCraftedGood = getClosestStorageSpotTo(ReservedCraftingResourceStorageSpots, reservedCraftingSpot.Location);
+        // Determine the resource spot that is closest to the crafting spot; we'll keep the reservation for that spot until
+        // the end of the task so that it can be used to store the crafted item
+        storageSpotForCraftedGood = reservedCraftingSpot.Location.GetClosest(ReservedCraftingResourceStorageSpots);
 
         // Start out walking to the storage spot with the first resource we'll use for crafting
         nextCraftingResourceStorageSpotToGetFrom = getNextReservedCraftingResourceStorageSpot();

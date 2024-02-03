@@ -1,5 +1,11 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
+
+public interface ILocationProvider
+{
+    LocationComponent Location { get; }
+}
 
 [Serializable]
 public class LocationComponent
@@ -35,6 +41,24 @@ public class LocationComponent
         LocalLoc = new(localX, localY);
         ParentLoc = parentLoc;
         UpdateWorldLoc();
+    }
+
+    public T GetClosest<T>(List<T> locsToCheck, Func<T, bool> isValidCallback = null) where T : ILocationProvider => GetClosest(locsToCheck, out _, isValidCallback);
+    public T GetClosest<T>(List<T> locsToCheck, out float closestDist, Func<T, bool> isValidCallback = null) where T : ILocationProvider
+    {
+        T closest = default;
+        closestDist = float.MaxValue;
+        foreach (var locToCheck in locsToCheck)
+            if (isValidCallback == null || isValidCallback(locToCheck))
+            {
+                float dist = DistanceTo(locToCheck.Location);
+                if (dist < closestDist)
+                {
+                    closest = locToCheck;
+                    closestDist = dist;
+                }
+            }
+        return closest;
     }
 
     internal void MoveTowards(LocationComponent loc1, LocationComponent loc2, float t)

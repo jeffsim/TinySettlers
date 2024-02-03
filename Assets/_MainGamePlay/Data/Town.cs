@@ -151,24 +151,9 @@ public class TownData : BaseData
         }
     }
 
-    internal BuildingData getNearestResourceSource(WorkerData worker, ItemDefn itemDefn)
+    internal BuildingData GetNearestResourceSource(LocationComponent loc, ItemDefn itemDefn)
     {
-        BuildingData closestBuildingWithResourceAndGatheringSpot = null;
-        float closestBuildingDistance = float.MaxValue;
-
-        foreach (var building in Buildings)
-        {
-            if (building.ResourceCanBeGatheredFromHere(itemDefn))
-            {
-                float distanceToBuilding = worker.DistanceToBuilding(building);
-                if (distanceToBuilding < closestBuildingDistance)
-                {
-                    closestBuildingWithResourceAndGatheringSpot = building;
-                    closestBuildingDistance = distanceToBuilding;
-                }
-            }
-        }
-        return closestBuildingWithResourceAndGatheringSpot;
+        return loc.GetClosest(Buildings, building => building.ResourceCanBeGatheredFromHere(itemDefn));
     }
 
     internal void AddItemToGround(ItemData item, LocationComponent loc)

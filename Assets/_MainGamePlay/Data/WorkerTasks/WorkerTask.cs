@@ -350,20 +350,4 @@ public abstract class WorkerTask
         }
         return originalReservedSpot;
     }
-
-    protected StorageSpotData getClosestStorageSpotTo(List<StorageSpotData> spots, LocationComponent location)
-    {
-        StorageSpotData closest = null;
-        float closestDist = float.MaxValue;
-        foreach (var spot in spots)
-        {
-            float dist = spot.Location.DistanceTo(location);
-            if (dist < closestDist)
-            {
-                closest = spot;
-                closestDist = dist;
-            }
-        }
-        return closest;
-    }
 }

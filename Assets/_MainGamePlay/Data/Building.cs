@@ -16,7 +16,7 @@ public class DistanceToBuilding
 }
 
 [Serializable]
-public class BuildingData : BaseData
+public class BuildingData : BaseData, ILocationProvider
 {
     public override string ToString() => Defn.FriendlyName + " (" + InstanceId + ")";
 
@@ -37,13 +37,12 @@ public class BuildingData : BaseData
 
     public bool IsPaused;
 
-    // Where the Building is located (== TileLoc * TileSize)
-    public LocationComponent Location;
+    [SerializeField] public LocationComponent Location { get; set; }
 
     [NonSerialized] public OnBuildingTileLocChangedEvent OnBuildingTileLocChanged;
 
     // public ConstructionState ConstructionState;
-    // public float PercentBuilt;
+    // public float PercentBuilt; 
     // public bool IsConstructed => !(Defn.CanBeConstructed) || (ConstructionState == ConstructionState.FullyConstructed);
 
     public List<DistanceToBuilding> OtherBuildingsByDistance = new();
@@ -122,7 +121,7 @@ public class BuildingData : BaseData
         Location = new(TileX * TileSize, TileY * TileSize);
     }
 
-    internal void Initialize(TownData town)
+    public void Initialize(TownData town)
     {
         Town = town;
 
@@ -247,7 +246,7 @@ public class BuildingData : BaseData
         returns true if this building supports gathering the required resource AND there's
         an available gathering spot
 */
-    internal bool ResourceCanBeGatheredFromHere(ItemDefn itemDefn)
+    public bool ResourceCanBeGatheredFromHere(ItemDefn itemDefn)
     {
         return Defn.ResourcesCanBeGatheredFromHere &&
                 Defn.ResourcesThatCanBeGatheredFromHere.Contains(itemDefn) &&
@@ -421,128 +420,46 @@ public class BuildingData : BaseData
         return count;
     }
 
-    public StorageSpotData GetEmptyStorageSpot()
+    public StorageSpotData GetEmptyStorageSpot() => StorageSpots.First(spot => spot.IsEmptyAndAvailable);
+
+    public StorageSpotData GetClosestEmptyStorageSpot(LocationComponent loc) => GetClosestEmptyStorageSpot(loc, out float _);
+    public StorageSpotData GetClosestEmptyStorageSpot(LocationComponent loc, out float dist)
     {
-        foreach (var spot in StorageSpots)
-            if (spot.IsEmptyAndAvailable)
-                return spot;
-        return null;
+        return loc.GetClosest(StorageSpots, out dist, s => s.IsEmptyAndAvailable);
     }
 
-    public StorageSpotData GetClosestEmptyStorageSpot(LocationComponent location) => GetClosestEmptyStorageSpot(location, out float _);
-    public StorageSpotData GetClosestEmptyStorageSpot(LocationComponent location, out float dist)
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItem(LocationComponent loc, ItemDefn itemDefn) => GetClosestUnreservedStorageSpotWithItem(loc, itemDefn, out float _);
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItem(LocationComponent loc, ItemDefn itemDefn, out float distance)
     {
-        StorageSpotData closestSpot = null;
-        dist = float.MaxValue;
-        foreach (var spot in StorageSpots)
-            if (spot.IsEmptyAndAvailable)
-            {
-                var spotDist = location.DistanceTo(spot.Location);
-                if (spotDist < dist)
-                {
-                    dist = spotDist;
-                    closestSpot = spot;
-                }
-            }
-        return closestSpot;
+        return loc.GetClosest(StorageSpots, out distance, s => !s.Reservation.IsReserved && s.ItemContainer.ContainsItem(itemDefn));
     }
 
-    internal void Debug_RemoveAllItemsFromStorage()
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(LocationComponent loc) => GetClosestUnreservedStorageSpotWithItemToReapOrSell(loc, out float _);
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(LocationComponent loc, out float distance)
+    {
+        return loc.GetClosest(StorageSpots, out distance, s => !s.Reservation.IsReserved && s.ItemContainer.HasItem);
+    }
+
+    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent loc) => GetClosestUnreservedGatheringSpotWithItemToReap(loc, out float _);
+    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent loc, out float distance)
+    {
+        return loc.GetClosest(GatheringSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.HasItem);
+    }
+
+    public void Debug_RemoveAllItemsFromStorage()
     {
         foreach (var area in StorageAreas)
             area.Debug_RemoveAllItemsFromStorage();
     }
 
-
-    internal StorageSpotData GetClosestUnreservedStorageSpotWithItem(LocationComponent location, ItemDefn itemDefn, out float distance)
+    public GatheringSpotData ReserveClosestGatheringSpot(WorkerData worker, LocationComponent loc)
     {
-        StorageSpotData closestSpot = null;
-        distance = float.MaxValue;
-
-        // Find Closest unreserved gathering spot that has an item that needs to be gathered
-        foreach (var spot in StorageSpots)
-            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
-            {
-                var distToSpot = location.DistanceTo(spot.Location);
-                if (distToSpot < distance)
-                {
-                    distance = distToSpot;
-                    closestSpot = spot;
-                }
-            }
-        if (closestSpot != null)
-            return closestSpot;
-        return null;
-    }
-    internal GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent location, out float distance)
-    {
-        GatheringSpotData closestSpot = null;
-        distance = float.MaxValue;
-
-        // Find Closest unreserved gathering spot that has an item that needs to be gathered
-        foreach (var spot in GatheringSpots)
-            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
-            {
-                var distToSpot = location.DistanceTo(spot.Location);
-                if (distToSpot < distance)
-                {
-                    distance = distToSpot;
-                    closestSpot = spot;
-                }
-            }
-        if (closestSpot != null)
-            return closestSpot;
-        return null;
+        var spot = loc.GetClosest(GatheringSpots);
+        spot?.Reservation.ReserveBy(worker);
+        return spot;
     }
 
-    internal StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(LocationComponent location, out float distance)
-    {
-        StorageSpotData closestSpot = null;
-        distance = float.MaxValue;
-
-        // Find Closest unreserved gathering spot that has an item that needs to be gathered
-        foreach (var spot in StorageSpots)
-            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
-            {
-                var distToSpot = location.DistanceTo(spot.Location);
-                if (distToSpot < distance)
-                {
-                    distance = distToSpot;
-                    closestSpot = spot;
-                }
-            }
-        if (closestSpot != null)
-            return closestSpot;
-        return null;
-    }
-
-    internal GatheringSpotData ReserveClosestGatheringSpot(WorkerData worker, LocationComponent location)
-    {
-        GatheringSpotData closestSpot = null;
-        float dist = float.MaxValue;
-
-        // Find Closest unreserved gathering spot
-        foreach (var spot in GatheringSpots)
-            if (!spot.Reservation.IsReserved)
-            {
-                var distToSpot = location.DistanceTo(spot.Location);
-                if (distToSpot < dist)
-                {
-                    dist = distToSpot;
-                    closestSpot = spot;
-                }
-            }
-        if (closestSpot != null)
-        {
-            closestSpot.Reservation.ReserveBy(worker);
-            return closestSpot;
-        }
-
-        Debug.Assert(false, "Reserving spot but none available");
-        return null;
-    }
-
-    internal void UnreserveGatheringSpot(WorkerData worker)
+    public void UnreserveGatheringSpot(WorkerData worker)
     {
         foreach (var spot in GatheringSpots)
             if (spot.Reservation.ReservedBy == worker)
@@ -555,12 +472,8 @@ public class BuildingData : BaseData
         Debug.Assert(false, "Unreserving gathering spot which isn't reserved by Worker");
     }
 
-    internal CraftingSpotData ReserveCraftingSpot(WorkerData worker)
+    public CraftingSpotData ReserveCraftingSpot(WorkerData worker)
     {
-        // Debug.Assert(WorkersThatReservedCraftingSpots.Count < Defn.CraftingSpots.Count, "Assigning too many workers to crafting spots");
-        // WorkersThatReservedCraftingSpots.Add(worker);
-
-
         // Find first unreserved crafting spot
         foreach (var spot in CraftingSpots)
             if (!spot.Reservation.IsReserved)
@@ -572,11 +485,8 @@ public class BuildingData : BaseData
         return null;
     }
 
-    internal void UnreserveCraftingSpot(WorkerData worker)
+    public void UnreserveCraftingSpot(WorkerData worker)
     {
-        // Debug.Assert(WorkersThatReservedCraftingSpots.Contains(worker), "Unreserving crafting spot but worker doesn't have one reserved");
-        // WorkersThatReservedCraftingSpots.Remove(worker);
-
         foreach (var spot in CraftingSpots)
             if (spot.Reservation.ReservedBy == worker)
             {
@@ -588,7 +498,7 @@ public class BuildingData : BaseData
         Debug.Assert(false, "Unreserving Crafting spot which isn't reserved by Worker");
     }
 
-    internal StorageSpotData ReserveStorageSpot(WorkerData worker)
+    public StorageSpotData ReserveStorageSpot(WorkerData worker)
     {
         Debug.Assert(HasAvailableStorageSpot, "Assigning too many workers to storage spots");
         var spot = GetEmptyStorageSpot();
@@ -597,7 +507,7 @@ public class BuildingData : BaseData
         return spot;
     }
 
-    internal StorageSpotData ReserveStorageSpotClosestToWorldLoc(WorkerData worker, LocationComponent location)
+    public StorageSpotData ReserveStorageSpotClosestToWorldLoc(WorkerData worker, LocationComponent location)
     {
         Debug.Assert(HasAvailableStorageSpot, "Assigning too many workers to storage spots");
         var spot = GetClosestEmptyStorageSpot(location);
@@ -605,22 +515,7 @@ public class BuildingData : BaseData
         return spot;
     }
 
-    // internal void UnreserveStorageSpot(WorkerData worker)
-    // {
-    //     // Note: Workers can only reserve one spot each; fine for now
-    //     foreach (var area in StorageAreas)
-    //         foreach (var spot in area.StorageSpots)
-    //             if (spot.ReservedBy == worker)
-    //             {
-    //                 spot.Unreserve();
-    //                 spot.RemoveItem();
-    //                 // WorkersThatReservedStorageSpots.Remove(worker);
-    //                 return;
-    //             }
-    //     Debug.Assert(false, "Unreserving storage spot but worker doesn't have one reserved");
-    // }
-
-    internal ItemData GetUnreservedItemInStorage(ItemDefn item)
+    public ItemData GetUnreservedItemInStorage(ItemDefn item)
     {
         foreach (var spot in StorageSpots)
             if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == item.Id)
@@ -628,7 +523,7 @@ public class BuildingData : BaseData
         return null;
     }
 
-    internal StorageSpotData GetStorageSpotWithUnreservedItem(ItemDefn item)
+    public StorageSpotData GetStorageSpotWithUnreservedItem(ItemDefn item)
     {
         foreach (var spot in StorageSpots)
             if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == item.Id)
@@ -636,7 +531,7 @@ public class BuildingData : BaseData
         return null;
     }
 
-    internal void Destroy()
+    public void Destroy()
     {
         Debug.Assert(!IsDestroyed, "destroying building twice");
         Debug.Assert(this != Town.Camp, "Can't destroy camp");
@@ -651,7 +546,7 @@ public class BuildingData : BaseData
         foreach (var area in StorageAreas) area.OnBuildingDestroyed();
     }
 
-    internal void MoveTo(int tileX, int tileY)
+    public void MoveTo(int tileX, int tileY)
     {
         Debug.Assert(!IsDestroyed, "destroying building twice");
 
@@ -669,7 +564,7 @@ public class BuildingData : BaseData
         OnBuildingTileLocChanged?.Invoke();
     }
 
-    internal void UpdateWorldLoc()
+    public void UpdateWorldLoc()
     {
         // TODO: UGH
         foreach (var area in StorageAreas)
@@ -692,7 +587,7 @@ public class BuildingData : BaseData
         OtherBuildingsByDistance.Sort((a, b) => (int)(a.Distance - b.Distance));
     }
 
-    internal StorageSpotData GetFirstStorageSpotWithUnreservedItemToRemove()
+    public StorageSpotData GetFirstStorageSpotWithUnreservedItemToRemove()
     {
         foreach (var spot in StorageSpots)
             if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
@@ -706,7 +601,7 @@ public class BuildingData : BaseData
         return null;
     }
 
-    internal StorageSpotData GetClosestStorageSpotWithUnreservedItemToRemove(LocationComponent location)
+    public StorageSpotData GetClosestStorageSpotWithUnreservedItemToRemove(LocationComponent location)
     {
         StorageSpotData closestSpot = null;
         float closestDist = float.MaxValue;
@@ -728,7 +623,7 @@ public class BuildingData : BaseData
         return closestSpot;
     }
 
-    internal List<StorageSpotData> GetStorageSpotsWithUnreservedItem(ItemDefn itemDefn)
+    public List<StorageSpotData> GetStorageSpotsWithUnreservedItem(ItemDefn itemDefn)
     {
         var spots = new List<StorageSpotData>();
         foreach (var spot in StorageSpots)
@@ -737,7 +632,7 @@ public class BuildingData : BaseData
         return spots;
     }
 
-    internal CraftingSpotData GetAvailableCraftingSpot()
+    public CraftingSpotData GetAvailableCraftingSpot()
     {
         foreach (var spot in CraftingSpots)
             if (!spot.Reservation.IsReserved)
@@ -745,7 +640,7 @@ public class BuildingData : BaseData
         return null;
     }
 
-    internal void TogglePaused()
+    public void TogglePaused()
     {
         Debug.Assert(Defn.PlayerCanPause, "Toggling paused on building that can't be paused");
         IsPaused = !IsPaused;

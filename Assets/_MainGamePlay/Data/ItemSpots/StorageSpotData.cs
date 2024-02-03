@@ -2,13 +2,13 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class StorageSpotData : BaseData
+public class StorageSpotData : BaseData, ILocationProvider
 {
     public BuildingData Building;
     [SerializeField] StoragePileData Pile;
     public int IndexInStoragePile;
 
-    public LocationComponent Location;
+    [SerializeField] public LocationComponent Location { get; set;  }
     public ReservationComponent Reservation = new();
     public ItemContainerComponent ItemContainer = new();
 
