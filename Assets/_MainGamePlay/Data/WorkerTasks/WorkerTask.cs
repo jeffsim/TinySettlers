@@ -176,7 +176,7 @@ public abstract class WorkerTask
             CurSubTask.OnAnyBuildingPauseToggled(building);
     }
 
-    public void OnBuildingDestroyed(BuildingData building)
+    public virtual void OnBuildingDestroyed(BuildingData building)
     {
         if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingDestroyed && Worker.Assignment.AssignedTo == building)
             Abandon();
