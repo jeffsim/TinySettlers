@@ -246,16 +246,16 @@ public partial class StorageRoomTests : TestBase
         // worker1 = worker assigned to store1
         // worker2 = worker assigned to store2
         // [..][..][Ca]
-        // [wo][..][..]
+        // [wo][..][s2]
         // [s1][..][..]
-        
-        // Test B: Move store1 while worker1 is getting an item from woodcutter to store in store1
-        // Test A: Move store2 while worker1 is getting an item from woodcutter to store in store1
+
+        // Test A: Move store1 while worker1 is getting an item from woodcutter to store in store1
+        // Test B: Move store2 while worker1 is getting an item from woodcutter to store in store1
+        // Test D: Move store1 while worker2 is getting an item from woodcutter to store in store1
+        // Test E: Move store2 while worker2 is getting an item from woodcutter to store in store1
         // Test C: Move woodcutter while worker1 is getting an item from woodcutter to store in store1
-        // Test E: Move store1 while worker2 is getting an item from woodcutter to store in store1
-        // Test D: Move store2 while worker2 is getting an item from woodcutter to store in store1
-        // Test F: Move woodcutter while worker1 is getting an item from woodcutter to store in store1
-        // Test F: Move woodcutter while worker2 is getting an item from woodcutter to store in store1
+        // Test F: Move woodcutter while worker1 is getting an item from woodcutter to store in store2
+        // Test G: Move woodcutter while worker2 is getting an item from woodcutter to store in store1
 
         // DONE test: pause storage while storer is bringing item to storage
         // test: pause camp while camper is bringing item to storage
@@ -273,7 +273,7 @@ public partial class StorageRoomTests : TestBase
 
         for (int i = 0; i < 4; i++)
         {
-            LoadTestTown("storageRoom_otherworker", i);
+            LoadTestTown("storageRoom_move1", i);
 
             // Town starts out with a camp, a storage room (with 1 worker), and a woodcutter's hut (with 1 woodplank in it). 
             // The worker will pick up the woodplank and store it in the storage room.
