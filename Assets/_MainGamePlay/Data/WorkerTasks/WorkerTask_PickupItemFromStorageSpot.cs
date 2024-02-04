@@ -24,10 +24,7 @@ public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
 
     public override void AllSubtasksComplete()
     {
-        // Remove item from gathering spot and put it in Worker's hand, and we're done
         CompleteTask();
-        Worker.Hands.SetItem(spotWithItemToPickup.ItemContainer.ClearItem());
-
         Worker.StorageSpotReservedForItemInHand = reservedSpotToStoreItemIn;
         Worker.OriginalPickupItemNeed = Need;
         reservedSpotToStoreItemIn.Reservation.ReserveBy(Worker);

@@ -21,12 +21,6 @@ public class WorkerTask_SellItem : WorkerTask
         Subtasks.Add(new WorkerSubtask_SellItemInHands(this, SpotWithItemToSell));
     }
 
-    public override void AllSubtasksComplete()
-    {
-        Worker.Town.ItemSold(Worker.Hands.ClearItem());
-        CompleteTask();
-    }
-
     // public override ItemDefn GetTaskItem()
     // {
     //     if (spotWithItemToSell.ItemContainer.Item != null)

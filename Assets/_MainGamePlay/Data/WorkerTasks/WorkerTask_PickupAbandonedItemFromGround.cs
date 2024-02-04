@@ -30,11 +30,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
 
     public override void AllSubtasksComplete()
     {
-        // Remove item from gathering spot and put it in Worker's hand, and we're done
         CompleteTask();
-        Worker.Town.RemoveItemFromGround(ItemToPickup);
-        Worker.Hands.SetItem(ItemToPickup);
-
         Worker.StorageSpotReservedForItemInHand = ReservedSpotToStoreItemIn;
         Worker.OriginalPickupItemNeed = Need;
         ReservedSpotToStoreItemIn.Reservation.ReserveBy(Worker);

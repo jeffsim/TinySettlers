@@ -12,6 +12,11 @@ public class WorkerSubtask_DropItemInItemSpot : WorkerSubtask
         UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);
     }
 
+    public override void SubtaskComplete()
+    {
+        Task.Worker.DropItemInHandInReservedStorageSpot();
+    }
+
     public override void OnAnyBuildingPauseToggled(BuildingData building)
     {
         if (building.IsPaused && building == ItemSpot.Building)

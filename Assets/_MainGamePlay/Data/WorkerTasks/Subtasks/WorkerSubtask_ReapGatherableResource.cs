@@ -12,6 +12,10 @@ public class WorkerSubtask_ReapGatherableResource : WorkerSubtask
         UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);
     }
 
+    public override void SubtaskComplete()
+    {
+    }
+    
     public override void OnAnyBuildingPauseToggled(BuildingData building)
     {
         if (building.IsPaused && building == ItemSpot.Building)

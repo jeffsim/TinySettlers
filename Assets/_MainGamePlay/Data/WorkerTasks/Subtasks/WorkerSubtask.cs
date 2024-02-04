@@ -10,7 +10,7 @@ public abstract class WorkerSubtask
     [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingPaused { get; set; } = true;
     [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingDestroyed { get; set; } = true;
     [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingMoved { get; set; } = false;
-    
+
     public List<BuildingData> UpdateWorkerLocWhenTheseBuildingsMove = new();
     public List<BuildingData> UpdateMoveTargetWhenTheseBuildingsMove = new();
 
@@ -61,5 +61,9 @@ public abstract class WorkerSubtask
     {
         if (IsSubstateDone)
             Task.GotoNextSubstate();
+    }
+
+    public virtual void SubtaskComplete()
+    {
     }
 }

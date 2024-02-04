@@ -86,6 +86,7 @@ public abstract class WorkerTask
 
     public virtual void GotoNextSubstate()
     {
+        CurSubTask?.SubtaskComplete();
         if (SubtaskIndex >= Subtasks.Count - 1)
             AllSubtasksComplete();
         else

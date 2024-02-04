@@ -1,16 +1,7 @@
-* destroy woodcutter while returning with wood
-    - keeps going to old pos.
-    - should find a new storage place for it
-        abandon task. on next update realize "I have an item in my hand and nowhere to go with it"
-            look at all possible destinations.
-
-* pause woodcutter while returning with wood
-    - keeps going to old pos.
-    - should keeps going to same storage place for it
-        abandon task. on next update realize "I have an item in my hand and nowhere to go with it"
-            look at all possible destinations.
-
-
+* Pause Market while woodcutter bringing word to it.  Works. Unpause, should bring wood
+    - ALSO: On pause it leaves the market storagespot reserved but shouldn't
+* MOve Market woprks
+* Destory Market
 
 * BUG: rapidly pause/unpause crafting station or storageroom; get "unrserving alreayd reserved spot"
 

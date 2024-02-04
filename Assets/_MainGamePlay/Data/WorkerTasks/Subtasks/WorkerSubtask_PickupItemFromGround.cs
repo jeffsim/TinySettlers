@@ -10,4 +10,10 @@ public class WorkerSubtask_PickupItemFromGround : WorkerSubtask
     {
         Item = item;
     }
+
+    public override void SubtaskComplete()
+    {
+        Task.Worker.Town.RemoveItemFromGround(Item);
+        Task.Worker.Hands.SetItem(Item);
+    }
 }

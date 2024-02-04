@@ -224,17 +224,7 @@ public class TownTaskMgr
             if (worker.Assignment.AssignedTo != craftingBuilding) continue; // worker must be assigned to the building that crafts the item
             if (worker.Assignment.AssignedTo.IsPaused) continue;
             if (!worker.CanCraftItems()) continue;
-            // if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
-
-            // StorageSpot only required for explicit items
-            // No Need: we'll use one of the crafting resources' storage spots
-            // StorageSpotData storageSpotForCraftedItem = null;
-            // if (itemToCraft.GoodType == GoodType.explicitGood)
-            // {
-            //     storageSpotForCraftedItem = worker.AssignedBuilding.GetClosestEmptyStorageSpot(craftingSpot.Location);
-            //     if (storageSpotForCraftedItem == null) continue; // No storage spot available for crafted item
-            // }
-
+           
             float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location, craftingSpot.Location);
 
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)

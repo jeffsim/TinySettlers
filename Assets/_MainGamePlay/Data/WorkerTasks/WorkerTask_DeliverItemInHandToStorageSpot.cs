@@ -26,12 +26,6 @@ public class WorkerTask_DeliverItemInHandToStorageSpot : WorkerTask
         Subtasks.Add(new WorkerSubtask_DropItemInItemSpot(this, Worker.StorageSpotReservedForItemInHand));
     }
 
-    public override void AllSubtasksComplete()
-    {
-        Worker.DropItemInHandInReservedStorageSpot();
-        CompleteTask();
-    }
-
     // // Note: this is called when any building is destroyed, not just "this task's" building
     // public override void OnBuildingDestroyed(BuildingData destroyedBuilding)
     // {
