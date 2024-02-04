@@ -26,7 +26,7 @@ MonoBehaviour:
     TileX: 2
     TileY: 2
     StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 1
+    NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 9f6b4d5be7465564ea13a01f9eda169b, type: 2}
     TestId: store1

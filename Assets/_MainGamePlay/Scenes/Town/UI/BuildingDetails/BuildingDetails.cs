@@ -36,6 +36,11 @@ public class BuildingDetails : MonoBehaviour
 
     }
 
+    public void OnDebugAddWorkerClicked()
+    {
+        scene.Map.Town.CreateWorkerInBuilding(building.Data);
+    }
+
     public void OnBuildingPauseToggleClicked()
     {
         building.Data.TogglePaused();

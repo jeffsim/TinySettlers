@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using UnityEditor.VersionControl;
 using UnityEngine;
 
 public abstract class TestBase
@@ -17,6 +16,8 @@ public abstract class TestBase
     public BuildingData StorageRoom;
     public BuildingData WoodcuttersHut;
 
+    TownDefn townDefn;
+
     public void LoadTestTown(string townDefnName, int stepNum = 0)
     {
         GameTime.IsTest = true;
@@ -29,7 +30,7 @@ public abstract class TestBase
         }
         UniqueIdGenerator.Instance = new UniqueIdGenerator();
 
-        var townDefn = GameDefns.Instance.TownDefns[townDefnName];
+        townDefn = GameDefns.Instance.TownDefns[townDefnName];
         Town = new TownData(townDefn);
         Town.InitializeOnFirstEnter();
 
@@ -46,20 +47,13 @@ public abstract class TestBase
         GameTime.timeScale = 16;
     }
 
-    // protected WorkerData addWorkerToBuilding(BuildingData building)
-    // {
-    //     throw new NotImplementedException();
-    // }
-
-    // protected void addItemsToBuilding(BuildingData building, string itemDefnId, int numToAdd)
-    // {
-    //     throw new NotImplementedException();
-    // }
-
-    // protected BuildingData addBuilding(string buildingDefnId, int tileX, int tileY)
-    // {
-    //     throw new NotImplementedException();
-    // }
+    protected BuildingData getBuildingByTestId(string testId, bool failureIsOkay = false)
+    {
+        var building = Town.Buildings.Find(building => building.TestId == testId);
+        if (building == null && !failureIsOkay)
+            Assert.Fail($"{preface()} failed to get building with TestId '{testId}'");
+        return building;
+    }
 
     protected BuildingData getBuilding(string buildingDefnId, bool failureIsOkay = false)
     {
@@ -85,14 +79,14 @@ public abstract class TestBase
         return null;
     }
 
-    protected void waitUntilTask(WorkerData worker, TaskType taskType, string message = "", float secondsBeforeExitCheck = 50)
+    protected void waitUntilTask(WorkerData worker, TaskType taskType, string message = "", float secondsBeforeExitCheck = 50, int frame = 2)
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         while (GameTime.time < breakTime && worker.AI.CurrentTask.Type != taskType)
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, "{preface(message)} stuck in loop in waitUntilTask.  AI.CurrentTask = " + worker.AI.CurrentTask.Type + ", expected " + taskType);
+        Assert.IsTrue(GameTime.time < breakTime, $"{preface(message, frame)} stuck in loop in waitUntilTask.  AI.CurrentTask = " + worker.AI.CurrentTask.Type + ", expected " + taskType);
     }
 
     protected void waitUntilTaskAndSubstate(WorkerData worker, TaskType taskType, int substate, string message = "", float secondsBeforeExitCheck = 500)
@@ -130,14 +124,15 @@ public abstract class TestBase
         Assert.IsTrue(GameTime.time < breakTime, $"s{preface(message)} stuck in loop in waitUntilTaskDone.  AI.CurrentTask = {worker.AI.CurrentTask.Type}, expected task to change");
     }
 
+    public string TestName = "";
     int CurStep;
     protected void SetStep(int stepNum)
     {
         CurStep = stepNum;
     }
 
-    private string preface(string message = "") => preface(new System.Diagnostics.StackTrace(true).GetFrame(2).GetFileLineNumber(), message);
-    private string preface(int lineNum, string message = "") => $"StepNum {CurStep}, line {lineNum}: {(message != "" ? message + ": " : "")}";
+    private string preface(string message = "", int frame = 2) => _preface(new System.Diagnostics.StackTrace(true).GetFrame(frame).GetFileLineNumber(), message);
+    private string _preface(int lineNum, string message = "") => $"{TestName}StepNum {CurStep}, line {lineNum}: {(message != "" ? message + ": " : "")}";
 
     public void verify_LocsAreEqual(Vector3 v1, Vector3 v2, string message = "", float acceptableDelta = 0.01f)
     {
@@ -156,10 +151,10 @@ public abstract class TestBase
         Assert.AreEqual(building1, building2, $"{preface(message)} Buildings not equal - {building1} vs {building2}");
     }
 
-    public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker, string message = "")
+    public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker, string message = "", int frame = 2)
     {
-        Assert.NotNull(worker.AI.CurrentTask, $"{preface(message)}: Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
-        Assert.AreEqual(expectedType, worker.AI.CurrentTask.Type, $"{preface(message)} Expected worker {worker} to have task type {expectedType}, but worker.AI.CurrentTask.Type is {worker.AI.CurrentTask.Type}");
+        Assert.NotNull(worker.AI.CurrentTask, $"{preface(message, frame)}: Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
+        Assert.AreEqual(expectedType, worker.AI.CurrentTask.Type, $"{preface(message, frame)} Expected worker {worker} to have task type {expectedType}, but worker.AI.CurrentTask.Type is {worker.AI.CurrentTask.Type}");
     }
 
     protected void verify_WorkerTaskSubstate(int substate, WorkerData worker)
@@ -169,35 +164,32 @@ public abstract class TestBase
         // Assert.AreEqual(substate, worker.AI.CurrentTask.substate, $"{preface(message)} Expected worker {worker} to have substate {substate}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.substate}");
     }
 
-
-
-
     protected void waitUntilTaskAndSubtask(WorkerData worker, TaskType taskType, Type subtaskType, string message = "", float secondsBeforeExitCheck = 500)
     {
-        waitUntilTask(worker, taskType, message, secondsBeforeExitCheck);
-        waitUntilTaskSubtask(worker, subtaskType, message, secondsBeforeExitCheck);
+        waitUntilTask(worker, taskType, message, secondsBeforeExitCheck, 3);
+        waitUntilTaskSubtask(worker, subtaskType, message, secondsBeforeExitCheck, 3);
     }
 
-    protected void waitUntilTaskSubtask(WorkerData worker, Type subtaskType, string message = "", float secondsBeforeExitCheck = 500)
+    protected void waitUntilTaskSubtask(WorkerData worker, Type subtaskType, string message = "", float secondsBeforeExitCheck = 500, int frame = 2)
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         while (GameTime.time < breakTime && worker.AI.CurrentTask.CurSubTask.GetType() != subtaskType)
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, $"{preface(message)} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.CurSubTask.GetType()}, expected substate {subtaskType}");
+        Assert.IsTrue(GameTime.time < breakTime, $"{preface(message, frame)} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.CurSubTask.GetType()}, expected substate {subtaskType}");
     }
 
     public void verify_WorkerTaskTypeAndSubtask(WorkerData worker, TaskType expectedType, Type subtaskType, string message = "")
     {
-        verify_WorkerTaskType(expectedType, worker, message);
-        verify_WorkerTaskSubtask(subtaskType, worker, message);
+        verify_WorkerTaskType(expectedType, worker, message, 3);
+        verify_WorkerTaskSubtask(subtaskType, worker, message, 3);
     }
 
-    protected void verify_WorkerTaskSubtask(Type type, WorkerData worker, string message = "")
+    protected void verify_WorkerTaskSubtask(Type type, WorkerData worker, string message = "", int frame = 2)
     {
         Assert.NotNull(worker.AI.CurrentTask, $"{preface(message)} Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
-        Assert.AreEqual(type, worker.AI.CurrentTask.CurSubTask.GetType(), $"{preface(message)} Expected worker {worker} to have substate {type}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.CurSubTask.GetType()}");
+        Assert.AreEqual(type, worker.AI.CurrentTask.CurSubTask.GetType(), $"{preface(message, frame)} Expected worker {worker} to have substate {type}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.CurSubTask.GetType()}");
     }
 
     protected void verify_AssignedBuilding(WorkerData worker, BuildingData building, string message = "")

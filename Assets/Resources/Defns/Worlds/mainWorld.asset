@@ -21,7 +21,7 @@ MonoBehaviour:
   - Town: {fileID: 11400000, guid: 3f8dee68f377b48b29ed78a6c7c4c373, type: 2}
     StartingState: 2
     WinningUnlocks: []
-  - Town: {fileID: 11400000, guid: c05fc006377cb7f4b8de33c127458406, type: 2}
+  - Town: {fileID: 11400000, guid: 3aaaac07ca24e7d44ae525b550c386b7, type: 2}
     StartingState: 2
     WinningUnlocks:
     - {fileID: 11400000, guid: b94bb7659c38b47ce9735883fe607e91, type: 2}

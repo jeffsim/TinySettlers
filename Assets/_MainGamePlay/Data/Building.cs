@@ -26,6 +26,10 @@ public class BuildingData : BaseData, ILocationProvider
     // The Town which this Building is in
     public TownData Town;
 
+#if UNITY_INCLUDE_TESTS
+    public string TestId;
+#endif
+
     public bool IsDestroyed;
 
     // Which Tile the Building is in
@@ -115,7 +119,7 @@ public class BuildingData : BaseData, ILocationProvider
         DefnId = buildingDefn.Id;
         TileX = tileX;
         TileY = tileY;
-        Location = new(new (TileX * TileSize, TileY * TileSize));
+        Location = new(new(TileX * TileSize, TileY * TileSize));
     }
 
     public void Initialize(TownData town)
@@ -410,7 +414,7 @@ public class BuildingData : BaseData, ILocationProvider
 
     public int NumItemsInStorage => StorageAreas.Sum(area => area.NumItemsInStorage);
     public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StorageAreas.Sum(area => area.NumItemsOfTypeInStorage(itemDefn));
-  
+
     public StorageSpotData GetEmptyStorageSpot() => StorageSpots.First(spot => spot.ItemContainer.IsEmpty && !spot.Reservation.IsReserved);
 
     public StorageSpotData GetClosestEmptyStorageSpot(LocationComponent loc) => GetClosestEmptyStorageSpot(loc, out float _);

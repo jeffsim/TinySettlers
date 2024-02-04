@@ -64,7 +64,9 @@ public class TownData : BaseData
             var building = ConstructBuilding(tbDefn.Building, tbDefn.TileX, tbDefn.TileY);
             if (building.Defn.BuildingClass == BuildingClass.Camp)
                 Camp = building;
-
+#if UNITY_INCLUDE_TESTS
+            building.TestId = tbDefn.TestId;
+#endif
             for (int i = 0; i < tbDefn.NumWorkersStartAtBuilding; i++)
                 CreateWorkerInBuilding(building);
 
@@ -75,11 +77,12 @@ public class TownData : BaseData
         TownTaskMgr = new(this);
     }
 
-    public void CreateWorkerInBuilding(BuildingData building)
+    public WorkerData CreateWorkerInBuilding(BuildingData building)
     {
         var worker = new WorkerData(building);
         Workers.Add(worker);
         OnWorkerCreated?.Invoke(worker);
+        return worker;
     }
 
     internal void TestMoveBuilding(int test)
