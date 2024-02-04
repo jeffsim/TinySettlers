@@ -16,18 +16,19 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     public TownData Town;
 
     public IItemSpotInBuilding StorageSpotReservedForItemInHand;
+    public float DistanceToAssignedBuilding => Location.DistanceTo(Assignment.AssignedTo.Location);
 
     public NeedData OriginalPickupItemNeed;
 
     public WorkerData(BuildingData buildingToStartIn)
     {
-        Location = new(Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f));
+        Location = Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f);
 
         Town = buildingToStartIn.Town;
 
         Assignment.AssignTo(buildingToStartIn);
         Assignment.OnAssignedToChanged += () => AI.CurrentTask.Abandon();  // TODO: I *think* this doesn't need to be cleaned up on destroy (?)
-        
+
         AI = new(this);
     }
 

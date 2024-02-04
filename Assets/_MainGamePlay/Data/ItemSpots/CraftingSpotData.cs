@@ -7,16 +7,22 @@ public class CraftingSpotData : BaseData, ILocationProvider, IReservationProvide
     public override string ToString() => ItemsContainer.ToString();
 
     [SerializeField] public BuildingData Building { get; set; }
-    
-    [SerializeField] public LocationComponent Location { get; set; }
+
+    [SerializeField] public LocationComponent Location { get; set; } = new();
     [SerializeField] public ReservationComponent Reservation { get; set; } = new();
     public MultipleItemContainerComponent ItemsContainer = new();
+    public Vector2 LocOffset;
 
     public CraftingSpotData(BuildingData building, int index)
     {
         Debug.Assert(building.Defn.CraftingSpots.Count > index, "building " + building.DefnId + " missing CraftingSpotData " + index);
         Building = building;
-        Location = new(building.Location, building.Defn.CraftingSpots[index].x, building.Defn.CraftingSpots[index].y);
+        LocOffset = new(building.Defn.CraftingSpots[index].x, building.Defn.CraftingSpots[index].y);
+    }
+
+    public void UpdateWorldLoc()
+    {
+        Location.SetWorldLoc(Building.Location.WorldLoc + LocOffset);
     }
 
     internal void OnBuildingDestroyed()

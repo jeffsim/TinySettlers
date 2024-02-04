@@ -13,7 +13,7 @@ public abstract class BaseWorkerSubtask_Moving : WorkerSubtask
     public override void Start()
     {
         base.Start();
-        Task.LastMoveToTarget = Location;
+        Task.LastMoveToTarget.SetWorldLoc(Location);
     }
 
     public override void Update()

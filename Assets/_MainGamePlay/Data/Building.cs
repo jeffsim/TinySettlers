@@ -117,7 +117,7 @@ public class BuildingData : BaseData, ILocationProvider
         DefnId = buildingDefn.Id;
         TileX = tileX;
         TileY = tileY;
-        Location = new(TileX * TileSize, TileY * TileSize);
+        Location = new(new (TileX * TileSize, TileY * TileSize));
     }
 
     public void Initialize(TownData town)
@@ -413,12 +413,12 @@ public class BuildingData : BaseData, ILocationProvider
     public int NumItemsInStorage => StorageAreas.Sum(area => area.NumItemsInStorage);
     public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StorageAreas.Sum(area => area.NumItemsOfTypeInStorage(itemDefn));
   
-    public StorageSpotData GetEmptyStorageSpot() => StorageSpots.First(spot => spot.IsEmptyAndAvailable);
+    public StorageSpotData GetEmptyStorageSpot() => StorageSpots.First(spot => spot.ItemContainer.IsEmpty && !spot.Reservation.IsReserved);
 
     public StorageSpotData GetClosestEmptyStorageSpot(LocationComponent loc) => GetClosestEmptyStorageSpot(loc, out float _);
     public StorageSpotData GetClosestEmptyStorageSpot(LocationComponent loc, out float dist)
     {
-        return loc.GetClosest(StorageSpots, out dist, spot => spot.IsEmptyAndAvailable);
+        return loc.GetClosest(StorageSpots, out dist, spot => spot.ItemContainer.IsEmpty && !spot.Reservation.IsReserved);
     }
 
     public StorageSpotData GetClosestUnreservedStorageSpotWithItem(LocationComponent loc, ItemDefn itemDefn) => GetClosestUnreservedStorageSpotWithItem(loc, itemDefn, out float _);
@@ -498,7 +498,7 @@ public class BuildingData : BaseData, ILocationProvider
         TileX = tileX;
         TileY = tileY;
 
-        LocationComponent previousWorldLoc = new(Location);
+        LocationComponent previousWorldLoc = new(Location.WorldLoc);
         Location.SetWorldLoc(TileX * TileSize, TileY * TileSize);
         UpdateWorldLoc();
 
@@ -515,9 +515,9 @@ public class BuildingData : BaseData, ILocationProvider
         foreach (var area in StorageAreas)
             area.UpdateWorldLoc();
         foreach (var spot in CraftingSpots)
-            spot.Location.UpdateWorldLoc();
+            spot.UpdateWorldLoc();
         foreach (var spot in GatheringSpots)
-            spot.Location.UpdateWorldLoc();
+            spot.UpdateWorldLoc();
     }
 
     public void UpdateDistanceToOtherBuildings()

@@ -190,10 +190,11 @@ public abstract class WorkerTask
             Abandon();
             return;
         }
+        var offset = building.Location - previousLoc;
         if (CurSubTask.UpdateWorkerLocWhenTheseBuildingsMove.Contains(building))
-            Worker.Location.OffsetMinus(building.Location, previousLoc);
+            Worker.Location += offset;
         if (CurSubTask.UpdateMoveTargetWhenTheseBuildingsMove.Contains(building))
-            LastMoveToTarget.OffsetMinus(building.Location, previousLoc);
+            LastMoveToTarget += offset;
 
         CurSubTask.OnAnyBuildingMoved(building, previousLoc);
     }

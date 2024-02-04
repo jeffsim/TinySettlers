@@ -45,7 +45,7 @@ public class StoragePile : MonoBehaviour
         bool isAnySpotReserved = Data.StorageSpots.Any(s => s.Reservation.IsReserved);
         if (Data.NumItemsInPile > 0)
         {
-            var firstSpotWithItem = Data.StorageSpots.FirstOrDefault(s => s.HasItem);
+            var firstSpotWithItem = Data.StorageSpots.FirstOrDefault(s => s.ItemContainer.HasItem);
             Debug.Assert(firstSpotWithItem != null);
             GetComponentInChildren<Renderer>().material.color = firstSpotWithItem.ItemContainer.Item.Defn.Color;
             name = "Storage " + Data.IndexInStorageArea + " - " + firstSpotWithItem.ItemContainer.Item.Defn.FriendlyName;

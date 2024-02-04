@@ -11,20 +11,23 @@ public class StoragePileData : BaseData
     public BuildingData Building;
     public int IndexInStorageArea;
 
+    public LocationComponent Location = new();
     public List<StorageSpotData> StorageSpots = new();
     public bool HasAvailableSpot => NumAvailableSpots > 0;
     public int NumStorageSpots => StorageSpots.Count;
-    public int NumAvailableSpots => StorageSpots.Count(spot => spot.IsEmptyAndAvailable);
+    public int NumAvailableSpots => StorageSpots.Count(spot => spot.ItemContainer.IsEmpty && !spot.Reservation.IsReserved);
     public int NumReservedSpots => StorageSpots.Count(spot => spot.Reservation.IsReserved);
-    public int NumItemsInPile => StorageSpots.Count(spot => spot.HasItem);
+    public int NumItemsInPile => StorageSpots.Count(spot => spot.ItemContainer.HasItem);
 
-    public LocationComponent Location;
+    public Vector2 PileLocOffset;
+    [SerializeReference] StorageAreaData Area;
 
-    public StoragePileData(StorageAreaData area, StorageAreaDefn areaDefn, Vector2 localLoc, int pileIndex)
+    public StoragePileData(StorageAreaData area, StorageAreaDefn areaDefn, Vector2 pileLocOffset, int pileIndex)
     {
+        Area = area;
+        PileLocOffset = pileLocOffset;
         IndexInStorageArea = pileIndex;
         Building = area.Building;
-        Location = new LocationComponent(area.Location, localLoc);
 
         var numSpots = areaDefn.StoragePileSize.x * areaDefn.StoragePileSize.y;
         for (int i = 0; i < numSpots; i++)
@@ -33,9 +36,9 @@ public class StoragePileData : BaseData
 
     public void UpdateWorldLoc()
     {
-        Location.UpdateWorldLoc();
+        Location.SetWorldLoc(Area.Location.WorldLoc + PileLocOffset);
         foreach (var spot in StorageSpots)
-            spot.Location.UpdateWorldLoc();
+            spot.Location.SetWorldLoc(Area.Location.WorldLoc + PileLocOffset);
     }
 
     public int NumItemsInStorage() => StorageSpots.Count(spot => spot.ItemContainer.HasItem);

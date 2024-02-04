@@ -176,7 +176,7 @@ public abstract class TestBase
         // Assert.NotNull(worker.AI.CurrentTask, $"{preface()} Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
         // Assert.AreEqual(type, worker.AI.CurrentTask.CurSubTask.GetType(), $"{preface()} Expected worker {worker} to have substate {type}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.substate.GetType()}");
     }
-    
+
     protected void verify_AssignedBuilding(WorkerData worker, BuildingData building)
     {
         Assert.NotNull(worker, $"{preface()} Expected worker {worker} to be assigned to {building}, but worker is null");
@@ -201,8 +201,8 @@ public abstract class TestBase
 
     protected void forceMoveWorkerAwayFromAssignedBuilding(WorkerData worker)
     {
-        var loc = worker.Assignment.AssignedTo.Location.WorldLoc + new Vector3(1, 0, 0);
-        worker.Location.SetWorldLoc(loc.x, loc.y);
+        Vector2 loc = worker.Assignment.AssignedTo.Location.WorldLoc;
+        worker.Location.SetWorldLoc(loc.x + 1, loc.y);
     }
 
     protected void updateTown()

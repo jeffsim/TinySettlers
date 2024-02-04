@@ -10,21 +10,26 @@ public class GatheringSpotData : BaseData, ILocationProvider, IReservationProvid
     public string ItemGrownInSpotDefnId;
     public float PercentGrown;
 
-    [SerializeField] public LocationComponent Location { get; set; }
+    [SerializeField] public LocationComponent Location { get; set; } = new();
     [SerializeField] public ReservationComponent Reservation { get; set; } = new();
     [SerializeField] public ItemContainerComponent ItemContainer { get; set; } = new();
+    public Vector2 LocOffset;
 
     public GatheringSpotData(BuildingData building, int index)
     {
         Building = building;
         Debug.Assert(building.Defn.GatheringSpots.Count > index, "building " + building.DefnId + " missing GatheringSpotData " + index);
         var loc = building.Defn.GatheringSpots[index];
-        Location = new(building.Location, loc.x, loc.y);
-        PercentGrown = 0;
+        LocOffset = new(loc.x, loc.y);
 
         // hack
         if (building.Defn.ResourcesCanBeGatheredFromHere)
             ItemGrownInSpotDefnId = building.Defn.ResourcesThatCanBeGatheredFromHere[0].Id;
+    }
+
+    public void UpdateWorldLoc()
+    {
+        Location.SetWorldLoc(Building.Location.WorldLoc + LocOffset);
     }
 
     public void Update()

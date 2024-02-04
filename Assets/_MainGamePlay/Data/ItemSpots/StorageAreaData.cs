@@ -8,8 +8,8 @@ public class StorageAreaData : BaseData
 {
     public override string ToString() => Location + "{" + string.Join(", ", StoragePiles.Select(pile => pile)) + "}";
 
-    public LocationComponent Location;
-    public List<StoragePileData> StoragePiles;
+    public LocationComponent Location = new();
+    public List<StoragePileData> StoragePiles = new();
 
     public BuildingData Building;
 
@@ -23,12 +23,12 @@ public class StorageAreaData : BaseData
     public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StoragePiles.Sum(spot => spot.NumItemsOfTypeInStorage(itemDefn));
     public int NumUnreservedItemsOfTypeInStorage(ItemDefn itemDefn) => StoragePiles.Sum(spot => spot.NumUnreservedItemsOfTypeInStorage(itemDefn));
 
+    public Vector2 AreaLocOffset;
+
     public StorageAreaData(BuildingData buildingData, StorageAreaDefn storageAreaDefn)
     {
         Building = buildingData;
-
-        Location = new(Building.Location, storageAreaDefn.Location.x, storageAreaDefn.Location.y);
-        StoragePiles = new();
+        AreaLocOffset = new(storageAreaDefn.Location.x, storageAreaDefn.Location.y);
         var width = storageAreaDefn.StorageAreaSize.x;
         var height = storageAreaDefn.StorageAreaSize.y;
         for (int i = 0, y = 0; y < height; y++)
@@ -41,7 +41,7 @@ public class StorageAreaData : BaseData
 
     public void UpdateWorldLoc()
     {
-        Location.UpdateWorldLoc();
+        Location.SetWorldLoc(Building.Location.WorldLoc + AreaLocOffset);
         foreach (var pile in StoragePiles)
             pile.UpdateWorldLoc();
     }

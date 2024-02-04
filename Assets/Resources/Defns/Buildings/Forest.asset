@@ -22,7 +22,7 @@ MonoBehaviour:
   HasWorkers: 0
   MaxWorkers: 4
   EditorColor: {r: 0, g: 0.38679248, b: 0.047153078, a: 1}
-  PlayerCanMove: 0
+  PlayerCanMove: 1
   PlayerCanDestroy: 0
   PlayerCanPause: 0
   CanBeConstructed: 0

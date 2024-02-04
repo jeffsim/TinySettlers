@@ -65,11 +65,12 @@ public class Worker : MonoBehaviour
             if (Data.AI.CurrentTask.IsWalkingToTarget)
             {
                 // Draw path
-                var offset = new Vector3(0, 0, -6);
                 using (Drawing.Draw.ingame.WithColor(Color.blue))
                 {
+                    Vector3 loc1 = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -6);
+                    Vector3 loc2 = new(Data.AI.CurrentTask.LastMoveToTarget.WorldLoc.x, Data.AI.CurrentTask.LastMoveToTarget.WorldLoc.y, -6);
                     using (Drawing.Draw.ingame.WithLineWidth(3))
-                        Drawing.Draw.ingame.Line(new Vector3(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, 0) + offset, Data.AI.CurrentTask.LastMoveToTarget.WorldLoc + offset);
+                        Drawing.Draw.ingame.Line(loc1, loc2);
                 }
             }
 
