@@ -44,8 +44,6 @@ public class BuildingData : BaseData, ILocationProvider
     // public float PercentBuilt; 
     // public bool IsConstructed => !(Defn.CanBeConstructed) || (ConstructionState == ConstructionState.FullyConstructed);
 
-    public List<DistanceToBuilding> OtherBuildingsByDistance = new();
-
     public List<NeedData> Needs;
 
     public List<GatheringSpotData> GatheringSpots;
@@ -518,18 +516,6 @@ public class BuildingData : BaseData, ILocationProvider
             spot.UpdateWorldLoc();
         foreach (var spot in GatheringSpots)
             spot.UpdateWorldLoc();
-    }
-
-    public void UpdateDistanceToOtherBuildings()
-    {
-        OtherBuildingsByDistance.Clear();
-        foreach (var building in Town.Buildings)
-        {
-            float distance = Location.DistanceTo(building.Location);
-            if (distance < int.MaxValue)
-                OtherBuildingsByDistance.Add(new() { Building = building, Distance = distance });
-        }
-        OtherBuildingsByDistance.Sort((a, b) => (int)(a.Distance - b.Distance));
     }
 
     public StorageSpotData GetFirstStorageSpotWithUnreservedItemToRemove()

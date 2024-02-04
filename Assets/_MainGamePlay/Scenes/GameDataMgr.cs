@@ -10,7 +10,7 @@ public class GameDataMgr : MonoBehaviour
     [ShowInInspector][NonSerialized] public GameData GameData;
 
     public string ProfilesFolderName => Path.Combine(Application.persistentDataPath, "Profiles");
-    bool UseBinarySaveFiles = false;
+    bool UseBinarySaveFiles = true;
 
     void Awake()
     {
@@ -83,7 +83,16 @@ public class GameDataMgr : MonoBehaviour
     public void SaveProfile()
     {
         EnsureProfilesFolderExists();
-        GameData.lastGameTime = GameTime.time;
+
+        if (GameData.CurrentTown != null)
+            GameData.CurrentTown.lastGameTime = GameTime.time;
+
+        // Delete all towns other than currenttown
+        // TBD if I keep this.  If so, clean it up
+        // var towns = GameData.Towns;
+        // GameData.Towns.Clear();
+        // GameData.Towns.Add(GameData.CurrentTown);
+
 
         var fileName = GetProfileFileName(GameData.ProfileName);
         byte[] bytes = SerializationUtility.SerializeValue(GameData, UseBinarySaveFiles ? DataFormat.Binary : DataFormat.JSON);

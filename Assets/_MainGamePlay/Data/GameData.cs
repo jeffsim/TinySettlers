@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 [Serializable]
 public class GameData
@@ -7,11 +6,9 @@ public class GameData
     /// The Name with which this GameData is saved
     public string ProfileName;
 
+    public WorldData World;
+
     public TownData CurrentTown;
-
-    public List<TownData> Towns = new List<TownData>();
-
-    public float lastGameTime;
 
     // Enables unique generation of ids that span saves
     public UniqueIdGenerator UniqueIdGenerator;
@@ -21,17 +18,19 @@ public class GameData
         UniqueIdGenerator = new UniqueIdGenerator();
         UniqueIdGenerator.Instance = UniqueIdGenerator;
 
-        var world = GameDefns.Instance.WorldDefns["mainWorld"];
-        foreach (var worldTownDefn in world.Towns)
-            Towns.Add(new TownData(worldTownDefn.Town, worldTownDefn.StartingState));
-
-        CurrentTown = null;
+        var worldDefn = GameDefns.Instance.WorldDefns["mainWorld"];
+        World = new WorldData(worldDefn);
     }
 
     public void OnLoaded()
     {
         UniqueIdGenerator.Instance = UniqueIdGenerator;
-        GameTime.time = lastGameTime;
         GameTime.UnPause();
+    }
+
+    internal void CurrentTownWonLost(bool won)
+    {
+        World.TownWonLost(CurrentTown, won);
+        CurrentTown = null;
     }
 }

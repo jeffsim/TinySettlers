@@ -25,7 +25,7 @@ public abstract class TestBase
         UniqueIdGenerator.Instance = new UniqueIdGenerator();
 
         var townDefn = GameDefns.Instance.TownDefns[townDefnName];
-        Town = new TownData(townDefn, TownState.Available);
+        Town = new TownData(townDefn);
         Town.InitializeOnFirstEnter();
 
         Camp = getBuilding("testCamp", true);

@@ -9,6 +9,7 @@ public class World_TownDefn
 {
     public TownDefn Town;
     public TownState StartingState;
+    public List<TownDefn> WinningUnlocks = new();
 }
 
 [CreateAssetMenu(fileName = "WorldDefn")]
@@ -16,5 +17,5 @@ public class WorldDefn : BaseDefn
 {
     public string FriendlyName;
 
-    public List<World_TownDefn> Towns = new List<World_TownDefn>();
+    public List<World_TownDefn> Towns = new();
 }

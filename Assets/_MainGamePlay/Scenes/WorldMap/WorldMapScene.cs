@@ -19,13 +19,12 @@ public class WorldMapScene : SceneMgr
     private void updateCityStates()
     {
         TownsFolder.RemoveAllChildren();
-        foreach (var town in gameDataMgr.GameData.Towns)
+        foreach (var world_town in gameDataMgr.GameData.World.World_Towns)
         {
-            if (town.State == TownState.Undiscovered)
+            if (world_town.State == TownState.Undiscovered)
                 continue;
-
-            var townGO = WorldMapTown.Instantiate<WorldMapTown>(WorldMapTownPrefab);
-            townGO.Initialize(town, this);
+            var townGO = Instantiate(WorldMapTownPrefab);
+            townGO.Initialize(world_town, this, gameDataMgr.GameData.CurrentTown);
             townGO.transform.SetParent(TownsFolder.transform, false);
         }
     }
@@ -35,17 +34,17 @@ public class WorldMapScene : SceneMgr
         SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
     }
 
-    public void TownClicked(TownData town)
+    public void TownClicked(World_TownData town)
     {
         if (town.State == TownState.Available)
         {
             // Town is being entered for the first time; initialize it
-            town.InitializeOnFirstEnter();
+            var townDefn = GameDefns.Instance.TownDefns[town.TownDefnId];
+            var townData = new TownData(townDefn);
+            townData.InitializeOnFirstEnter();
+            gameDataMgr.SetCurrentTown(townData);
             town.State = TownState.InProgress; // will be saved below
         }
-
-        // Track which town the player last entered so that they can quickly return there on next launch
-        gameDataMgr.SetCurrentTown(town);
 
         SceneManager.LoadScene("TownScene", LoadSceneMode.Single);
     }

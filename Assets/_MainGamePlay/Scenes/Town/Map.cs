@@ -134,7 +134,6 @@ public class Map : MonoBehaviour
         scene.Gold.text += "\nTime: " + GameTime.time.ToString("0.0");
 
         var numReservedStorageSpots = Town.Buildings.Sum(b => b.NumReservedStorageSpots);
-        scene.DebugInfo.text = "Reserved spots: " + numReservedStorageSpots;
     }
 
     internal Tile getTileAt(Vector3 position)

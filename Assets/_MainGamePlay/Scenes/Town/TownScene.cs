@@ -20,7 +20,7 @@ public class TownScene : SceneWithMap
             SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
             return;
         }
-
+        gameDataMgr.GameData.CurrentTown.OnLoaded();
         TownName.text = gameDataMgr.GameData.CurrentTown.Defn.FriendlyName;
 
         CreateMap(gameDataMgr.GameData.CurrentTown);
@@ -53,13 +53,18 @@ public class TownScene : SceneWithMap
 
     public void OnMainClicked()
     {
-        gameDataMgr.SetCurrentTown(null);
         SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
+    }
+
+    public void OnFakeWinLoseClicked(bool won)
+    {
+        gameDataMgr.GameData.CurrentTownWonLost(won);
+
+        SceneManager.LoadScene("WorldMapScene", LoadSceneMode.Single);
     }
 
     public void OnWorldMapClicked()
     {
-        gameDataMgr.SetCurrentTown(null);
         SceneManager.LoadScene("WorldMapScene", LoadSceneMode.Single);
     }
 
@@ -76,7 +81,7 @@ public class TownScene : SceneWithMap
 
     public void OnResetClicked()
     {
-        gameDataMgr.GameData.CurrentTown = new TownData(gameDataMgr.GameData.CurrentTown.Defn, gameDataMgr.GameData.CurrentTown.State);
+        gameDataMgr.GameData.CurrentTown = new TownData(gameDataMgr.GameData.CurrentTown.Defn);
         gameDataMgr.GameData.CurrentTown.InitializeOnFirstEnter();
 
         gameDataMgr.SaveProfile();

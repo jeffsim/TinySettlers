@@ -24,9 +24,6 @@ public class TownData : BaseData
 
     public TownTaskMgr TownTaskMgr;
 
-    public TownState State;
-    public bool CanEnter => State == TownState.Available || State == TownState.InProgress;
-
     // Current Map
     public BuildingData Camp;
     public List<TileData> Tiles = new();
@@ -35,14 +32,21 @@ public class TownData : BaseData
     public List<ItemData> ItemsOnGround = new();
     public List<NeedData> otherTownNeeds = new();
 
-    public TownData(TownDefn townDefn, TownState startingState)
+    public TownData(TownDefn townDefn)
     {
         DefnId = townDefn.Id;
-        State = startingState;
+    }
+
+    public float lastGameTime;
+
+    public void OnLoaded()
+    {
+        GameTime.time = lastGameTime;
     }
 
     public void InitializeOnFirstEnter()
     {
+        lastGameTime = 0;
         Tiles.Clear();
         string[] tiles = Defn.Tiles.Split(",");
         Debug.Assert(tiles.Length == Defn.Width * Defn.Height, "wrong num tiles");
@@ -68,7 +72,6 @@ public class TownData : BaseData
                 for (int i = 0; i < item.Count; i++)
                     building.GetEmptyStorageSpot().ItemContainer.SetItem(new ItemData() { DefnId = item.Item.Id });
         }
-        UpdateDistanceToBuildings();
         TownTaskMgr = new(this);
     }
 
@@ -90,7 +93,6 @@ public class TownData : BaseData
         building.Initialize(this);
         Buildings.Add(building);
         Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
-        UpdateDistanceToBuildings();
 
         OnBuildingAdded?.Invoke(building);
 
@@ -103,7 +105,6 @@ public class TownData : BaseData
 
         Buildings.Remove(building);
         building.Destroy();
-        UpdateDistanceToBuildings();
     }
 
     public void DestroyWorker(WorkerData worker)
@@ -117,7 +118,6 @@ public class TownData : BaseData
         Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
         building.MoveTo(tileX, tileY);
         Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
-        UpdateDistanceToBuildings();
     }
 
     public void Update()
@@ -239,44 +239,6 @@ public class TownData : BaseData
             }
         }
         return closestBuilding?.GetClosestEmptyStorageSpot(location, out dist);
-    }
-
-    public StorageSpotData GetClosestItemOfType(ItemDefn itemDefn, ItemClass itemClass, BuildingData startingBuilding)
-    {
-        foreach (var buildingDist in startingBuilding.OtherBuildingsByDistance)
-        {
-            BuildingData building = buildingDist.Building;
-            if (building == startingBuilding) continue;
-            if (!building.Defn.CanStoreItems) continue;
-
-            // If 'building' itself has a need for resourceType then don't consider it for pickup (e.g. don't move food from building that has hungry assigned entity)
-            bool ignoreBuilding = false;
-            foreach (var need in building.Needs)
-            {
-                // only check non-item-class-based item needs.  If looking for e.g any item of type food then use getclosestItemOfClass instead...
-                if (itemDefn != null && need.Type != NeedType.GatherResource && need.NeedCoreType == NeedCoreType.Item && need.NeededItem != null && need.NeededItem.Id == itemDefn.Id && need.State == NeedState.unmet)
-                {
-                    ignoreBuilding = true;
-                    break;
-                }
-            }
-            if (ignoreBuilding)
-                continue;
-
-            var storageSpotWithItem = building.GetStorageSpotWithUnreservedItemOfType(itemDefn, itemClass);
-            if (storageSpotWithItem != null)
-                return storageSpotWithItem;
-        }
-
-        // no resource accessible
-        return null;
-    }
-
-    public void UpdateDistanceToBuildings()
-    {
-        // TODO (PERF): Can cut this time in 1/2 since building A->B distance is same as building B->A distance.
-        foreach (BuildingData building in Buildings)
-            building.UpdateDistanceToOtherBuildings();
     }
 
     internal int Chart_GetNumOfItemInTown(string itemId)
