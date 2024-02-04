@@ -221,7 +221,7 @@ public abstract class TestBase
     {
         Assert.NotNull(worker);
         if (worker.Hands.HasItem)
-            Assert.AreEqual(item, worker.Hands.Item.DefnId, $"{preface(message)} Expected item in hand to be '{item}', but is '{worker.Hands.Item}'");
+            Assert.AreEqual(item, worker.Hands.Item, $"{preface(message)} Expected item in hand to be '{item}', but is '{worker.Hands.Item}'");
         else
             Assert.AreEqual(item, null, $"{preface(message)} Expected item in hand to be null, but is '{item}'");
     }

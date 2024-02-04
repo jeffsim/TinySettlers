@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: testStorageRoom
   BuildingColor: {r: 0.20154905, g: 0.29411766, b: 0.003921565, a: 1}
-  FriendlyName: testStorageRoom
+  FriendlyName: store
   IsTestBuilding: 0
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.09818679, g: 0.59607846, b: 0, a: 0}

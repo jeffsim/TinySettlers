@@ -30,9 +30,9 @@ public class TownDefnEditor : OdinEditor
         int width = mapDefn.Width, height = mapDefn.Height;
         float tileSize = Mathf.Min(rect.width * 2 / width, rect.height * 2 / height);
 
-        var shadowStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.black } };
-        var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.yellow } };
-        var whiteStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, normal = { textColor = Color.white } };
+        var shadowStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.black } };
+        var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.yellow } };
+        var whiteStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.white } };
 
         string[] tiles = mapDefn.Tiles.Split(",");
         Debug.Assert(tiles.Length == mapDefn.Width * mapDefn.Height, "wrong num tiles");
@@ -45,7 +45,7 @@ public class TownDefnEditor : OdinEditor
                 Debug.Assert(myGameDefns.TileDefns.ContainsKey(tileId), tileId + "not in tiledefns");
 
                 var tile = myGameDefns.TileDefns[tileId];
-                var name = tile.FriendlyName.Substring(0, Math.Min(tile.FriendlyName.Length, 4));
+                var name = tile.FriendlyName.Substring(0, Math.Min(tile.FriendlyName.Length, 8));
                 EditorGUI.DrawRect(new Rect(finalX, finalY, tileSize - 1, tileSize - 1), tile.EditorColor);
                 EditorGUI.LabelField(new Rect(finalX + 1, finalY + 1, tileSize - 3, tileSize - 3), name, shadowStyle);
                 EditorGUI.LabelField(new Rect(finalX, finalY, tileSize - 3, tileSize - 3), name, whiteStyle);
@@ -62,7 +62,7 @@ public class TownDefnEditor : OdinEditor
             var name = buildingDefn.Building.FriendlyName;
             if (name.Length > 2)
             {
-                var text = name.Substring(0, Math.Min(name.Length, 4));
+                var text = name.Substring(0, Math.Min(name.Length, 6));
                 EditorGUI.LabelField(new Rect(finalX + 2, finalY + 1, tileSize - 3, tileSize - 3), text, shadowStyle);
                 EditorGUI.LabelField(new Rect(finalX + 1, finalY, tileSize - 3, tileSize - 3), text, style);
             }

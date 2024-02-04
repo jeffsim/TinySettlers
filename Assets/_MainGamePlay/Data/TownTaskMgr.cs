@@ -92,19 +92,30 @@ public class TownTaskMgr
             }
             else
             {
-                // No building needs it; fulfill the original need.
-                if (worker.StorageSpotReservedForItemInHand == null || worker.StorageSpotReservedForItemInHand.Building.IsPaused)
+                // No building needs it; find a storage spot for it
+                if (worker.StorageSpotReservedForItemInHand == null)
                 {
                     // We didn't have a storage spot reserved; find the nearest storage spot and reserve it.  If we can't find one, then abandon (drop) the item and abort
                     worker.StorageSpotReservedForItemInHand = FindAndReserveOptimalStorageSpotToDeliverItemTo(worker);
-                    if (worker.StorageSpotReservedForItemInHand == null)
-                    {
-                        worker.DropItemOnGround();
-                        worker.AI.StartIdling();
-                        return false;
-                    }
                 }
-             
+                else if (worker.StorageSpotReservedForItemInHand.Building.IsPaused)
+                {
+                    // We had a storage spot reserved for hte item, but it's in a building that is now Paused.  When a building is paused, it's storage spots are no longer valid.
+                    // So, we need to find a new storage spot for the item.  If we can't find one, then abandon (drop) the item and abort
+                    worker.StorageSpotReservedForItemInHand.Reservation.Unreserve();
+                    worker.StorageSpotReservedForItemInHand = FindAndReserveOptimalStorageSpotToDeliverItemTo(worker);
+                }
+                else
+                {
+                    // The Worker has a storage spot reserved for the item they're holding and it's still valid, so we'll use it. Nothing to do here
+                }
+
+                if (worker.StorageSpotReservedForItemInHand == null)
+                {
+                    worker.DropItemOnGround();
+                    worker.AI.StartIdling();
+                    return false;
+                }
                 highestNeed = worker.OriginalPickupItemNeed;
             }
             worker.AI.StartTask(new WorkerTask_DeliverItemInHandToStorageSpot(worker, highestNeed));
@@ -224,7 +235,7 @@ public class TownTaskMgr
             if (worker.Assignment.AssignedTo != craftingBuilding) continue; // worker must be assigned to the building that crafts the item
             if (worker.Assignment.AssignedTo.IsPaused) continue;
             if (!worker.CanCraftItems()) continue;
-           
+
             float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location, craftingSpot.Location);
 
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
