@@ -7,6 +7,9 @@ public class TownScene : SceneWithMap
 {
     public TextMeshProUGUI TownName;
     public NeedsGraph NeedsGraph;
+    
+    // Sigh; without this, Load and Reset will call scene.Load and somehow and Update is called before Enable (!?)
+    bool wthEnableRan;
 
     public override void OnEnable()
     {
@@ -26,10 +29,12 @@ public class TownScene : SceneWithMap
         CreateMap(gameDataMgr.GameData.CurrentTown);
 
         NeedsGraph.ShowForScene(this);
+        wthEnableRan = false;
     }
 
     public void Update()
     {
+        if (wthEnableRan) return;
         if (gameDataMgr.GameData.CurrentTown == null) return;
         if (GameTime.timeScale == 0) return;
         gameDataMgr.GameData.CurrentTown.Update();
@@ -75,6 +80,7 @@ public class TownScene : SceneWithMap
 
     public void OnLoadClicked()
     {
+        wthEnableRan = true;
         gameDataMgr.ReloadProfile();
         SceneManager.LoadScene("TownScene", LoadSceneMode.Single);
     }
@@ -85,6 +91,7 @@ public class TownScene : SceneWithMap
         gameDataMgr.GameData.CurrentTown.InitializeOnFirstEnter();
 
         gameDataMgr.SaveProfile();
+        wthEnableRan = true;
         SceneManager.LoadScene("TownScene", LoadSceneMode.Single);
     }
 }

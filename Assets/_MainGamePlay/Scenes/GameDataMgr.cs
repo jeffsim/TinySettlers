@@ -10,7 +10,7 @@ public class GameDataMgr : MonoBehaviour
     [ShowInInspector][NonSerialized] public GameData GameData;
 
     public string ProfilesFolderName => Path.Combine(Application.persistentDataPath, "Profiles");
-    bool UseBinarySaveFiles = true;
+    bool UseBinarySaveFiles = false;
 
     void Awake()
     {
@@ -28,11 +28,19 @@ public class GameDataMgr : MonoBehaviour
             if (lastLoadedProfile != "")
             {
                 // load profile
-                LoadProfile(lastLoadedProfile);
+                try
+                {
+                    LoadProfile(lastLoadedProfile);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error loading profile: " + e.Message);
+                    PlayerPrefs.SetString("LoadLoadedProfile", "");
+                }
             }
-            else
+            if (GameData == null)
             {
-                // no profile exists.  Allowed only on MainScene; if on any other scene, revert to main
+                // no profile exists. or failed to load it.  Allowed only on MainScene; if on any other scene, revert to main
                 var curScene = FindFirstObjectByType<SceneMgr>();
                 if (curScene == null || curScene.RequiresProfile)
                 {

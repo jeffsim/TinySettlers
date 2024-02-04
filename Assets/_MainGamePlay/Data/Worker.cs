@@ -36,14 +36,14 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
 
     internal void OnNeedBeingMetCancelled()
     {
-        throw new NotImplementedException("nyi");
+       // throw new NotImplementedException("nyi");
     }
 
     // Called when any building is destroyed; if this Task involves that building then determine
     // what we should do (if anything).
     public void OnBuildingDestroyed(BuildingData building)
     {
-        if (StorageSpotReservedForItemInHand.Building == building)
+        if (StorageSpotReservedForItemInHand != null && StorageSpotReservedForItemInHand.Building == building)
         {
             StorageSpotReservedForItemInHand.Reservation.Unreserve();
             StorageSpotReservedForItemInHand = null;

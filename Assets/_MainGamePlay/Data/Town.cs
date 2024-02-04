@@ -46,7 +46,7 @@ public class TownData : BaseData
 
     public void InitializeOnFirstEnter()
     {
-        lastGameTime = 0;
+        lastGameTime = GameTime.time = 0;
         Tiles.Clear();
         string[] tiles = Defn.Tiles.Split(",");
         Debug.Assert(tiles.Length == Defn.Width * Defn.Height, "wrong num tiles");
