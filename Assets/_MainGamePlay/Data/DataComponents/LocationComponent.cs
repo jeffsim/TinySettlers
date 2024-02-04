@@ -25,8 +25,8 @@ public class LocationComponent
     internal float DistanceTo(LocationComponent location) => Vector2.Distance(WorldLoc, location.WorldLoc);
     public bool WithinDistanceOf(LocationComponent location, float closeEnough) => DistanceTo(location) <= closeEnough;
 
-    public static LocationComponent operator -(LocationComponent loc1, LocationComponent loc2) => new(loc1.WorldLoc - loc2.WorldLoc);
-    public static LocationComponent operator +(LocationComponent loc1, LocationComponent loc2) => new(loc1.WorldLoc + loc2.WorldLoc);
+    public static LocationComponent operator -(LocationComponent loc1, LocationComponent loc2) => new(loc1.LocalLoc - loc2.LocalLoc);
+    public static LocationComponent operator +(LocationComponent loc1, LocationComponent loc2) => new(loc1.LocalLoc + loc2.LocalLoc);
 
     // todo: following doesn't account for ParentLoc
     // TODO: Shouldn't be able to set worldloc directly.
@@ -72,5 +72,12 @@ public class LocationComponent
         WorldLoc = LocalLoc;
         if (ParentLoc != null)
             WorldLoc += ParentLoc.WorldLoc;
+    }
+
+    internal void OffsetMinus(LocationComponent loc1, LocationComponent loc2)
+    {
+        LocalLoc.x = loc1.LocalLoc.x - loc2.LocalLoc.x;
+        LocalLoc.y = loc1.LocalLoc.y - loc2.LocalLoc.y;
+        UpdateWorldLoc();
     }
 }

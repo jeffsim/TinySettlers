@@ -96,12 +96,26 @@ public abstract class TestBase
 
     protected void waitUntilTaskSubstate(WorkerData worker, int substate, float secondsBeforeExitCheck = 500)
     {
+        Assert.IsTrue(false, "nyi port");
+        // float breakTime = GameTime.time + secondsBeforeExitCheck;
+        // while (GameTime.time < breakTime && worker.AI.CurrentTask.substate != substate)
+        // {
+        //     updateTown();
+        // }
+        // Assert.IsTrue(GameTime.time < breakTime, $"{preface()} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.substate}, expected substate {substate}");
+    }
+
+    protected void waitUntilTaskSubstate(WorkerData worker, Type taskSubstateType, float secondsBeforeExitCheck = 500)
+    {
+        Assert.IsTrue(false, "nyi port");
         float breakTime = GameTime.time + secondsBeforeExitCheck;
-        while (GameTime.time < breakTime && worker.AI.CurrentTask.substate != substate)
-        {
-            updateTown();
-        }
-        Assert.IsTrue(GameTime.time < breakTime, $"{preface()} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.substate}, expected substate {substate}");
+        // while (GameTime.time < breakTime && worker.AI.CurrentTask.CurSubTask.GetType() != taskSubstateType)
+        // {
+        //     Debug.Log(taskSubstateType);
+        //     Debug.Log(worker.AI.CurrentTask.substate.GetType());
+        //     updateTown();
+        // }
+        // Assert.IsTrue(GameTime.time < breakTime, $"{preface()} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.substate.GetType()}, expected substate {taskSubstateType}");
     }
 
     protected void waitUntilNewTask(WorkerData worker, TaskType newTaskType)
@@ -150,10 +164,19 @@ public abstract class TestBase
 
     protected void verify_WorkerTaskSubstate(int substate, WorkerData worker)
     {
-        Assert.NotNull(worker.AI.CurrentTask, $"{preface()} Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
-        Assert.AreEqual(substate, worker.AI.CurrentTask.substate, $"{preface()} Expected worker {worker} to have substate {substate}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.substate}");
+        Assert.IsTrue(false, "nyi port");
+        // Assert.NotNull(worker.AI.CurrentTask, $"{preface()} Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
+        // Assert.AreEqual(substate, worker.AI.CurrentTask.substate, $"{preface()} Expected worker {worker} to have substate {substate}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.substate}");
     }
 
+
+    protected void verify_WorkerTaskSubstate(Type type, WorkerData worker)
+    {
+        Assert.IsTrue(false, "nyi port");
+        // Assert.NotNull(worker.AI.CurrentTask, $"{preface()} Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
+        // Assert.AreEqual(type, worker.AI.CurrentTask.CurSubTask.GetType(), $"{preface()} Expected worker {worker} to have substate {type}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.substate.GetType()}");
+    }
+    
     protected void verify_AssignedBuilding(WorkerData worker, BuildingData building)
     {
         Assert.NotNull(worker, $"{preface()} Expected worker {worker} to be assigned to {building}, but worker is null");

@@ -15,19 +15,20 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
 
     public TownData Town;
 
-    public StorageSpotData StorageSpotReservedForItemInHand;
+    public IItemSpotInBuilding StorageSpotReservedForItemInHand;
 
     public NeedData OriginalPickupItemNeed;
 
     public WorkerData(BuildingData buildingToStartIn)
     {
         Location = new(Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f));
-        AI = new(this);
 
         Town = buildingToStartIn.Town;
 
         Assignment.AssignTo(buildingToStartIn);
         Assignment.OnAssignedToChanged += () => AI.CurrentTask.Abandon();  // TODO: I *think* this doesn't need to be cleaned up on destroy (?)
+        
+        AI = new(this);
     }
 
     internal void OnNeedBeingMetCancelled()

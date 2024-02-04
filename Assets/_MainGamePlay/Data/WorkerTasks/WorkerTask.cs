@@ -19,8 +19,9 @@ public enum TaskState { Unset, NotStarted, Started, Completed, Abandoned };
 [Serializable]
 public abstract class WorkerTask
 {
-    internal virtual string GetDebuggerString() => $"{Type}  debugger string not implemented"; // used for VS Code debugging pane
+    public override string ToString() => $"{Type} ToString() not implemented"; // used for VS Code debugging pane
 
+    // == Task State ===========================
     public virtual TaskType Type => TaskType.Unset;
     public TaskState TaskState = TaskState.Unset;
     public bool IsRunning => TaskState == TaskState.Started;
@@ -28,12 +29,13 @@ public abstract class WorkerTask
     // == Worker ===============================
     [SerializeReference] public WorkerData Worker;
 
-    // == Substate management ==================
-    public float timeStartedSubstate;
-    public int substate;
+    // == Subtasks =============================
+    public List<WorkerSubtask> Subtasks = new();
+    [SerializeField] public WorkerSubtask CurSubTask;
+    public int SubtaskIndex = 0;
 
-    // == Movement =============================
-    public virtual bool IsWalkingToTarget => false;
+    // == Movement and Location ================
+    public virtual bool IsWalkingToTarget => CurSubTask.IsWalkingToTarget;
     public LocationComponent LastMoveToTarget = new();
 
     // == Reservable Spots =====================
@@ -43,7 +45,7 @@ public abstract class WorkerTask
 
     // == Items ================================
     public virtual bool IsCarryingItem(string itemId) => false;
-    public abstract ItemDefn GetTaskItem();
+    public virtual ItemDefn GetTaskItem() => CurSubTask.GetTaskItem();
 
     // == Need =================================
     // The Need that this task is meeting
@@ -62,33 +64,46 @@ public abstract class WorkerTask
     public virtual void Start()
     {
         TaskState = TaskState.Started;
-        substate = 0;
 
         foreach (var spot in SpotsToReserveOnStart)
             ReserveSpot(spot);
         SpotsToReserveOnStart.Clear();
+
+        Subtasks.Clear();
+        InitializeStateMachine();
+
+        SubtaskIndex = 0;
+        if (Subtasks.Count > 0)
+        {
+            CurSubTask = Subtasks[SubtaskIndex];
+            CurSubTask.Start();
+        }
     }
-    
+
+    // ====================================================================
+    // State Machine
+    public virtual void InitializeStateMachine() { }
+
+    public virtual void GotoNextSubstate()
+    {
+        if (SubtaskIndex >= Subtasks.Count - 1)
+            AllSubtasksComplete();
+        else
+        {
+            CurSubTask = Subtasks[++SubtaskIndex];
+            CurSubTask.Start();
+        }
+    }
+
+
     // ====================================================================
     // Called per AI tick.
     public virtual void Update()
     {
         Debug.Assert(IsRunning, "Updating nonrunning task (state = " + TaskState + ")");
         Debug.Assert(Worker.Assignment.IsAssigned, "Failed to cancel task when assigned building cleared");
+        CurSubTask?.Update();
     }
-
-    // ====================================================================================================================
-    // Substate management
-
-    protected void GotoSubstate(int num)
-    {
-        substate = num;
-        timeStartedSubstate = GameTime.time;
-    }
-
-    protected void GotoNextSubstate() => GotoSubstate(substate + 1);
-    protected bool IsSubstateDone(float substateRuntime) => getPercentSubstateDone(substateRuntime) == 1;
-    public float getPercentSubstateDone(float substateRuntime) => Math.Clamp((GameTime.time - timeStartedSubstate) / (substateRuntime / GameTime.timeScale), 0, 1);
 
 
     // ====================================================================================================================
@@ -120,7 +135,7 @@ public abstract class WorkerTask
     // ====================================================================================================================
     // Worker movement
 
-    protected bool MoveTowards(LocationComponent location, float closeEnough = .1f)
+    public bool MoveTowards(LocationComponent location, float closeEnough = .1f)
     {
         // Track last movement target so that it can be (a) updated if buildings move and (b) rendered
         LastMoveToTarget.SetWorldLoc(location);
@@ -139,7 +154,7 @@ public abstract class WorkerTask
     // ====================================================================================================================
     // Task completion
 
-    protected virtual void CompleteTask() => finishTask(TaskState.Completed);
+    public virtual void CompleteTask() => finishTask(TaskState.Completed);
     public virtual void Abandon() => finishTask(TaskState.Abandoned);
 
     void finishTask(TaskState newState)
@@ -152,10 +167,41 @@ public abstract class WorkerTask
     // ====================================================================================================================
     // Building status updates
 
-    // Called when any building is destroyed, moved, or paused; if this Task involves that building then determine what we should do (if anything).
-    public virtual void OnBuildingDestroyed(BuildingData building) { }
-    public virtual void OnBuildingMoved(BuildingData building, LocationComponent previousLoc) { }
-    public virtual void OnBuildingPauseToggled(BuildingData building) { }
+    public void OnBuildingPauseToggled(BuildingData building)
+    {
+        if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingPaused && Worker.Assignment.AssignedTo == building)
+            Abandon();
+        else
+            CurSubTask.OnAnyBuildingPauseToggled(building);
+    }
+
+    public void OnBuildingDestroyed(BuildingData building)
+    {
+        if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingDestroyed && Worker.Assignment.AssignedTo == building)
+            Abandon();
+        else
+            CurSubTask.OnAnyBuildingDestroyed(building);
+    }
+
+    public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
+    {
+        if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingMoved && Worker.Assignment.AssignedTo == building)
+        {
+            Abandon();
+            return;
+        }
+        if (CurSubTask.UpdateWorkerLocWhenTheseBuildingsMove.Contains(building))
+            Worker.Location.OffsetMinus(building.Location, previousLoc);
+        if (CurSubTask.UpdateMoveTargetWhenTheseBuildingsMove.Contains(building))
+            LastMoveToTarget.OffsetMinus(building.Location, previousLoc);
+
+        CurSubTask.OnAnyBuildingMoved(building, previousLoc);
+    }
+
+    public virtual void AllSubtasksComplete()
+    {
+        CompleteTask();
+    }
 
 
     // ====================================================================================================================

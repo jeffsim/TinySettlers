@@ -20,6 +20,6 @@ public class AvailableTasksDialogEntry : MonoBehaviour
     {
         Priority.text = Task.Priority.ToString("0.0");
         Info.text = Task.Task.ToString();
-        Time.text = Task.Task.timeStartedSubstate.ToString("0.0");
+        Time.text = Task.Task.CurSubTask.StartTime.ToString("0.0");
     }
 }

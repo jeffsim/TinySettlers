@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 
@@ -21,13 +22,13 @@ public class GatherResourceTests : TestBase
 
         // Verify Worker reserved a storage spot in the Miners hut (which is closer to the mine than the camp)
         Assert.AreEqual(MinersHut.NumReservedStorageSpots, 1);
-        Assert.AreEqual((miner.AI.CurrentTask as WorkerTask_PickupGatherableResource).ReservedStorageSpot.Reservation.ReservedBy, miner);
+        Assert.AreEqual((miner.AI.CurrentTask as WorkerTask_PickupGatherableResource).SpotToStoreGatheredItemIn.Reservation.ReservedBy, miner);
 
         // wait until actually gathering (reaping) resource in target building
-        waitUntilTaskSubstate(miner, (int)WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource);
+        waitUntilTaskSubstate(miner, typeof(WorkerSubtask_ReapGatherableResource));
 
         // wait until done gathering (reaping) and are now picking up
-        waitUntilTaskSubstate(miner, (int)WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource);
+        waitUntilTaskSubstate(miner, typeof(WorkerSubtask_PickupItemFromBuilding));
 
         // wait until done picking up; gathering spot should no longer be reserve
         waitUntilTaskDone(miner);

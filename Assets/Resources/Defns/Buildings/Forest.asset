@@ -33,8 +33,7 @@ MonoBehaviour:
   CraftingSpots: []
   CanStoreItems: 0
   IsPrimaryStorage: 0
-  StorageAreaLocations: []
-  StorageAreaSize: {x: 3, y: 3}
+  StorageAreas: []
   WorkersCanFerryItems: 0
   CanGatherResources: 0
   GatherableResources: []

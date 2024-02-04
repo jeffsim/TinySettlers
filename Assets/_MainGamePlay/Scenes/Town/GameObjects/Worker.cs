@@ -77,116 +77,104 @@ public class Worker : MonoBehaviour
         var itemDown = new Vector3(0, 0f, -1);
         var scaleSmall = new Vector3(0, 0, 0);
         var scaleNormal = new Vector3(1, 1, 1);
+        var percentDone = Data.AI.CurrentTask.CurSubTask.PercentDone;
+        var item = Data.AI.CurrentTask.GetTaskItem();
+        CarriedItem.text = item == null ? "" : item.Id.Substring(0, 2);
+        CarriedItem.gameObject.SetActive(true);
 
         switch (Data.AI.CurrentTask.Type)
         {
             case TaskType.SellItem:
-                CarriedItem.gameObject.SetActive(true);
-                CarriedItem.text = (Data.AI.CurrentTask as WorkerTask_SellItem).GetTaskItem().Id.Substring(0, 2);
-                switch ((WorkerTask_SellItemSubstate)Data.AI.CurrentTask.substate)
+                switch (Data.AI.CurrentTask.SubtaskIndex)
                 {
-                    case WorkerTask_SellItemSubstate.GotoItemToSell:
+                    case 0://WorkerTask_SellItemSubstate.GotoItemToSell:
                         updateCarriedItem(itemDown, scaleNormal, Color.red);
                         break;
-                    case WorkerTask_SellItemSubstate.PickupItemToSell:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_SellItem.secondsToPickup)), scaleNormal, Color.white);
+                    case 1://WorkerTask_SellItemSubstate.PickupItemToSell:
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
                         break;
-                    case WorkerTask_SellItemSubstate.SellItem:
-                        var t = Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_SellItem.secondsToSell);
-                        updateCarriedItem(itemUp, Vector3.Lerp(scaleSmall, scaleNormal, t), Color.Lerp(Color.red, Color.white, t));
+                    case 2:// WorkerTask_SellItemSubstate.SellItem:
+                        updateCarriedItem(itemUp, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.red, Color.white, percentDone));
                         break;
                 }
                 break;
 
             case TaskType.PickupGatherableResource:
-                CarriedItem.gameObject.SetActive(true);
-                CarriedItem.text = (Data.AI.CurrentTask as WorkerTask_PickupGatherableResource).GetTaskItem().Id.Substring(0, 2);
-                switch ((WorkerTask_PickupGatherableResourceSubstate)Data.AI.CurrentTask.substate)
+                switch (Data.AI.CurrentTask.SubtaskIndex)
                 {
-                    case WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot:
+                    case 0: // WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot:
                         updateCarriedItem(itemDown, scaleNormal, Color.red);
                         break;
-                    case WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource:
-                        var t = Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_PickupGatherableResource.secondsToReap);
-                        updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, t), Color.Lerp(Color.red, Color.white, t));
+                    case 1: // WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource:
+                        updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.red, Color.white, percentDone));
                         break;
-                    case WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_PickupGatherableResource.secondsToPickup)), scaleNormal, Color.white);
-                        break;
-                }
-                break;
-
-            case TaskType.PickupItemInStorageSpot:
-                CarriedItem.gameObject.SetActive(true);
-                CarriedItem.text = (Data.AI.CurrentTask as WorkerTask_PickupItemFromStorageSpot).GetTaskItem().Id.Substring(0, 2);
-                switch ((WorkerTask_PickupItemFromStorageSpotSubstate)Data.AI.CurrentTask.substate)
-                {
-                    case WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem:
-                        updateCarriedItem(itemDown, scaleNormal, Color.red);
-                        break;
-                    case WorkerTask_PickupItemFromStorageSpotSubstate.PickupItemFromItemSpot:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_PickupItemFromStorageSpot.secondsToPickup)), scaleNormal, Color.white);
+                    case 2: // WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource:
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
                         break;
                 }
                 break;
 
             case TaskType.PickupItemFromGround:
-                CarriedItem.gameObject.SetActive(true);
-                CarriedItem.text = (Data.AI.CurrentTask as WorkerTask_PickupAbandonedItemFromGround).GetTaskItem().Id.Substring(0, 2);
-                switch ((WorkerTask_PickupAbandonedItemFromGroundSubstate)Data.AI.CurrentTask.substate)
+                switch (Data.AI.CurrentTask.SubtaskIndex)
                 {
-                    case WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround:
+                    case 0:// WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround:
                         updateCarriedItem(itemDown, scaleNormal, Color.red);
                         break;
-                    case WorkerTask_PickupAbandonedItemFromGroundSubstate.PickupItemFromGround:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_PickupAbandonedItemFromGround.secondsToPickup)), scaleNormal, Color.white);
+                    case 1: //WorkerTask_PickupAbandonedItemFromGroundSubstate.PickupItemFromGround:
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
+                        break;
+                }
+                break;
+
+            case TaskType.PickupItemInStorageSpot:
+                switch (Data.AI.CurrentTask.SubtaskIndex)
+                {
+                    case 0: //WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem:
+                        updateCarriedItem(itemDown, scaleNormal, Color.red);
+                        break;
+                    case 1: //WorkerTask_PickupItemFromStorageSpotSubstate.PickupItemFromItemSpot:
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
                         break;
                 }
                 break;
 
             case TaskType.DeliverItemInHandToStorageSpot:
-                CarriedItem.gameObject.SetActive(true);
-                CarriedItem.text = (Data.AI.CurrentTask as WorkerTask_DeliverItemInHandToStorageSpot).GetTaskItem().Id[..2];
-                switch ((WorkerTask_DeliverItemInHandToStorageSpotSubstate)Data.AI.CurrentTask.substate)
+                switch (Data.AI.CurrentTask.SubtaskIndex)
                 {
-                    case WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo:
+                    case 0: //WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo:
                         updateCarriedItem(itemUp, scaleNormal, Color.white);
                         break;
-                    case WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot:
-                        updateCarriedItem(Vector3.Lerp(itemUp, itemDown, Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_DeliverItemInHandToStorageSpot.secondsToDrop)), scaleNormal, Color.white);
+                    case 1: //WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot:
+                        updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white);
                         break;
                 }
                 break;
 
             case TaskType.CraftGood:
-                CarriedItem.gameObject.SetActive(true);
-                CarriedItem.text = (Data.AI.CurrentTask as WorkerTask_CraftItem).GetTaskItem().Id.Substring(0, 2);
-                switch ((WorkerTask_CraftItemSubstate)Data.AI.CurrentTask.substate)
+                switch (Data.AI.CurrentTask.SubtaskIndex)
                 {
-                    case WorkerTask_CraftItemSubstate.GotoSpotWithResource:
+                    case 0: //WorkerTask_CraftItemSubstate.GotoSpotWithResource:
                         updateCarriedItem(itemDown, scaleNormal, Color.red);
                         break;
-                    case WorkerTask_CraftItemSubstate.PickupResource:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToPickupSourceResource)), scaleNormal, Color.white);
+                    case 1: //WorkerTask_CraftItemSubstate.PickupResource:
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
                         break;
-                    case WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
+                    case 2: //WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
                         updateCarriedItem(itemUp, scaleNormal, Color.white);
                         break;
-                    case WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
-                        updateCarriedItem(Vector3.Lerp(itemUp, itemDown, Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToDropSourceResource)), scaleNormal, Color.white);
+                    case 3: //WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
+                        updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white);
                         break;
-                    case WorkerTask_CraftItemSubstate.CraftGood:
-                        var t = Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToCraft);
-                        updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, t), Color.Lerp(Color.green, Color.white, t));
+                    case 4: //WorkerTask_CraftItemSubstate.CraftGood:
+                        updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone));
                         break;
-                    case WorkerTask_CraftItemSubstate.PickupProducedGood:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_CraftItem.secondsToPickupCraftedGood)), scaleNormal, Color.white);
+                    case 5: //WorkerTask_CraftItemSubstate.PickupProducedGood:
+                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
                         break;
                 }
                 break;
 
             case TaskType.Idle:
-                CarriedItem.gameObject.SetActive(true);
                 updateCarriedItem(itemDown, scaleNormal, Color.white);
                 CarriedItem.text = "<i>i</i>";
                 break;

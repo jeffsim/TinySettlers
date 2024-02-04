@@ -14,7 +14,7 @@ public class AIComponent : BaseData
 
     public AIComponent(WorkerData worker)
     {
-        StartTask(IdleTask = WorkerTask_Idle.Create(worker));
+        StartTask(IdleTask = new WorkerTask_Idle(worker));
     }
 
     internal void StartTask(WorkerTask task)

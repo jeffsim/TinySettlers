@@ -6,7 +6,7 @@ public class CraftingSpotData : BaseData, ILocationProvider, IReservationProvide
 {
     public override string ToString() => ItemsContainer.ToString();
 
-    public BuildingData Building;
+    [SerializeField] public BuildingData Building { get; set; }
     
     [SerializeField] public LocationComponent Location { get; set; }
     [SerializeField] public ReservationComponent Reservation { get; set; } = new();

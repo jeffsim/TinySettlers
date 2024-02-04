@@ -89,7 +89,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(WorkerTask_SellItem.Create(worker, need, closestSpotWithItemToWorker), highestPrioritySoFar);
+                HighestPriorityTask.Set(new WorkerTask_SellItem(worker, need, closestSpotWithItemToWorker), highestPrioritySoFar);
             }
         }
     }
@@ -149,7 +149,7 @@ public class TownTaskMgr
                 // a better (non gathering) task to perform may still be found by caller.
                 var closestStorageSpot = need.BuildingWithNeed.GetClosestEmptyStorageSpot(optimalSpot.Location);
                 Debug.Assert(closestStorageSpot != null, "No storage spot found for item that we're about to gather");
-                HighestPriorityTask.Set(WorkerTask_PickupItemFromStorageSpot.Create(worker, need, optimalSpot, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new WorkerTask_PickupItemFromStorageSpot(worker, need, optimalSpot, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
@@ -192,7 +192,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(WorkerTask_CraftItem.Create(worker, need, craftingSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new WorkerTask_CraftItem(worker, need, craftingSpot), highestPrioritySoFar);
             }
         }
     }
@@ -222,7 +222,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(WorkerTask_PickupAbandonedItemFromGround.Create(worker, need, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new WorkerTask_PickupAbandonedItemFromGround(worker, need, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
@@ -267,7 +267,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(WorkerTask_PickupItemFromStorageSpot.Create(worker, need, spotWithItem, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new WorkerTask_PickupItemFromStorageSpot(worker, need, spotWithItem, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
@@ -321,7 +321,7 @@ public class TownTaskMgr
                 // a better (non gathering) task to perform may still be found by caller.
                 var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, optimalGatheringSpot.Location, worker);
                 Debug.Assert(closestStorageSpot != null, "No storage spot found for item that we're about to gather");
-                HighestPriorityTask.Set(WorkerTask_PickupGatherableResource.Create(worker, need, optimalGatheringSpot, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new WorkerTask_PickupGatherableResource(worker, need, optimalGatheringSpot, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
@@ -396,7 +396,8 @@ public class TownTaskMgr
                     }
                 }
             }
-            WorkerTask_DeliverItemInHandToStorageSpot.CreateAndStart(worker, highestNeed);
+            worker.AI.StartTask(new WorkerTask_DeliverItemInHandToStorageSpot(worker, highestNeed));
+
             return true;
         }
 
