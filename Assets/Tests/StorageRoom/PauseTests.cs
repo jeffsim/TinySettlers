@@ -35,7 +35,7 @@ public partial class StorageRoomTests : TestBase
             case 3: TestName += $"dropping item in {buildingToStoreItemIn.TestId} after picking it up from {buildingWithItem.TestId}"; break;
         }
         TestName += "\n  ";
-        Debug.Log(TestName);
+        // Debug.Log(TestName);
 
         // Create the worker and wait until they get to the to-be-tested subtask
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
@@ -72,42 +72,38 @@ public partial class StorageRoomTests : TestBase
                 // * If we paused the building that the item was going to be stored in, then the worker should still be walking to the itemspot and an itemspot in another building should be reserved
                 if (buildingToPause == worker.Assignment.AssignedTo || pausedBuildingWithItemInIt)
                 {
-                    verify_spotIsUnreserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved in all cases");
-                    verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved in all cases");
+                    verify_spotIsUnreserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
+                    verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
                     verify_WorkerTaskType(TaskType.Idle, worker);
                 }
                 else if (pausedBuildingItemWillBeStoredIn)
                 {
-                    verify_spotIsReserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved in all cases");
-                    verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved in all cases");
+                    verify_spotIsReserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
+                    verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
                     verify_WorkerTaskType(TaskType.PickupItemInStorageSpot, worker);
-                    verify_spotIsReserved(worker.StorageSpotReservedForItemInHand);
-                    Assert.AreNotEqual(worker.StorageSpotReservedForItemInHand.Building, buildingToPause, $"{preface()} Worker should have reserved a spot in another building to store the item in");
+                    Assert.AreNotEqual(((WorkerTask_PickupItemFromStorageSpot)worker.AI.CurrentTask).ReservedSpotToStoreItemIn.Building, buildingToPause, $"{preface()} Worker should have reserved a spot in another building to store the item in");
                 }
-                else
-                    Assert.Fail("huh?");
                 break;
 
-                // case 1: // WorkerSubtask_PickupItemFromBuilding.
-                //     verify_ItemDefnInHand(worker, null);
-                //     verify_ItemInStorageSpot(originalSpotWithItem, itemToBePickedUp);
-                //     verify_WorkerTaskType(TaskType.Idle, worker);
-                //     break;
+            case 1: // WorkerSubtask_PickupItemFromBuilding.
+                verify_ItemDefnInHand(worker, null);
+                verify_ItemInStorageSpot(originalSpotWithItem, itemToBePickedUp);
+                verify_WorkerTaskType(TaskType.Idle, worker);
+                break;
 
-                // case 2: // WorkerSubtask_WalkToItemSpot.
-                //     verify_ItemInHand(worker, itemToBePickedUp);
-                //     verify_WorkerTaskTypeAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot), "Should be carrying item to Camp now");
-                //     verify_BuildingsAreEqual(((WorkerSubtask_WalkToItemSpot)worker.AI.CurrentTask.CurSubTask).ItemSpot.Building, Camp);
-                //     verify_ItemInStorageSpot(originalSpotWithItem, null);
+            case 2: // WorkerSubtask_WalkToItemSpot.
+                verify_ItemInHand(worker, itemToBePickedUp);
+                verify_ItemInStorageSpot(originalSpotWithItem, null);
+                verify_WorkerTaskTypeAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot), "Should be carrying item to Camp now");
+                verify_BuildingsAreEqual(((WorkerSubtask_WalkToItemSpot)worker.AI.CurrentTask.CurSubTask).ItemSpot.Building, Camp);
+                break;
 
-                //     break;
-
-                // case 3: // WorkerSubtask_DropItemInItemSpot.
-                //     verify_ItemInHand(worker, itemToBePickedUp);
-                //     verify_WorkerTaskTypeAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot), "Should be carrying item to Camp now");
-                //     verify_BuildingsAreEqual(((WorkerSubtask_WalkToItemSpot)worker.AI.CurrentTask.CurSubTask).ItemSpot.Building, Camp);
-                //     verify_ItemInStorageSpot(originalSpotWithItem, null);
-                //     break;
+            case 3: // WorkerSubtask_DropItemInItemSpot.
+                verify_ItemInHand(worker, itemToBePickedUp);
+                verify_ItemInStorageSpot(originalSpotWithItem, null);
+                verify_WorkerTaskTypeAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot), "Should be carrying item to Camp now");
+                verify_BuildingsAreEqual(((WorkerSubtask_WalkToItemSpot)worker.AI.CurrentTask.CurSubTask).ItemSpot.Building, Camp);
+                break;
         }
     }
 

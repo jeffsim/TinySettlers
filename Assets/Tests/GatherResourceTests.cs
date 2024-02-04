@@ -22,7 +22,7 @@ public class GatherResourceTests : TestBase
 
         // Verify Worker reserved a storage spot in the Miners hut (which is closer to the mine than the camp)
         Assert.AreEqual(MinersHut.NumReservedStorageSpots, 1);
-        Assert.AreEqual((miner.AI.CurrentTask as WorkerTask_PickupGatherableResource).SpotToStoreGatheredItemIn.Reservation.ReservedBy, miner);
+        Assert.AreEqual((miner.AI.CurrentTask as WorkerTask_PickupGatherableResource).ReservedSpotToStoreItemIn.Reservation.ReservedBy, miner);
 
         // wait until actually gathering (reaping) resource in target building
         waitUntilTaskSubtask(miner, typeof(WorkerSubtask_ReapGatherableResource));

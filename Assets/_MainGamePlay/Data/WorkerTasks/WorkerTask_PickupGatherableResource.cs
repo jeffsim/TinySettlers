@@ -8,12 +8,12 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
     public override TaskType Type => TaskType.PickupGatherableResource;
 
     [SerializeField] public IItemSpotInBuilding SpotToGatherFrom;
-    [SerializeField] public IItemSpotInBuilding SpotToStoreGatheredItemIn;
+    [SerializeField] public IItemSpotInBuilding ReservedSpotToStoreItemIn;
 
     public WorkerTask_PickupGatherableResource(WorkerData worker, NeedData needData, IItemSpotInBuilding gatheringSpot, IItemSpotInBuilding storageSpotToReserve) : base(worker, needData)
     {
         SpotToGatherFrom = ReserveSpotOnStart(gatheringSpot);
-        SpotToStoreGatheredItemIn = ReserveSpotOnStart(storageSpotToReserve);
+        ReservedSpotToStoreItemIn = ReserveSpotOnStart(storageSpotToReserve);
     }
 
     public override void InitializeStateMachine()
@@ -23,11 +23,27 @@ public class WorkerTask_PickupGatherableResource : WorkerTask
         Subtasks.Add(new WorkerSubtask_PickupItemFromBuilding(this, SpotToGatherFrom));
     }
 
+    public override void OnBuildingPauseToggled(BuildingData building)
+    {
+        if (building == ReservedSpotToStoreItemIn.Building)
+        {
+            ReservedSpots.Remove(ReservedSpotToStoreItemIn);
+            ReservedSpotToStoreItemIn = FindAndReserveNewOptimalStorageSpotToDeliverItemTo(ReservedSpotToStoreItemIn, SpotToGatherFrom.Location);
+            if (ReservedSpotToStoreItemIn == null)
+            {
+                Abandon(); // failed to find a new spot to store the item in
+                return;
+            }
+            ReservedSpots.Add(ReservedSpotToStoreItemIn);
+        }
+        base.OnBuildingPauseToggled(building);
+    }
+
     public override void AllSubtasksComplete()
     {
         CompleteTask();
-        Worker.StorageSpotReservedForItemInHand = SpotToStoreGatheredItemIn;
+        Worker.StorageSpotReservedForItemInHand = ReservedSpotToStoreItemIn;
         Worker.OriginalPickupItemNeed = Need;
-        SpotToStoreGatheredItemIn.Reservation.ReserveBy(Worker);
+        ReservedSpotToStoreItemIn.Reservation.ReserveBy(Worker);
     }
 }
