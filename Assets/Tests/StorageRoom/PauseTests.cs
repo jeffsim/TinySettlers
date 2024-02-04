@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using UnityEngine;
 
 public partial class StorageRoomTests : TestBase
 {
@@ -96,11 +95,6 @@ public partial class StorageRoomTests : TestBase
         }
         else if (workerSubtask == 2 || workerSubtask == 3) // WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot
         {
-            // Test A: Pause store1 while worker1 is getting an item from woodcutter to store in store1
-            // Test B: Pause store1 while worker2 is getting an item from woodcutter to store in store1
-            // Test C: Pause store2 while worker2 is getting an item from woodcutter to store in store1
-            // Test D: Pause woodcu while worker1 is getting an item from woodcutter to store in store1
-            // Test E: Pause woodcu while worker2 is getting an item from woodcutter to store in store1
             verify_ItemInHand(worker, itemToBePickedUp);
             verify_ItemInStorageSpot(originalSpotWithItem, null);
             verify_spotIsUnreserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");

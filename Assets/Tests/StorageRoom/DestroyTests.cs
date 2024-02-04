@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using UnityEngine;
 
 public partial class StorageRoomTests : TestBase
 {
@@ -26,8 +25,6 @@ public partial class StorageRoomTests : TestBase
             SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
             SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
         }
-        Debug.Log("add back");
-        Debug.Log("i");
     }
 
     void runDestroyTest(string testName, int workerSubtask, BuildingData buildingToDestroy, BuildingData buildingWorker, BuildingData buildingWithItem, BuildingData buildingToStoreItemIn)
