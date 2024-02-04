@@ -268,6 +268,18 @@ public abstract class TestBase
         return building.StorageSpots.Find(spot => spot.ItemContainer.Item == item);
     }
 
+    protected void fillAllTownStorageWithItem(string itemDefnId)
+    {
+        // Fill up all storage spots so that the worker will fail when looking for a new spot to store the item in
+        foreach (var building in Town.Buildings)
+            if (building.Defn.CanStoreItems)
+                foreach (var spot in building.StorageSpots)
+                    if (!spot.ItemContainer.HasItem)
+                        spot.ItemContainer.SetItem(new ItemData() { DefnId = itemDefnId });
+    }
+
+    protected int GetNumItemsInTownStorage() => Town.Buildings.Sum(building => building.StorageSpots.Count(spot => spot.ItemContainer.HasItem));
+    
     protected void updateTown(int times = 1)
     {
         for (int i = 0; i < times; i++)

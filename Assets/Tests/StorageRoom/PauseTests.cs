@@ -10,7 +10,9 @@ public partial class StorageRoomTests : TestBase
         //   subtask=1: Pause [buildingToPause] while [workerToTest] is picking up item in [buildingWithItem] to store in [buildingToStoreItemIn]
         //   subtask=2: Pause [buildingToPause] while [workerToTest] is walking to [buildingToStoreItemIn]
         //   subtask=3: Pause [buildingToPause] while [workerToTest] is dropping item in [buildingToStoreItemIn]
-        for (int subtask = 0; subtask < 4; subtask++)
+        //   subtask=4: Destroy [buildingToDestroy] while [workerToTest] is walking to [buildingToStoreItemIn] and there are no available storage spots
+        //   subtask=5: Destroy [buildingToDestroy] while [workerToTest] is dropping item in [buildingToStoreItemIn] and there are no available storage spots
+        for (int subtask = 0; subtask < 6; subtask++)
         {
             // Test A: Pause store1 while worker1 is getting an item from woodcutter to store in store1
             // Test B: Pause store1 while worker2 is getting an item from woodcutter to store in store1
@@ -35,6 +37,8 @@ public partial class StorageRoomTests : TestBase
             case 1: TestName += $"picking up item in {buildingWithItem.TestId} to bring to {buildingToStoreItemIn.TestId}"; break;
             case 2: TestName += $"walking to {buildingToStoreItemIn.TestId} to dropoff item picked up from {buildingWithItem.TestId}"; break;
             case 3: TestName += $"dropping item in {buildingToStoreItemIn.TestId} after picking it up from {buildingWithItem.TestId}"; break;
+            case 4: TestName += $"walking to {buildingToStoreItemIn.TestId} to dropoff item picked up from {buildingWithItem.TestId} and there are no available storage spots"; break;
+            case 5: TestName += $"dropping item in {buildingToStoreItemIn.TestId} after picking it up from {buildingWithItem.TestId} and there are no available storage spots"; break;
         }
         TestName += "\n  ";
         // if (workerSubtask == 0) Debug.Log(TestName);
@@ -53,9 +57,17 @@ public partial class StorageRoomTests : TestBase
             case 1: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(WorkerSubtask_PickupItemFromBuilding)); break;
             case 2: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
             case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_DropItemInItemSpot)); break;
+            case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
+            case 5: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_DropItemInItemSpot)); break;
         }
         var originalSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
         Assert.IsNotNull(originalSpotToStoreItemIn, $"{preface()} Worker should have reserved a spot in {buildingToStoreItemIn.TestId} to store the item in");
+
+        if (workerSubtask > 3)
+            fillAllTownStorageWithItem("plank");
+        int origNumItemsInTownStorage = GetNumItemsInTownStorage();
+        int origNumItemsOnGround = Town.ItemsOnGround.Count;
+        int origNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
 
         buildingToPause.TogglePaused();
 
@@ -81,7 +93,7 @@ public partial class StorageRoomTests : TestBase
                 Assert.AreNotEqual(((WorkerTask_PickupItemFromStorageSpot)worker.AI.CurrentTask).ReservedSpotToStoreItemIn.Building, buildingToPause, $"{preface()} Worker should have reserved a spot in another building to store the item in");
             }
         }
-        else // WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot
+        else if (workerSubtask == 2 || workerSubtask == 3) // WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot
         {
             // Test A: Pause store1 while worker1 is getting an item from woodcutter to store in store1
             // Test B: Pause store1 while worker2 is getting an item from woodcutter to store in store1
@@ -118,9 +130,20 @@ public partial class StorageRoomTests : TestBase
                 Assert.AreNotEqual(worker.StorageSpotReservedForItemInHand.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
             }
         }
-    }
+        else // STORAGE FULL: WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot 
+        {
+            // Worker was holding an item before the building was destroyed; and there's no place to put it.  So they should have dropped it on the ground
+            verify_ItemInHand(worker, null);
+            verify_WorkerTaskType(TaskType.Idle, worker);
+            verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
+            verify_spotIsUnreserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
 
-    // TODO: Test scenarios where there isn't available storage; drop item on ground
+            int newNumItemsInTownStorage = GetNumItemsInTownStorage();
+            int newNumItemsOnGround = Town.ItemsOnGround.Count;
+            int newNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
+            Assert.AreEqual(origNumItemsInTownStorage + origNumItemsOnGround + origNumItemsInWorkersHands, newNumItemsInTownStorage + newNumItemsOnGround + newNumItemsInWorkersHands, $"{preface("", 1)} Number of items in town (in storage+onground) should not have changed");
+        }
+    }
 
     void SetupPauseTest(int subtask, out BuildingData store1, out BuildingData store2)
     {
