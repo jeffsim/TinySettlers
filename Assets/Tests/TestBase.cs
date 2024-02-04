@@ -226,11 +226,13 @@ public abstract class TestBase
 
     protected void verify_spotIsUnreserved(IItemSpotInBuilding spot, string message = "")
     {
+        Assert.IsNotNull(spot, $"{preface(message)} null spot");
         Assert.IsNull(spot.Reservation.ReservedBy, $"{preface(message)} Expected spot to be unreserved, but it is reserved by {spot.Reservation.ReservedBy}");
     }
 
     protected void verify_spotIsReserved(IItemSpotInBuilding spot, string message = "")
     {
+        Assert.IsNotNull(spot, $"{preface(message)} null spot");
         Assert.IsNotNull(spot.Reservation.ReservedBy, $"{preface(message)} Expected spot to be reserved, but it is not");
     }
 
