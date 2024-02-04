@@ -12,7 +12,7 @@ public partial class StorageRoomTests : TestBase
         //   subtask=3: Destroy [buildingToDestroy] while [workerToTest] is dropping item in [buildingToStoreItemIn]
         //   subtask=4: Destroy [buildingToDestroy] while [workerToTest] is walking to [buildingToStoreItemIn] and there are no available storage spots
         //   subtask=5: Destroy [buildingToDestroy] while [workerToTest] is dropping item in [buildingToStoreItemIn] and there are no available storage spots
-        for (int subtask = 4; subtask < 6; subtask++)
+        for (int subtask = 0; subtask < 6; subtask++)
         {
             // Test A: Destroy store1 while worker1 is getting an item from woodcutter to store in store1
             // Test B: Destroy store1 while worker2 is getting an item from woodcutter to store in store1
@@ -20,13 +20,12 @@ public partial class StorageRoomTests : TestBase
             // Test D: Destroy woodcu while worker1 is getting an item from woodcutter to store in store1
             // Test E: Destroy woodcu while worker2 is getting an item from woodcutter to store in store1
             BuildingData store1, store2;
-            // SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
-            // SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
+            SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
+            SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
             SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
-            // SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
-            // SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
+            SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
+            SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
         }
-        Assert.Fail("add back");
         Debug.Log("add back");
         Debug.Log("i");
     }
@@ -53,6 +52,7 @@ public partial class StorageRoomTests : TestBase
         var destroyedBuildingWithItemInIt = buildingWithItem == buildingToDestroy;
         var destroyedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToDestroy;
         var destroyedBuildingOfWorker = buildingWorker == buildingToDestroy;
+        var workerOriginalAssignedBuilding = worker.Assignment.AssignedTo;
 
         switch (workerSubtask)
         {
@@ -79,11 +79,6 @@ public partial class StorageRoomTests : TestBase
             updateTown();
 
         // Verify new state.
-        // Test A: Destroy store1 while worker1 is getting an item from woodcutter to store in store1
-        // Test B: Destroy store1 while worker2 is getting an item from woodcutter to store in store1
-        // Test C: Destroy store2 while worker2 is getting an item from woodcutter to store in store1
-        // Test D: Destroy woodcu while worker1 is getting an item from woodcutter to store in store1
-        // Test E: Destroy woodcu while worker2 is getting an item from woodcutter to store in store1
         if (workerSubtask == 0 || workerSubtask == 1)// WorkerSubtask_WalkToItemSpot and WorkerSubtask_PickupItemFromBuilding
         {
             verify_ItemDefnInHand(worker, null);
@@ -143,19 +138,31 @@ public partial class StorageRoomTests : TestBase
         }
         else // STORAGE FULL: WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot 
         {
-            // Worker was holding an item before the building was destroyed; and there's no place to put it.  So they should have dropped it on the ground
-            verify_ItemInHand(worker, null);
-            verify_WorkerTaskType(TaskType.Idle, worker);
-            verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
-
             int newNumItemsInTownStorage = GetNumItemsInTownStorage();
             int newNumItemsOnGround = Town.ItemsOnGround.Count;
             int newNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
+
+            verify_AssignedBuilding(worker, destroyedBuildingOfWorker ? Camp : workerOriginalAssignedBuilding);
             Assert.AreEqual(origNumItemsInTownStorage + origNumItemsOnGround + origNumItemsInWorkersHands, newNumItemsInTownStorage + newNumItemsOnGround + newNumItemsInWorkersHands, $"{preface("", 1)} Number of items in town (in storage+onground) should not have changed");
+
+            // worker had a reserved spot in store1;
+            //  if store1 was destroyed then their reservation should be removed and they should be assigned to camp and should have no item.  we were able to fill it above.
+            //  if store2 was destroyed then their reservation should be valid and they should be assigned to origBuilding and should still be carrying to store1.  we couldn't fill it above.
+            //  if woodcutter was destroyed then their reservation should be valid and they should be assigned to origBuilding and should still be carrying to store1.  we couldn't fill it above.
+            if (buildingToDestroy.TestId == "store1")
+            {
+                verify_ItemInHand(worker, null);
+                verify_WorkerTaskType(TaskType.Idle, worker);
+                verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
+            }
+            else
+            {
+                verify_ItemInHand(worker, itemToBePickedUp);
+                verify_spotStillReservedByWorker(originalSpotToStoreItemIn, originalSpotToStoreItemIn.Building, worker);
+                verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
+            }
         }
     }
-
-    // TODO: Test scenarios where there isn't available storage; drop item on ground
 
     void SetupDestroyTest(int subtask, out BuildingData store1, out BuildingData store2)
     {

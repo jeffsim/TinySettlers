@@ -274,7 +274,7 @@ public abstract class TestBase
         foreach (var building in Town.Buildings)
             if (building.Defn.CanStoreItems)
                 foreach (var spot in building.StorageSpots)
-                    if (!spot.ItemContainer.HasItem)
+                    if (!spot.ItemContainer.HasItem && !spot.Reservation.IsReserved)
                         spot.ItemContainer.SetItem(new ItemData() { DefnId = itemDefnId });
     }
 

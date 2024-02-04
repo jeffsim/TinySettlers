@@ -50,6 +50,7 @@ public partial class StorageRoomTests : TestBase
         var pausedBuildingWithItemInIt = buildingWithItem == buildingToPause;
         var pausedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToPause;
         var pausedBuildingOfWorker = buildingWorker == buildingToPause;
+        var workerOriginalAssignedBuilding = worker.Assignment.AssignedTo;
 
         switch (workerSubtask)
         {
@@ -132,16 +133,29 @@ public partial class StorageRoomTests : TestBase
         }
         else // STORAGE FULL: WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot 
         {
-            // Worker was holding an item before the building was destroyed; and there's no place to put it.  So they should have dropped it on the ground
-            verify_ItemInHand(worker, null);
-            verify_WorkerTaskType(TaskType.Idle, worker);
-            verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
-            verify_spotIsUnreserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
-
             int newNumItemsInTownStorage = GetNumItemsInTownStorage();
             int newNumItemsOnGround = Town.ItemsOnGround.Count;
             int newNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
+
+            verify_AssignedBuilding(worker, workerOriginalAssignedBuilding);
             Assert.AreEqual(origNumItemsInTownStorage + origNumItemsOnGround + origNumItemsInWorkersHands, newNumItemsInTownStorage + newNumItemsOnGround + newNumItemsInWorkersHands, $"{preface("", 1)} Number of items in town (in storage+onground) should not have changed");
+
+            // worker had a reserved spot in store1;
+            //  if store1 was destroyed then their reservation should be removed and they should be assigned to camp and should have no item.  we were able to fill it above.
+            //  if store2 was destroyed then their reservation should be valid and they should be assigned to origBuilding and should still be carrying to store1.  we couldn't fill it above.
+            //  if woodcutter was destroyed then their reservation should be valid and they should be assigned to origBuilding and should still be carrying to store1.  we couldn't fill it above.
+            if (buildingToPause.TestId == "store1")
+            {
+                verify_ItemInHand(worker, null);
+                verify_WorkerTaskType(TaskType.Idle, worker);
+                verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
+            }
+            else
+            {
+                verify_ItemInHand(worker, itemToBePickedUp);
+                verify_spotStillReservedByWorker(originalSpotToStoreItemIn, originalSpotToStoreItemIn.Building, worker);
+                verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
+            }
         }
     }
 
