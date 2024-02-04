@@ -168,7 +168,7 @@ public abstract class WorkerTask
     // ====================================================================================================================
     // Building status updates
 
-    public void OnBuildingPauseToggled(BuildingData building)
+    public virtual void OnBuildingPauseToggled(BuildingData building)
     {
         if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingPaused && Worker.Assignment.AssignedTo == building)
             Abandon();
@@ -209,7 +209,7 @@ public abstract class WorkerTask
     // ====================================================================================================================
     // Other functions
 
-    protected StorageSpotData FindNewOptimalStorageSpotToDeliverItemTo(StorageSpotData originalReservedSpot, LocationComponent closestLocation)
+    protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpotToDeliverItemTo(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation)
     {
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
         if (optimalStorageSpotToDeliverItemTo == null)
