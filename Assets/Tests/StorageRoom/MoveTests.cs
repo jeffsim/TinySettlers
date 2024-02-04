@@ -37,7 +37,6 @@ public partial class StorageRoomTests : TestBase
             case 3: TestName += $"dropping item in {buildingToStoreItemIn.TestId} after picking it up from {buildingWithItem.TestId}"; break;
         }
         TestName += "\n  ";
-        Debug.Log(TestName);
 
         // Create the worker and wait until they get to the to-be-tested subtask
         var worker = Town.CreateWorkerInBuilding(buildingWorker);

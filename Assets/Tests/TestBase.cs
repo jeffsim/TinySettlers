@@ -131,7 +131,7 @@ public abstract class TestBase
         CurStep = stepNum;
     }
 
-    private string preface(string message = "", int frame = 2) => _preface(new System.Diagnostics.StackTrace(true).GetFrame(frame).GetFileLineNumber(), message);
+    protected string preface(string message = "", int frame = 2) => _preface(new System.Diagnostics.StackTrace(true).GetFrame(frame).GetFileLineNumber(), message);
     private string _preface(int lineNum, string message = "") => $"{TestName}StepNum {CurStep}, line {lineNum}: {(message != "" ? message + ": " : "")}";
 
     public void verify_LocsAreEqual(Vector3 v1, Vector3 v2, string message = "", float acceptableDelta = 0.01f)
@@ -224,9 +224,14 @@ public abstract class TestBase
         Assert.AreEqual(spot, getStorageSpotInBuildingReservedByWorker(building, worker), $"{preface(message)} Expected spot to still be reserved by worker, but it is not");
     }
 
-    protected void verify_spotIsUnreserved(StorageSpotData spot, string message = "")
+    protected void verify_spotIsUnreserved(IItemSpotInBuilding spot, string message = "")
     {
         Assert.IsNull(spot.Reservation.ReservedBy, $"{preface(message)} Expected spot to be unreserved, but it is reserved by {spot.Reservation.ReservedBy}");
+    }
+
+    protected void verify_spotIsReserved(IItemSpotInBuilding spot, string message = "")
+    {
+        Assert.IsNotNull(spot.Reservation.ReservedBy, $"{preface(message)} Expected spot to be reserved, but it is not");
     }
 
     protected void verify_ItemsOnGround(int expectedNumber, string message = "")
@@ -261,9 +266,12 @@ public abstract class TestBase
         return building.StorageSpots.Find(spot => spot.ItemContainer.Item == item);
     }
 
-    protected void updateTown()
+    protected void updateTown(int times = 1)
     {
-        GameTime.Test_Update();
-        Town.Update();
+        for (int i = 0; i < times; i++)
+        {
+            GameTime.Test_Update();
+            Town.Update();
+        }
     }
 }
