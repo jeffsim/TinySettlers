@@ -25,7 +25,6 @@ public class BuildingDefn : BaseDefn
 {
     public Color BuildingColor;
     public string FriendlyName;
-
     public bool IsTestBuilding = false;
     public BuildingClass BuildingClass = BuildingClass.Other;
 

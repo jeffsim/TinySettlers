@@ -22,18 +22,21 @@ MonoBehaviour:
   Buildings:
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: dda0fe43be1ab4dc695d54f1a2a23154, type: 2}
+    TestId: 
     TileX: 2
     TileY: 2
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 1
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 9f6b4d5be7465564ea13a01f9eda169b, type: 2}
+    TestId: store1
     TileX: 0
     TileY: 0
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 716a56f780483e24b9d1bb58c94cf5e1, type: 2}
+    TestId: woodc
     TileX: 0
     TileY: 1
     StartingItemsInBuilding:
@@ -42,6 +45,7 @@ MonoBehaviour:
     NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 9f6b4d5be7465564ea13a01f9eda169b, type: 2}
+    TestId: store2
     TileX: 2
     TileY: 1
     StartingItemsInBuilding: []

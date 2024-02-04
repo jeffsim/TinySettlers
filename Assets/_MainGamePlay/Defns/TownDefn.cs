@@ -14,6 +14,7 @@ public class Town_BuildingDefn
 {
     public bool IsEnabled = true; // used for debugging town w/o deleting buildings
     public BuildingDefn Building;
+    public string TestId;
     public int TileX;
     public int TileY;
 
