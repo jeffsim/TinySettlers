@@ -4,29 +4,29 @@ using UnityEngine;
 [Serializable]
 public class WorkerTask_PickupItemFromStorageSpot : WorkerTask
 {
-    public override string ToString() => $"Pickup item from {spotWithItemToPickup}";
+    public override string ToString() => $"Pickup item from {SpotWithItemToPickup}";
     public override TaskType Type => TaskType.PickupItemInStorageSpot;
 
-    [SerializeField] IItemSpotInBuilding spotWithItemToPickup;
-    [SerializeField] IItemSpotInBuilding reservedSpotToStoreItemIn;
+    [SerializeField] IItemSpotInBuilding SpotWithItemToPickup;
+    [SerializeField] IItemSpotInBuilding ReservedSpotToStoreItemIn;
 
     public WorkerTask_PickupItemFromStorageSpot(WorkerData worker, NeedData needData, IItemSpotInBuilding spotWithItemToPickup, IItemSpotInBuilding reservedSpotToStoreItemIn) : base(worker, needData)
     {
-        this.spotWithItemToPickup = ReserveSpotOnStart(spotWithItemToPickup);
-        this.reservedSpotToStoreItemIn = ReserveSpotOnStart(reservedSpotToStoreItemIn);
+        SpotWithItemToPickup = ReserveSpotOnStart(spotWithItemToPickup);
+        ReservedSpotToStoreItemIn = ReserveSpotOnStart(reservedSpotToStoreItemIn);
     }
 
     public override void InitializeStateMachine()
     {
-        Subtasks.Add(new WorkerSubtask_WalkToItemSpot(this, spotWithItemToPickup));
-        Subtasks.Add(new WorkerSubtask_PickupItemFromBuilding(this, spotWithItemToPickup));
+        Subtasks.Add(new WorkerSubtask_WalkToItemSpot(this, SpotWithItemToPickup));
+        Subtasks.Add(new WorkerSubtask_PickupItemFromBuilding(this, SpotWithItemToPickup));
     }
 
     public override void AllSubtasksComplete()
     {
         CompleteTask();
-        Worker.StorageSpotReservedForItemInHand = reservedSpotToStoreItemIn;
+        Worker.StorageSpotReservedForItemInHand = ReservedSpotToStoreItemIn;
         Worker.OriginalPickupItemNeed = Need;
-        reservedSpotToStoreItemIn.Reservation.ReserveBy(Worker);
+        ReservedSpotToStoreItemIn.Reservation.ReserveBy(Worker);
     }
 }
