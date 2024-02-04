@@ -1,18 +1,23 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
+using UnityEditor.VersionControl;
 using UnityEngine;
 
 public abstract class TestBase
 {
     public TownData Town;
-    public BuildingData Camp;        // first instance of building found in town
-    public BuildingData MinersHut;   // first instance of building found in town
-    public BuildingData StoneMine;   // first instance of building found in town
-    public BuildingData Market;   // first instance of building found in town
-    public BuildingData CraftingStation;   // first instance of building found in town
 
-    public void LoadTestTown(string townDefnName, int stepNum = -1)
+    // first instance of buildings found in town
+    public BuildingData Camp;
+    public BuildingData MinersHut;
+    public BuildingData StoneMine;
+    public BuildingData Market;
+    public BuildingData CraftingStation;
+    public BuildingData StorageRoom;
+    public BuildingData WoodcuttersHut;
+
+    public void LoadTestTown(string townDefnName, int stepNum = 0)
     {
         GameTime.IsTest = true;
         CurStep = stepNum;
@@ -32,9 +37,11 @@ public abstract class TestBase
         MinersHut = getBuilding("testMinersHut", true);
         Market = getBuilding("testMarket", true);
         CraftingStation = getBuilding("testCraftingStation", true);
+        StorageRoom = getBuilding("testStorageRoom", true);
+        WoodcuttersHut = getBuilding("testWoodCuttersHut", true);
+
         StoneMine = getBuilding("testStoneMine_oneGatherSpot", true);
-        if (StoneMine == null)
-            StoneMine = getBuilding("testStoneMine_twoGatherSpots", true);
+        StoneMine ??= getBuilding("testStoneMine_twoGatherSpots", true);
 
         GameTime.timeScale = 16;
     }
@@ -78,23 +85,23 @@ public abstract class TestBase
         return null;
     }
 
-    protected void waitUntilTask(WorkerData worker, TaskType taskType, float secondsBeforeExitCheck = 50)
+    protected void waitUntilTask(WorkerData worker, TaskType taskType, string message = "", float secondsBeforeExitCheck = 50)
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         while (GameTime.time < breakTime && worker.AI.CurrentTask.Type != taskType)
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, "{preface()} stuck in loop in waitUntilTask.  AI.CurrentTask = " + worker.AI.CurrentTask.Type + ", expected " + taskType);
+        Assert.IsTrue(GameTime.time < breakTime, "{preface(message)} stuck in loop in waitUntilTask.  AI.CurrentTask = " + worker.AI.CurrentTask.Type + ", expected " + taskType);
     }
 
-    protected void waitUntilTaskAndSubstate(WorkerData worker, TaskType taskType, int substate, float secondsBeforeExitCheck = 500)
+    protected void waitUntilTaskAndSubstate(WorkerData worker, TaskType taskType, int substate, string message = "", float secondsBeforeExitCheck = 500)
     {
-        waitUntilTask(worker, taskType, secondsBeforeExitCheck);
-        waitUntilTaskSubstate(worker, substate, secondsBeforeExitCheck);
+        waitUntilTask(worker, taskType, message, secondsBeforeExitCheck);
+        waitUntilTaskSubstate(worker, substate, message, secondsBeforeExitCheck);
     }
 
-    protected void waitUntilTaskSubstate(WorkerData worker, int substate, float secondsBeforeExitCheck = 500)
+    protected void waitUntilTaskSubstate(WorkerData worker, int substate, string message = "", float secondsBeforeExitCheck = 500)
     {
         Assert.IsTrue(false, "nyi port");
         // float breakTime = GameTime.time + secondsBeforeExitCheck;
@@ -102,21 +109,9 @@ public abstract class TestBase
         // {
         //     updateTown();
         // }
-        // Assert.IsTrue(GameTime.time < breakTime, $"{preface()} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.substate}, expected substate {substate}");
+        // Assert.IsTrue(GameTime.time < breakTime, $"{preface(message)} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.substate}, expected substate {substate}");
     }
 
-    protected void waitUntilTaskSubstate(WorkerData worker, Type taskSubstateType, float secondsBeforeExitCheck = 500)
-    {
-        Assert.IsTrue(false, "nyi port");
-        float breakTime = GameTime.time + secondsBeforeExitCheck;
-        // while (GameTime.time < breakTime && worker.AI.CurrentTask.CurSubTask.GetType() != taskSubstateType)
-        // {
-        //     Debug.Log(taskSubstateType);
-        //     Debug.Log(worker.AI.CurrentTask.substate.GetType());
-        //     updateTown();
-        // }
-        // Assert.IsTrue(GameTime.time < breakTime, $"{preface()} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.substate.GetType()}, expected substate {taskSubstateType}");
-    }
 
     protected void waitUntilNewTask(WorkerData worker, TaskType newTaskType)
     {
@@ -124,7 +119,7 @@ public abstract class TestBase
         waitUntilTask(worker, newTaskType);
     }
 
-    protected void waitUntilTaskDone(WorkerData worker, float secondsBeforeExitCheck = 50)
+    protected void waitUntilTaskDone(WorkerData worker, string message = "", float secondsBeforeExitCheck = 50)
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         var startTask = worker.AI.CurrentTask;
@@ -132,7 +127,7 @@ public abstract class TestBase
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, $"s{preface()} stuck in loop in waitUntilTaskDone.  AI.CurrentTask = {worker.AI.CurrentTask.Type}, expected task to change");
+        Assert.IsTrue(GameTime.time < breakTime, $"s{preface(message)} stuck in loop in waitUntilTaskDone.  AI.CurrentTask = {worker.AI.CurrentTask.Type}, expected task to change");
     }
 
     int CurStep;
@@ -156,53 +151,122 @@ public abstract class TestBase
         Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, $"{preface(message)} Locs not equal - {loc1} vs {loc2}");
     }
 
-    public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker)
+    public void verify_BuildingsAreEqual(BuildingData building1, BuildingData building2, string message = "")
     {
-        Assert.NotNull(worker.AI.CurrentTask, $"{preface()}: Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
-        Assert.AreEqual(expectedType, worker.AI.CurrentTask.Type, $"{preface()} Expected worker {worker} to have task type {expectedType}, but worker.AI.CurrentTask.Type is {worker.AI.CurrentTask.Type}");
+        Assert.AreEqual(building1, building2, $"{preface(message)} Buildings not equal - {building1} vs {building2}");
+    }
+
+    public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker, string message = "")
+    {
+        Assert.NotNull(worker.AI.CurrentTask, $"{preface(message)}: Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
+        Assert.AreEqual(expectedType, worker.AI.CurrentTask.Type, $"{preface(message)} Expected worker {worker} to have task type {expectedType}, but worker.AI.CurrentTask.Type is {worker.AI.CurrentTask.Type}");
     }
 
     protected void verify_WorkerTaskSubstate(int substate, WorkerData worker)
     {
         Assert.IsTrue(false, "nyi port");
-        // Assert.NotNull(worker.AI.CurrentTask, $"{preface()} Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
-        // Assert.AreEqual(substate, worker.AI.CurrentTask.substate, $"{preface()} Expected worker {worker} to have substate {substate}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.substate}");
+        // Assert.NotNull(worker.AI.CurrentTask, $"{preface(message)} Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
+        // Assert.AreEqual(substate, worker.AI.CurrentTask.substate, $"{preface(message)} Expected worker {worker} to have substate {substate}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.substate}");
     }
 
 
-    protected void verify_WorkerTaskSubstate(Type type, WorkerData worker)
+
+
+    protected void waitUntilTaskAndSubtask(WorkerData worker, TaskType taskType, Type subtaskType, string message = "", float secondsBeforeExitCheck = 500)
     {
-        Assert.IsTrue(false, "nyi port");
-        // Assert.NotNull(worker.AI.CurrentTask, $"{preface()} Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
-        // Assert.AreEqual(type, worker.AI.CurrentTask.CurSubTask.GetType(), $"{preface()} Expected worker {worker} to have substate {type}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.substate.GetType()}");
+        waitUntilTask(worker, taskType, message, secondsBeforeExitCheck);
+        waitUntilTaskSubtask(worker, subtaskType, message, secondsBeforeExitCheck);
     }
 
-    protected void verify_AssignedBuilding(WorkerData worker, BuildingData building)
+    protected void waitUntilTaskSubtask(WorkerData worker, Type subtaskType, string message = "", float secondsBeforeExitCheck = 500)
     {
-        Assert.NotNull(worker, $"{preface()} Expected worker {worker} to be assigned to {building}, but worker is null");
-        Assert.NotNull(building, $"{preface()} Expected worker {worker} to be assigned to {building}, but building is null");
-        Assert.AreEqual(worker.Assignment.AssignedTo, building, $"{preface()} Expected worker {worker} to be assigned to {building}, but worker is assigned to '{worker.Assignment.AssignedTo}'");
+        float breakTime = GameTime.time + secondsBeforeExitCheck;
+        while (GameTime.time < breakTime && worker.AI.CurrentTask.CurSubTask.GetType() != subtaskType)
+        {
+            updateTown();
+        }
+        Assert.IsTrue(GameTime.time < breakTime, $"{preface(message)} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.CurSubTask.GetType()}, expected substate {subtaskType}");
     }
 
-    protected void verify_ItemInHand(WorkerData worker, string itemDefnId)
+    public void verify_WorkerTaskTypeAndSubtask(WorkerData worker, TaskType expectedType, Type subtaskType, string message = "")
+    {
+        verify_WorkerTaskType(expectedType, worker, message);
+        verify_WorkerTaskSubtask(subtaskType, worker, message);
+    }
+
+    protected void verify_WorkerTaskSubtask(Type type, WorkerData worker, string message = "")
+    {
+        Assert.NotNull(worker.AI.CurrentTask, $"{preface(message)} Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");
+        Assert.AreEqual(type, worker.AI.CurrentTask.CurSubTask.GetType(), $"{preface(message)} Expected worker {worker} to have substate {type}, but worker.AI.CurrentTask.substate is {worker.AI.CurrentTask.CurSubTask.GetType()}");
+    }
+
+    protected void verify_AssignedBuilding(WorkerData worker, BuildingData building, string message = "")
+    {
+        Assert.NotNull(worker, $"{preface(message)} Expected worker {worker} to be assigned to {building}, but worker is null");
+        Assert.NotNull(building, $"{preface(message)} Expected worker {worker} to be assigned to {building}, but building is null");
+        Assert.AreEqual(worker.Assignment.AssignedTo, building, $"{preface(message)} Expected worker {worker} to be assigned to {building}, but worker is assigned to '{worker.Assignment.AssignedTo}'");
+    }
+
+    protected void verify_ItemDefnInHand(WorkerData worker, string itemDefnId, string message = "")
     {
         Assert.NotNull(worker);
         if (worker.Hands.HasItem)
-            Assert.AreEqual(itemDefnId, worker.Hands.Item.DefnId, $"{preface()} Expected item in hand to be '{itemDefnId}', but is '{worker.Hands.Item}'");
+            Assert.AreEqual(itemDefnId, worker.Hands.Item.DefnId, $"{preface(message)} Expected item in hand to be '{itemDefnId}', but is '{worker.Hands.Item}'");
         else
-            Assert.AreEqual(itemDefnId, null, $"{preface()} Expected item in hand to be null, but is '{itemDefnId}'");
+            Assert.AreEqual(itemDefnId, null, $"{preface(message)} Expected item in hand to be null, but is '{itemDefnId}'");
     }
 
-    protected void verify_ItemsOnGround(int expectedNumber)
+
+    protected void verify_ItemInHand(WorkerData worker, ItemData item, string message = "")
+    {
+        Assert.NotNull(worker);
+        if (worker.Hands.HasItem)
+            Assert.AreEqual(item, worker.Hands.Item.DefnId, $"{preface(message)} Expected item in hand to be '{item}', but is '{worker.Hands.Item}'");
+        else
+            Assert.AreEqual(item, null, $"{preface(message)} Expected item in hand to be null, but is '{item}'");
+    }
+
+
+    protected void verify_spotStillReservedByWorker(StorageSpotData spot, BuildingData building, WorkerData worker, string message = "")
+    {
+        Assert.AreEqual(spot, getStorageSpotInBuildingReservedByWorker(building, worker), $"{preface(message)} Expected spot to still be reserved by worker, but it is not");
+    }
+
+    protected void verify_spotIsUnreserved(StorageSpotData spot, string message = "")
+    {
+        Assert.IsNull(spot.Reservation.ReservedBy, $"{preface(message)} Expected spot to be unreserved, but it is reserved by {spot.Reservation.ReservedBy}");
+    }
+
+    protected void verify_ItemsOnGround(int expectedNumber, string message = "")
     {
         string itemsFound = string.Join(", ", Town.ItemsOnGround.Select(item => item.DefnId));
-        Assert.AreEqual(expectedNumber, Town.ItemsOnGround.Count, $"{preface()} Expected {expectedNumber} items on ground, but found only {Town.ItemsOnGround.Count} ({itemsFound})");
+        Assert.AreEqual(expectedNumber, Town.ItemsOnGround.Count, $"{preface(message)} Expected {expectedNumber} items on ground, but found only {Town.ItemsOnGround.Count} ({itemsFound})");
+    }
+
+    protected void verify_ItemInStorageSpot(StorageSpotData spot, ItemData expectedItem, string message = "")
+    {
+        var actualItem = spot.ItemContainer.Item;
+        Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in storage spot to be '{expectedItem}', but is '{actualItem}'");
     }
 
     protected void forceMoveWorkerAwayFromAssignedBuilding(WorkerData worker)
     {
         Vector2 loc = worker.Assignment.AssignedTo.Location.WorldLoc;
         worker.Location.SetWorldLoc(loc.x + 1, loc.y);
+    }
+
+    protected StorageSpotData getStorageSpotInBuildingReservedByWorker(BuildingData building, WorkerData worker)
+    {
+        Assert.NotNull(building);
+        Assert.NotNull(worker);
+        return building.StorageSpots.Find(spot => spot.Reservation.ReservedBy == worker);
+    }
+
+    protected StorageSpotData getStorageSpotInBuildingWithItem(BuildingData building, ItemData item)
+    {
+        Assert.NotNull(building);
+        Assert.NotNull(item);
+        return building.StorageSpots.Find(spot => spot.ItemContainer.Item == item);
     }
 
     protected void updateTown()

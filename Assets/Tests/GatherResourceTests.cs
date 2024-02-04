@@ -25,10 +25,10 @@ public class GatherResourceTests : TestBase
         Assert.AreEqual((miner.AI.CurrentTask as WorkerTask_PickupGatherableResource).SpotToStoreGatheredItemIn.Reservation.ReservedBy, miner);
 
         // wait until actually gathering (reaping) resource in target building
-        waitUntilTaskSubstate(miner, typeof(WorkerSubtask_ReapGatherableResource));
+        waitUntilTaskSubtask(miner, typeof(WorkerSubtask_ReapGatherableResource));
 
         // wait until done gathering (reaping) and are now picking up
-        waitUntilTaskSubstate(miner, typeof(WorkerSubtask_PickupItemFromBuilding));
+        waitUntilTaskSubtask(miner, typeof(WorkerSubtask_PickupItemFromBuilding));
 
         // wait until done picking up; gathering spot should no longer be reserve
         waitUntilTaskDone(miner);

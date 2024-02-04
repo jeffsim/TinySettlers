@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class WorkerSubtask_WalkToItemSpot : BaseWorkerSubtask_Moving
 {
-    [SerializeField] IItemSpotInBuilding ItemSpot;
+    [SerializeField] public IItemSpotInBuilding ItemSpot;
 
     public override ItemDefn GetTaskItem()
     {

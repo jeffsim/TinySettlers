@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e75d84e7abf74cb19c5077568ca91fd, type: 3}
+  m_Name: testStorageRoom
+  m_EditorClassIdentifier: 
+  Id: testStorageRoom
+  BuildingColor: {r: 0.20154905, g: 0.29411766, b: 0.003921565, a: 1}
+  FriendlyName: testStorageRoom
+  IsTestBuilding: 0
+  BuildingClass: 2
+  AssignedWorkerColor: {r: 0.09818679, g: 0.59607846, b: 0, a: 0}
+  AssignedWorkerFriendlyName: Courier
+  HasWorkers: 1
+  MaxWorkers: 4
+  EditorColor: {r: 0.11972148, g: 0.24528301, b: 0, a: 1}
+  PlayerCanMove: 1
+  PlayerCanDestroy: 1
+  PlayerCanPause: 1
+  CanBeConstructed: 1
+  ResourcesNeededForConstruction: []
+  NumConstructorSpots: 0
+  CanCraft: 0
+  CraftableItems: []
+  CraftingSpots: []
+  CanStoreItems: 1
+  IsPrimaryStorage: 1
+  StorageAreas:
+  - Location: {x: 0, y: 0.5, z: 0}
+    StorageAreaSize: {x: 6, y: 5}
+    StoragePileSize: {x: 3, y: 3, z: 3}
+  WorkersCanFerryItems: 1
+  CanGatherResources: 0
+  GatherableResources:
+  - {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
+  ResourcesCanBeGatheredFromHere: 0
+  ResourcesThatCanBeGatheredFromHere: []
+  GatheringSpots: []
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []

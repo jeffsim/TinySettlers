@@ -17,7 +17,7 @@ public class MoveBuildingTests : TestBase
             waitUntilTask(miner, TaskType.PickupGatherableResource);
 
             // wait until walking to target mine
-            waitUntilTaskSubstate(miner, typeof(WorkerSubtask_WalkToItemSpot));
+            waitUntilTaskSubtask(miner, typeof(WorkerSubtask_WalkToItemSpot));
 
             var minerOriginalLoc = miner.Location.WorldLoc;
 
@@ -57,7 +57,7 @@ public class MoveBuildingTests : TestBase
             waitUntilTask(miner, TaskType.PickupGatherableResource);
 
             // wait until reaping
-            waitUntilTaskSubstate(miner, typeof(WorkerSubtask_ReapGatherableResource));
+            waitUntilTaskSubtask(miner, typeof(WorkerSubtask_ReapGatherableResource));
 
             var minerOriginalLocRelativeToReapingBuilding = miner.Location.WorldLoc - StoneMine.Location.WorldLoc;
 
@@ -91,7 +91,7 @@ public class MoveBuildingTests : TestBase
             waitUntilTask(miner, TaskType.PickupGatherableResource);
 
             // wait until reaping
-            waitUntilTaskSubstate(miner, typeof(WorkerSubtask_PickupItemFromBuilding));
+            waitUntilTaskSubtask(miner, typeof(WorkerSubtask_PickupItemFromBuilding));
 
             var minerOriginalLocRelativeToReapingBuilding = miner.Location.WorldLoc - StoneMine.Location.WorldLoc;
 
@@ -123,7 +123,7 @@ public class MoveBuildingTests : TestBase
 
             // wait until task is to drop off resource in mind
             waitUntilTask(miner, TaskType.DeliverItemInHandToStorageSpot);
-            verify_WorkerTaskSubstate(typeof(WorkerSubtask_WalkToItemSpot), miner);
+            verify_WorkerTaskSubtask(typeof(WorkerSubtask_WalkToItemSpot), miner);
 
             var minerOriginalLoc = miner.Location.WorldLoc;
 
@@ -140,7 +140,7 @@ public class MoveBuildingTests : TestBase
 
             // verify miner's task remains the same
             verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, miner);
-            verify_WorkerTaskSubstate(typeof(WorkerSubtask_WalkToItemSpot), miner);
+            verify_WorkerTaskSubtask(typeof(WorkerSubtask_WalkToItemSpot), miner);
 
             // verify miner is in same location; wasn't moved due to building moving
             verify_LocsAreEqual(minerOriginalLoc, miner.Location.WorldLoc, "step " + i);
@@ -168,7 +168,7 @@ public class MoveBuildingTests : TestBase
             waitUntilTask(miner, TaskType.DeliverItemInHandToStorageSpot);
 
             // Wait until actually dropping
-            waitUntilTaskSubstate(miner, typeof(WorkerSubtask_DropItemInItemSpot));
+            waitUntilTaskSubtask(miner, typeof(WorkerSubtask_DropItemInItemSpot));
 
             var minerOriginalLocRelativeToDroppingBuilding = miner.Location.WorldLoc - MinersHut.Location.WorldLoc;
 

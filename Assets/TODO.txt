@@ -1,11 +1,37 @@
-* Pause Market while woodcutter bringing word to it.  Works. Unpause, should bring wood
-    - ALSO: On pause it leaves the market storagespot reserved but shouldn't
+
 * MOve Market woprks
 * Destory Market
 
-* BUG: rapidly pause/unpause crafting station or storageroom; get "unrserving alreayd reserved spot"
+* Market
+  - Move: 
+    - move market...
+    - move ...
+  - Destory: 
+    - destroy market while dropping in it
+    - destroy market while selling...
+  - Pause
+    - Pause while woodcutter bringing word to it.  Works. Unpause, should bring wood
+    - ALSO: On pause it leaves the market storagespot reserved but shouldn't
+    - ALSO: even without pausing; doesn't unreserve
 
+* Storage Room
+  - Basic
+    DropItem in storage room: unreserves storage spot
+  - Move Building
+        // Move storageroom while assigned worker is getting an item to store in the room
+        Move storagebuilding while assigned worker is walking to another building to pick something up to store in storage room
+            verify spot remains reserved, worker remains walking to other building, Location and MoveTarget are unchanged
+        Move storagebuilding while assigned worker is picking up item in another building to store in storage room
+            verify spot remains reserved, worker remains walking to it, Location and MoveTarget are unchanged
+        Move storagebuilding while assigned worker is delivering item that it picked up in another building to store in storage room
+            verify spot remains reserved, worker remains walking to it,movetarget has been updated, Location is unchanged
+        Move storagebuilding while assigned worker is dropping off something in storageroom
+            verify spot remains reserved, worker remains walking to it, movetarget is unchanged, Location has been updated
 
+        // Same as above, but using worker from another room.
+
+* Wood cutter
+* ...
 
 * add: primary storage: specify per-building hwt can be stored (defaults to 'anything')
     - silo: can only store items of type 'food'
