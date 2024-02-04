@@ -13,6 +13,8 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     [SerializeField] public ItemContainerComponent Hands { get; set; } = new();
     [SerializeField] public AIComponent AI { get; set; }
 
+    internal void DropItemOnGround() => Town.AddItemToGround(Hands.ClearItem(), Location);
+
     public TownData Town;
 
     public IItemSpotInBuilding StorageSpotReservedForItemInHand;
@@ -41,6 +43,13 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     // what we should do (if anything).
     public void OnBuildingDestroyed(BuildingData building)
     {
+        if (StorageSpotReservedForItemInHand.Building == building)
+        {
+            StorageSpotReservedForItemInHand.Reservation.Unreserve();
+            StorageSpotReservedForItemInHand = null;
+            OriginalPickupItemNeed = null;
+        }
+
         AI.CurrentTask.OnBuildingDestroyed(building);
 
         // If we are assigned to the destroyed building, then assign ourselves to the Camp instead

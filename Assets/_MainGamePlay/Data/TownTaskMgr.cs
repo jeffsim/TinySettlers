@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Analytics;
 
 [Serializable]
 public class TownTaskMgr
@@ -64,6 +63,55 @@ public class TownTaskMgr
 
         // Return the highest priority task
         return HighestPriorityTask;
+    }
+
+    bool findAndAssignIdleWorkerCarryingItemToBringItemToBuilding(List<WorkerData> idleWorkers)
+    {
+        // return true as soon as one worker is assigned
+        foreach (var worker in idleWorkers)
+        {
+            if (!worker.Hands.HasItem) continue; // idle worker isn't carrying anything
+
+            // 'worker' is idle and holding an item.  This is because they were recently sent on a task to pick up an item, and 
+            // they picked it up but haven't yet been assigned a new task to bring it anywhere.  In this case, they have already
+            // reserved a storage spot for the item, but we'll first look around to see if any building needs the item.  If so, 
+            // we'll assign the worker to that building.  If not, we'll deliver the item to the reserved storage spot.
+            NeedData highestNeed = GetHighestUnmetNeedForItemInBuildingWithAvailableStorage(worker.Hands.Item.DefnId);
+            if (highestNeed != null)
+            {
+                // found a building that needs the item and can store it.  Swap out the storage spot reserved for the item with the building's storage spot
+                // unreserve the original storage spot
+                worker.StorageSpotReservedForItemInHand?.Reservation.Unreserve();
+
+                // Get the nearest storage spot in the building that needs the item and reserve it for this worker to carry the item-in-hand to.
+                worker.StorageSpotReservedForItemInHand = highestNeed.BuildingWithNeed.GetClosestEmptyStorageSpot(worker.Location);
+                worker.StorageSpotReservedForItemInHand.Reservation.ReserveBy(worker);
+
+                // Tell the Need that we'll be fulfilling it now.
+                highestNeed.AssignWorkerToMeetNeed(worker);
+            }
+            else
+            {
+                // No building needs it; fulfill the original need.
+                if (worker.StorageSpotReservedForItemInHand == null || worker.StorageSpotReservedForItemInHand.Building.IsPaused)
+                {
+                    // We didn't have a storage spot reserved; find the nearest storage spot and reserve it.  If we can't find one, then abandon (drop) the item and abort
+                    worker.StorageSpotReservedForItemInHand = FindAndReserveOptimalStorageSpotToDeliverItemTo(worker);
+                    if (worker.StorageSpotReservedForItemInHand == null)
+                    {
+                        worker.DropItemOnGround();
+                        worker.AI.StartIdling();
+                        return false;
+                    }
+                }
+             
+                highestNeed = worker.OriginalPickupItemNeed;
+            }
+            worker.AI.StartTask(new WorkerTask_DeliverItemInHandToStorageSpot(worker, highestNeed));
+            return true;
+        }
+
+        return false; // no idle worker has an item in hand (that any building needs)
     }
 
     private void getHigherPriorityTaskIfExists_SellItem(NeedData need, List<WorkerData> idleWorkers)
@@ -353,55 +401,12 @@ public class TownTaskMgr
         return allNeeds;
     }
 
-    private bool findAndAssignIdleWorkerCarryingItemToBringItemToBuilding(List<WorkerData> idleWorkers)
+    protected StorageSpotData FindAndReserveOptimalStorageSpotToDeliverItemTo(WorkerData worker)
     {
-        // return true as soon as one worker is assigned
-        foreach (var worker in idleWorkers)
-        {
-            if (worker.Assignment.AssignedTo.IsPaused) continue;
-            if (!worker.Hands.HasItem) continue; // idle worker isn't carrying anything
-            Debug.Assert(worker.StorageSpotReservedForItemInHand != null, $"Worker {worker} is carrying item {worker.Hands.Item} but doesn't have a storage spot reserved for it");
-
-            // 'worker' is idle and holding an item.  This is because they were recently sent on a task to pick up an item, and 
-            // they picked it up but haven't yet been assigned a new task to bring it anywhere.  In this case, they have already
-            // reserved a storage spot for the item, but we'll first look around to see if any building needs the item.  If so, 
-            // we'll assign the worker to that building.  If not, we'll deliver the item to the reserved storage spot.
-            NeedData highestNeed = GetHighestUnmetNeedForItemInBuildingWithAvailableStorage(worker.Hands.Item.DefnId);
-            if (highestNeed != null)
-            {
-                // found a building that needs the item and can store it.  Swap out the storage spot reserved for the item with the building's storage spot
-                // unreserve the original storage spot
-                worker.StorageSpotReservedForItemInHand.Reservation.Unreserve();
-
-                // Get the nearest storage spot in the building that needs the item and reserve it for this worker to carry the item-in-hand to.
-                worker.StorageSpotReservedForItemInHand = highestNeed.BuildingWithNeed.GetClosestEmptyStorageSpot(worker.Location);
-                worker.StorageSpotReservedForItemInHand.Reservation.ReserveBy(worker);
-
-                // Tell the Need that we'll be fulfilling it now.
-                highestNeed.AssignWorkerToMeetNeed(worker);
-            }
-            else
-            {
-                // No building needs it; fulfill the original need.
-                highestNeed = worker.OriginalPickupItemNeed;
-                if (worker.StorageSpotReservedForItemInHand == null)
-                {
-                    // We didn't have a storage spot reserved; find the nearest storage spot and reserve it.  If we can't find one, then abandon (drop) the item and abort
-                    worker.StorageSpotReservedForItemInHand = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.Primary, worker.Location);
-                    if (worker.StorageSpotReservedForItemInHand == null)
-                    {
-                        Town.AddItemToGround(worker.Hands.ClearItem(), worker.Location);
-                        worker.AI.CurrentTask = null; // TODO: hm.
-                        return false;
-                    }
-                }
-            }
-            worker.AI.StartTask(new WorkerTask_DeliverItemInHandToStorageSpot(worker, highestNeed));
-
-            return true;
-        }
-
-        return false; // no idle worker has an item in hand (that any building needs)
+        var optimalStorageSpotToDeliverItemTo = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worker.Location, worker);
+        if (optimalStorageSpotToDeliverItemTo != null)
+            optimalStorageSpotToDeliverItemTo.Reservation.ReserveBy(worker);
+        return optimalStorageSpotToDeliverItemTo;
     }
 
     internal NeedData GetHighestUnmetNeedForItemInBuildingWithAvailableStorage(string itemDefnId)
