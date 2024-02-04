@@ -100,7 +100,7 @@ public partial class StorageRoomTests : TestBase
 
     void SetupMoveTest(int subtask, out BuildingData store1, out BuildingData store2)
     {
-        LoadTestTown("storageRoom_move1", subtask);
+        LoadTestTown("storageRoom_MovePauseDestroy", subtask);
         store1 = getBuildingByTestId("store1");
         store2 = getBuildingByTestId("store2");
     }
