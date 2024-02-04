@@ -15,6 +15,7 @@ public abstract class TestBase
     public BuildingData CraftingStation;
     public BuildingData StorageRoom;
     public BuildingData WoodcuttersHut;
+    public BuildingData Forest;
 
     TownDefn townDefn;
 
@@ -40,6 +41,7 @@ public abstract class TestBase
         CraftingStation = getBuilding("testCraftingStation", true);
         StorageRoom = getBuilding("testStorageRoom", true);
         WoodcuttersHut = getBuilding("testWoodCuttersHut", true);
+        Forest = getBuilding("testForest", true);
 
         StoneMine = getBuilding("testStoneMine_oneGatherSpot", true);
         StoneMine ??= getBuilding("testStoneMine_twoGatherSpots", true);

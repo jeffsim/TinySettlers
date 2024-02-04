@@ -6,46 +6,54 @@ public partial class WoodcutterHutTests : TestBase
     [Test]
     public void WoodcutterHut_MoveTests()
     {
-        //   subtask=0: Move [buildingToMove] while [workerToTest] is walking to [buildingWithItem] to pick something up to store in [buildingToStoreItemIn]
-        //   subtask=1: Move [buildingToMove] while [workerToTest] is picking up item in [buildingWithItem] to store in [buildingToStoreItemIn]
-        //   subtask=2: Move [buildingToMove] while [workerToTest] is walking to [buildingToStoreItemIn]
-        //   subtask=3: Move [buildingToMove] while [workerToTest] is dropping item in [buildingToStoreItemIn]
-        for (int subtask = 0; subtask < 4; subtask++)
+        //   subtask=0: woodcutter is walking to forest to gather wood to store in [buildingToStoreItemIn]
+        //   subtask=1: woodcutter is gathering wood in forest to store in [buildingToStoreItemIn]
+        //   subtask=2: woodcutter is picking up wood in forest to store in [buildingToStoreItemIn]
+        //   subtask=3: woodcutter is walking to [buildingToStoreItemIn]
+        //   subtask=4: woodcutter is dropping wood in [buildingToStoreItemIn]
+        for (int subtask = 0; subtask < 5; subtask++)
         {
-            // Test A: Move store1     while worker1 is getting an item from woodcutter to store in store1
-            // Test B: Move store1     while worker2 is getting an item from woodcutter to store in store1
-            // Test C: Move store2     while worker2 is getting an item from woodcutter to store in store1
-            // Test D: Move woodcutter while worker1 is getting an item from woodcutter to store in store1
-            // Test E: Move woodcutter while worker1 is getting an item from woodcutter to store in store2
+            // [Worker1 is in woodcutter]
+            // Test A: Move woodcutter while worker1 is getting wood from forest to store in store1
+            // Test B: Move forest     while worker1 is getting wood from forest to store in store1
+            // Test C: Move store1     while worker1 is getting wood from forest to store in store1
+            // Test D: Move store2     while worker1 is getting wood from forest to store in store1 (so that store2 is closer; switch to that)
             BuildingData store1, store2;
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test E", subtask, WoodcuttersHut, store1, WoodcuttersHut, store2);
+            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test A", subtask, WoodcuttersHut, store1);
+            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test B", subtask, Forest, store1);
+            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test C", subtask, store1, store1);
+            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test D", subtask, store2, store1);
         }
     }
-
-    void runMoveTest(string testName, int workerSubtask, BuildingData buildingToMove, BuildingData buildingWorker, BuildingData buildingWithItem, BuildingData buildingToStoreItemIn)
+    // [wo][..][ca]
+    // [..][..][s1]
+    // [s2][..][fo]
+    void runMoveTest(string testName, int workerSubtask, BuildingData buildingToMove, BuildingData buildingToStoreItemIn)
     {
-        TestName = $"{testName}: Move {buildingToMove.TestId} while {buildingWorker.TestId}'s worker is ";
+        BuildingData buildingWithItem = Forest;
+        BuildingData buildingWorker = WoodcuttersHut;
+
+        TestName = $"{testName}-{workerSubtask}: Move {buildingToMove.TestId} while {buildingWorker.TestId}'s worker is ";
         switch (workerSubtask)
         {
-            case 0: TestName += $"walking to {buildingWithItem.TestId} to pickup item and bring to {buildingToStoreItemIn.TestId}"; break;
-            case 1: TestName += $"picking up item in {buildingWithItem.TestId} to bring to {buildingToStoreItemIn.TestId}"; break;
-            case 2: TestName += $"walking to {buildingToStoreItemIn.TestId} to dropoff item picked up from {buildingWithItem.TestId}"; break;
-            case 3: TestName += $"dropping item in {buildingToStoreItemIn.TestId} after picking it up from {buildingWithItem.TestId}"; break;
+            case 0: TestName += $"walking to {buildingWithItem.TestId} to gather wood and bring to {buildingToStoreItemIn.TestId}"; break;
+            case 1: TestName += $"gathering wood in {buildingWithItem.TestId} to bring to {buildingToStoreItemIn.TestId}"; break;
+            case 2: TestName += $"picking up wood in {buildingWithItem.TestId} to bring to {buildingToStoreItemIn.TestId}"; break;
+            case 3: TestName += $"walking to {buildingToStoreItemIn.TestId} to dropoff item picked up from {buildingWithItem.TestId}"; break;
+            case 4: TestName += $"dropping item in {buildingToStoreItemIn.TestId} after picking it up from {buildingWithItem.TestId}"; break;
         }
         TestName += "\n  ";
+        if (workerSubtask == 0) Debug.Log(TestName);
 
         // Create the worker and wait until they get to the to-be-tested subtask
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(WorkerSubtask_PickupItemFromBuilding)); break;
-            case 2: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
-            case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_DropItemInItemSpot)); break;
+            case 0: waitUntilTaskAndSubtask(worker, TaskType.PickupGatherableResource, typeof(WorkerSubtask_WalkToItemSpot)); break;
+            case 1: waitUntilTaskAndSubtask(worker, TaskType.PickupGatherableResource, typeof(WorkerSubtask_ReapGatherableResource)); break;
+            case 2: waitUntilTaskAndSubtask(worker, TaskType.PickupGatherableResource, typeof(WorkerSubtask_PickupItemFromBuilding)); break;
+            case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
+            case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_DropItemInItemSpot)); break;
         }
 
         var movedBuildingWithItemInIt = buildingWithItem == buildingToMove;
@@ -78,19 +86,25 @@ public partial class WoodcutterHutTests : TestBase
                     verify_LocsAreEqual(workerOriginalTargetRelativeToBuilding, workerNewMoveTargetRelativeToBuilding);
                 break;
 
-            case 1: // WorkerSubtask_PickupItemFromBuilding.
+            case 1: // WorkerSubtask_ReapGatherableResource.
                 if (movedBuildingWithItemInIt)
                     verify_LocsAreEqual(workerOriginalLocRelativeToBuilding, workerNewLocRelativeToBuilding);
                 verify_LocsAreEqual(workerOriginalMoveTarget, worker.AI.CurrentTask.LastMoveToTarget);
                 break;
 
-            case 2: // WorkerSubtask_WalkToItemSpot.
+            case 2: // WorkerSubtask_PickupItemFromBuilding.
+                if (movedBuildingWithItemInIt)
+                    verify_LocsAreEqual(workerOriginalLocRelativeToBuilding, workerNewLocRelativeToBuilding);
+                verify_LocsAreEqual(workerOriginalMoveTarget, worker.AI.CurrentTask.LastMoveToTarget);
+                break;
+
+            case 3: // WorkerSubtask_WalkToItemSpot.
                 verify_LocsAreEqual(workerOriginalLoc, worker.Location);
                 if (movedBuildingItemWillBeStoredIn)
                     verify_LocsAreEqual(workerOriginalTargetRelativeToBuilding, workerNewMoveTargetRelativeToBuilding);
                 break;
 
-            case 3: // WorkerSubtask_DropItemInItemSpot.
+            case 4: // WorkerSubtask_DropItemInItemSpot.
                 if (movedBuildingItemWillBeStoredIn)
                     verify_LocsAreEqual(workerOriginalLocRelativeToBuilding, workerNewLocRelativeToBuilding);
                 verify_LocsAreEqual(workerOriginalMoveTarget, worker.AI.CurrentTask.LastMoveToTarget);
@@ -100,7 +114,7 @@ public partial class WoodcutterHutTests : TestBase
 
     void SetupMoveTest(int subtask, out BuildingData store1, out BuildingData store2)
     {
-        LoadTestTown("storageRoom_MovePauseDestroy", subtask);
+        LoadTestTown("woodcutter_MovePauseDestroy", subtask);
         store1 = getBuildingByTestId("store1");
         store2 = getBuildingByTestId("store2");
     }
