@@ -65,7 +65,7 @@ public static class GameTime
 
     static public void Update()
     {
-        time += Time.unscaledDeltaTime;
+        time += Time.deltaTime;
     }
 
     static public void UnPause() => timeScale = _lastSetNonZeroTimeScale;
