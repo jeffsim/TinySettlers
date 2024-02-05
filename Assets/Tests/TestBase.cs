@@ -294,6 +294,7 @@ public abstract class TestBase
     }
 
     protected int GetNumItemsInTownStorage() => Town.Buildings.Sum(building => building.StorageSpots.Count(spot => spot.ItemContainer.HasItem));
+    protected int GetNumItemsInTownGatheringSpots() => Town.Buildings.Sum(building => building.GatheringSpots.Count(spot => spot.ItemContainer.HasItem));
 
     protected void moveBuilding(BuildingData buildingToMove, int tileX, int tileY)
     {

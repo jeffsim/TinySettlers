@@ -28,6 +28,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             SetupMPDTest(out store1, out store2, true); runDestroyTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
             SetupMPDTest(out store1, out store2, true); runDestroyTest("Test F", subtask, Forest, WoodcuttersHut);
         }
+        Debug.Log("add back");
     }
 
     void runDestroyTest(string testName, int workerSubtask, BuildingData buildingToDestroy, BuildingData buildingToStoreItemIn)
@@ -50,6 +51,9 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 
         // Grow trees so that woodcutter can gather wood
         Forest.GatheringSpots[0].ItemContainer.SetItem(new ItemData() { DefnId = "wood" });
+        Forest.GatheringSpots[0].PercentGrown = -1000; // hack to ensure they don't grow
+        Forest.GatheringSpots[1].PercentGrown = -1000; // hack to ensure they don't grow
+        Forest.GatheringSpots[2].PercentGrown = -1000; // hack to ensure they don't grow
 
         // Create the worker and wait until they get to the to-be-tested subtask
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
@@ -75,7 +79,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 
         if (workerSubtask > 3)
             fillAllTownStorageWithItem("plank");
-        int origNumItemsInTownStorage = GetNumItemsInTownStorage();
+        int origNumItemsInTownStorage = GetNumItemsInTownStorage() + GetNumItemsInTownGatheringSpots();
         int origNumItemsOnGround = Town.ItemsOnGround.Count;
         int origNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
 
@@ -91,7 +95,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             verify_ItemDefnInHand(worker, null);
             if (destroyedBuildingWithItemInIt)
             {
-                verify_WorkerTaskType(TaskType.Idle, worker);                
+                verify_WorkerTaskType(TaskType.Idle, worker);
                 verify_ItemsOnGround(1);
             }
             else
@@ -145,7 +149,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         }
         else // STORAGE FULL: WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot 
         {
-            int newNumItemsInTownStorage = GetNumItemsInTownStorage();
+            int newNumItemsInTownStorage = GetNumItemsInTownStorage() + GetNumItemsInTownGatheringSpots();
             int newNumItemsOnGround = Town.ItemsOnGround.Count;
             int newNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
 

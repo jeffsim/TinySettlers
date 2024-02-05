@@ -51,9 +51,6 @@ public class GatheringSpotData : BaseData, ILocationProvider, IReservationProvid
     internal void OnBuildingDestroyed()
     {
         if (!ItemContainer.IsEmpty)
-        {
-            var item = ItemContainer.ClearItem();
-            Building.Town.AddItemToGround(item, Location);
-        }
+            Building.Town.AddItemToGround(ItemContainer.ClearItem(), Location);
     }
 }
