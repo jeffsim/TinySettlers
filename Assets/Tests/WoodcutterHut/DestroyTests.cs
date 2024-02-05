@@ -47,7 +47,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             case 5: TestName += $"dropping item in {buildingToStoreItemIn.TestId} after picking it up from {buildingWithItem.TestId} and there are no available storage spots"; break;
         }
         TestName += "\n  ";
-        if (workerSubtask == 0) Debug.Log(TestName);
+        // if (workerSubtask == 0) Debug.Log(TestName);
 
         // Grow trees so that woodcutter can gather wood
         Forest.GatheringSpots[0].ItemContainer.SetItem(new ItemData() { DefnId = "wood" });
