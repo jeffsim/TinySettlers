@@ -13,21 +13,24 @@ public partial class WoodcutterHutTests : TestBase
         //   subtask=4: woodcutter is dropping wood in [buildingToStoreItemIn]
         for (int subtask = 0; subtask < 5; subtask++)
         {
-            // [Worker1 is in woodcutter]
             // Test A: Move woodcutter while worker1 is getting wood from forest to store in store1
             // Test B: Move forest     while worker1 is getting wood from forest to store in store1
             // Test C: Move store1     while worker1 is getting wood from forest to store in store1
             // Test D: Move store2     while worker1 is getting wood from forest to store in store1 (so that store2 is closer; switch to that)
             BuildingData store1, store2;
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test A", subtask, WoodcuttersHut, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test B", subtask, Forest, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test C", subtask, store1, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test D", subtask, store2, store1);
+            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test A", subtask, WoodcuttersHut, store1);
+            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test B", subtask, Forest, store1);
+            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test C", subtask, store1, store1);
+            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test D", subtask, store2, store1);
+
+            // Following tests disable store1 and store2 before running so that woodcutter can only store in woodcutter
+            // Test E: Move woodcutter while worker1 is getting wood from forest to store in woodcutter
+            // Test F: Move forest     while worker1 is getting wood from forest to store in woodcutter
+            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2, true); runMoveTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
+            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2, true); runMoveTest("Test F", subtask, Forest, WoodcuttersHut);
         }
     }
-    // [wo][..][ca]
-    // [..][..][s1]
-    // [s2][..][fo]
+
     void runMoveTest(string testName, int workerSubtask, BuildingData buildingToMove, BuildingData buildingToStoreItemIn)
     {
         BuildingData buildingWithItem = Forest;
@@ -43,7 +46,7 @@ public partial class WoodcutterHutTests : TestBase
             case 4: TestName += $"dropping item in {buildingToStoreItemIn.TestId} after picking it up from {buildingWithItem.TestId}"; break;
         }
         TestName += "\n  ";
-        if (workerSubtask == 0) Debug.Log(TestName);
+        // if (workerSubtask == 0) Debug.Log(TestName);
 
         // Create the worker and wait until they get to the to-be-tested subtask
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
@@ -69,7 +72,7 @@ public partial class WoodcutterHutTests : TestBase
         var workerOriginalLocRelativeToBuilding = worker.Location.WorldLoc - buildingToMove.Location.WorldLoc;
         var workerOriginalTargetRelativeToBuilding = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - buildingToMove.Location.WorldLoc;
 
-        Town.MoveBuilding(buildingToMove, 2, 0);
+        moveBuilding(buildingToMove, 1, 1);
 
         // Verify new state.  First verify storage spot in room remains reserved
         verify_spotStillReservedByWorker(originalSpotToStoreItemIn, buildingToStoreItemIn, worker);
@@ -110,12 +113,5 @@ public partial class WoodcutterHutTests : TestBase
                 verify_LocsAreEqual(workerOriginalMoveTarget, worker.AI.CurrentTask.LastMoveToTarget);
                 break;
         }
-    }
-
-    void SetupMoveTest(int subtask, out BuildingData store1, out BuildingData store2)
-    {
-        LoadTestTown("woodcutter_MovePauseDestroy", subtask);
-        store1 = getBuildingByTestId("store1");
-        store2 = getBuildingByTestId("store2");
     }
 }

@@ -281,6 +281,24 @@ public abstract class TestBase
     }
 
     protected int GetNumItemsInTownStorage() => Town.Buildings.Sum(building => building.StorageSpots.Count(spot => spot.ItemContainer.HasItem));
+
+    protected void moveBuilding(BuildingData buildingToMove, int tileX, int tileY)
+    {
+        Assert.IsNull(Town.Tiles[tileY * Town.Defn.Width + tileX].BuildingInTile, $"{preface()} Tile {tileX}, {tileY} is already occupied by a building");
+        Town.MoveBuilding(buildingToMove, tileX, tileY);
+    }
+
+    protected void SetupMPDTest(string townDefnId, int subtask, out BuildingData store1, out BuildingData store2, bool destroyStores = false)
+    {
+        LoadTestTown(townDefnId, subtask);
+        store1 = getBuildingByTestId("store1");
+        store2 = getBuildingByTestId("store2");
+        if (destroyStores)
+        {
+            Town.DestroyBuilding(store1);
+            Town.DestroyBuilding(store2);
+        }
+    }
     
     protected void updateTown(int times = 1)
     {

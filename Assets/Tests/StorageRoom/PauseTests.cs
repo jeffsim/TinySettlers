@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using UnityEngine;
 
 public partial class StorageRoomTests : TestBase
 {
@@ -19,12 +20,19 @@ public partial class StorageRoomTests : TestBase
             // Test D: Pause woodcu while worker1 is getting an item from woodcutter to store in store1
             // Test E: Pause woodcu while worker2 is getting an item from woodcutter to store in store1
             BuildingData store1, store2;
-            SetupPauseTest(subtask, out store1, out store2); runPauseTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
-            SetupPauseTest(subtask, out store1, out store2); runPauseTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
-            SetupPauseTest(subtask, out store1, out store2); runPauseTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
-            SetupPauseTest(subtask, out store1, out store2); runPauseTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
-            SetupPauseTest(subtask, out store1, out store2); runPauseTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
+            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
+            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
+            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
+            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
+            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
+
+            // Following tests disable store1 and store2 before running so that woodcutter can only store in woodcutter
+            // Test F: Pause woodcutter while worker1 is getting wood from forest to store in woodcutter
+            // Test G: Pause forest     while worker1 is getting wood from forest to store in woodcutter
+            // SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2, true); runMoveTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
+            // SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2, true); runMoveTest("Test F", subtask, Forest, WoodcuttersHut);
         }
+        Debug.Log("add back");
     }
 
     void runPauseTest(string testName, int workerSubtask, BuildingData buildingToPause, BuildingData buildingWorker, BuildingData buildingWithItem, BuildingData buildingToStoreItemIn)
@@ -151,12 +159,5 @@ public partial class StorageRoomTests : TestBase
                 verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
             }
         }
-    }
-
-    void SetupPauseTest(int subtask, out BuildingData store1, out BuildingData store2)
-    {
-        LoadTestTown("storageRoom_MovePauseDestroy", subtask);
-        store1 = getBuildingByTestId("store1");
-        store2 = getBuildingByTestId("store2");
     }
 }

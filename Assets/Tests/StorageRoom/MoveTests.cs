@@ -18,12 +18,19 @@ public partial class StorageRoomTests : TestBase
             // Test D: Move woodcutter while worker1 is getting an item from woodcutter to store in store1
             // Test E: Move woodcutter while worker1 is getting an item from woodcutter to store in store2
             BuildingData store1, store2;
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
-            SetupMoveTest(subtask, out store1, out store2); runMoveTest("Test E", subtask, WoodcuttersHut, store1, WoodcuttersHut, store2);
+            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
+            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
+            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
+            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
+            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test E", subtask, WoodcuttersHut, store1, WoodcuttersHut, store2);
+
+            // Following tests disable store1 and store2 before running so that woodcutter can only store in woodcutter
+            // Test E: Move woodcutter while worker1 is getting wood from forest to store in woodcutter
+            // Test F: Move forest     while worker1 is getting wood from forest to store in woodcutter
+            // SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2, true); runMoveTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
+            // SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2, true); runMoveTest("Test F", subtask, Forest, WoodcuttersHut);
         }
+        Debug.Log("add back");
     }
 
     void runMoveTest(string testName, int workerSubtask, BuildingData buildingToMove, BuildingData buildingWorker, BuildingData buildingWithItem, BuildingData buildingToStoreItemIn)
@@ -96,12 +103,5 @@ public partial class StorageRoomTests : TestBase
                 verify_LocsAreEqual(workerOriginalMoveTarget, worker.AI.CurrentTask.LastMoveToTarget);
                 break;
         }
-    }
-
-    void SetupMoveTest(int subtask, out BuildingData store1, out BuildingData store2)
-    {
-        LoadTestTown("storageRoom_MovePauseDestroy", subtask);
-        store1 = getBuildingByTestId("store1");
-        store2 = getBuildingByTestId("store2");
     }
 }

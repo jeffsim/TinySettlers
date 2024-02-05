@@ -19,11 +19,11 @@
 //             // Test D: Destroy woodcu while worker1 is getting an item from woodcutter to store in store1
 //             // Test E: Destroy woodcu while worker2 is getting an item from woodcutter to store in store1
 //             BuildingData store1, store2;
-//             SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
-//             SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
-//             SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
-//             SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
-//             SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
+//             SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runDestroyTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
+//             SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runDestroyTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
+//             SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runDestroyTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
+//             SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runDestroyTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
+//             SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runDestroyTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
 //         }
 //     }
 
