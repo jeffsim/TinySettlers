@@ -241,7 +241,7 @@ public abstract class TestBase
     protected void verify_ItemsOnGround(int expectedNumber, string message = "")
     {
         string itemsFound = string.Join(", ", Town.ItemsOnGround.Select(item => item.DefnId));
-        Assert.AreEqual(expectedNumber, Town.ItemsOnGround.Count, $"{preface(message)} Expected {expectedNumber} items on ground, but found only {Town.ItemsOnGround.Count} ({itemsFound})");
+        Assert.AreEqual(expectedNumber, Town.ItemsOnGround.Count, $"{preface(message)} Expected {expectedNumber} items on ground, but found {Town.ItemsOnGround.Count} ({itemsFound})");
     }
 
     protected void verify_ItemInStorageSpot(StorageSpotData spot, ItemData expectedItem, string message = "")
