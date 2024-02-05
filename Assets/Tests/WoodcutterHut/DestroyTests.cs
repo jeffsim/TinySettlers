@@ -1,3 +1,4 @@
+using System.Linq;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -28,7 +29,6 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             SetupMPDTest(out store1, out store2, true); runDestroyTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
             SetupMPDTest(out store1, out store2, true); runDestroyTest("Test F", subtask, Forest, WoodcuttersHut);
         }
-        Debug.Log("add back");
     }
 
     void runDestroyTest(string testName, int workerSubtask, BuildingData buildingToDestroy, BuildingData buildingToStoreItemIn)
@@ -82,6 +82,8 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         int origNumItemsInTownStorage = GetNumItemsInTownStorage() + GetNumItemsInTownGatheringSpots();
         int origNumItemsOnGround = Town.ItemsOnGround.Count;
         int origNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
+        int origNumReservedStorageSpots = Town.Buildings.Sum(b => b.StorageSpots.Count(s => s.Reservation.IsReserved));
+        int origNumReservedGatheringSpots = Town.Buildings.Sum(b => b.GatheringSpots.Count(s => s.Reservation.IsReserved));
 
         Town.DestroyBuilding(buildingToDestroy);
 
@@ -152,15 +154,14 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             int newNumItemsInTownStorage = GetNumItemsInTownStorage() + GetNumItemsInTownGatheringSpots();
             int newNumItemsOnGround = Town.ItemsOnGround.Count;
             int newNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
+            int newNumReservedStorageSpots = Town.Buildings.Sum(b => b.StorageSpots.Count(s => s.Reservation.IsReserved));
+            int newNumReservedGatheringSpots = Town.Buildings.Sum(b => b.GatheringSpots.Count(s => s.Reservation.IsReserved));
 
             verify_AssignedBuilding(worker, destroyedBuildingOfWorker ? Camp : workerOriginalAssignedBuilding);
             Assert.AreEqual(origNumItemsInTownStorage + origNumItemsOnGround + origNumItemsInWorkersHands, newNumItemsInTownStorage + newNumItemsOnGround + newNumItemsInWorkersHands, $"{preface("", 1)} Number of items in town (in storage+onground) should not have changed");
 
-            // worker had a reserved spot in store1;
-            //  if store1 was destroyed then their reservation should be removed and they should be assigned to camp and should have no item.  we were able to fill it above.
-            //  if store2 was destroyed then their reservation should be valid and they should be assigned to origBuilding and should still be carrying to store1.  we couldn't fill it above.
-            //  if woodcutter was destroyed then their reservation should be valid and they should be assigned to origBuilding and should still be carrying to store1.  we couldn't fill it above.
-            if (buildingToDestroy.TestId == "store1")
+
+            if (buildingToDestroy == originalSpotToStoreItemIn.Building)
             {
                 verify_ItemInHand(worker, null);
                 verify_WorkerTaskType(TaskType.Idle, worker);
@@ -175,3 +176,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         }
     }
 }
+// Test E-4: Destroy woodc while woodc's worker is walking to woodc to dropoff item picked up from forest and there are no available storage spots
+//   StepNum 4, line 171:  Expected item in hand to be null, but is 'wood (2004)'
+//   Expected: < wood(2004) >
+//   But was: null

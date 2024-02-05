@@ -18,7 +18,6 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     public TownData Town;
 
     public IItemSpotInBuilding StorageSpotReservedForItemInHand;
-    public float DistanceToAssignedBuilding => Location.DistanceTo(Assignment.AssignedTo.Location);
 
     public NeedData OriginalPickupItemNeed;
 

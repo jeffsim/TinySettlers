@@ -8,6 +8,8 @@ public interface IAIProvider
 [Serializable]
 public class AIComponent : BaseData
 {
+    public override string ToString() => $"Task: {CurrentTask} - {CurrentTask.CurSubTask}";
+
     public WorkerTask CurrentTask;
     public bool IsIdle => CurrentTask.Type == TaskType.Idle;
     public WorkerTask_Idle IdleTask;

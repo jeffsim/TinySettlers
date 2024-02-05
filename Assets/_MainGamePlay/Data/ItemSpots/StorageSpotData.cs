@@ -4,7 +4,7 @@ using UnityEngine;
 [Serializable]
 public class StorageSpotData : BaseData, ILocationProvider, IReservationProvider, IItemSpotInBuilding
 {
-    public override string ToString() => Location + " " + ItemContainer;
+    public override string ToString() => Location + " " + ItemContainer + Reservation;
     public int IndexInStoragePile;
 
     [SerializeField] public BuildingData Building { get; set; }

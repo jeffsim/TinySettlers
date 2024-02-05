@@ -10,6 +10,8 @@ public delegate void OnAssignedToChangedEvent();
 [Serializable]
 public class AssignmentComponent : BaseData
 {
+    public override string ToString() => $"Assigned to: {AssignedTo}";
+
     public BuildingData AssignedTo;
     public bool IsAssigned => AssignedTo != null;
     [NonSerialized] public OnAssignedToChangedEvent OnAssignedToChanged;

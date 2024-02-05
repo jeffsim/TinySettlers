@@ -9,6 +9,8 @@ public interface IReservationProvider
 [Serializable]
 public class ReservationComponent : BaseData
 {
+    public override string ToString() => IsReserved ? "Reserved by " + ReservedBy : "Not reserved";
+
     public WorkerData ReservedBy;
     public bool IsReserved => ReservedBy != null;
 

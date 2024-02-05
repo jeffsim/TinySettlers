@@ -1,26 +1,22 @@
-// using NUnit.Framework;
+using NUnit.Framework;
 
-// public partial class StorageRoomTests : TestBase
-// {
-//     [Test]
-//     public void StorageRoom_BasicFunctionality()
-//     {
-//         // DropItem in storage room: unreserves storage spot
-//         LoadTestTown("storageRoom_BasicFunctionality");
-//         var storage = StorageRoom;
-//         var worker = getAssignedWorker(storage);
-//         var originalStorageSpot = WoodcuttersHut.GetStorageSpotWithUnreservedItem(GameDefns.Instance.ItemDefns["plank"]);
-//         var itemToStore = originalStorageSpot.ItemContainer.Item;
+public partial class WoodcutterHutTests : MovePauseDestroyTestBase
+{
+    [Test]
+    public void Woodcutter_BasicFunctionality()
+    {
+        // DropItem in storage room: unreserves storage spot
+        LoadTestTown("woodcutter_MovePauseDestroy");
+        var worker = Town.CreateWorkerInBuilding(WoodcuttersHut);
 
-//         waitUntilTask(worker, TaskType.PickupItemInStorageSpot);
+        waitUntilTask(worker, TaskType.PickupGatherableResource);
+        var item = (worker.AI.CurrentTask as BaseWorkerTask_TransportItemFromSpotToStorage).SpotWithItemToPickup.ItemContainer.Item;
+        waitUntilTask(worker, TaskType.DeliverItemInHandToStorageSpot);
+        var storageSpot = worker.StorageSpotReservedForItemInHand;
+        waitUntilTaskDone(worker);
         
-//         var reservedStorageSpot = getStorageSpotInBuildingReservedByWorker(storage, worker);
-        
-//         waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_DropItemInItemSpot));
-//         waitUntilTaskDone(worker);
-        
-//         verify_spotIsUnreserved(reservedStorageSpot);
-//         verify_ItemInStorageSpot(reservedStorageSpot, itemToStore, "Item should be in new storage spot");
-//         verify_ItemInStorageSpot(originalStorageSpot, null, "Item should not be in original storage spot");
-//     }
-// }
+        verify_spotIsUnreserved(storageSpot);
+        verify_ItemInHand(worker, null);
+        verify_ItemInSpot(storageSpot, item, "Item should be in new storage spot");
+    }
+}
