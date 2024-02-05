@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 
-public partial class StorageRoomTests : TestBase
+public partial class StorageRoomTests : MovePauseDestroyTestBase
 {
     [Test]
     public void StorageRoom_MoveTests()
@@ -18,11 +18,12 @@ public partial class StorageRoomTests : TestBase
             // Test D: Move woodcutter while worker1 is getting an item from woodcutter to store in store1
             // Test E: Move woodcutter while worker1 is getting an item from woodcutter to store in store2
             BuildingData store1, store2;
-            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
-            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
-            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
-            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
-            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test E", subtask, WoodcuttersHut, store1, WoodcuttersHut, store2);
+            PrepMPDTest("storageRoom_MovePauseDestroy", subtask);
+            SetupMPDTest(out store1, out store2); runMoveTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runMoveTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runMoveTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runMoveTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runMoveTest("Test E", subtask, WoodcuttersHut, store1, WoodcuttersHut, store2);
 
             // Following tests disable store1 and store2 before running so that woodcutter can only store in woodcutter
             // Test E: Move woodcutter while worker1 is getting wood from forest to store in woodcutter

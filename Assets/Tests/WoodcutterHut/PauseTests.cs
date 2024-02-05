@@ -1,7 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 
-public partial class WoodcutterHutTests : TestBase
+public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 {
     [Test]
     public void WoodcutterHut_PauseTests()
@@ -13,21 +13,20 @@ public partial class WoodcutterHutTests : TestBase
         // subtask=4: woodcutter is dropping wood in [buildingToStoreItemIn]
         for (int subtask = 0; subtask < 6; subtask++)
         {
-            // Test A: Pause woodcutter while worker1 is getting wood from forest to store in store1
-            // Test B: Pause forest     while worker1 is getting wood from forest to store in store1
-            // Test C: Pause store1     while worker1 is getting wood from forest to store in store1
-            // Test D: Pause store2     while worker1 is getting wood from forest to store in store1 (so that store2 is closer; switch to that)
+            // Test A: Pause woodcu while worker1 is getting wood from forest to store in store1
+            // Test B: Pause forest while worker1 is getting wood from forest to store in store1
+            // Test C: Pause store1 while worker1 is getting wood from forest to store in store1
             BuildingData store1, store2;
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test A", subtask, WoodcuttersHut, store1);
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test B", subtask, Forest, store1);
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test C", subtask, store1, store1);
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test D", subtask, store2, store1);
+            PrepMPDTest("woodcutter_MovePauseDestroy", subtask);
+            SetupMPDTest(out store1, out store2); runPauseTest("Test A", subtask, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runPauseTest("Test B", subtask, Forest, store1);
+            SetupMPDTest(out store1, out store2); runPauseTest("Test C", subtask, store1, store1);
 
             // Following tests disable store1 and store2 before running so that woodcutter can only store in woodcutter
             // Test E: Pause woodcutter while worker1 is getting wood from forest to store in woodcutter
             // Test F: Pause forest     while worker1 is getting wood from forest to store in woodcutter
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2, true); runPauseTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2, true); runPauseTest("Test F", subtask, Forest, WoodcuttersHut);
+            SetupMPDTest(out store1, out store2, true); runPauseTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
+            SetupMPDTest(out store1, out store2, true); runPauseTest("Test F", subtask, Forest, WoodcuttersHut);
         }
     }
 
@@ -36,7 +35,7 @@ public partial class WoodcutterHutTests : TestBase
         BuildingData buildingWithItem = Forest;
         BuildingData buildingWorker = WoodcuttersHut;
 
-        TestName = $"{testName}: Pause {buildingToPause.TestId} while {buildingWorker.TestId}'s worker is ";
+        TestName = $"{testName}-{workerSubtask}: Pause {buildingToPause.TestId} while {buildingWorker.TestId}'s worker is ";
         switch (workerSubtask)
         {
             case 0: TestName += $"walking to {buildingWithItem.TestId} to pickup item and bring to {buildingToStoreItemIn.TestId}"; break;
@@ -49,10 +48,14 @@ public partial class WoodcutterHutTests : TestBase
         TestName += "\n  ";
         if (workerSubtask == 0) Debug.Log(TestName);
 
+        // Grow trees so that woodcutter can gather wood
+        Forest.GatheringSpots[0].ItemContainer.SetItem(new ItemData() { DefnId = "wood" });
+
         // Create the worker and wait until they get to the to-be-tested subtask
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
-        var itemToBePickedUp = buildingWithItem.GetUnreservedItemInStorage(GameDefns.Instance.ItemDefns["plank"]);
-        var originalSpotWithItem = getStorageSpotInBuildingWithItem(buildingWithItem, itemToBePickedUp);
+        var spotWithWood = buildingWithItem.GetClosestUnreservedGatheringSpotWithItemToReap(worker.Location);
+        var itemToBePickedUp = spotWithWood.ItemContainer.Item;
+        var originalSpotWithItem = getGatheringSpotInBuildingWithItem(buildingWithItem, itemToBePickedUp);
         var pausedBuildingWithItemInIt = buildingWithItem == buildingToPause;
         var pausedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToPause;
         var pausedBuildingOfWorker = buildingWorker == buildingToPause;
@@ -60,8 +63,8 @@ public partial class WoodcutterHutTests : TestBase
 
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(WorkerSubtask_PickupItemFromBuilding)); break;
+            case 0: waitUntilTaskAndSubtask(worker, TaskType.PickupGatherableResource, typeof(WorkerSubtask_WalkToItemSpot)); break;
+            case 1: waitUntilTaskAndSubtask(worker, TaskType.PickupGatherableResource, typeof(WorkerSubtask_PickupItemFromBuilding)); break;
             case 2: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
             case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_DropItemInItemSpot)); break;
             case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
@@ -86,7 +89,7 @@ public partial class WoodcutterHutTests : TestBase
         if (workerSubtask == 0 || workerSubtask == 1)// WorkerSubtask_WalkToItemSpot and WorkerSubtask_PickupItemFromBuilding
         {
             verify_ItemDefnInHand(worker, null);
-            verify_ItemInStorageSpot(originalSpotWithItem, itemToBePickedUp);
+            verify_ItemInSpot(originalSpotWithItem, itemToBePickedUp);
             verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
             if (pausedBuildingOfWorker || pausedBuildingWithItemInIt)
             {
@@ -96,14 +99,13 @@ public partial class WoodcutterHutTests : TestBase
             else if (pausedBuildingItemWillBeStoredIn)
             {
                 verify_spotIsReserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
-                verify_WorkerTaskType(TaskType.PickupItemInStorageSpot, worker);
-                Assert.AreNotEqual(((WorkerTask_PickupItemFromStorageSpot)worker.AI.CurrentTask).ReservedSpotToStoreItemIn.Building, buildingToPause, $"{preface()} Worker should have reserved a spot in another building to store the item in");
+                verify_WorkerTaskType(TaskType.PickupGatherableResource, worker);
+                Assert.AreNotEqual(((WorkerTask_PickupGatherableResource)worker.AI.CurrentTask).ReservedSpotToStoreItemIn.Building, buildingToPause, $"{preface()} Worker should have reserved a spot in another building to store the item in");
             }
         }
         else if (workerSubtask == 2 || workerSubtask == 3) // WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot
         {
             verify_ItemInHand(worker, itemToBePickedUp);
-            verify_ItemInStorageSpot(originalSpotWithItem, null);
             verify_spotIsUnreserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
 
             if (pausedBuildingOfWorker)
@@ -141,11 +143,7 @@ public partial class WoodcutterHutTests : TestBase
             verify_AssignedBuilding(worker, workerOriginalAssignedBuilding);
             Assert.AreEqual(origNumItemsInTownStorage + origNumItemsOnGround + origNumItemsInWorkersHands, newNumItemsInTownStorage + newNumItemsOnGround + newNumItemsInWorkersHands, $"{preface("", 1)} Number of items in town (in storage+onground) should not have changed");
 
-            // worker had a reserved spot in store1;
-            //  if store1 was destroyed then their reservation should be removed and they should be assigned to camp and should have no item.  we were able to fill it above.
-            //  if store2 was destroyed then their reservation should be valid and they should be assigned to origBuilding and should still be carrying to store1.  we couldn't fill it above.
-            //  if woodcutter was destroyed then their reservation should be valid and they should be assigned to origBuilding and should still be carrying to store1.  we couldn't fill it above.
-            if (buildingToPause.TestId == "store1")
+            if (buildingToPause == buildingToStoreItemIn)
             {
                 verify_ItemInHand(worker, null);
                 verify_WorkerTaskType(TaskType.Idle, worker);

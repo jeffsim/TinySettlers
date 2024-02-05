@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-public partial class StorageRoomTests : TestBase
+public partial class StorageRoomTests : MovePauseDestroyTestBase
 {
     [Test]
     public void StorageRoom_BasicFunctionality()

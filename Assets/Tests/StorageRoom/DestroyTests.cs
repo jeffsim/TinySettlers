@@ -1,6 +1,6 @@
 using NUnit.Framework;
 
-public partial class StorageRoomTests : TestBase
+public partial class StorageRoomTests : MovePauseDestroyTestBase
 {
     [Test]
     public void StorageRoom_DestroyTests()
@@ -19,11 +19,12 @@ public partial class StorageRoomTests : TestBase
             // Test D: Destroy woodcu while worker1 is getting an item from woodcutter to store in store1
             // Test E: Destroy woodcu while worker2 is getting an item from woodcutter to store in store1
             BuildingData store1, store2;
-            SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
-            SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
-            SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
-            SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
-            SetupDestroyTest(subtask, out store1, out store2); runDestroyTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
+            PrepMPDTest("storageRoom_MovePauseDestroy", subtask);
+            SetupMPDTest(out store1, out store2); runDestroyTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runDestroyTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runDestroyTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runDestroyTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runDestroyTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
         }
     }
 
@@ -159,12 +160,5 @@ public partial class StorageRoomTests : TestBase
                 verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
             }
         }
-    }
-
-    void SetupDestroyTest(int subtask, out BuildingData store1, out BuildingData store2)
-    {
-        LoadTestTown("storageRoom_MovePauseDestroy", subtask);
-        store1 = getBuildingByTestId("store1");
-        store2 = getBuildingByTestId("store2");
     }
 }

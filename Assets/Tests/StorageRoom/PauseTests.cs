@@ -1,17 +1,17 @@
 using NUnit.Framework;
 using UnityEngine;
 
-public partial class StorageRoomTests : TestBase
+public partial class StorageRoomTests : MovePauseDestroyTestBase
 {
     [Test]
     public void StorageRoom_PauseTests()
     {
-        //   subtask=0: Pause [buildingToPause] while [workerToTest] is walking to [buildingWithItem] to pick something up to store in [buildingToStoreItemIn]
-        //   subtask=1: Pause [buildingToPause] while [workerToTest] is picking up item in [buildingWithItem] to store in [buildingToStoreItemIn]
-        //   subtask=2: Pause [buildingToPause] while [workerToTest] is walking to [buildingToStoreItemIn]
-        //   subtask=3: Pause [buildingToPause] while [workerToTest] is dropping item in [buildingToStoreItemIn]
-        //   subtask=4: Destroy [buildingToDestroy] while [workerToTest] is walking to [buildingToStoreItemIn] and there are no available storage spots
-        //   subtask=5: Destroy [buildingToDestroy] while [workerToTest] is dropping item in [buildingToStoreItemIn] and there are no available storage spots
+        // subtask=0: Pause [buildingToPause] while [workerToTest] is walking to [buildingWithItem] to pick something up to store in [buildingToStoreItemIn]
+        // subtask=1: Pause [buildingToPause] while [workerToTest] is picking up item in [buildingWithItem] to store in [buildingToStoreItemIn]
+        // subtask=2: Pause [buildingToPause] while [workerToTest] is walking to [buildingToStoreItemIn]
+        // subtask=3: Pause [buildingToPause] while [workerToTest] is dropping item in [buildingToStoreItemIn]
+        // subtask=4: Destroy [buildingToDestroy] while [workerToTest] is walking to [buildingToStoreItemIn] and there are no available storage spots
+        // subtask=5: Destroy [buildingToDestroy] while [workerToTest] is dropping item in [buildingToStoreItemIn] and there are no available storage spots
         for (int subtask = 0; subtask < 6; subtask++)
         {
             // Test A: Pause store1 while worker1 is getting an item from woodcutter to store in store1
@@ -20,17 +20,18 @@ public partial class StorageRoomTests : TestBase
             // Test D: Pause woodcu while worker1 is getting an item from woodcutter to store in store1
             // Test E: Pause woodcu while worker2 is getting an item from woodcutter to store in store1
             BuildingData store1, store2;
-            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
-            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
-            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
-            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
-            SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2); runPauseTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
+            PrepMPDTest("storageRoom_MovePauseDestroy", subtask);
+            SetupMPDTest(out store1, out store2); runPauseTest("Test A", subtask, store1, store1, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runPauseTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runPauseTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runPauseTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runPauseTest("Test E", subtask, WoodcuttersHut, store2, WoodcuttersHut, store1);
 
             // Following tests disable store1 and store2 before running so that woodcutter can only store in woodcutter
-            // Test F: Pause woodcutter while worker1 is getting wood from forest to store in woodcutter
-            // Test G: Pause forest     while worker1 is getting wood from forest to store in woodcutter
-            // SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2, true); runMoveTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
-            // SetupMPDTest("storageRoom_MovePauseDestroy", subtask, out store1, out store2, true); runMoveTest("Test F", subtask, Forest, WoodcuttersHut);
+            // Test F: Pause woodcu while worker1 is getting wood from forest to store in woodcutter
+            // Test G: Pause forest while worker1 is getting wood from forest to store in woodcutter
+            // SetupMPDTest(out store1, out store2, true); runPauseTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
+            // SetupMPDTest(out store1, out store2, true); runPauseTest("Test F", subtask, Forest, WoodcuttersHut);
         }
         Debug.Log("add back");
     }

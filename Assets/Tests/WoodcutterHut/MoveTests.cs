@@ -1,7 +1,6 @@
 using NUnit.Framework;
-using UnityEngine;
 
-public partial class WoodcutterHutTests : TestBase
+public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 {
     [Test]
     public void WoodcutterHut_MoveTests()
@@ -18,16 +17,17 @@ public partial class WoodcutterHutTests : TestBase
             // Test C: Move store1     while worker1 is getting wood from forest to store in store1
             // Test D: Move store2     while worker1 is getting wood from forest to store in store1 (so that store2 is closer; switch to that)
             BuildingData store1, store2;
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test A", subtask, WoodcuttersHut, store1);
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test B", subtask, Forest, store1);
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test C", subtask, store1, store1);
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2); runMoveTest("Test D", subtask, store2, store1);
+            PrepMPDTest("woodcutter_MovePauseDestroy", subtask);
+            SetupMPDTest(out store1, out store2); runMoveTest("Test A", subtask, WoodcuttersHut, store1);
+            SetupMPDTest(out store1, out store2); runMoveTest("Test B", subtask, Forest, store1);
+            SetupMPDTest(out store1, out store2); runMoveTest("Test C", subtask, store1, store1);
+            SetupMPDTest(out store1, out store2); runMoveTest("Test D", subtask, store2, store1);
 
             // Following tests disable store1 and store2 before running so that woodcutter can only store in woodcutter
             // Test E: Move woodcutter while worker1 is getting wood from forest to store in woodcutter
             // Test F: Move forest     while worker1 is getting wood from forest to store in woodcutter
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2, true); runMoveTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
-            SetupMPDTest("woodcutter_MovePauseDestroy", subtask, out store1, out store2, true); runMoveTest("Test F", subtask, Forest, WoodcuttersHut);
+            SetupMPDTest(out store1, out store2, true); runMoveTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
+            SetupMPDTest(out store1, out store2, true); runMoveTest("Test F", subtask, Forest, WoodcuttersHut);
         }
     }
 

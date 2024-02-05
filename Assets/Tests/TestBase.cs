@@ -250,6 +250,12 @@ public abstract class TestBase
         Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in storage spot to be '{expectedItem}', but is '{actualItem}'");
     }
 
+    protected void verify_ItemInSpot(IItemSpotInBuilding spot, ItemData expectedItem, string message = "")
+    {
+        var actualItem = spot.ItemContainer.Item;
+        Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in spot to be '{expectedItem}', but is '{actualItem}'");
+    }
+
     protected void forceMoveWorkerAwayFromAssignedBuilding(WorkerData worker)
     {
         Vector2 loc = worker.Assignment.AssignedTo.Location.WorldLoc;
@@ -265,9 +271,16 @@ public abstract class TestBase
 
     protected StorageSpotData getStorageSpotInBuildingWithItem(BuildingData building, ItemData item)
     {
-        Assert.NotNull(building);
-        Assert.NotNull(item);
+        Assert.NotNull(building, $"{preface()} building is null");
+        Assert.NotNull(item, $"{preface()} item is null");
         return building.StorageSpots.Find(spot => spot.ItemContainer.Item == item);
+    }
+
+    protected GatheringSpotData getGatheringSpotInBuildingWithItem(BuildingData building, ItemData item)
+    {
+        Assert.NotNull(building, $"{preface()} building is null");
+        Assert.NotNull(item, $"{preface()} item is null");
+        return building.GatheringSpots.Find(spot => spot.ItemContainer.Item == item);
     }
 
     protected void fillAllTownStorageWithItem(string itemDefnId)
@@ -288,18 +301,6 @@ public abstract class TestBase
         Town.MoveBuilding(buildingToMove, tileX, tileY);
     }
 
-    protected void SetupMPDTest(string townDefnId, int subtask, out BuildingData store1, out BuildingData store2, bool destroyStores = false)
-    {
-        LoadTestTown(townDefnId, subtask);
-        store1 = getBuildingByTestId("store1");
-        store2 = getBuildingByTestId("store2");
-        if (destroyStores)
-        {
-            Town.DestroyBuilding(store1);
-            Town.DestroyBuilding(store2);
-        }
-    }
-    
     protected void updateTown(int times = 1)
     {
         for (int i = 0; i < times; i++)
