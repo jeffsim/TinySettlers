@@ -7,7 +7,7 @@ public class TownScene : SceneWithMap
 {
     public TextMeshProUGUI TownName;
     public NeedsGraph NeedsGraph;
-    
+
     // Sigh; without this, Load and Reset will call scene.Load and somehow and Update is called before Enable (!?)
     bool wthEnableRan;
 
@@ -20,6 +20,12 @@ public class TownScene : SceneWithMap
         if (gameDataMgr.GameData.CurrentTown == null)
         {
             Debug.Log("In TownScene but no active Town; likely debugging.  Returning to MainScene");
+            SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
+            return;
+        }
+        if (GameDefns.Instance.TownDefns == null || GameDefns.Instance.TownDefns == null)
+        {
+            Debug.Log("BAD STATE.  Not sure how.  Returning to MainScene");
             SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
             return;
         }

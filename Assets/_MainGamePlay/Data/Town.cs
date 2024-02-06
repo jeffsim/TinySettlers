@@ -42,6 +42,8 @@ public class TownData : BaseData
     public void OnLoaded()
     {
         GameTime.time = lastGameTime;
+        // foreach (var building in Buildings) building.OnLoaded();
+        foreach (var worker in Workers) worker.OnLoaded();
     }
 
     public void InitializeOnFirstEnter()

@@ -28,14 +28,21 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
         Town = buildingToStartIn.Town;
 
         Assignment.AssignTo(buildingToStartIn);
-        Assignment.OnAssignedToChanged += () => AI.CurrentTask.Abandon();  // TODO: I *think* this doesn't need to be cleaned up on destroy (?)
+        initializeCallbacks();
 
         AI = new(this);
     }
 
+    public void OnLoaded() => initializeCallbacks();
+
+    void initializeCallbacks()
+    {
+        Assignment.OnAssignedToChanged += () => AI.CurrentTask.Abandon();  // TODO: I *think* this doesn't need to be cleaned up on destroy (?)
+    }
+
     internal void OnNeedBeingMetCancelled()
     {
-       // throw new NotImplementedException("nyi");
+        // throw new NotImplementedException("nyi");
     }
 
     // Called when any building is destroyed; if this Task involves that building then determine
