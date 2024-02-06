@@ -3,16 +3,9 @@
 * carnation: remove store.  build a new store while courer carrying item.
   - should go to store?
 
-
-
-
-* RESET; while woodsman is walking to forest, SAVE; LOAD; unassign. still goes to forest before switching to camp
-  - abandon worker.task on assign.
-  - ... but does work without the load, so: it is?
- - because this line in Worker.cs -- it doesn't save the callback
-        Assignment.OnAssignedToChanged += () => AI.CurrentTask.Abandon();  // TODO: I *think* this doesn't need to be cleaned up on destroy (?)
-    ... need to REMOVE ALL CALLBACKS IN ALL DATA CLASSES
-    -- OR I need to do "OnLoaded" and build the callbacks there.
+* market_MovePauseDestroy: one worker in storage, 1 wood in woodcutter
+  - storer goes to woodcutter to pick up wood. good
+  - then immediately drops it (bad), picks it up, drops it..
 
 
 
