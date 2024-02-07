@@ -414,7 +414,7 @@ public class TownTaskMgr
     {
         NeedData highestNeed = null;
         foreach (var building in Town.Buildings)
-            if (building.HasAvailableStorageSpot)
+            if (building.HasAvailableStorageSpot && !building.IsPaused && building.NumWorkers > 0)
                 foreach (var need in building.Needs)
                 {
                     // only fulfill itemneeds
