@@ -301,6 +301,7 @@ public abstract class TestBase
         Assert.IsNull(Town.Tiles[tileY * Town.Defn.Width + tileX].BuildingInTile, $"{preface()} Tile {tileX}, {tileY} is already occupied by a building");
         Town.MoveBuilding(buildingToMove, tileX, tileY);
     }
+    protected ItemData CreateItem(string itemDefnId) => new() { DefnId = itemDefnId };
 
     protected void updateTown(int times = 1)
     {

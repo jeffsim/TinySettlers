@@ -7,7 +7,7 @@ public class WorkerTask_SellItem : WorkerTask
     public override string ToString() => $"Sell item {GetTaskItem()}";
     public override TaskType Type => TaskType.SellItem;
 
-    [SerializeField] IItemSpotInBuilding SpotWithItemToSell;
+    [SerializeField] public IItemSpotInBuilding SpotWithItemToSell;
 
     public WorkerTask_SellItem(WorkerData worker, NeedData needData, IItemSpotInBuilding spotWithItemToSell) : base(worker, needData)
     {

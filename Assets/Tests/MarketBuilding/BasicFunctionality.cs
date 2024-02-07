@@ -5,18 +5,20 @@ public partial class MarketTests : MovePauseDestroyTestBase
     [Test]
     public void Market_BasicFunctionality()
     {
-        // DropItem in storage room: unreserves storage spot
-        LoadTestTown("woodcutter_MovePauseDestroy");
-        var worker = Town.CreateWorkerInBuilding(WoodcuttersHut);
+        // place wood in the Market's storagespots.  should sell it
+        LoadTestTown("market_MovePauseDestroy");
 
-        waitUntilTask(worker, TaskType.PickupGatherableResource);
-        var item = (worker.AI.CurrentTask as BaseWorkerTask_TransportItemFromSpotToStorage).SpotWithItemToPickup.ItemContainer.Item;
-        waitUntilTask(worker, TaskType.DeliverItemInHandToStorageSpot);
-        var storageSpot = worker.StorageSpotReservedForItemInHand;
+        var worker = Town.CreateWorkerInBuilding(Market);
+        Market.StorageSpots[0].ItemContainer.Item = CreateItem("wood");
+
+        var origGold = Town.Gold;
+
+        waitUntilTask(worker, TaskType.SellItem);
+        var item = (worker.AI.CurrentTask as WorkerTask_SellItem).SpotWithItemToSell.ItemContainer.Item;
         waitUntilTaskDone(worker);
-        
-        verify_spotIsUnreserved(storageSpot);
+
+        verify_spotIsUnreserved( Market.StorageSpots[0]);
         verify_ItemInHand(worker, null);
-        verify_ItemInSpot(storageSpot, item, "Item should be in new storage spot");
+        Assert.AreEqual(origGold + item.Defn.BaseSellPrice, Town.Gold, $"{preface("",1)} Expected gold to increase by the sell price of the item");
     }
 }

@@ -36,12 +36,3 @@ MonoBehaviour:
     - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
       Count: 1
     NumWorkersStartAtBuilding: 0
-  - IsEnabled: 1
-    Building: {fileID: 11400000, guid: 9f6b4d5be7465564ea13a01f9eda169b, type: 2}
-    TestId: store1
-    TileX: 2
-    TileY: 1
-    StartingItemsInBuilding:
-    - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
-      Count: 1
-    NumWorkersStartAtBuilding: 1
