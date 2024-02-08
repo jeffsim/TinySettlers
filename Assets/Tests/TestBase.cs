@@ -252,6 +252,9 @@ public abstract class TestBase
 
     protected void verify_ItemInSpot(IItemSpotInBuilding spot, ItemData expectedItem, string message = "")
     {
+        Assert.NotNull(spot, $"{preface(message)} spot is null");
+        Assert.NotNull(spot.ItemContainer, $"{preface(message)} spot.ItemContainer is null");
+        Assert.NotNull(expectedItem, $"{preface(message)} expectedItem is null");
         var actualItem = spot.ItemContainer.Item;
         Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in spot to be '{expectedItem}', but is '{actualItem}'");
     }
@@ -262,10 +265,10 @@ public abstract class TestBase
         worker.Location.SetWorldLoc(loc.x + 1, loc.y);
     }
 
-    protected StorageSpotData getStorageSpotInBuildingReservedByWorker(BuildingData building, WorkerData worker)
+    protected StorageSpotData getStorageSpotInBuildingReservedByWorker(BuildingData building, WorkerData worker, string message = "")
     {
-        Assert.NotNull(building);
-        Assert.NotNull(worker);
+        Assert.NotNull(building, $"{preface(message)} building is null");
+        Assert.NotNull(worker, $"{preface(message)} worker is null");
         return building.StorageSpots.Find(spot => spot.Reservation.ReservedBy == worker);
     }
 

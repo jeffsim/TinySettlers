@@ -36,6 +36,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
         // Create the worker and wait until they get to the to-be-tested subtask
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
         forceMoveWorkerAwayFromAssignedBuilding(worker);
+        
         switch (workerSubtask)
         {
             case 0: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(WorkerSubtask_WalkToItemSpot)); break;
