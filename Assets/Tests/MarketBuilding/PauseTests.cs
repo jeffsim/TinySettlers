@@ -1,6 +1,4 @@
 using NUnit.Framework;
-using UnityEditorInternal.Profiling.Memory.Experimental;
-using UnityEngine.UIElements;
 
 public partial class MarketTests : MovePauseDestroyTestBase
 {
@@ -44,9 +42,6 @@ public partial class MarketTests : MovePauseDestroyTestBase
         var spotWithWood = buildingWithItem.GetClosestUnreservedStorageSpotWithItem(worker.Location, itemDefn);
         var itemToBePickedUp = spotWithWood.ItemContainer.Item;
         var originalSpotWithItem = getStorageSpotInBuildingWithItem(buildingWithItem, itemToBePickedUp);
-        var pausedBuildingWithItemInIt = buildingWithItem == buildingToPause;
-        var pausedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToPause;
-        var pausedBuildingOfWorker = buildingWorker == buildingToPause;
         var workerOriginalAssignedBuilding = worker.Assignment.AssignedTo;
 
         switch (workerSubtask)
@@ -62,6 +57,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
 
         if (workerSubtask == 3)
             fillAllTownStorageWithItem("plank");
+            
         int origNumItemsInTownStorage = GetNumItemsInTownStorage();
         int origNumItemsOnGround = Town.ItemsOnGround.Count;
         int origNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;

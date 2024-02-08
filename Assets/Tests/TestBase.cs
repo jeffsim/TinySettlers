@@ -254,7 +254,6 @@ public abstract class TestBase
     {
         Assert.NotNull(spot, $"{preface(message)} spot is null");
         Assert.NotNull(spot.ItemContainer, $"{preface(message)} spot.ItemContainer is null");
-        Assert.NotNull(expectedItem, $"{preface(message)} expectedItem is null");
         var actualItem = spot.ItemContainer.Item;
         Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in spot to be '{expectedItem}', but is '{actualItem}'");
     }
