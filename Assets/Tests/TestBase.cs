@@ -220,7 +220,6 @@ public abstract class TestBase
             Assert.AreEqual(item, null, $"{preface(message)} Expected item in hand to be null, but is '{item}'");
     }
 
-
     protected void verify_spotStillReservedByWorker(StorageSpotData spot, BuildingData building, WorkerData worker, string message = "")
     {
         Assert.AreEqual(spot, getStorageSpotInBuildingReservedByWorker(building, worker), $"{preface(message)} Expected spot to still be reserved by worker, but it is not");
@@ -248,6 +247,12 @@ public abstract class TestBase
     {
         var actualItem = spot.ItemContainer.Item;
         Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in storage spot to be '{expectedItem}', but is '{actualItem}'");
+    }
+    
+    protected void verify_ItemTypeInSpot(StorageSpotData spot, ItemDefn expectedItemType, string message = "")
+    {
+        var actualItem = spot.ItemContainer.Item;
+        Assert.AreEqual(expectedItemType, actualItem.Defn, $"{preface(message)} Expected item in storage spot to be '{expectedItemType}', but is '{actualItem.Defn}'");
     }
 
     protected void verify_ItemInSpot(IItemSpotInBuilding spot, ItemData expectedItem, string message = "")
