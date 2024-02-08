@@ -17,6 +17,8 @@ public class WorkerSubtask_PickupItemFromBuilding : WorkerSubtask
     {
         Debug.Assert(ItemSpot.ItemContainer.HasItem);
         Task.Worker.Hands.SetItem(ItemSpot.ItemContainer.ClearItem());
+        Debug.Assert(Task.Worker.Hands.HasItem);
+        
         Task.Worker.StorageSpotReservedForItemInHand = null; // TODO
     }
 

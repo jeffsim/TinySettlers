@@ -34,7 +34,7 @@ MonoBehaviour:
   NumConstructorSpots: 2
   CanCraft: 1
   CraftableItems:
-  - {fileID: 11400000, guid: 06ea90791fa6045cea5d2005d2eeb22c, type: 2}
+  - {fileID: 11400000, guid: a806f05d763e8a744aa2323085bb94cb, type: 2}
   CraftingSpots:
   - {x: 0, y: 3, z: 0}
   CanStoreItems: 1

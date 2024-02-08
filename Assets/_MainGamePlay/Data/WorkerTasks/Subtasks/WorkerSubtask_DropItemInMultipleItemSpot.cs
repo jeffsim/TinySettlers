@@ -1,20 +1,25 @@
 using UnityEngine;
 
-public class WorkerSubtask_DropItemInItemSpot : WorkerSubtask
+public class WorkerSubtask_DropItemInMultipleItemSpot : WorkerSubtask
 {
     protected override float RunTime => 0.5f;
-    [SerializeField] IItemSpotInBuilding ItemSpot;
+    [SerializeField] IMultipleItemSpotInBuilding ItemSpot;
     public override ItemDefn GetTaskItem() => Task.Worker.Hands.Item.Defn;
 
-    public WorkerSubtask_DropItemInItemSpot(WorkerTask parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
+    public WorkerSubtask_DropItemInMultipleItemSpot(WorkerTask parentTask, IMultipleItemSpotInBuilding itemSpot) : base(parentTask)
     {
         ItemSpot = itemSpot;
         UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);
     }
+    public override void Start()
+    {
+        Debug.Assert(Task.Worker.Hands.HasItem);
+        base.Start();
+    }
 
     public override void SubtaskComplete()
     {
-        Task.Worker.DropItemInHandInSpot(Task.Worker.StorageSpotReservedForItemInHand);
+        Task.Worker.DropItemInHandInSpot(ItemSpot);
     }
 
     public override void OnAnyBuildingPauseToggled(BuildingData building)

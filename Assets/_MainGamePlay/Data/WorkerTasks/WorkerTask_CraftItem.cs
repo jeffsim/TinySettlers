@@ -1,16 +1,6 @@
 using System;
 using UnityEngine;
 
-// public enum WorkerTask_CraftItemSubstate
-// {
-//     GotoSpotWithResource = 0,
-//     PickupResource = 1,
-//     CarryResourceToCraftingSpot = 2,
-//     DropResourceInCraftingSpot = 3,
-//     CraftGood = 4,
-//     PickupProducedGood = 5,
-// };
-
 [Serializable]
 public class WorkerTask_CraftItem : WorkerTask
 {
@@ -25,11 +15,6 @@ public class WorkerTask_CraftItem : WorkerTask
     ItemDefn itemBeingCrafted => GameDefns.Instance.ItemDefns[CraftingItemDefnId];
 
     [SerializeField] public CraftingSpotData reservedCraftingSpot;
-    // [SerializeField] StorageSpotData storageSpotForCraftedGood;
-
-    // [SerializeField] List<StorageSpotData> craftingResourceSpots = new();
-    // [SerializeField] StorageSpotData nextCraftingResourceStorageSpotToGetFrom;
-    // [SerializeField] string lastPickedUpResourceDefnId;
 
     public WorkerTask_CraftItem(WorkerData worker, NeedData needData, CraftingSpotData craftingSpot) : base(worker, needData)
     {
@@ -39,24 +24,25 @@ public class WorkerTask_CraftItem : WorkerTask
 
     public override void InitializeStateMachine()
     {
-        throw new NotImplementedException();
-        // foreach (var resource in itemBeingCrafted.ResourcesNeededForCrafting)
-        //     for (int i = 0; i < resource.Count; i++)
-        //     {
-        //         // TODO: Ensure I'm unreserving these too
-        //         var resourceSpot = reserveCraftingResourceStorageSpotForItem(resource.Item, reservedCraftingSpot.Location);
-        //         Subtasks.Add(new WorkerSubtask_WalkToItemSpot(this, resourceSpot));
-        //         Subtasks.Add(new WorkerSubtask_PickupItemFromBuilding(this, resourceSpot));
-        //         Subtasks.Add(new WorkerSubtask_WalkToItemSpot(this, reservedCraftingSpot));
-        //         Subtasks.Add(new WorkerSubtask_DropItemInHandsInItemSpot(this, reservedCraftingSpot));
-        //     }
-        // Subtasks.Add(new WorkerSubtask_WalkToItemSpot(this, reservedCraftingSpot));
-        // Subtasks.Add(new WorkerSubtask_CraftItem(this, reservedCraftingSpot));
-        // Subtasks.Add(new WorkerTask_PickupItemFromStorageSpot(this, reservedCraftingSpot));
+        // transfer resources from our building's storage to the crafting spot
+        foreach (var resource in itemBeingCrafted.ResourcesNeededForCrafting)
+            for (int i = 0; i < resource.Count; i++)
+            {
+                var resourceSpot = reserveCraftingResourceStorageSpotForItem(resource.Item, reservedCraftingSpot.Location);
+                Subtasks.Add(new WorkerSubtask_WalkToItemSpot(this, resourceSpot));
+                Subtasks.Add(new WorkerSubtask_PickupItemFromBuilding(this, resourceSpot));
+                Subtasks.Add(new WorkerSubtask_WalkToMultipleItemSpot(this, reservedCraftingSpot));
+                Subtasks.Add(new WorkerSubtask_DropItemInMultipleItemSpot(this, reservedCraftingSpot));
+            }
 
-        // var storageSpotForCraftedGood = reservedCraftingSpot.Location.GetClosest(craftingResourceSpots);
-        // Subtasks.Add(new WorkerSubtask_WalkToItemSpot(this, storageSpotForCraftedGood));
-        // Subtasks.Add(new WorkerSubtask_DropItemInHandsInItemSpot(this, storageSpotForCraftedGood));
+        // craft the item
+        Subtasks.Add(new WorkerSubtask_CraftItem(this, CraftingItemDefnId, reservedCraftingSpot));
+
+        // we'll store the crafted good in the same spot that the closest resource was stored in
+        // TODO: Ensure I handle unreserving properly below
+        var storageSpotForCraftedGood = reservedCraftingSpot.Location.GetClosest(reservedCraftingSpot.Building.StorageSpots);
+        Subtasks.Add(new WorkerSubtask_WalkToItemSpot(this, storageSpotForCraftedGood));
+        Subtasks.Add(new WorkerSubtask_DropItemInItemSpot(this, storageSpotForCraftedGood));
     }
 
     public override void AllSubtasksComplete()
@@ -65,7 +51,7 @@ public class WorkerTask_CraftItem : WorkerTask
         if (itemBeingCrafted.GoodType == GoodType.explicitGood)
             Worker.Hands.SetItem(new ItemData() { DefnId = CraftingItemDefnId });
         else
-            Worker.Assignment.AssignedTo.Town.Gold += 100; // implicit good (e.g. gold) - done // todo: hardcoded
+            Worker.Assignment.AssignedTo.Town.Gold += itemBeingCrafted.BaseSellPrice; // implicit good (e.g. gold)
 
         CompleteTask();
 
@@ -117,13 +103,13 @@ public class WorkerTask_CraftItem : WorkerTask
     //     return craftingResourceSpots.Count > 0;
     // }
 
-    // IReservationProvider reserveCraftingResourceStorageSpotForItem(ItemDefn itemDefn, LocationComponent location)
-    // {
-    //     var spot = Worker.Assignment.AssignedTo.GetClosestUnreservedStorageSpotWithItem(location, itemDefn);
-    //     Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.Assignment.AssignedTo.DefnId);
-    //     ReserveSpot(spot);
-    //     return spot;
-    // }
+    IItemSpotInBuilding reserveCraftingResourceStorageSpotForItem(ItemDefn itemDefn, LocationComponent location)
+    {
+        var spot = Worker.Assignment.AssignedTo.GetClosestUnreservedStorageSpotWithItem(location, itemDefn);
+        Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.Assignment.AssignedTo.DefnId);
+        ReserveSpot(spot);
+        return spot;
+    }
 
     // void unreserveBuildingCraftingResourceSpot(StorageSpotData spot)
     // {

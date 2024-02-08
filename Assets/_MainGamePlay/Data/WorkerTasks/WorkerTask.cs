@@ -116,12 +116,14 @@ public abstract class WorkerTask
         return spot;
     }
 
-    protected void ReserveSpot(IReservationProvider spot)
+    protected IReservationProvider ReserveSpot(IReservationProvider spot)
     {
+        Debug.Assert(spot != null, "Trying to reserve a null spot");
         spot.Reservation.ReserveBy(Worker);
 
         Debug.Assert(!ReservedSpots.Contains(spot), $"Task is trying to reserve {spot} but it's already reserved by {Worker}");
         ReservedSpots.Add(spot);
+        return spot;
     }
 
     protected void UnreserveSpot(IReservationProvider spot)

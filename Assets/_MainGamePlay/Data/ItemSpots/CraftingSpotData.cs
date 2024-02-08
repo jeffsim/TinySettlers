@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class CraftingSpotData : BaseData, ILocationProvider, IReservationProvider
+public class CraftingSpotData : BaseData, ILocationProvider, IReservationProvider, IMultipleItemSpotInBuilding
 {
     public override string ToString() => ItemsContainer.ToString();
 
@@ -10,7 +10,7 @@ public class CraftingSpotData : BaseData, ILocationProvider, IReservationProvide
 
     [SerializeField] public LocationComponent Location { get; set; } = new();
     [SerializeField] public ReservationComponent Reservation { get; set; } = new();
-    public MultipleItemContainerComponent ItemsContainer = new();
+    [SerializeField] public MultipleItemContainerComponent ItemsContainer { get; set; } = new();
     public Vector2 LocOffset;
 
     public CraftingSpotData(BuildingData building, int index)

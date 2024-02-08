@@ -152,25 +152,16 @@ public class Worker : MonoBehaviour
                 break;
 
             case TaskType.CraftGood:
-                switch (Data.AI.CurrentTask.SubtaskIndex)
+                switch (Data.AI.CurrentTask.CurSubTask)
                 {
-                    case 0: //WorkerTask_CraftItemSubstate.GotoSpotWithResource:
-                        updateCarriedItem(itemDown, scaleNormal, Color.red);
-                        break;
-                    case 1: //WorkerTask_CraftItemSubstate.PickupResource:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
-                        break;
-                    case 2: //WorkerTask_CraftItemSubstate.CarryResourceToCraftingSpot:
-                        updateCarriedItem(itemUp, scaleNormal, Color.white);
-                        break;
-                    case 3: //WorkerTask_CraftItemSubstate.DropResourceInCraftingSpot:
-                        updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white);
-                        break;
-                    case 4: //WorkerTask_CraftItemSubstate.CraftGood:
-                        updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone));
-                        break;
-                    case 5: //WorkerTask_CraftItemSubstate.PickupProducedGood:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
+                    case WorkerSubtask_WalkToItemSpot _:             updateCarriedItem(itemDown, scaleNormal, Color.red); break;
+                    case WorkerSubtask_WalkToMultipleItemSpot _:     updateCarriedItem(itemDown, scaleNormal, Color.red); break;
+                    case WorkerSubtask_DropItemInItemSpot _:         updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
+                    case WorkerSubtask_DropItemInMultipleItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
+                    case WorkerSubtask_PickupItemFromBuilding _:     updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
+                    case WorkerSubtask_CraftItem _:                  updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
+                    default:
+                        Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);
                         break;
                 }
                 break;

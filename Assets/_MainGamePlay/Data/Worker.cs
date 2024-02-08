@@ -77,17 +77,39 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
         return distanceMovedPerSecond;
     }
 
-    internal void DropItemInHandInReservedStorageSpot()
+    // internal void DropItemInHandInReservedStorageSpot()
+    // {
+    //     Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
+    //     Debug.Assert(StorageSpotReservedForItemInHand.Building != null, "No ItemInHand");
+    //     Debug.Assert(!StorageSpotReservedForItemInHand.Building.IsDestroyed, "Building destroyed");
+    //     Debug.Assert(Hands.HasItem, "No ItemInHand");
+
+    //     // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
+    //     StorageSpotReservedForItemInHand.ItemContainer.SetItem(Hands.ClearItem());
+    //     StorageSpotReservedForItemInHand.Reservation.Unreserve();
+    //     StorageSpotReservedForItemInHand = null;
+    // }
+
+    internal void DropItemInHandInSpot(IItemSpotInBuilding spot)
     {
-        Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
-        Debug.Assert(StorageSpotReservedForItemInHand.Building != null, "No ItemInHand");
-        Debug.Assert(!StorageSpotReservedForItemInHand.Building.IsDestroyed, "Building destroyed");
         Debug.Assert(Hands.HasItem, "No ItemInHand");
 
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
-        StorageSpotReservedForItemInHand.ItemContainer.SetItem(Hands.ClearItem());
-        StorageSpotReservedForItemInHand.Reservation.Unreserve();
-        StorageSpotReservedForItemInHand = null;
+        spot.ItemContainer.SetItem(Hands.ClearItem());
+        spot.Reservation.Unreserve();
+        if (spot == StorageSpotReservedForItemInHand)
+            StorageSpotReservedForItemInHand = null;
+    }
+
+    internal void DropItemInHandInSpot(IMultipleItemSpotInBuilding spot)
+    {
+        Debug.Assert(Hands.HasItem, "No ItemInHand");
+
+        // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
+        spot.ItemsContainer.AddItem(Hands.ClearItem());
+        spot.Reservation.Unreserve();
+        if (spot == StorageSpotReservedForItemInHand)
+            StorageSpotReservedForItemInHand = null;
     }
 
     // TODO: Rather than tie following to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when

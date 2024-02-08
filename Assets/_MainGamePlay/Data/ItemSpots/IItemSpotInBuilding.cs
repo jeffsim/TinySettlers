@@ -4,3 +4,10 @@ public interface IItemSpotInBuilding : IReservationProvider
     LocationComponent Location { get; set; }
     BuildingData Building { get; set; }
 }
+
+public interface IMultipleItemSpotInBuilding : IReservationProvider
+{
+    MultipleItemContainerComponent ItemsContainer { get; }
+    LocationComponent Location { get; set; }
+    BuildingData Building { get; set; }
+}
