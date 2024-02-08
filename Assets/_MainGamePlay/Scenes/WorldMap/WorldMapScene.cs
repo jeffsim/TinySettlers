@@ -34,6 +34,15 @@ public class WorldMapScene : SceneMgr
         SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
     }
 
+    public void OnUnlockAllClicked()
+    {
+        // Set all towns state to available
+        foreach (var town in gameDataMgr.GameData.World.World_Towns)
+            town.State = TownState.Available;
+        gameDataMgr.SaveProfile();
+        SceneManager.LoadScene("WorldMapScene", LoadSceneMode.Single); // reload
+    }
+
     public void TownClicked(World_TownData town)
     {
         if (town.State == TownState.Available)

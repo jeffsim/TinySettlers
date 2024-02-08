@@ -22,6 +22,10 @@ public class WorldMapTown : MonoBehaviour
         if (currentTown != null && currentTown.DefnId != town.TownDefnId)
             Button.interactable = false;
 
+        // hm
+        if (town.State == TownState.Available)
+            Button.interactable = true;
+
         Name.text = townDefn.FriendlyName;
         switch (town.State)
         {

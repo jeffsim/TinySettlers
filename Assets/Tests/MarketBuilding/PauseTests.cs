@@ -1,32 +1,19 @@
 using NUnit.Framework;
-using UnityEngine;
 
 public partial class MarketTests : MovePauseDestroyTestBase
 {
     [Test]
     public void Market_PauseTests()
     {
-        // subtask=0: woodcutter is walking to forest to gather wood to store in [buildingToStoreItemIn]
-        // subtask=1: woodcutter is gathering wood in forest to store in [buildingToStoreItemIn]
-        // subtask=2: woodcutter is picking up wood in forest to store in [buildingToStoreItemIn]
-        // subtask=3: woodcutter is walking to [buildingToStoreItemIn]
-        // subtask=4: woodcutter is dropping wood in [buildingToStoreItemIn]
-        for (int subtask = 0; subtask < 6; subtask++)
+        // subtask=0: seller is walking to spot in Market with item to sell
+        // subtask=1: seller is picking up item to sell
+        // subtask=2: seller is selling item in hand
+        // subtask=3: seller is selling item in hand and there are no available storage spots
+        for (int subtask = 0; subtask < 4; subtask++)
         {
-            // Test A: Pause woodcu while worker1 is getting wood from forest to store in store1
-            // Test B: Pause forest while worker1 is getting wood from forest to store in store1
-            // Test C: Pause store1 while worker1 is getting wood from forest to store in store1
-            BuildingData store1, store2;
-            PrepMPDTest("woodcutter_MovePauseDestroy", subtask);
-            SetupMPDTest(out store1, out store2); runPauseTest("Test A", subtask, WoodcuttersHut, store1);
-            SetupMPDTest(out store1, out store2); runPauseTest("Test B", subtask, Forest, store1);
-            SetupMPDTest(out store1, out store2); runPauseTest("Test C", subtask, store1, store1);
-
-            // Following tests disable store1 and store2 before running so that woodcutter can only store in woodcutter
-            // Test E: Pause woodcutter while worker1 is getting wood from forest to store in woodcutter
-            // Test F: Pause forest     while worker1 is getting wood from forest to store in woodcutter
-            SetupMPDTest(out store1, out store2, true); runPauseTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
-            SetupMPDTest(out store1, out store2, true); runPauseTest("Test F", subtask, Forest, WoodcuttersHut);
+            // Test A: Pause market while worker1 is selling item
+            LoadTestTown("market_MovePauseDestroy", subtask);
+            runPauseTest("Test A", subtask, Market, Market);
         }
     }
 
