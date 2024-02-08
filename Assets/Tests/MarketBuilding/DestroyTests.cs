@@ -18,7 +18,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
             // Test B: Destroy forest while worker1 is getting wood from forest to store in store1
             // Test C: Destroy store1 while worker1 is getting wood from forest to store in store1
             BuildingData store1, store2;
-            PrepMPDTest("woodcutter_MovePauseDestroy", subtask);
+            PrepMPDTest("market_MovePauseDestroy", subtask);
             SetupMPDTest(out store1, out store2); runDestroyTest("Test A", subtask, WoodcuttersHut, store1);
             SetupMPDTest(out store1, out store2); runDestroyTest("Test B", subtask, Forest, store1);
             SetupMPDTest(out store1, out store2); runDestroyTest("Test C", subtask, store1, store1);
@@ -29,6 +29,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
             SetupMPDTest(out store1, out store2, true); runDestroyTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
             SetupMPDTest(out store1, out store2, true); runDestroyTest("Test F", subtask, Forest, WoodcuttersHut);
         }
+        Assert.Fail("nyi");
     }
 
     void runDestroyTest(string testName, int workerSubtask, BuildingData buildingToDestroy, BuildingData buildingToStoreItemIn)
