@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba40ddb7a672144348894273f778f708, type: 3}
   m_Name: craftingstation_MovePauseDestroy
   m_EditorClassIdentifier: 
-  Id: crafting_town1
-  FriendlyName: crafting_town1
+  Id: craftingstation_MovePauseDestroy
+  FriendlyName: craftingstation_MovePauseDestroy
   Width: 3
   Height: 3
   Tiles: g,g,g,g,g,g,g,g,g

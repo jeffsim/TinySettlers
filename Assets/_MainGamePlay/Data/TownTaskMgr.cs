@@ -19,16 +19,13 @@ public class TownTaskMgr
     public void AssignTaskToIdleWorker()
     {
         // Find the best task and (if one is found) start it
-        GetBestTaskForOneIdleWorker();
-        if (HighestPriorityTask.Task != null)
-        {
-            var task = HighestPriorityTask.Task;
-            task.Worker.AI.StartTask(task);
-        }
+        var bestTask = GetBestTaskForOneIdleWorker();
+        if (bestTask != null)
+            bestTask.Worker.AI.StartTask(bestTask);
     }
 
     // Only do this for one worker per Town update, because need priorities change
-    private PrioritizedTask GetBestTaskForOneIdleWorker()
+    private WorkerTask GetBestTaskForOneIdleWorker()
     {
         // Assume we find no task
         HighestPriorityTask.Task = null;
@@ -39,7 +36,7 @@ public class TownTaskMgr
         // =====================================================================================
         // FIRST: If an idle worker is standing around holding an Item that they need to transport then assign them to do that
         if (findAndAssignIdleWorkerCarryingItemToBringItemToBuilding(idleWorkers))
-            return null;
+            return HighestPriorityTask.Task;
 
         // =====================================================================================
         // SECOND: If there are no idle worker is standing around holding an Item, then find the building with the highest need that a worker can fulfill
@@ -62,12 +59,13 @@ public class TownTaskMgr
                 }
 
         // Return the highest priority task
-        return HighestPriorityTask;
+        return HighestPriorityTask?.Task;
     }
 
     bool findAndAssignIdleWorkerCarryingItemToBringItemToBuilding(List<WorkerData> idleWorkers)
     {
         // return true as soon as one worker is assigned
+        float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
         foreach (var worker in idleWorkers)
         {
             if (!worker.Hands.HasItem) continue; // idle worker isn't carrying anything
@@ -118,7 +116,7 @@ public class TownTaskMgr
                 }
                 highestNeed = worker.OriginalPickupItemNeed;
             }
-            worker.AI.StartTask(new WorkerTask_DeliverItemInHandToStorageSpot(worker, highestNeed));
+            HighestPriorityTask.Set(new WorkerTask_DeliverItemInHandToStorageSpot(worker, highestNeed), highestPrioritySoFar);
             return true;
         }
 
