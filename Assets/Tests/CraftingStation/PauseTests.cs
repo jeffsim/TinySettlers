@@ -26,19 +26,18 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         for (int subtask = 0; subtask < 11; subtask++)
         {
             // Test A: Move craftingstation while worker1 is crafting item
-            LoadTestTown("craftingstation_MovePauseDestroy", subtask);
-            runPauseTest("Test A", subtask);
+            LoadTestTown("craftingstation_MovePauseDestroy", subtask); runPauseTest("Test A", subtask, false);
+            LoadTestTown("craftingstation_MovePauseDestroy", subtask); runPauseTest("Test B", subtask, true);
+
         }
     }
 
-    void runPauseTest(string testName, int workerSubtask)
+    void runPauseTest(string testName, int workerSubtask, bool forceFillAllStorage)
     {
-        BuildingData buildingWithItem = CraftingStation;
         BuildingData buildingWorker = CraftingStation;
-        var buildingToStoreItemIn = CraftingStation;
         var buildingToPause = CraftingStation;
 
-        TestName = $"{testName}-{workerSubtask}: Pause {buildingToPause.TestId} while {buildingWorker.TestId}'s worker is ";
+        TestName = $"{testName}-{workerSubtask} {(forceFillAllStorage ? "fillall" : "")}: Pause {buildingToPause.TestId} while {buildingWorker.TestId}'s worker is ";
         switch (workerSubtask)
         {
             case 0: TestName += $"walking to 1st storage spot to pick up 1st resource and bring to craftingspot"; break;
@@ -53,6 +52,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
             case 9: TestName += $"walking to storage spot to storage crafted item"; break;
             case 10: TestName += $"dropping crafted item in storage spot"; break;
         }
+        if (forceFillAllStorage) TestName += " (forceFillAllStorage)";
         TestName += "\n  ";
         // if (workerSubtask == 0) Debug.Log(TestName);
 
@@ -60,6 +60,9 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         var worker = createWorkerInBuilding(buildingWorker);
 
         waitUntilTaskAndSubtaskIndex(worker, TaskType.Task_CraftItem, 0);
+
+        if (forceFillAllStorage)
+            fillAllTownStorageWithItem("plank");
 
         var newTask = getWorkerCurrentTaskAsType<Task_CraftItem>(worker);
         CraftingSpotData reservedCraftingSpot = buildingWorker.CraftingSpots[0];
@@ -71,10 +74,6 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         if (workerSubtask > 0)
             waitUntilTaskAndSubtaskIndex(worker, TaskType.Task_CraftItem, workerSubtask);
 
-        int origNumItemsInTownStorage = GetNumItemsInTownStorage();
-        int origNumItemsOnGround = Town.ItemsOnGround.Count;
-        int origNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
-
         buildingToPause.TogglePaused();
 
         // If the worker is returning with the item in hand, then we need to wait one Town turn so that the worker can decide to carry the item they're holding to the Camp.
@@ -84,7 +83,6 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         verify_spotIsUnreserved(resourceSpot1);
         verify_spotIsUnreserved(resourceSpot2);
         verify_spotIsUnreserved(reservedCraftingSpot);
-        verify_ItemsOnGround(0);
 
         // Verify new state.
         if (workerSubtask == 0 || workerSubtask == 1 || workerSubtask == 4 || workerSubtask == 5)// Walking to 1st or 2nd storage spot to pick up resource, or picking it up
@@ -96,22 +94,32 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
             verify_ItemInStorageSpot(resourceSpot2, origResource2);
             verify_ItemCountInCraftingSpot(reservedCraftingSpot, isFirstResource ? 0 : 1);
             verify_ItemIsInCraftingSpot(reservedCraftingSpot, isFirstResource ? null : origResource1);
+            verify_ItemsOnGround(0);
         }
         else if (workerSubtask == 2 || workerSubtask == 3 || workerSubtask == 6 || workerSubtask == 7) // Walking to crafting spot to drop 1st or 2nd resource, or dropping it
         {
             var isFirstResource = workerSubtask == 2 || workerSubtask == 3;
 
-            // we should now be carrying the resource to a storage spot in the Camp since we're paused
-            verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker);
-            var newTask2 = getWorkerCurrentTaskAsType<Task_DeliverItemInHandToStorageSpot>(worker);
-            verify_ItemDefnInHand(worker, "wood");
-            var newSubtask = getWorkerCurrentSubtaskAsType<Subtask_WalkToItemSpot>(worker);
-            verify_spotIsReserved(newSubtask.ItemSpot);
-            verify_BuildingsAreEqual(newTask2.ReservedItemSpot.Building, Camp);
-            verify_ItemInStorageSpot(resourceSpot1, null);
-            verify_ItemInStorageSpot(resourceSpot2, isFirstResource ? origResource2 : null);
-            verify_ItemCountInCraftingSpot(reservedCraftingSpot, isFirstResource ? 0 : 1);
-            verify_ItemIsInCraftingSpot(reservedCraftingSpot, isFirstResource ? null : origResource1);
+            if (forceFillAllStorage)
+            {
+                verify_WorkerTaskType(TaskType.Idle, worker);
+                verify_ItemDefnInHand(worker, null);
+                verify_ItemsOnGround(1);
+            }
+            else
+            {
+                // we should now be carrying the resource to a storage spot in the Camp since we're paused
+                verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker);
+                var newTask2 = getWorkerCurrentTaskAsType<Task_DeliverItemInHandToStorageSpot>(worker);
+                verify_ItemDefnInHand(worker, "wood");
+                var newSubtask = getWorkerCurrentSubtaskAsType<Subtask_WalkToItemSpot>(worker);
+                verify_spotIsReserved(newSubtask.ItemSpot);
+                verify_BuildingsAreEqual(newTask2.ReservedItemSpot.Building, Camp);
+                verify_ItemInStorageSpot(resourceSpot1, null);
+                verify_ItemInStorageSpot(resourceSpot2, isFirstResource ? origResource2 : null);
+                verify_ItemCountInCraftingSpot(reservedCraftingSpot, isFirstResource ? 0 : 1);
+                verify_ItemIsInCraftingSpot(reservedCraftingSpot, isFirstResource ? null : origResource1);
+            }
         }
         else if (workerSubtask == 8) // Crafting the item
         {
@@ -127,15 +135,25 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         else if (workerSubtask == 9 || workerSubtask == 10) // walking to final storage spot to drop crafted resource, or dropping it
         {
             // we should now be carrying the crafted good to a storage spot in the Camp since we're paused
-            verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker);
-            var newTask3 = getWorkerCurrentTaskAsType<Task_DeliverItemInHandToStorageSpot>(worker);
-            verify_ItemDefnInHand(worker, "GardenPlot");
-            var newSubtask = getWorkerCurrentSubtaskAsType<Subtask_WalkToItemSpot>(worker);
-            verify_spotIsReserved(newSubtask.ItemSpot);
-            verify_BuildingsAreEqual(newTask3.ReservedItemSpot.Building, Camp);
-            verify_ItemCountInCraftingSpot(reservedCraftingSpot, 0);
-            verify_ItemInStorageSpot(resourceSpot1, null);
-            verify_ItemInStorageSpot(resourceSpot2, null);
+            if (forceFillAllStorage)
+            {
+                verify_WorkerTaskType(TaskType.Idle, worker);
+                verify_ItemDefnInHand(worker, null);
+                verify_ItemsOnGround(1);
+            }
+            else
+            {
+                // we should now be carrying the crafted good to a storage spot in the Camp since we're paused
+                verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker);
+                var newTask3 = getWorkerCurrentTaskAsType<Task_DeliverItemInHandToStorageSpot>(worker);
+                verify_ItemDefnInHand(worker, "GardenPlot");
+                var newSubtask = getWorkerCurrentSubtaskAsType<Subtask_WalkToItemSpot>(worker);
+                verify_spotIsReserved(newSubtask.ItemSpot);
+                verify_BuildingsAreEqual(newTask3.ReservedItemSpot.Building, Camp);
+                verify_ItemCountInCraftingSpot(reservedCraftingSpot, 0);
+                verify_ItemInStorageSpot(resourceSpot1, null);
+                verify_ItemInStorageSpot(resourceSpot2, null);
+            }
         }
     }
 }
