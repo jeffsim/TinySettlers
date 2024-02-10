@@ -63,12 +63,12 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_PickupItemFromItemSpot)); break;
-            case 2: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
-            case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
-            case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
-            case 5: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
+            case 0: waitUntilSubtask(worker, typeof(Subtask_WalkToItemSpot)); break;
+            case 1: waitUntilSubtask(worker, typeof(Subtask_PickupItemFromItemSpot)); break;
+            case 2: waitUntilSubtask(worker, typeof(Subtask_WalkToItemSpot)); break;
+            case 3: waitUntilSubtask(worker, typeof(Subtask_DropItemInItemSpot)); break;
+            case 4: waitUntilSubtask(worker, typeof(Subtask_WalkToItemSpot)); break;
+            case 5: waitUntilSubtask(worker, typeof(Subtask_DropItemInItemSpot)); break;
         }
         var originalSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
         Assert.IsNotNull(originalSpotToStoreItemIn, $"{preface()} Worker should have reserved a spot in {buildingToStoreItemIn.TestId} to store the item in");
@@ -99,7 +99,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             else if (pausedBuildingItemWillBeStoredIn)
             {
                 verify_spotIsReserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
-                verify_WorkerTaskType(TaskType.GetGatherableResource, worker);
+                verify_WorkerTaskType(TaskType.GatherResource, worker);
                 Assert.AreNotEqual(((Task_GatherResource)worker.AI.CurrentTask).SpotToStoreItemIn.Building, buildingToPause, $"{preface()} Worker should have reserved a spot in another building to store the item in");
             }
         }
@@ -153,7 +153,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             else
             {
                 verify_ItemInHand(worker, itemToBePickedUp);
-                verify_spotStillReservedByWorker(originalSpotToStoreItemIn, originalSpotToStoreItemIn.Building, worker);
+                verify_spotReservedByWorker(originalSpotToStoreItemIn, worker);
                 verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
             }
         }

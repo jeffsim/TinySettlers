@@ -60,7 +60,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
         moveBuilding(buildingToMove, 1, 1);
 
         // Verify new state.  First verify storage spot in room remains reserved
-        verify_spotStillReservedByWorker(originalSpotToStoreItemIn, buildingToStoreItemIn, worker);
+        verify_spotReservedByWorker(originalSpotToStoreItemIn, worker);
         verify_WorkerTaskTypeAndSubtask(worker, workerOriginalTask, workerOriginalSubtask);
 
         var workerNewLocRelativeToBuilding = worker.Location.WorldLoc - buildingToMove.Location.WorldLoc;

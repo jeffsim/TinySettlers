@@ -169,10 +169,10 @@ public abstract class TestBase
     protected void waitUntilTaskAndSubtask(WorkerData worker, TaskType taskType, Type subtaskType, string message = "", float secondsBeforeExitCheck = 500)
     {
         waitUntilTask(worker, taskType, message, secondsBeforeExitCheck, 3);
-        waitUntilTaskSubtask(worker, subtaskType, message, secondsBeforeExitCheck, 3);
+        waitUntilSubtask(worker, subtaskType, message, secondsBeforeExitCheck, 3);
     }
 
-    protected void waitUntilTaskSubtask(WorkerData worker, Type subtaskType, string message = "", float secondsBeforeExitCheck = 500, int frame = 2)
+    protected void waitUntilSubtask(WorkerData worker, Type subtaskType, string message = "", float secondsBeforeExitCheck = 500, int frame = 2)
     {
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         while (GameTime.time < breakTime && worker.AI.CurrentTask.CurSubTask.GetType() != subtaskType)
@@ -180,6 +180,18 @@ public abstract class TestBase
             updateTown();
         }
         Assert.IsTrue(GameTime.time < breakTime, $"{preface(message, frame)} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.CurSubTask.GetType()}, expected substate {subtaskType}");
+    }
+
+
+    public void waitUntilTaskAndSubtaskIndex(WorkerData worker, TaskType taskType, int subTaskIndex, string message = "", float secondsBeforeExitCheck = 500, int frame = 2)
+    {
+        float breakTime = GameTime.time + secondsBeforeExitCheck;
+        while (GameTime.time < breakTime && (worker.AI.CurrentTask.Type != taskType || worker.AI.CurrentTask.SubtaskIndex != subTaskIndex))
+        {
+            updateTown();
+        }
+        Assert.IsTrue(GameTime.time < breakTime, $"{preface(message, frame)} stuck in loop in waitUntilTaskSubstate.  subTaskIndex = {worker.AI.CurrentTask.SubtaskIndex}, expected subTaskIndex {subTaskIndex}");
+
     }
 
     public void verify_WorkerTaskTypeAndSubtask(WorkerData worker, TaskType expectedType, Type subtaskType, string message = "")
@@ -220,9 +232,9 @@ public abstract class TestBase
             Assert.AreEqual(item, null, $"{preface(message)} Expected item in hand to be null, but is '{item}'");
     }
 
-    protected void verify_spotStillReservedByWorker(StorageSpotData spot, BuildingData building, WorkerData worker, string message = "")
+    protected void verify_spotReservedByWorker(IItemSpotInBuilding spot, WorkerData worker, string message = "")
     {
-        Assert.AreEqual(spot, getStorageSpotInBuildingReservedByWorker(building, worker), $"{preface(message)} Expected spot to still be reserved by worker, but it is not");
+        Assert.AreEqual(spot, getStorageSpotInBuildingReservedByWorker(spot.Building, worker), $"{preface(message)} Expected spot to still be reserved by worker, but it is not");
     }
 
     protected void verify_spotIsUnreserved(IItemSpotInBuilding spot, string message = "")
@@ -248,7 +260,7 @@ public abstract class TestBase
         var actualItem = spot.ItemContainer.Item;
         Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in storage spot to be '{expectedItem}', but is '{actualItem}'");
     }
-    
+
     protected void verify_ItemTypeInSpot(StorageSpotData spot, ItemDefn expectedItemType, string message = "")
     {
         var actualItem = spot.ItemContainer.Item;

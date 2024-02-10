@@ -51,9 +51,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 
         // Grow trees so that woodcutter can gather wood
         Forest.GatheringSpots[0].ItemContainer.SetItem(new ItemData() { DefnId = "wood" });
-        Forest.GatheringSpots[0].PercentGrown = -1000; // hack to ensure they don't grow
-        Forest.GatheringSpots[1].PercentGrown = -1000; // hack to ensure they don't grow
-        Forest.GatheringSpots[2].PercentGrown = -1000; // hack to ensure they don't grow
+        Forest.GatheringSpots.ForEach(s => s.PercentGrown = float.MaxValue); // hack to ensure they don't grow
 
         // Create the worker and wait until they get to the to-be-tested subtask
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
@@ -67,12 +65,12 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_PickupItemFromItemSpot)); break;
-            case 2: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
-            case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
-            case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
-            case 5: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
+            case 0: waitUntilSubtask(worker, typeof(Subtask_WalkToItemSpot)); break;
+            case 1: waitUntilSubtask(worker, typeof(Subtask_PickupItemFromItemSpot)); break;
+            case 2: waitUntilSubtask(worker, typeof(Subtask_WalkToItemSpot)); break;
+            case 3: waitUntilSubtask(worker, typeof(Subtask_DropItemInItemSpot)); break;
+            case 4: waitUntilSubtask(worker, typeof(Subtask_WalkToItemSpot)); break;
+            case 5: waitUntilSubtask(worker, typeof(Subtask_DropItemInItemSpot)); break;
         }
         var originalSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
         Assert.IsNotNull(originalSpotToStoreItemIn, $"{preface()} Worker should have reserved a spot in {buildingToStoreItemIn.TestId} to store the item in");
@@ -112,7 +110,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
                 else if (destroyedBuildingItemWillBeStoredIn)
                 {
                     verify_spotIsReserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
-                    verify_WorkerTaskType(TaskType.GetGatherableResource, worker);
+                    verify_WorkerTaskType(TaskType.GatherResource, worker);
                     Assert.AreNotEqual(((Task_GatherResource)worker.AI.CurrentTask).SpotToStoreItemIn.Building, buildingToDestroy, $"{preface()} Worker should have reserved a spot in another building to store the item in");
                 }
             }
@@ -171,7 +169,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             else
             {
                 verify_ItemInHand(worker, itemToBePickedUp);
-                verify_spotStillReservedByWorker(originalSpotToStoreItemIn, originalSpotToStoreItemIn.Building, worker);
+                verify_spotReservedByWorker(originalSpotToStoreItemIn, worker);
                 verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
             }
         }

@@ -5,13 +5,14 @@ using UnityEngine;
 public class Task_GatherResource : NewBaseTask
 {
     public override string ToString() => $"Gather resource from {SpotToGatherFrom}";
-    public override TaskType Type => TaskType.GetGatherableResource;
+    public override TaskType Type => TaskType.GatherResource;
 
     [SerializeField] public IItemSpotInBuilding SpotToGatherFrom;
     [SerializeField] public IItemSpotInBuilding SpotToStoreItemIn;
 
-    bool IsWalkingToSpotToGatherFrom => SubtaskIndex == 0;
-    bool IsWalkingToSpotDropItemIn => SubtaskIndex == 4;
+    public bool IsWalkingToSpotToGatherFrom => SubtaskIndex == 0;
+    public bool IsWalkingToSpotDropItemIn => SubtaskIndex == 4;
+    public bool IsDroppingItemInSpot => SubtaskIndex == 5;
 
     public Task_GatherResource(WorkerData worker, NeedData needData, IItemSpotInBuilding spotToGatherFrom, IItemSpotInBuilding spotToStoreItemIn) :
         base(worker, needData)
@@ -40,7 +41,9 @@ public class Task_GatherResource : NewBaseTask
 
         if (IsWalkingToSpotToGatherFrom)
             SpotToGatherFrom = FindAndReserveNewOptimalGatheringSpot(SpotToGatherFrom, Worker.Location, Need.NeededItem, true);
-        SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotDropItemIn);
+
+        if (!IsDroppingItemInSpot)
+            SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotDropItemIn && building == SpotToStoreItemIn.Building);
     }
 
     public override void OnBuildingDestroyed(BuildingData building) => HandleBuildingPausedOrDestroyed(building, true);
@@ -51,9 +54,9 @@ public class Task_GatherResource : NewBaseTask
 
         // Check if a better spot to gather from is available - if pausing then do this in all cases of a building moving since another storage building could now be closer
         if (!doAbandon && (!destroyed || building == SpotToStoreItemIn.Building))
-            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotDropItemIn)) == null)
+            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotDropItemIn && building == SpotToStoreItemIn.Building)) == null)
                 doAbandon = true;
-        
+
         if (doAbandon)
             Abandon();
         else if (destroyed)

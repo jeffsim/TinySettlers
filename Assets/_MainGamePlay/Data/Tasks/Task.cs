@@ -7,7 +7,7 @@ public enum TaskType
     Unset,
     Idle,
     DeliverItemInHandToStorageSpot,
-    GetGatherableResource,
+    GatherResource,
     PickupItemInStorageSpot,
     PickupItemFromGround,
     SellItem,
@@ -243,10 +243,13 @@ public abstract class Task
         return originalReservedSpot;
     }
 
-    protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpot(IItemSpotInBuilding originalReservedSpot,
-                                                                       LocationComponent closestLocation, bool updateMoveLoc)
+    protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpot(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation, bool updateMoveLoc)
     {
+        // Temporarily unreserve the spot so that it can be returned if closest
+        var reservedBy = originalReservedSpot.Reservation.ReservedBy;
+        originalReservedSpot.Reservation.Unreserve();
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
+        originalReservedSpot.Reservation.ReserveBy(reservedBy);
         if (optimalStorageSpotToDeliverItemTo != null && optimalStorageSpotToDeliverItemTo != originalReservedSpot)
         {
             UnreserveSpot(originalReservedSpot);
@@ -258,10 +261,14 @@ public abstract class Task
         return originalReservedSpot;
     }
 
-    protected IItemSpotInBuilding FindAndReserveNewOptimalGatheringSpot(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation,
-                                                                        ItemDefn itemDefn, bool isCurrentMoveTarget)
+    protected IItemSpotInBuilding FindAndReserveNewOptimalGatheringSpot(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation, ItemDefn itemDefn, bool isCurrentMoveTarget)
     {
+        // Temporarily unreserve the spot so that it can be returned if closest
+        var reservedBy = originalReservedSpot.Reservation.ReservedBy;
+        originalReservedSpot.Reservation.Unreserve();
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableGatheringSpot(closestLocation, itemDefn, Worker);
+        originalReservedSpot.Reservation.ReserveBy(reservedBy);
+
         if (optimalStorageSpotToDeliverItemTo != null && optimalStorageSpotToDeliverItemTo != originalReservedSpot)
         {
             UnreserveSpot(originalReservedSpot);

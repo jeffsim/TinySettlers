@@ -9,7 +9,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         LoadTestTown("woodcutter_MovePauseDestroy");
         var worker = Town.CreateWorkerInBuilding(WoodcuttersHut);
 
-        waitUntilTask(worker, TaskType.GetGatherableResource);
+        waitUntilTask(worker, TaskType.GatherResource);
         var task = worker.AI.CurrentTask as Task_GatherResource;
         var item = task.SpotToGatherFrom.ItemContainer.Item;
         var storageSpot = task.SpotToStoreItemIn;

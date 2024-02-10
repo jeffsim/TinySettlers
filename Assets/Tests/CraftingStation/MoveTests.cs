@@ -53,9 +53,9 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_ReapItem)); break;
-            case 2: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_PickupItemFromItemSpot)); break;
+            case 0: waitUntilTaskAndSubtask(worker, TaskType.GatherResource, typeof(Subtask_WalkToItemSpot)); break;
+            case 1: waitUntilTaskAndSubtask(worker, TaskType.GatherResource, typeof(Subtask_ReapItem)); break;
+            case 2: waitUntilTaskAndSubtask(worker, TaskType.GatherResource, typeof(Subtask_PickupItemFromItemSpot)); break;
             case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
             case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
         }
@@ -76,7 +76,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         moveBuilding(buildingToMove, 1, 1);
 
         // Verify new state.  First verify storage spot in room remains reserved
-        verify_spotStillReservedByWorker(originalSpotToStoreItemIn, buildingToStoreItemIn, worker);
+        verify_spotReservedByWorker(originalSpotToStoreItemIn,  worker);
         verify_WorkerTaskTypeAndSubtask(worker, workerOriginalTask, workerOriginalSubtask);
 
         var workerNewLocRelativeToBuilding = worker.Location.WorldLoc - buildingToMove.Location.WorldLoc;

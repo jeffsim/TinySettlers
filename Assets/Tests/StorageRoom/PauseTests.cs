@@ -150,7 +150,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
             else
             {
                 verify_ItemInHand(worker, itemToBePickedUp);
-                verify_spotStillReservedByWorker(originalSpotToStoreItemIn, originalSpotToStoreItemIn.Building, worker);
+                verify_spotReservedByWorker(originalSpotToStoreItemIn, worker);
                 verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
             }
         }

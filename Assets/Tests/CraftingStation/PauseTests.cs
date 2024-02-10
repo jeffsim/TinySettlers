@@ -64,8 +64,8 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
 
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_PickupItemFromItemSpot)); break;
+            case 0: waitUntilTaskAndSubtask(worker, TaskType.GatherResource, typeof(Subtask_WalkToItemSpot)); break;
+            case 1: waitUntilTaskAndSubtask(worker, TaskType.GatherResource, typeof(Subtask_PickupItemFromItemSpot)); break;
             case 2: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
             case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
             case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
@@ -100,7 +100,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
             else if (pausedBuildingItemWillBeStoredIn)
             {
                 verify_spotIsReserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
-                verify_WorkerTaskType(TaskType.GetGatherableResource, worker);
+                verify_WorkerTaskType(TaskType.GatherResource, worker);
                 Assert.AreNotEqual(((Task_GatherResource)worker.AI.CurrentTask).SpotToStoreItemIn.Building, buildingToPause, $"{preface()} Worker should have reserved a spot in another building to store the item in");
             }
         }
@@ -154,7 +154,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
             else
             {
                 verify_ItemInHand(worker, itemToBePickedUp);
-                verify_spotStillReservedByWorker(originalSpotToStoreItemIn, originalSpotToStoreItemIn.Building, worker);
+                verify_spotReservedByWorker(originalSpotToStoreItemIn, worker);
                 verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
             }
         }
