@@ -5,114 +5,88 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
     [Test]
     public void CraftingStation_MoveTests()
     {
-        //   subtask=0: woodcutter is walking to forest to gather wood to store in [buildingToStoreItemIn]
-        //   subtask=1: woodcutter is gathering wood in forest to store in [buildingToStoreItemIn]
-        //   subtask=2: woodcutter is picking up wood in forest to store in [buildingToStoreItemIn]
-        //   subtask=3: woodcutter is walking to [buildingToStoreItemIn]
-        //   subtask=4: woodcutter is dropping wood in [buildingToStoreItemIn]
-        for (int subtask = 0; subtask < 5; subtask++)
-        {
-            // Test A: Move woodcutter while worker1 is getting wood from forest to store in store1
-            // Test B: Move forest     while worker1 is getting wood from forest to store in store1
-            // Test C: Move store1     while worker1 is getting wood from forest to store in store1
-            // Test D: Move store2     while worker1 is getting wood from forest to store in store1 (so that store2 is closer; switch to that)
-            BuildingData store1, store2;
-            PrepMPDTest("craftingstation_MovePauseDestroy", subtask);
-            SetupMPDTest(out store1, out store2); runMoveTest("Test A", subtask, WoodcuttersHut, store1);
-            SetupMPDTest(out store1, out store2); runMoveTest("Test B", subtask, Forest, store1);
-            SetupMPDTest(out store1, out store2); runMoveTest("Test C", subtask, store1, store1);
-            SetupMPDTest(out store1, out store2); runMoveTest("Test D", subtask, store2, store1);
+        // For this test we craft an item that requires two wood and generates 1 gardenplot.
+        // only testing explicit goods here.
 
-            // Following tests disable store1 and store2 before running so that woodcutter can only store in woodcutter
-            // Test E: Move woodcutter while worker1 is getting wood from forest to store in woodcutter
-            // Test F: Move forest     while worker1 is getting wood from forest to store in woodcutter
-            SetupMPDTest(out store1, out store2, true); runMoveTest("Test E", subtask, WoodcuttersHut, WoodcuttersHut);
-            SetupMPDTest(out store1, out store2, true); runMoveTest("Test F", subtask, Forest, WoodcuttersHut);
+        // example scenario: 2 resources needed for crafting. subtasks:
+        // --- transport resouce 1 to crafting spot
+        // subtask=0: walk to resource in itemspot 1
+        // subtask=1: pickup resource from itemspot 1
+        // subtask=2: walk to crafting spot
+        // subtask=3: drop resource in crafting spot
+        // --- transport resouce 2 to crafting spot
+        // subtask=4: walk to resource in itemspot 2
+        // subtask=5: pickup resource from itemspot 2
+        // subtask=6: walk to crafting spot
+        // subtask=7: drop resource in crafting spot
+        // --- ready to craft
+        // subtask=8: craft item
+        // subtask=9: walk to storage spot
+        // subtask=10: drop item in storage spot
+        for (int subtask = 0; subtask < 11; subtask++)
+        {
+            // Test A: Move craftingstation while worker1 is crafting item
+            LoadTestTown("craftingstation_MovePauseDestroy", subtask);
+            runCraftingTest("Test A", subtask);
         }
-        Assert.Fail("nyi");
     }
 
-    void runMoveTest(string testName, int workerSubtask, BuildingData buildingToMove, BuildingData buildingToStoreItemIn)
+    void runCraftingTest(string testName, int workerSubtask)
     {
-        BuildingData buildingWithItem = Forest;
-        BuildingData buildingWorker = WoodcuttersHut;
+        BuildingData buildingWithItem = CraftingStation;
+        BuildingData buildingWorker = CraftingStation;
+        var buildingToStoreItemIn = CraftingStation;
+        var buildingToMove = CraftingStation;
 
         TestName = $"{testName}-{workerSubtask}: Move {buildingToMove.TestId} while {buildingWorker.TestId}'s worker is ";
         switch (workerSubtask)
         {
-            case 0: TestName += $"walking to {buildingWithItem.TestId} to gather wood and bring to {buildingToStoreItemIn.TestId}"; break;
-            case 1: TestName += $"gathering wood in {buildingWithItem.TestId} to bring to {buildingToStoreItemIn.TestId}"; break;
-            case 2: TestName += $"picking up wood in {buildingWithItem.TestId} to bring to {buildingToStoreItemIn.TestId}"; break;
-            case 3: TestName += $"walking to {buildingToStoreItemIn.TestId} to dropoff item picked up from {buildingWithItem.TestId}"; break;
-            case 4: TestName += $"dropping item in {buildingToStoreItemIn.TestId} after picking it up from {buildingWithItem.TestId}"; break;
+            case 0: TestName += $"walking to 1st storage spot to pick up 1st resource and bring to craftingspot"; break;
+            case 1: TestName += $"picking up 1st resource"; break;
+            case 2: TestName += $"Carrying 1st resource to craftingspot"; break;
+            case 3: TestName += $"Dropping 1st resource in craftingspot"; break;
+            case 4: TestName += $"walking to 2nd storage spot to pick up 2nd resource and bring to craftingspot"; break;
+            case 5: TestName += $"picking up 2nd resource"; break;
+            case 6: TestName += $"Carrying 2nd resource to craftingspot"; break;
+            case 7: TestName += $"Dropping 2nd resource in craftingspot"; break;
+            case 8: TestName += $"Crafting the item"; break;
+            case 9: TestName += $"walking to storage spot to storage crafted item"; break;
+            case 10: TestName += $"dropping crafted item in storage spot"; break;
         }
         TestName += "\n  ";
         // if (workerSubtask == 0) Debug.Log(TestName);
 
         // Create the worker and wait until they get to the to-be-tested subtask
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
-        switch (workerSubtask)
-        {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.GatherResource, typeof(Subtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.GatherResource, typeof(Subtask_ReapItem)); break;
-            case 2: waitUntilTaskAndSubtask(worker, TaskType.GatherResource, typeof(Subtask_PickupItemFromItemSpot)); break;
-            case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
-            case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
-        }
+        forceMoveWorkerAwayFromAssignedBuilding(worker);
 
-        var movedBuildingWithItemInIt = buildingWithItem == buildingToMove;
-        var movedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToMove;
+        waitUntilTaskAndSubtaskIndex(worker, TaskType.Task_CraftItem, workerSubtask);
 
         // Storage original state prior to making the change we're testing
         var originalSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
         var workerOriginalLoc = worker.Location;
-        var workerOriginalMoveTarget = worker.AI.CurrentTask.LastMoveToTarget;
         var workerOriginalTask = worker.AI.CurrentTask.Type;
         var workerOriginalSubtask = worker.AI.CurrentTask.CurSubTask.GetType();
-
         var workerOriginalLocRelativeToBuilding = worker.Location.WorldLoc - buildingToMove.Location.WorldLoc;
         var workerOriginalTargetRelativeToBuilding = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - buildingToMove.Location.WorldLoc;
 
-        moveBuilding(buildingToMove, 1, 1);
+        moveBuilding(buildingToMove, 1, 2);
 
         // Verify new state.  First verify storage spot in room remains reserved
-        verify_spotReservedByWorker(originalSpotToStoreItemIn,  worker);
+        verify_spotReservedByWorker(originalSpotToStoreItemIn, worker);
         verify_WorkerTaskTypeAndSubtask(worker, workerOriginalTask, workerOriginalSubtask);
 
-        var workerNewLocRelativeToBuilding = worker.Location.WorldLoc - buildingToMove.Location.WorldLoc;
-        var workerNewMoveTargetRelativeToBuilding = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - buildingToMove.Location.WorldLoc;
-
-        switch (workerSubtask)
+        var isWalking = workerSubtask == 0 || workerSubtask == 2 || workerSubtask == 4 || workerSubtask == 6 || workerSubtask == 9;
+        if (isWalking)
         {
-            case 0: // WorkerSubtask_WalkToItemSpot.
-                verify_LocsAreEqual(workerOriginalLoc, worker.Location);
-                if (movedBuildingWithItemInIt)
-                    verify_LocsAreEqual(workerOriginalTargetRelativeToBuilding, workerNewMoveTargetRelativeToBuilding);
-                break;
-
-            case 1: // WorkerSubtask_ReapGatherableResource.
-                if (movedBuildingWithItemInIt)
-                    verify_LocsAreEqual(workerOriginalLocRelativeToBuilding, workerNewLocRelativeToBuilding);
-                verify_LocsAreEqual(workerOriginalMoveTarget, worker.AI.CurrentTask.LastMoveToTarget);
-                break;
-
-            case 2: // WorkerSubtask_PickupItemFromBuilding.
-                if (movedBuildingWithItemInIt)
-                    verify_LocsAreEqual(workerOriginalLocRelativeToBuilding, workerNewLocRelativeToBuilding);
-                verify_LocsAreEqual(workerOriginalMoveTarget, worker.AI.CurrentTask.LastMoveToTarget);
-                break;
-
-            case 3: // WorkerSubtask_WalkToItemSpot.
-                verify_LocsAreEqual(workerOriginalLoc, worker.Location);
-                if (movedBuildingItemWillBeStoredIn)
-                    verify_LocsAreEqual(workerOriginalTargetRelativeToBuilding, workerNewMoveTargetRelativeToBuilding);
-                break;
-
-            case 4: // WorkerSubtask_DropItemInItemSpot.
-                if (movedBuildingItemWillBeStoredIn)
-                    verify_LocsAreEqual(workerOriginalLocRelativeToBuilding, workerNewLocRelativeToBuilding);
-                verify_LocsAreEqual(workerOriginalMoveTarget, worker.AI.CurrentTask.LastMoveToTarget);
-                break;
+            var workerNewMoveTargetRelativeToBuilding = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - buildingToMove.Location.WorldLoc;
+            verify_LocsAreEqual(workerOriginalTargetRelativeToBuilding, workerNewMoveTargetRelativeToBuilding);
+            verify_LocsAreEqual(workerOriginalLoc, worker.Location);
+        }
+        else
+        {
+            var workerNewLocRelativeToBuilding = worker.Location.WorldLoc - buildingToMove.Location.WorldLoc;
+            verify_LocsAreEqual(workerOriginalLocRelativeToBuilding, workerNewLocRelativeToBuilding);
         }
     }
 }

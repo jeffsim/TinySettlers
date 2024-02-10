@@ -197,8 +197,12 @@ public abstract class TestBase
         float breakTime = GameTime.time + secondsBeforeExitCheck;
         while (GameTime.time < breakTime && (worker.AI.CurrentTask.Type != taskType || worker.AI.CurrentTask.SubtaskIndex != subTaskIndex))
         {
+            // Debug.Log($"{worker.AI.CurrentTask.Type} {taskType} {worker.AI.CurrentTask.SubtaskIndex} {subTaskIndex}");
             updateTown();
         }
+        // if (GameTime.time >= breakTime)
+        //     updateTown();
+
         Assert.IsTrue(GameTime.time < breakTime, $"{preface(message, frame)} stuck in loop in waitUntilTaskSubstate. task = {worker.AI.CurrentTask.Type} expectedTask = {taskType} subTaskIndex = {worker.AI.CurrentTask.SubtaskIndex}, expected subTaskIndex {subTaskIndex}");
     }
 

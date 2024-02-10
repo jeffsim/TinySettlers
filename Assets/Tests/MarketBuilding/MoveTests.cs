@@ -18,7 +18,6 @@ public partial class MarketTests : MovePauseDestroyTestBase
 
     void runMoveTest(string testName, int workerSubtask)
     {
-        var buildingWithItem = Market;
         var buildingWorker = Market;
         var buildingToStoreItemIn = Market;
         var buildingToMove = Market;

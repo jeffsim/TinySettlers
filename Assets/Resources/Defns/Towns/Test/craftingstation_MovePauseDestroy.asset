@@ -22,7 +22,7 @@ MonoBehaviour:
   Buildings:
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 332dbdd2a7fca488f96b9a9b03553acf, type: 2}
-    TestId: 
+    TestId: craft1
     TileX: 1
     TileY: 1
     StartingItemsInBuilding:
@@ -31,7 +31,7 @@ MonoBehaviour:
     NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: dda0fe43be1ab4dc695d54f1a2a23154, type: 2}
-    TestId: 
+    TestId: camp
     TileX: 0
     TileY: 0
     StartingItemsInBuilding: []
