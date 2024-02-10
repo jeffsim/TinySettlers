@@ -182,6 +182,15 @@ public abstract class TestBase
         Assert.IsTrue(GameTime.time < breakTime, $"{preface(message, frame)} stuck in loop in waitUntilTaskSubstate.  substate = {worker.AI.CurrentTask.CurSubTask.GetType()}, expected substate {subtaskType}");
     }
 
+    public void waitUntilSubtaskIndex(WorkerData worker, int subTaskIndex, string message = "", float secondsBeforeExitCheck = 500, int frame = 2)
+    {
+        float breakTime = GameTime.time + secondsBeforeExitCheck;
+        while (GameTime.time < breakTime && worker.AI.CurrentTask.SubtaskIndex != subTaskIndex)
+        {
+            updateTown();
+        }
+        Assert.IsTrue(GameTime.time < breakTime, $"{preface(message, frame)} stuck in loop in waitUntilTaskSubstate.  subTaskIndex = {worker.AI.CurrentTask.SubtaskIndex}, expected subTaskIndex {subTaskIndex}");
+    }
 
     public void waitUntilTaskAndSubtaskIndex(WorkerData worker, TaskType taskType, int subTaskIndex, string message = "", float secondsBeforeExitCheck = 500, int frame = 2)
     {
@@ -191,7 +200,6 @@ public abstract class TestBase
             updateTown();
         }
         Assert.IsTrue(GameTime.time < breakTime, $"{preface(message, frame)} stuck in loop in waitUntilTaskSubstate.  subTaskIndex = {worker.AI.CurrentTask.SubtaskIndex}, expected subTaskIndex {subTaskIndex}");
-
     }
 
     public void verify_WorkerTaskTypeAndSubtask(WorkerData worker, TaskType expectedType, Type subtaskType, string message = "")

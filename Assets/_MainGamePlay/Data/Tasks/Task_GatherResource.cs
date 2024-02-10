@@ -46,22 +46,32 @@ public class Task_GatherResource : NewBaseTask
             SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotDropItemIn && building == SpotToStoreItemIn.Building);
     }
 
-    public override void OnBuildingDestroyed(BuildingData building) => HandleBuildingPausedOrDestroyed(building, true);
-    public override void OnBuildingPauseToggled(BuildingData building) => HandleBuildingPausedOrDestroyed(building, false);
-    void HandleBuildingPausedOrDestroyed(BuildingData building, bool destroyed)
+    public override void OnBuildingDestroyed(BuildingData building)
     {
-        var doAbandon = SubtaskIndex < 4 && building == SpotToGatherFrom.Building;
+        base.OnBuildingDestroyed(building);
+        HandleOnBuildingDestroyedOrPaused(building, true);
+    }
 
-        // Check if a better spot to gather from is available - if pausing then do this in all cases of a building moving since another storage building could now be closer
-        if (!doAbandon && (!destroyed || building == SpotToStoreItemIn.Building))
-            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotDropItemIn && building == SpotToStoreItemIn.Building)) == null)
-                doAbandon = true;
+    public override void OnBuildingPauseToggled(BuildingData building)
+    {
+        base.OnBuildingPauseToggled(building);
+        HandleOnBuildingDestroyedOrPaused(building, false);
+    }
 
-        if (doAbandon)
+    private void HandleOnBuildingDestroyedOrPaused(BuildingData building, bool destroyed)
+    {
+        if (!IsRunning) return;
+
+        if (SubtaskIndex < 4 && building == SpotToGatherFrom.Building)
+        {
             Abandon();
-        else if (destroyed)
-            base.OnBuildingDestroyed(building);
-        else
-            base.OnBuildingPauseToggled(building);
+            return;
+        }
+
+        // Check if a better spot to store in is available
+        var checkForBetterStorageSpot = !destroyed || building == SpotToStoreItemIn.Building;
+        if (checkForBetterStorageSpot)
+            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotDropItemIn && building == SpotToStoreItemIn.Building)) == null)
+                Abandon();
     }
 }

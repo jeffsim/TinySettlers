@@ -25,6 +25,7 @@ public abstract class Task
     public virtual TaskType Type => TaskType.Unset;
     public TaskState TaskState = TaskState.Unset;
     public bool IsRunning => TaskState == TaskState.Started;
+    public bool IsAbandoned => TaskState == TaskState.Abandoned;
 
     // == Worker ===============================
     [SerializeReference] public WorkerData Worker;
@@ -231,7 +232,7 @@ public abstract class Task
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
         if (optimalStorageSpotToDeliverItemTo == null)
             return originalReservedSpot;
-
+ 
         if (optimalStorageSpotToDeliverItemTo != originalReservedSpot)
         {
             originalReservedSpot.Reservation.Unreserve();
@@ -250,6 +251,12 @@ public abstract class Task
         originalReservedSpot.Reservation.Unreserve();
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
         originalReservedSpot.Reservation.ReserveBy(reservedBy);
+        if (optimalStorageSpotToDeliverItemTo == null && originalReservedSpot.Building.IsPaused)
+        {
+            // Couldn't find any and original spot is no longer valid
+            return null;
+        }
+
         if (optimalStorageSpotToDeliverItemTo != null && optimalStorageSpotToDeliverItemTo != originalReservedSpot)
         {
             UnreserveSpot(originalReservedSpot);
@@ -268,6 +275,11 @@ public abstract class Task
         originalReservedSpot.Reservation.Unreserve();
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableGatheringSpot(closestLocation, itemDefn, Worker);
         originalReservedSpot.Reservation.ReserveBy(reservedBy);
+        if (optimalStorageSpotToDeliverItemTo == null && originalReservedSpot.Building.IsPaused)
+        {
+            // Couldn't find any and original spot is no longer valid
+            return null;
+        }
 
         if (optimalStorageSpotToDeliverItemTo != null && optimalStorageSpotToDeliverItemTo != originalReservedSpot)
         {
