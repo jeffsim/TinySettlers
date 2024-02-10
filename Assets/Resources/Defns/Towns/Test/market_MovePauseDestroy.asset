@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: market_MovePauseDestroy
   m_EditorClassIdentifier: 
   Id: market_MovePauseDestroy
-  FriendlyName: market_MovePauseDestroy
+  FriendlyName: market_MPD
   Width: 3
   Height: 3
   Tiles: g,g,g,g,g,g,g,g,g

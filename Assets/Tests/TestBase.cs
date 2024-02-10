@@ -199,7 +199,7 @@ public abstract class TestBase
         {
             updateTown();
         }
-        Assert.IsTrue(GameTime.time < breakTime, $"{preface(message, frame)} stuck in loop in waitUntilTaskSubstate.  subTaskIndex = {worker.AI.CurrentTask.SubtaskIndex}, expected subTaskIndex {subTaskIndex}");
+        Assert.IsTrue(GameTime.time < breakTime, $"{preface(message, frame)} stuck in loop in waitUntilTaskSubstate. task = {worker.AI.CurrentTask.Type} expectedTask = {taskType} subTaskIndex = {worker.AI.CurrentTask.SubtaskIndex}, expected subTaskIndex {subTaskIndex}");
     }
 
     public void verify_WorkerTaskTypeAndSubtask(WorkerData worker, TaskType expectedType, Type subtaskType, string message = "")
@@ -242,6 +242,8 @@ public abstract class TestBase
 
     protected void verify_spotReservedByWorker(IItemSpotInBuilding spot, WorkerData worker, string message = "")
     {
+        Assert.IsNotNull(spot, $"{preface(message)} null spot");
+        Assert.IsNotNull(spot.Building, $"{preface(message)} null spot.Building");
         Assert.AreEqual(spot, getStorageSpotInBuildingReservedByWorker(spot.Building, worker), $"{preface(message)} Expected spot to still be reserved by worker, but it is not");
     }
 

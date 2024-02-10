@@ -51,11 +51,12 @@ public class TownTaskMgr
                 switch (need.Type)
                 {
                     case NeedType.GatherResource: getHigherPriorityTaskIfExists_GatherResource(need, idleWorkers); break;
+                    case NeedType.SellItem: getHigherPriorityTaskIfExists_SellItem(need, idleWorkers); break;
+                 
                     case NeedType.ClearStorage: getHigherPriorityTaskIfExists_CleanupStorage(need, idleWorkers); break;
                     case NeedType.PickupAbandonedItem: getHigherPriorityTaskIfExists_PickupAbandonedItem(need, idleWorkers); break;
                     case NeedType.CraftingOrConstructionMaterial: getHigherPriorityTaskIfExists_BuildingWantsAnItem(need, idleWorkers); break;
                     case NeedType.CraftGood: getHigherPriorityTaskIfExists_CraftItem(need, idleWorkers); break;
-                    case NeedType.SellItem: getHigherPriorityTaskIfExists_SellItem(need, idleWorkers); break;
                 }
 
         // Return the highest priority task
@@ -207,7 +208,7 @@ public class TownTaskMgr
                 // a better (non gathering) task to perform may still be found by caller.
                 var closestStorageSpot = need.BuildingWithNeed.GetClosestEmptyStorageSpot(optimalSpot.Location);
                 Debug.Assert(closestStorageSpot != null, "No storage spot found for item that we're about to gather");
-                HighestPriorityTask.Set(new Task_PickupItemFromStorageSpot(worker, need, optimalSpot, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new Task_TransportItemFromSpotToSpot(worker, need, optimalSpot, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
@@ -315,7 +316,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(new Task_PickupItemFromStorageSpot(worker, need, spotWithItem, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new Task_TransportItemFromSpotToSpot(worker, need, spotWithItem, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }

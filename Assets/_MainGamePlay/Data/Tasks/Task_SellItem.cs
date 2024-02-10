@@ -24,5 +24,4 @@ public class Task_SellItem : NewBaseTask
             _ => null // No more subtasks
         };
     }
-
 }

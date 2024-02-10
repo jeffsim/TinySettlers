@@ -1,5 +1,4 @@
 using NUnit.Framework;
-using UnityEngine;
 
 public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 {
@@ -115,7 +114,10 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             {
                 // nothing should have changed; we're already past the forest
                 verify_WorkerTaskType(TaskType.GatherResource, worker, $"{preface("", 1)} Nothing should have changed");
-                verify_spotIsReserved(originalSpotToStoreItemIn, $"{preface("", 1)} Nothing should have changed");
+                if (pausedBuildingOfWorker)
+                    verify_spotIsUnreserved(originalSpotToStoreItemIn, $"{preface("", 1)} Nothing should have changed");
+                else
+                    verify_spotIsReserved(originalSpotToStoreItemIn, $"{preface("", 1)} Nothing should have changed");
             }
             else if (pausedBuildingOfWorker)
             {

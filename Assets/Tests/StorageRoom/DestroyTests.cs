@@ -30,7 +30,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
 
     void runDestroyTest(string testName, int workerSubtask, BuildingData buildingToDestroy, BuildingData buildingWorker, BuildingData buildingWithItem, BuildingData buildingToStoreItemIn)
     {
-        TestName = $"{testName}: Destroy {buildingToDestroy.TestId} while {buildingWorker.TestId}'s worker is ";
+        TestName = $"{testName}-{workerSubtask}: Destroy {buildingToDestroy.TestId} while {buildingWorker.TestId}'s worker is ";
         switch (workerSubtask)
         {
             case 0: TestName += $"walking to {buildingWithItem.TestId} to pickup item and bring to {buildingToStoreItemIn.TestId}"; break;
@@ -54,8 +54,8 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
 
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(Subtask_PickupItemFromItemSpot)); break;
+            case 0: waitUntilTaskAndSubtask(worker, TaskType.TransportItemFromSpotToSpot, typeof(Subtask_WalkToItemSpot)); break;
+            case 1: waitUntilTaskAndSubtask(worker, TaskType.TransportItemFromSpotToSpot, typeof(Subtask_PickupItemFromItemSpot)); break;
             case 2: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
             case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
             case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
@@ -97,8 +97,8 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
                 else if (destroyedBuildingItemWillBeStoredIn)
                 {
                     verify_spotIsReserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
-                    verify_WorkerTaskType(TaskType.PickupItemInStorageSpot, worker);
-                    Assert.AreNotEqual(((Task_PickupItemFromStorageSpot)worker.AI.CurrentTask).ReservedSpotToStoreItemIn.Building, buildingToDestroy, $"{preface()} Worker should have reserved a spot in another building to store the item in");
+                    verify_WorkerTaskType(TaskType.TransportItemFromSpotToSpot, worker);
+                    Assert.AreNotEqual(((Task_TransportItemFromSpotToSpot)worker.AI.CurrentTask).SpotToStoreItemIn.Building, buildingToDestroy, $"{preface()} Worker should have reserved a spot in another building to store the item in");
                 }
             }
         }

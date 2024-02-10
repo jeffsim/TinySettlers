@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: woodcutter_MovePauseDestroy
   m_EditorClassIdentifier: 
   Id: woodcutter_MovePauseDestroy
-  FriendlyName: woodcutter_MovePauseDestroy
+  FriendlyName: woodcutter_MPD
   Width: 3
   Height: 3
   Tiles: g,g,g,g,g,g,g,g,g
-  WorldX: -600
+  WorldX: -900
   WorldY: 600
   Buildings:
   - IsEnabled: 1
@@ -41,7 +41,7 @@ MonoBehaviour:
     TileY: 2
     StartingItemsInBuilding:
     - Item: {fileID: 11400000, guid: 06ea90791fa6045cea5d2005d2eeb22c, type: 2}
-      Count: 1
+      Count: 0
     NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: 9f6b4d5be7465564ea13a01f9eda169b, type: 2}

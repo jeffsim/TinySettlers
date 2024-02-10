@@ -8,7 +8,7 @@ public enum TaskType
     Idle,
     DeliverItemInHandToStorageSpot,
     GatherResource,
-    PickupItemInStorageSpot,
+    TransportItemFromSpotToSpot,
     PickupItemFromGround,
     SellItem,
     CraftGood

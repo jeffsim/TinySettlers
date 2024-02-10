@@ -12,11 +12,11 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         var originalStorageSpot = WoodcuttersHut.GetStorageSpotWithUnreservedItem(GameDefns.Instance.ItemDefns["plank"]);
         var itemToStore = originalStorageSpot.ItemContainer.Item;
 
-        waitUntilTask(worker, TaskType.PickupItemInStorageSpot);
+        waitUntilTask(worker, TaskType.TransportItemFromSpotToSpot);
         
         var reservedStorageSpot = getStorageSpotInBuildingReservedByWorker(storage, worker);
         
-        waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot));
+        waitUntilTaskAndSubtask(worker, TaskType.TransportItemFromSpotToSpot, typeof(Subtask_DropItemInItemSpot));
         waitUntilTaskDone(worker);
         
         verify_spotIsUnreserved(reservedStorageSpot);
