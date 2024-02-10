@@ -10,13 +10,10 @@ public abstract class Subtask
     [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingPaused { get; set; } = true;
     [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingDestroyed { get; set; } = true;
     [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingMoved { get; set; } = false;
-    [SerializeField] public virtual bool InstantlyRun { get; set; } = false;
+    [SerializeField] public virtual bool InstantlyComplete { get; set; } = false;
 
     public List<BuildingData> UpdateWorkerLocWhenTheseBuildingsMove = new();
     public List<BuildingData> UpdateMoveTargetWhenTheseBuildingsMove = new();
-
-    // not all use this but most do
-    [SerializeField] public IItemSpotInBuilding ItemSpot;
 
     public float StartTime;
 

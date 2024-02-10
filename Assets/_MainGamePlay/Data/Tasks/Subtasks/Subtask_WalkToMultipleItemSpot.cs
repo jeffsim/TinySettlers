@@ -3,6 +3,7 @@ using UnityEngine;
 public class Subtask_WalkToMultipleItemSpot : BaseSubtask_Moving
 {
     [SerializeField] public IMultipleItemSpotInBuilding ItemsSpot;
+    [SerializeField] public IItemSpotInBuilding ItemSpot;
 
     public override ItemDefn GetTaskItem()
     {

@@ -4,6 +4,7 @@ public class Subtask_PickupItemFromItemSpot : Subtask
 {
     protected override float RunTime => 0.5f;
     public override ItemDefn GetTaskItem() => ItemSpot.ItemContainer.Item.Defn;
+    [SerializeField] public IItemSpotInBuilding ItemSpot;
 
     public Subtask_PickupItemFromItemSpot(Task parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
     {
@@ -19,15 +20,15 @@ public class Subtask_PickupItemFromItemSpot : Subtask
         Debug.Assert(Task.Worker.Hands.HasItem);
     }
 
-    public override void OnAnyBuildingPauseToggled(BuildingData building)
-    {
-        if (building.IsPaused && building == ItemSpot.Building)
-            Task.Abandon();
-    }
+    // public override void OnAnyBuildingPauseToggled(BuildingData building)
+    // {
+    //     if (building.IsPaused && building == ItemSpot.Building)
+    //         Task.Abandon();
+    // }
 
-    public override void OnAnyBuildingDestroyed(BuildingData building)
-    {
-        if (building == ItemSpot.Building)
-            Task.Abandon();
-    }
+    // public override void OnAnyBuildingDestroyed(BuildingData building)
+    // {
+    //     if (building == ItemSpot.Building)
+    //         Task.Abandon();
+    // }
 }

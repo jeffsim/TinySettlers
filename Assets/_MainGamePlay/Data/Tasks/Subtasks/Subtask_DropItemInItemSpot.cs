@@ -4,6 +4,7 @@ public class Subtask_DropItemInItemSpot : Subtask
 {
     protected override float RunTime => 0.5f;
     public override ItemDefn GetTaskItem() => Task.Worker.Hands.Item.Defn;
+    [SerializeField] public IItemSpotInBuilding ItemSpot;
 
     public Subtask_DropItemInItemSpot(Task parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
     {
@@ -16,15 +17,15 @@ public class Subtask_DropItemInItemSpot : Subtask
         Task.Worker.DropItemInHandInSpot(ItemSpot);
     }
 
-    public override void OnAnyBuildingPauseToggled(BuildingData building)
-    {
-        if (building.IsPaused && building == ItemSpot.Building)
-            Task.Abandon();
-    }
+    // public override void OnAnyBuildingPauseToggled(BuildingData building)
+    // {
+    //     if (building.IsPaused && building == ItemSpot.Building)
+    //         Task.Abandon();
+    // }
 
-    public override void OnAnyBuildingDestroyed(BuildingData destroyedBuilding)
-    {
-        if (destroyedBuilding == ItemSpot.Building)
-            Task.Abandon();
-    }
+    // public override void OnAnyBuildingDestroyed(BuildingData destroyedBuilding)
+    // {
+    //     if (destroyedBuilding == ItemSpot.Building)
+    //         Task.Abandon();
+    // }
 }

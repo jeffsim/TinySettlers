@@ -1,5 +1,9 @@
+using UnityEngine;
+
 public class Subtask_WalkToItemSpot : BaseSubtask_Moving
 {
+    [SerializeField] public IItemSpotInBuilding ItemSpot;
+
     public override ItemDefn GetTaskItem()
     {
         if (ItemSpot.ItemContainer.HasItem)
@@ -15,15 +19,15 @@ public class Subtask_WalkToItemSpot : BaseSubtask_Moving
         UpdateMoveTargetWhenBuildingMoves(ItemSpot.Building);
     }
 
-    public override void OnAnyBuildingPauseToggled(BuildingData building)
-    {
-        if (building.IsPaused && building == ItemSpot.Building)
-            Task.Abandon();
-    }
+    // public override void OnAnyBuildingPauseToggled(BuildingData building)
+    // {
+    //     if (building.IsPaused && building == ItemSpot.Building)
+    //         Task.Abandon();
+    // }
 
-    public override void OnAnyBuildingDestroyed(BuildingData building)
-    {
-        if (building == ItemSpot.Building)
-            Task.Abandon();
-    }
+    // public override void OnAnyBuildingDestroyed(BuildingData building)
+    // {
+    //     if (building == ItemSpot.Building)
+    //         Task.Abandon();
+    // }
 }

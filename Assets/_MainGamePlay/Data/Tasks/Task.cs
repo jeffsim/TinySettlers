@@ -39,7 +39,7 @@ public abstract class Task
     public LocationComponent LastMoveToTarget = new();
 
     // == Reservable Spots =====================
-    [SerializeField] List<IReservationProvider> SpotsToReserveOnStart = new();
+    [SerializeField] protected List<IReservationProvider> SpotsToReserveOnStart = new();
     [SerializeField] protected List<IReservationProvider> ReservedSpots = new();
     public bool HasReservedSpot(IReservationProvider spot) => ReservedSpots.Contains(spot);
 
@@ -85,7 +85,10 @@ public abstract class Task
     {
 
     }
-
+    public virtual Subtask GetNextSubtask()
+    {
+        return null;
+    }
     // ====================================================================
     // State Machine
     public virtual void InitializeStateMachine() { }
@@ -98,7 +101,7 @@ public abstract class Task
         else
         {
             CurSubTask = Subtasks[++SubtaskIndex];
-            if (CurSubTask.InstantlyRun)
+            if (CurSubTask.InstantlyComplete)
                 GotoNextSubstate();
             else
             {
@@ -171,7 +174,6 @@ public abstract class Task
 
     public virtual void CompleteTask() => finishTask(TaskState.Completed);
     public virtual void Abandon() => finishTask(TaskState.Abandoned);
-
     void finishTask(TaskState newState)
     {
         ReservedSpots.ForEach(spot => spot.Reservation.Unreserve());
@@ -216,6 +218,7 @@ public abstract class Task
 
     public virtual void AllSubtasksComplete()
     {
+        TaskState = TaskState.Completed;
         CompleteTask();
     }
 

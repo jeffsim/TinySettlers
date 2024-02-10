@@ -10,7 +10,6 @@ public class GameDataMgr : MonoBehaviour
     [ShowInInspector][NonSerialized] public GameData GameData;
 
     public string ProfilesFolderName => Path.Combine(Application.persistentDataPath, "Profiles");
-    bool UseBinarySaveFiles = false;
 
     void Awake()
     {
@@ -95,15 +94,8 @@ public class GameDataMgr : MonoBehaviour
         if (GameData.CurrentTown != null)
             GameData.CurrentTown.lastGameTime = GameTime.time;
 
-        // Delete all towns other than currenttown
-        // TBD if I keep this.  If so, clean it up
-        // var towns = GameData.Towns;
-        // GameData.Towns.Clear();
-        // GameData.Towns.Add(GameData.CurrentTown);
-
-
         var fileName = GetProfileFileName(GameData.ProfileName);
-        byte[] bytes = SerializationUtility.SerializeValue(GameData, UseBinarySaveFiles ? DataFormat.Binary : DataFormat.JSON);
+        byte[] bytes = SerializationUtility.SerializeValue(GameData, Settings.UseBinarySaveFiles ? DataFormat.Binary : DataFormat.JSON);
         File.WriteAllBytes(fileName, bytes);
     }
 
@@ -115,7 +107,7 @@ public class GameDataMgr : MonoBehaviour
     internal void LoadProfile(string profileName)
     {
         byte[] bytes = File.ReadAllBytes(GetProfileFileName(profileName));
-        GameData = SerializationUtility.DeserializeValue<GameData>(bytes, UseBinarySaveFiles ? DataFormat.Binary : DataFormat.JSON);
+        GameData = SerializationUtility.DeserializeValue<GameData>(bytes, Settings.UseBinarySaveFiles ? DataFormat.Binary : DataFormat.JSON);
 
         GameData.OnLoaded();
         PlayerPrefs.SetString("LoadLoadedProfile", profileName);
