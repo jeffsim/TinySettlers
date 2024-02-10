@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class Task_GatherResource : NewBaseTask
+public class Task_GatherResource : Task
 {
     public override string ToString() => $"Gather resource from {SpotToGatherFrom}";
     public override TaskType Type => TaskType.GatherResource;

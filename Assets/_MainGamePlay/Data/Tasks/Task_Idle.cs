@@ -1,7 +1,7 @@
 using System;
 
 [Serializable]
-public class Task_Idle : NewBaseTask
+public class Task_Idle : Task
 {
     public override string ToString() => "Idle";
     public override TaskType Type => TaskType.Idle;

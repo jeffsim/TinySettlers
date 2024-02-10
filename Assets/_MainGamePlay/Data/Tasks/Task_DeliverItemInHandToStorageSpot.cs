@@ -1,7 +1,7 @@
 using System;
 
 [Serializable]
-public class Task_DeliverItemInHandToStorageSpot : NewBaseTask
+public class Task_DeliverItemInHandToStorageSpot : Task
 {
     public override string ToString() => "Deliver item in hand to storage spot";
     public override TaskType Type => TaskType.DeliverItemInHandToStorageSpot;

@@ -8,8 +8,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         // Test that worker in a crafting station that has enough resources will craft an item
         LoadTestTown("craftingstation_MovePauseDestroy");
         var worker = Town.CreateWorkerInBuilding(CraftingStation);
-
-        waitUntilTask(worker, TaskType.CraftGood);
+        waitUntilTask(worker, TaskType.Task_CraftItem);
         waitUntilTaskDone(worker);
 
         verify_ItemInHand(worker, null);

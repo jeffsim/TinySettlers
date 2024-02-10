@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class Task_SellItem : NewBaseTask
+public class Task_SellItem : Task
 {
     public override string ToString() => $"Sell item {GetTaskItem()}";
     public override TaskType Type => TaskType.SellItem;

@@ -273,7 +273,9 @@ public abstract class TestBase
 
     protected void verify_ItemTypeInSpot(StorageSpotData spot, ItemDefn expectedItemType, string message = "")
     {
+        Assert.NotNull(spot, $"{preface(message)} spot is null");
         var actualItem = spot.ItemContainer.Item;
+        Assert.NotNull(actualItem, $"{preface(message)} actualItem is null");
         Assert.AreEqual(expectedItemType, actualItem.Defn, $"{preface(message)} Expected item in storage spot to be '{expectedItemType}', but is '{actualItem.Defn}'");
     }
 

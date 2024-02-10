@@ -11,7 +11,7 @@ public enum TaskType
     TransportItemFromSpotToSpot,
     PickupItemFromGround,
     SellItem,
-    CraftGood
+    Task_CraftItem
 };
 
 public enum TaskState { Unset, NotStarted, Started, Completed, Abandoned };
@@ -60,58 +60,41 @@ public abstract class Task
         Worker = workerData;
     }
 
-    // ====================================================================
-    // Called when we have decided that this is the Task we'll perform next
     public virtual void Start()
     {
         TaskState = TaskState.Started;
 
         foreach (var spot in SpotsToReserveOnStart)
             ReserveSpot(spot);
-        SpotsToReserveOnStart.Clear();
-
-        Subtasks.Clear();
-        InitializeStateMachine();
 
         SubtaskIndex = 0;
-        if (Subtasks.Count > 0)
-        {
-            CurSubTask = Subtasks[SubtaskIndex];
-            OnSubtaskStart();
-            CurSubTask.Start();
-        }
+        CurSubTask = GetNextSubtask();
+        CurSubTask.Start();
     }
-
-    public virtual void OnSubtaskStart()
-    {
-
-    }
-    public virtual Subtask GetNextSubtask()
-    {
-        return null;
-    }
-    // ====================================================================
-    // State Machine
-    public virtual void InitializeStateMachine() { }
 
     public virtual void GotoNextSubstate()
     {
         CurSubTask?.SubtaskComplete();
-        if (SubtaskIndex >= Subtasks.Count - 1)
+
+        SubtaskIndex++;
+        CurSubTask = GetNextSubtask();
+        if (CurSubTask == null)
             AllSubtasksComplete();
         else
         {
-            CurSubTask = Subtasks[++SubtaskIndex];
+            CurSubTask.Start();
             if (CurSubTask.InstantlyComplete)
                 GotoNextSubstate();
-            else
-            {
-                OnSubtaskStart();
-                CurSubTask.Start();
-            }
         }
     }
 
+    public virtual void OnSubtaskStart() { }
+    public virtual void InitializeStateMachine() { }
+  
+    public virtual Subtask GetNextSubtask()
+    {
+        return null;
+    }
 
     // ====================================================================
     // Called per AI tick.

@@ -84,14 +84,14 @@ public class Worker : MonoBehaviour
         CarriedItem.gameObject.SetActive(true);
         switch (Data.AI.CurrentTask.CurSubTask)
         {
-            case BaseSubtask_Moving _: updateCarriedItem(itemDown, scaleNormal, Color.red); break;
+            case BaseSubtask_Moving _: updateCarriedItem(Data.Hands.HasItem ? itemUp : itemDown, scaleNormal, Color.red); break;
             case Subtask_DropItemInItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
             case Subtask_DropItemInMultipleItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
             case Subtask_PickupItemFromItemSpot _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
             case Subtask_PickupItemFromGround _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
             case Subtask_ReapItem _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
             case Subtask_SellItemInHands _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
-            case Subtask_CraftItem _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
+            case Subtask_CraftItem _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
             case Subtask_Wait _: updateCarriedItem(itemDown, scaleNormal, Color.Lerp(Color.green, Color.white, percentDone)); break;
             default:
                 // Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);

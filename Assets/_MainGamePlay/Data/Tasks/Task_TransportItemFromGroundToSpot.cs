@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class Task_TransportItemFromGroundToSpot : NewBaseTask
+public class Task_TransportItemFromGroundToSpot : Task
 {
     public override string ToString() => $"Pickup item {ItemToPickup} from ground";
     public override TaskType Type => TaskType.PickupItemFromGround;

@@ -3,7 +3,6 @@ using UnityEngine;
 public class Subtask_WalkToMultipleItemSpot : BaseSubtask_Moving
 {
     [SerializeField] public IMultipleItemSpotInBuilding ItemsSpot;
-    [SerializeField] public IItemSpotInBuilding ItemSpot;
 
     public override ItemDefn GetTaskItem()
     {
@@ -14,21 +13,21 @@ public class Subtask_WalkToMultipleItemSpot : BaseSubtask_Moving
         return null;
     }
 
-    public Subtask_WalkToMultipleItemSpot(Task parentTask, IMultipleItemSpotInBuilding itemSpot) : base(parentTask, itemSpot.Location)
+    public Subtask_WalkToMultipleItemSpot(Task parentTask, IMultipleItemSpotInBuilding itemsSpot) : base(parentTask, itemsSpot.Location)
     {
-        ItemsSpot = itemSpot;
-        UpdateMoveTargetWhenBuildingMoves(ItemSpot.Building);
+        ItemsSpot = itemsSpot;
+        UpdateMoveTargetWhenBuildingMoves(ItemsSpot.Building);
     }
 
     public override void OnAnyBuildingPauseToggled(BuildingData building)
     {
-        if (building.IsPaused && building == ItemSpot.Building)
+        if (building.IsPaused && building == ItemsSpot.Building)
             Task.Abandon();
     }
 
     public override void OnAnyBuildingDestroyed(BuildingData building)
     {
-        if (building == ItemSpot.Building)
+        if (building == ItemsSpot.Building)
             Task.Abandon();
     }
 }
