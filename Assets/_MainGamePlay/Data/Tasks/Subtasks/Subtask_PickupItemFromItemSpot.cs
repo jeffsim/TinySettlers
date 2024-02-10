@@ -3,7 +3,6 @@ using UnityEngine;
 public class Subtask_PickupItemFromItemSpot : Subtask
 {
     protected override float RunTime => 0.5f;
-    [SerializeField] IItemSpotInBuilding ItemSpot;
     public override ItemDefn GetTaskItem() => ItemSpot.ItemContainer.Item.Defn;
 
     public Subtask_PickupItemFromItemSpot(Task parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)

@@ -76,8 +76,14 @@ public abstract class Task
         if (Subtasks.Count > 0)
         {
             CurSubTask = Subtasks[SubtaskIndex];
+            OnSubtaskStart();
             CurSubTask.Start();
         }
+    }
+
+    public virtual void OnSubtaskStart()
+    {
+
     }
 
     // ====================================================================
@@ -95,7 +101,10 @@ public abstract class Task
             if (CurSubTask.InstantlyRun)
                 GotoNextSubstate();
             else
+            {
+                OnSubtaskStart();
                 CurSubTask.Start();
+            }
         }
     }
 

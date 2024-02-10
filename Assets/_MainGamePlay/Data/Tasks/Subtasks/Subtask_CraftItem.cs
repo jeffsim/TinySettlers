@@ -3,15 +3,15 @@ using UnityEngine;
 public class Subtask_CraftItem : Subtask
 {
     protected override float RunTime => 1;
-    [SerializeField] IMultipleItemSpotInBuilding ItemSpot;
+    [SerializeField] IMultipleItemSpotInBuilding ItemsSpot;
     public override ItemDefn GetTaskItem() => Task.Worker.Hands.Item.Defn;
     public string CraftingItemDefnId;
 
     public Subtask_CraftItem(Task parentTask, string craftingItemDefnId, IMultipleItemSpotInBuilding itemSpot) : base(parentTask)
     {
-        ItemSpot = itemSpot;
+        ItemsSpot = itemSpot;
         CraftingItemDefnId = craftingItemDefnId;
-        UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);
+        UpdateWorkerLocWhenBuildingMoves(ItemsSpot.Building);
     }
 
     public override void SubtaskComplete()
@@ -21,13 +21,13 @@ public class Subtask_CraftItem : Subtask
 
     public override void OnAnyBuildingPauseToggled(BuildingData building)
     {
-        if (building.IsPaused && building == ItemSpot.Building)
+        if (building.IsPaused && building == ItemsSpot.Building)
             Task.Abandon();
     }
 
     public override void OnAnyBuildingDestroyed(BuildingData destroyedBuilding)
     {
-        if (destroyedBuilding == ItemSpot.Building)
+        if (destroyedBuilding == ItemsSpot.Building)
             Task.Abandon();
     }
 }

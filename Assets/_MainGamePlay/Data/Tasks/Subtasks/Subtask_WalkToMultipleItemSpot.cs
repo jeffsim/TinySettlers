@@ -2,12 +2,12 @@ using UnityEngine;
 
 public class Subtask_WalkToMultipleItemSpot : BaseSubtask_Moving
 {
-    [SerializeField] public IMultipleItemSpotInBuilding ItemSpot;
+    [SerializeField] public IMultipleItemSpotInBuilding ItemsSpot;
 
     public override ItemDefn GetTaskItem()
     {
-        if (ItemSpot.ItemsContainer.HasItem)
-            return ItemSpot.ItemsContainer.Items[0].Defn;
+        if (ItemsSpot.ItemsContainer.HasItem)
+            return ItemsSpot.ItemsContainer.Items[0].Defn;
         if (Task.Worker.Hands.HasItem)
             return Task.Worker.Hands.Item.Defn;
         return null;
@@ -15,7 +15,7 @@ public class Subtask_WalkToMultipleItemSpot : BaseSubtask_Moving
 
     public Subtask_WalkToMultipleItemSpot(Task parentTask, IMultipleItemSpotInBuilding itemSpot) : base(parentTask, itemSpot.Location)
     {
-        ItemSpot = itemSpot;
+        ItemsSpot = itemSpot;
         UpdateMoveTargetWhenBuildingMoves(ItemSpot.Building);
     }
 

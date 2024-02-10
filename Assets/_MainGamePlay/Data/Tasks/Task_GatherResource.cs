@@ -19,14 +19,27 @@ public class Task_GatherResource : Task
 
     public override void InitializeStateMachine()
     {
-        Subtasks.Add(new Subtask_WalkToItemSpot(this, SpotToGatherFrom));
-        Subtasks.Add(new Subtask_ReapItem(this, SpotToGatherFrom));
-        Subtasks.Add(new Subtask_PickupItemFromItemSpot(this, SpotToGatherFrom));
-        Subtasks.Add(new Subtask_UnreserveSpot(this, SpotToGatherFrom)); //preemptively unreserve the spot so that others can use it
-        Subtasks.Add(new Subtask_WalkToItemSpot(this, SpotToStoreItemIn));
-        Subtasks.Add(new Subtask_DropItemInItemSpot(this, SpotToStoreItemIn));
+        Subtasks.Add(new Subtask_WalkToItemSpot(this, null));
+        Subtasks.Add(new Subtask_ReapItem(this, null));
+        Subtasks.Add(new Subtask_PickupItemFromItemSpot(this, null));
+        Subtasks.Add(new Subtask_UnreserveSpot(this, null)); //preemptively unreserve the spot so that others can use it
+        Subtasks.Add(new Subtask_WalkToItemSpot(this, null));
+        Subtasks.Add(new Subtask_DropItemInItemSpot(this, null));
     }
 
+    public override void OnSubtaskStart()
+    {
+        switch (SubtaskIndex)
+        {
+            case 0: CurSubTask.ItemSpot = SpotToGatherFrom; break;
+            case 1: CurSubTask.ItemSpot = SpotToGatherFrom; break;
+            case 2: CurSubTask.ItemSpot = SpotToGatherFrom; break;
+            case 3: CurSubTask.ItemSpot = SpotToGatherFrom; break;
+            case 4: CurSubTask.ItemSpot = SpotToStoreItemIn; break;
+            case 5: CurSubTask.ItemSpot = SpotToStoreItemIn; break;
+        }
+    }
+    
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
         base.OnBuildingMoved(building, previousLoc);
@@ -35,7 +48,6 @@ public class Task_GatherResource : Task
         {
             case 0: // Subtask_WalkToItemSpot
                 SpotToGatherFrom = FindAndReserveNewOptimalGatheringSpot(SpotToGatherFrom, Worker.Location, Need.NeededItem, true);
-                (Subtasks[3] as Subtask_UnreserveSpot).ItemSpot = SpotToGatherFrom;
                 SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, SpotToGatherFrom.Location, false);
                 break;
             case 1: // Subtask_ReapItem
@@ -44,11 +56,9 @@ public class Task_GatherResource : Task
             case 2: // Subtask_PickupItemFromItemSpot
                 SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, SpotToGatherFrom.Location, false);
                 break;
-            case 3: Debug.Assert(false, "Shouldn't hit this case"); break; // Subtask_UnreserveSpot
             case 4: // Subtask_WalkToItemSpot
                 SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, SpotToGatherFrom.Location, true);
                 break;
-            case 5: break; // Subtask_DropItemInItemSpot -- do nothing               
         }
     }
 

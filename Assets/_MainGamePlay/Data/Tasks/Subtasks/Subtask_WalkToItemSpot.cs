@@ -1,9 +1,5 @@
-using UnityEngine;
-
 public class Subtask_WalkToItemSpot : BaseSubtask_Moving
 {
-    [SerializeField] public IItemSpotInBuilding ItemSpot;
-
     public override ItemDefn GetTaskItem()
     {
         if (ItemSpot.ItemContainer.HasItem)

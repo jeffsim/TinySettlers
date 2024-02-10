@@ -1,9 +1,6 @@
-using UnityEngine;
-
 public class Subtask_ReapItem : Subtask
 {
     protected override float RunTime => 1;
-    [SerializeField] IItemSpotInBuilding ItemSpot;
     public override ItemDefn GetTaskItem() => ItemSpot.ItemContainer.Item.Defn;
 
     public Subtask_ReapItem(Task parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
@@ -12,10 +9,6 @@ public class Subtask_ReapItem : Subtask
         UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);
     }
 
-    public override void SubtaskComplete()
-    {
-    }
-    
     public override void OnAnyBuildingPauseToggled(BuildingData building)
     {
         if (building.IsPaused && building == ItemSpot.Building)

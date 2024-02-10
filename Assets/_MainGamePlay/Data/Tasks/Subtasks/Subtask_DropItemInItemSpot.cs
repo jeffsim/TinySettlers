@@ -3,7 +3,6 @@ using UnityEngine;
 public class Subtask_DropItemInItemSpot : Subtask
 {
     protected override float RunTime => 0.5f;
-    [SerializeField] IItemSpotInBuilding ItemSpot;
     public override ItemDefn GetTaskItem() => Task.Worker.Hands.Item.Defn;
 
     public Subtask_DropItemInItemSpot(Task parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)

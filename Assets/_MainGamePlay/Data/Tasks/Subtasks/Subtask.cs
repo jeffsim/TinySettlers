@@ -15,6 +15,9 @@ public abstract class Subtask
     public List<BuildingData> UpdateWorkerLocWhenTheseBuildingsMove = new();
     public List<BuildingData> UpdateMoveTargetWhenTheseBuildingsMove = new();
 
+    // not all use this but most do
+    [SerializeField] public IItemSpotInBuilding ItemSpot;
+
     public float StartTime;
 
     public float PercentDone => Math.Clamp((GameTime.time - StartTime) / RunTime, 0, 1);
@@ -57,7 +60,7 @@ public abstract class Subtask
     {
         StartTime = GameTime.time;
     }
-    
+
     public virtual void Update()
     {
         if (IsSubstateDone)

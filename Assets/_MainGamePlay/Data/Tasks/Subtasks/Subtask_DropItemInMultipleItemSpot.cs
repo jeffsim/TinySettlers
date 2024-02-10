@@ -3,13 +3,13 @@ using UnityEngine;
 public class Subtask_DropItemInMultipleItemSpot : Subtask
 {
     protected override float RunTime => 0.5f;
-    [SerializeField] IMultipleItemSpotInBuilding ItemSpot;
+    [SerializeField] IMultipleItemSpotInBuilding ItemsSpot;
     public override ItemDefn GetTaskItem() => Task.Worker.Hands.Item.Defn;
 
     public Subtask_DropItemInMultipleItemSpot(Task parentTask, IMultipleItemSpotInBuilding itemSpot) : base(parentTask)
     {
-        ItemSpot = itemSpot;
-        UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);
+        ItemsSpot = itemSpot;
+        UpdateWorkerLocWhenBuildingMoves(ItemsSpot.Building);
     }
     public override void Start()
     {
@@ -19,18 +19,18 @@ public class Subtask_DropItemInMultipleItemSpot : Subtask
 
     public override void SubtaskComplete()
     {
-        Task.Worker.DropItemInHandInSpot(ItemSpot);
+        Task.Worker.DropItemInHandInSpot(ItemsSpot);
     }
 
     public override void OnAnyBuildingPauseToggled(BuildingData building)
     {
-        if (building.IsPaused && building == ItemSpot.Building)
+        if (building.IsPaused && building == ItemsSpot.Building)
             Task.Abandon();
     }
 
     public override void OnAnyBuildingDestroyed(BuildingData destroyedBuilding)
     {
-        if (destroyedBuilding == ItemSpot.Building)
+        if (destroyedBuilding == ItemsSpot.Building)
             Task.Abandon();
     }
 }
