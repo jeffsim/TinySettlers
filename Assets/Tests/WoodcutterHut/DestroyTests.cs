@@ -1,6 +1,5 @@
 using System.Linq;
 using NUnit.Framework;
-using UnityEngine;
 
 public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 {
