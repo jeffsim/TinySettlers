@@ -8,12 +8,15 @@ public class Task_TransportItemFromGroundToSpot : Task
     public override TaskType Type => TaskType.PickupItemFromGround;
 
     [SerializeField] public ItemData ItemToPickup;
-    [SerializeField] IItemSpotInBuilding ReservedSpotToStoreItemIn;
+    [SerializeField] IItemSpotInBuilding SpotToStoreItemIn;
+
+    public bool IsWalkingToItemOnGround => SubtaskIndex == 0;
+    public bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 2;
 
     public Task_TransportItemFromGroundToSpot(WorkerData worker, NeedData needData, IItemSpotInBuilding reservedSpotToStoreItemIn) : base(worker, needData)
     {
         ItemToPickup = Need.AbandonedItemToPickup;
-        ReservedSpotToStoreItemIn = ReserveSpotOnStart(reservedSpotToStoreItemIn);
+        SpotToStoreItemIn = ReserveSpotOnStart(reservedSpotToStoreItemIn);
     }
 
     public override void Start()
@@ -28,8 +31,8 @@ public class Task_TransportItemFromGroundToSpot : Task
         {
             0 => new Subtask_WalkToLocation(this, ItemToPickup.Location),
             1 => new Subtask_PickupItemFromGround(this, ItemToPickup),
-            3 => new Subtask_WalkToItemSpot(this, ReservedSpotToStoreItemIn),
-            4 => new Subtask_DropItemInItemSpot(this, ReservedSpotToStoreItemIn),
+            3 => new Subtask_WalkToItemSpot(this, SpotToStoreItemIn),
+            4 => new Subtask_DropItemInItemSpot(this, SpotToStoreItemIn),
             _ => null // No more subtasks
         };
     }
@@ -38,5 +41,25 @@ public class Task_TransportItemFromGroundToSpot : Task
     {
         CompleteTask();
         Worker.OriginalPickupItemNeed = Need;
+    }
+
+    public override void OnBuildingDestroyed(BuildingData building)
+    {
+        base.OnBuildingDestroyed(building);
+        if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, true);
+    }
+
+    public override void OnBuildingPauseToggled(BuildingData building)
+    {
+        base.OnBuildingPauseToggled(building);
+        if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, false);
+    }
+
+    private void HandleOnBuildingDestroyedOrPaused(BuildingData building, bool destroyed)
+    {
+        // Check if a better spot to store in is available
+        if (!destroyed || building == SpotToStoreItemIn.Building)
+            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : ItemToPickup.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building)) == null)
+                Abandon();
     }
 }

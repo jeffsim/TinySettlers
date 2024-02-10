@@ -11,7 +11,7 @@ public class Task_GatherResource : Task
     [SerializeField] public IItemSpotInBuilding SpotToStoreItemIn;
 
     public bool IsWalkingToSpotToGatherFrom => SubtaskIndex == 0;
-    public bool IsWalkingToSpotDropItemIn => SubtaskIndex == 4;
+    public bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 4;
     public bool IsDroppingItemInSpot => SubtaskIndex == 5;
 
     public Task_GatherResource(WorkerData worker, NeedData needData, IItemSpotInBuilding spotToGatherFrom, IItemSpotInBuilding spotToStoreItemIn) :
@@ -43,7 +43,7 @@ public class Task_GatherResource : Task
             SpotToGatherFrom = FindAndReserveNewOptimalGatheringSpot(SpotToGatherFrom, Worker.Location, Need.NeededItem, true);
 
         if (!IsDroppingItemInSpot)
-            SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotDropItemIn && building == SpotToStoreItemIn.Building);
+            SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building);
     }
 
     public override void OnBuildingDestroyed(BuildingData building)
@@ -67,9 +67,8 @@ public class Task_GatherResource : Task
         }
 
         // Check if a better spot to store in is available
-        var checkForBetterStorageSpot = !destroyed || building == SpotToStoreItemIn.Building;
-        if (checkForBetterStorageSpot)
-            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotDropItemIn && building == SpotToStoreItemIn.Building)) == null)
+        if (!destroyed || building == SpotToStoreItemIn.Building)
+            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building)) == null)
                 Abandon();
     }
 }

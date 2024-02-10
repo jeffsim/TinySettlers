@@ -11,7 +11,7 @@ public class Task_TransportItemFromSpotToSpot : Task
     [SerializeField] public IItemSpotInBuilding SpotToStoreItemIn;
 
     public bool IsWalkingToSpotToGatherFrom => SubtaskIndex == 0;
-    public bool IsWalkingToSpotDropItemIn => SubtaskIndex == 2;
+    public bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 2;
 
     public Task_TransportItemFromSpotToSpot(WorkerData worker, NeedData needData, IItemSpotInBuilding spotWithItemToPickup, IItemSpotInBuilding reservedSpotToStoreItemIn) :
         base(worker, needData)
@@ -36,19 +36,17 @@ public class Task_TransportItemFromSpotToSpot : Task
     public override void OnBuildingDestroyed(BuildingData building)
     {
         base.OnBuildingDestroyed(building);
-        HandleOnBuildingDestroyedOrPaused(building, true);
+        if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, true);
     }
 
     public override void OnBuildingPauseToggled(BuildingData building)
     {
         base.OnBuildingPauseToggled(building);
-        HandleOnBuildingDestroyedOrPaused(building, false);
+        if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, false);
     }
 
     private void HandleOnBuildingDestroyedOrPaused(BuildingData building, bool destroyed)
     {
-        if (!IsRunning) return;
-
         if (SubtaskIndex < 3 && building == SpotWithItemToPickup.Building)
         {
             Abandon();
@@ -56,9 +54,8 @@ public class Task_TransportItemFromSpotToSpot : Task
         }
 
         // Check if a better spot to store in is available
-        var checkForBetterStorageSpot = !destroyed || building == SpotToStoreItemIn.Building;
-        if (checkForBetterStorageSpot)
-            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotDropItemIn ? Worker.Location : SpotWithItemToPickup.Location, IsWalkingToSpotDropItemIn && building == SpotToStoreItemIn.Building)) == null)
+        if (!destroyed || building == SpotToStoreItemIn.Building)
+            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotWithItemToPickup.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building)) == null)
                 Abandon();
     }
 }
