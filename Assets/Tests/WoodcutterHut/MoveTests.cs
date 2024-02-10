@@ -53,7 +53,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         // if (workerSubtask == 0) Debug.Log(TestName);
 
         // Create the worker and wait until they get to the to-be-tested subtask
-        var worker = Town.CreateWorkerInBuilding(buildingWorker);
+        var worker = createWorkerInBuilding(buildingWorker);
 
         waitUntilTaskAndSubtaskIndex(worker, TaskType.GatherResource, workerSubtask);
 

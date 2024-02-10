@@ -48,7 +48,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         // if (workerSubtask == 0) Debug.Log(TestName);
 
         // Create the worker and wait until they get to the to-be-tested subtask
-        var worker = Town.CreateWorkerInBuilding(buildingWorker);
+        var worker = createWorkerInBuilding(buildingWorker);
         var itemToBePickedUp = buildingWithItem.GetUnreservedItemInStorage(GameDefns.Instance.ItemDefns["plank"]);
         var originalSpotWithItem = getStorageSpotInBuildingWithItem(buildingWithItem, itemToBePickedUp);
         var pausedBuildingWithItemInIt = buildingWithItem == buildingToPause;

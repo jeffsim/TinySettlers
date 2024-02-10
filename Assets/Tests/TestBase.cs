@@ -251,7 +251,7 @@ public abstract class TestBase
         Assert.AreEqual(spot, getStorageSpotInBuildingReservedByWorker(spot.Building, worker), $"{preface(message)} Expected spot to still be reserved by worker, but it is not");
     }
 
-    protected void verify_spotIsUnreserved(IItemSpotInBuilding spot, string message = "")
+    protected void verify_spotIsUnreserved(IReservationProvider spot, string message = "")
     {
         Assert.IsNotNull(spot, $"{preface(message)} null spot");
         Assert.IsNull(spot.Reservation.ReservedBy, $"{preface(message)} Expected spot to be unreserved, but it is reserved by {spot.Reservation.ReservedBy}");
@@ -273,6 +273,21 @@ public abstract class TestBase
     {
         var actualItem = spot.ItemContainer.Item;
         Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in storage spot to be '{expectedItem}', but is '{actualItem}'");
+    }
+
+    protected void verify_ItemIsInCraftingSpot(CraftingSpotData spot, ItemData expectedItem, string message = "")
+    {
+        var items = spot.ItemsContainer.Items;
+        if (expectedItem == null)
+            Assert.AreEqual(0, items.Count, $"{preface(message)} Expected no items in crafting spot, but found {items.Count} items");
+        else
+            Assert.IsTrue(items.Contains(expectedItem), $"{preface(message)} Expected item in crafting spot to be '{expectedItem}', but is not in the list of items in the crafting spot");
+    }
+
+    protected void verify_ItemCountInCraftingSpot(IMultipleItemSpotInBuilding spot, int expectedCount, string message = "")
+    {
+        var actualCount = spot.ItemsContainer.Items.Count;
+        Assert.AreEqual(expectedCount, actualCount, $"{preface(message)} Expected {expectedCount} item(s) in crafting spot [{spot}], but it actually has {actualCount}");
     }
 
     protected void verify_ItemTypeInSpot(StorageSpotData spot, ItemDefn expectedItemType, string message = "")
@@ -346,6 +361,23 @@ public abstract class TestBase
         Assert.IsNotNull(task, $"{preface()} Worker should have a current task");
         Assert.AreEqual(expectedTaskType, actualTaskType, $"{preface()} Worker's current task should be of type {expectedTaskType} but is {actualTaskType}");
         return (T)task;
+    }
+
+    protected T getWorkerCurrentSubtaskAsType<T>(WorkerData worker) where T : Subtask
+    {
+        var subtask = worker.AI.CurrentTask.CurSubTask;
+        var actualSubtaskType = subtask.GetType();
+        var expectedSubtaskType = typeof(T);
+        Assert.IsNotNull(subtask, $"{preface()} Worker should have a current subtask");
+        Assert.AreEqual(expectedSubtaskType, actualSubtaskType, $"{preface()} Worker's current subtask should be of type {expectedSubtaskType} but is {actualSubtaskType}");
+        return (T)subtask;
+    }
+
+    protected WorkerData createWorkerInBuilding(BuildingData buildingWorker)
+    {
+        var worker = Town.CreateWorkerInBuilding(buildingWorker);
+        forceMoveWorkerAwayFromAssignedBuilding(worker);
+        return worker;
     }
 
     protected void updateTown(int times = 1)

@@ -41,7 +41,7 @@ public abstract class Task
 
     // == Reservable Spots =====================
     [SerializeField] protected List<IReservationProvider> SpotsToReserveOnStart = new();
-    [SerializeField] protected List<IReservationProvider> ReservedSpots = new();
+    [SerializeField] public List<IReservationProvider> ReservedSpots = new();
     public bool HasReservedSpot(IReservationProvider spot) => ReservedSpots.Contains(spot);
 
     // == Items ================================

@@ -36,8 +36,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
         // if (workerSubtask == 0) Debug.Log(TestName);
 
         // Create the worker and wait until they get to the to-be-tested subtask
-        var worker = Town.CreateWorkerInBuilding(buildingWorker);
-        forceMoveWorkerAwayFromAssignedBuilding(worker);
+        var worker = createWorkerInBuilding(buildingWorker);
 
         var itemDefn = GameDefns.Instance.ItemDefns["wood"];
         var spotWithWood = buildingWithItem.GetClosestUnreservedStorageSpotWithItem(worker.Location, itemDefn);

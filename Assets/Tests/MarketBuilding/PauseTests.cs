@@ -34,8 +34,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
         // if (workerSubtask == 0) Debug.Log(TestName);
 
         // Create the worker and wait until they get to the to-be-tested subtask
-        var worker = Town.CreateWorkerInBuilding(buildingWorker);
-        forceMoveWorkerAwayFromAssignedBuilding(worker);
+        var worker = createWorkerInBuilding(buildingWorker);
 
         // Create the worker and wait until they get to the to-be-tested subtask
         var itemDefn = GameDefns.Instance.ItemDefns["wood"];
@@ -51,6 +50,8 @@ public partial class MarketTests : MovePauseDestroyTestBase
             case 2: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(Subtask_SellItemInHands)); break;
             case 3: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(Subtask_SellItemInHands)); break;
         }
+        // TODO: Why doesn't this work here and in other Market_MPD tests?
+        // waitUntilTaskAndSubtaskIndex(worker, TaskType.SellItem, workerSubtask);
 
         var originalSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
         Assert.IsNotNull(originalSpotToStoreItemIn, $"{preface()} Worker should have reserved a spot in {buildingToStoreItemIn.TestId} to store the item in");

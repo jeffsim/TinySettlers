@@ -57,7 +57,8 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         Forest.GatheringSpots[2].PercentGrown = -1000; // hack to ensure they don't grow
 
         // Create the worker and wait until they get to the to-be-tested subtask
-        var worker = Town.CreateWorkerInBuilding(buildingWorker);
+        var worker = createWorkerInBuilding(buildingWorker);
+
         var spotWithWood = buildingWithItem.GetClosestUnreservedGatheringSpotWithItemToReap(worker.Location);
         var itemToBePickedUp = spotWithWood.ItemContainer.Item;
         var originalSpotWithItem = getGatheringSpotInBuildingWithItem(buildingWithItem, itemToBePickedUp);

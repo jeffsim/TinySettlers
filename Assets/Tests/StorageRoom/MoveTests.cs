@@ -42,7 +42,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         TestName += "\n  ";
 
         // Create the worker and wait until they get to the to-be-tested subtask
-        var worker = Town.CreateWorkerInBuilding(buildingWorker);
+        var worker = createWorkerInBuilding(buildingWorker);
 
         waitUntilTaskAndSubtaskIndex(worker, TaskType.TransportItemFromSpotToSpot, workerSubtask);
 

@@ -27,11 +27,11 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         {
             // Test A: Move craftingstation while worker1 is crafting item
             LoadTestTown("craftingstation_MovePauseDestroy", subtask);
-            runCraftingTest("Test A", subtask);
+            runMoveTest("Test A", subtask);
         }
     }
 
-    void runCraftingTest(string testName, int workerSubtask)
+    void runMoveTest(string testName, int workerSubtask)
     {
         BuildingData buildingWithItem = CraftingStation;
         BuildingData buildingWorker = CraftingStation;
@@ -57,9 +57,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         // if (workerSubtask == 0) Debug.Log(TestName);
 
         // Create the worker and wait until they get to the to-be-tested subtask
-        var worker = Town.CreateWorkerInBuilding(buildingWorker);
-        forceMoveWorkerAwayFromAssignedBuilding(worker);
-
+        var worker = createWorkerInBuilding(buildingWorker);
         waitUntilTaskAndSubtaskIndex(worker, TaskType.Task_CraftItem, workerSubtask);
 
         // Storage original state prior to making the change we're testing

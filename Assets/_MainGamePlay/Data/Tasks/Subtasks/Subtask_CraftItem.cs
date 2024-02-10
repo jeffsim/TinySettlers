@@ -17,5 +17,8 @@ public class Subtask_CraftItem : Subtask
     public override void SubtaskComplete()
     {
         Task.Worker.Hands.SetItem(new ItemData() { DefnId = CraftingItemDefnId });
+
+        // Consume the resources in the CraftingSpot
+        ItemsSpot.ItemsContainer.ClearItems();
     }
 }
