@@ -327,7 +327,7 @@ public class TownTaskMgr
         // FIRST, determine if need is meetable
 
         // Generate the list of all buildings that the resource can be gathered from (and have an available gatheringspot); if none then abort
-        var buildingsThatResourceCanBeGatheredFrom = Town.Buildings.Where(building => building.ResourceCanBeGatheredFromHere(need.NeededItem) && !building.IsPaused).ToList();
+        var buildingsThatResourceCanBeGatheredFrom = Town.Buildings.Where(building => building.ResourceCanBeGatheredFromHere(need.NeededItem) && !building.IsPaused && !building.IsDestroyed).ToList();
         if (buildingsThatResourceCanBeGatheredFrom.Count == 0) return;
 
         // =====================================================================================
@@ -413,7 +413,7 @@ public class TownTaskMgr
     {
         NeedData highestNeed = null;
         foreach (var building in Town.Buildings)
-            if (building.HasAvailableStorageSpot && !building.IsPaused && building.NumWorkers > 0)
+            if (building.HasAvailableStorageSpot && !building.IsPaused && !building.IsDestroyed && building.NumWorkers > 0)
                 foreach (var need in building.Needs)
                 {
                     // only fulfill itemneeds

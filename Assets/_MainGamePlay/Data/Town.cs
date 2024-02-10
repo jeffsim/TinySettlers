@@ -191,7 +191,7 @@ public class TownData : BaseData
 
         foreach (var building in Buildings)
         {
-            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot && !building.IsPaused)
+            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot && !building.IsPaused && !building.IsDestroyed)
             {
                 var buildingMatchesSearchType = searchType switch
                 {
@@ -222,7 +222,7 @@ public class TownData : BaseData
         dist = float.MaxValue;
         foreach (var building in Buildings)
         {
-            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot && !building.IsPaused)
+            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot && !building.IsPaused && !building.IsDestroyed)
             {
                 var buildingMatchesSearchType = searchType switch
                 {
@@ -253,7 +253,7 @@ public class TownData : BaseData
         dist = float.MaxValue;
         foreach (var building in Buildings)
         {
-            if (!building.IsPaused && building.ResourceCanBeGatheredFromHere(itemDefn))
+            if (!building.IsPaused && !building.IsDestroyed && building.ResourceCanBeGatheredFromHere(itemDefn))
             {
                 var distanceToBuilding = location.DistanceTo(building.Location);
                 if (distanceToBuilding < dist)

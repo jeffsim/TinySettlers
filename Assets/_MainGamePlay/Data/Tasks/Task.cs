@@ -251,7 +251,7 @@ public abstract class Task
         originalReservedSpot.Reservation.Unreserve();
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
         originalReservedSpot.Reservation.ReserveBy(reservedBy);
-        if (optimalStorageSpotToDeliverItemTo == null && originalReservedSpot.Building.IsPaused)
+        if (optimalStorageSpotToDeliverItemTo == null && (originalReservedSpot.Building.IsPaused || originalReservedSpot.Building.IsDestroyed))
         {
             // Couldn't find any and original spot is no longer valid
             return null;
@@ -275,7 +275,7 @@ public abstract class Task
         originalReservedSpot.Reservation.Unreserve();
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableGatheringSpot(closestLocation, itemDefn, Worker);
         originalReservedSpot.Reservation.ReserveBy(reservedBy);
-        if (optimalStorageSpotToDeliverItemTo == null && originalReservedSpot.Building.IsPaused)
+        if (optimalStorageSpotToDeliverItemTo == null && (originalReservedSpot.Building.IsPaused || originalReservedSpot.Building.IsDestroyed))
         {
             // Couldn't find any and original spot is no longer valid
             return null;

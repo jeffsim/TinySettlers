@@ -75,7 +75,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         moveBuilding(buildingToMove, 1, 1);
 
         var newTask = worker.AI.CurrentTask as Task_GatherResource;
-        Assert.AreEqual(originalTask, newTask,$"{preface()} Task shouldn't have changed");
+        Assert.AreEqual(originalTask, newTask, $"{preface("", 1)} Task shouldn't have changed");
 
         var newSpotToGatherFrom = newTask.SpotToGatherFrom;
         var newSpotToStoreItemIn = newTask.SpotToStoreItemIn;

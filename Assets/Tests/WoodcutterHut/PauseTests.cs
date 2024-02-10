@@ -111,7 +111,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             verify_spotIsUnreserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
             verify_AssignedBuilding(worker, WoodcuttersHut, $"{preface("", 1)} Worker should still be assigned to the woodcutters hut");
 
-            if (buildingToPause == buildingWithItem)
+            if (pausedBuildingWithItemInIt)
             {
                 // nothing should have changed; we're already past the forest
                 verify_WorkerTaskType(TaskType.GatherResource, worker, $"{preface("", 1)} Nothing should have changed");
