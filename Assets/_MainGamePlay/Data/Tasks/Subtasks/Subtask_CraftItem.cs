@@ -18,16 +18,4 @@ public class Subtask_CraftItem : Subtask
     {
         Task.Worker.Hands.SetItem(new ItemData() { DefnId = CraftingItemDefnId });
     }
-
-    public override void OnAnyBuildingPauseToggled(BuildingData building)
-    {
-        if (building.IsPaused && building == ItemsSpot.Building)
-            Task.Abandon();
-    }
-
-    public override void OnAnyBuildingDestroyed(BuildingData destroyedBuilding)
-    {
-        if (destroyedBuilding == ItemsSpot.Building)
-            Task.Abandon();
-    }
 }

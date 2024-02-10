@@ -70,7 +70,6 @@ public class Task_CraftItem : Task
         // if explicit item then already dropped in storage spot; if implicit then create now
         if (itemBeingCrafted.GoodType == GoodType.implicitGood)
             Worker.Assignment.AssignedTo.Town.Gold += itemBeingCrafted.BaseSellPrice;
-
         base.AllSubtasksComplete();
     }
 
@@ -81,30 +80,4 @@ public class Task_CraftItem : Task
         ReserveSpot(spot);
         return spot;
     }
-
-    // public override void InitializeStateMachine()
-    // {
-    //     // Transfer resources from our building's storage to the crafting spot
-    //     foreach (var resource in itemBeingCrafted.ResourcesNeededForCrafting)
-    //         for (int i = 0; i < resource.Count; i++)
-    //         {
-    //             var resourceSpot = ReserveCraftingResourceStorageSpotForItem(resource.Item, reservedCraftingSpot.Location);
-    //             Subtasks.Add(new Subtask_WalkToItemSpot(this, resourceSpot));
-    //             Subtasks.Add(new Subtask_PickupItemFromItemSpot(this, resourceSpot));
-    //             Subtasks.Add(new Subtask_WalkToMultipleItemSpot(this, reservedCraftingSpot));
-    //             Subtasks.Add(new Subtask_DropItemInMultipleItemSpot(this, reservedCraftingSpot));
-    //         }
-
-    //     // craft the item
-    //     Subtasks.Add(new Subtask_CraftItem(this, CraftingItemDefnId, reservedCraftingSpot));
-
-    //     if (itemBeingCrafted.GoodType == GoodType.explicitGood)
-    //     {
-    //         // we'll store the crafted good in the same spot that the closest resource was stored in
-    //         // TODO: Ensure I handle unreserving properly below
-    //         var storageSpotForCraftedGood = reservedCraftingSpot.Location.GetClosest(reservedCraftingSpot.Building.StorageSpots);
-    //         Subtasks.Add(new Subtask_WalkToItemSpot(this, storageSpotForCraftedGood));
-    //         Subtasks.Add(new Subtask_DropItemInItemSpot(this, storageSpotForCraftedGood));
-    //     }
-    // }
 }

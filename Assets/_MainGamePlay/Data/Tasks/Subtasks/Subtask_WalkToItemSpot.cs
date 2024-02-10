@@ -18,16 +18,4 @@ public class Subtask_WalkToItemSpot : BaseSubtask_Moving
         ItemSpot = itemSpot;
         UpdateMoveTargetWhenBuildingMoves(ItemSpot.Building);
     }
-
-    // public override void OnAnyBuildingPauseToggled(BuildingData building)
-    // {
-    //     if (building.IsPaused && building == ItemSpot.Building)
-    //         Task.Abandon();
-    // }
-
-    // public override void OnAnyBuildingDestroyed(BuildingData building)
-    // {
-    //     if (building == ItemSpot.Building)
-    //         Task.Abandon();
-    // }
 }

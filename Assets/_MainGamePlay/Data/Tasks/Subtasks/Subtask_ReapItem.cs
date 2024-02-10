@@ -11,16 +11,4 @@ public class Subtask_ReapItem : Subtask
         ItemSpot = itemSpot;
         UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);
     }
-
-    // public override void OnAnyBuildingPauseToggled(BuildingData building)
-    // {
-    //     if (building.IsPaused && building == ItemSpot.Building)
-    //         Task.Abandon();
-    // }
-
-    // public override void OnAnyBuildingDestroyed(BuildingData building)
-    // {
-    //     if (building == ItemSpot.Building)
-    //         Task.Abandon();
-    // }
 }

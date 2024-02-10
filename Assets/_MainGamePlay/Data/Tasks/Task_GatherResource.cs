@@ -49,19 +49,17 @@ public class Task_GatherResource : Task
     public override void OnBuildingDestroyed(BuildingData building)
     {
         base.OnBuildingDestroyed(building);
-        HandleOnBuildingDestroyedOrPaused(building, true);
+        if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, true);
     }
 
     public override void OnBuildingPauseToggled(BuildingData building)
     {
         base.OnBuildingPauseToggled(building);
-        HandleOnBuildingDestroyedOrPaused(building, false);
+        if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, false);
     }
 
     private void HandleOnBuildingDestroyedOrPaused(BuildingData building, bool destroyed)
     {
-        if (!IsRunning) return;
-
         if (SubtaskIndex < 4 && building == SpotToGatherFrom.Building)
         {
             Abandon();

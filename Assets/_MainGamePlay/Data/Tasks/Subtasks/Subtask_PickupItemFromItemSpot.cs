@@ -19,16 +19,4 @@ public class Subtask_PickupItemFromItemSpot : Subtask
         Task.Worker.Hands.SetItem(ItemSpot.ItemContainer.ClearItem());
         Debug.Assert(Task.Worker.Hands.HasItem);
     }
-
-    // public override void OnAnyBuildingPauseToggled(BuildingData building)
-    // {
-    //     if (building.IsPaused && building == ItemSpot.Building)
-    //         Task.Abandon();
-    // }
-
-    // public override void OnAnyBuildingDestroyed(BuildingData building)
-    // {
-    //     if (building == ItemSpot.Building)
-    //         Task.Abandon();
-    // }
 }

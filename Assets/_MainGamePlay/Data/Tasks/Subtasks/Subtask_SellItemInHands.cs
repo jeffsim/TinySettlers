@@ -16,16 +16,4 @@ public class Subtask_SellItemInHands : Subtask
     {
         Task.Worker.Town.ItemSold(Task.Worker.Hands.ClearItem());
     }
-
-    public override void OnAnyBuildingPauseToggled(BuildingData building)
-    {
-        if (building.IsPaused && building == ItemSpot.Building)
-            Task.Abandon();
-    }
-
-    public override void OnAnyBuildingDestroyed(BuildingData destroyedBuilding)
-    {
-        if (destroyedBuilding == ItemSpot.Building)
-            Task.Abandon();
-    }
 }

@@ -21,16 +21,4 @@ public class Subtask_DropItemInMultipleItemSpot : Subtask
     {
         Task.Worker.DropItemInHandInSpot(ItemsSpot);
     }
-
-    public override void OnAnyBuildingPauseToggled(BuildingData building)
-    {
-        if (building.IsPaused && building == ItemsSpot.Building)
-            Task.Abandon();
-    }
-
-    public override void OnAnyBuildingDestroyed(BuildingData destroyedBuilding)
-    {
-        if (destroyedBuilding == ItemsSpot.Building)
-            Task.Abandon();
-    }
 }

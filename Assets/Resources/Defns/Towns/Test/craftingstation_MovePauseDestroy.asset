@@ -17,7 +17,7 @@ MonoBehaviour:
   Width: 3
   Height: 3
   Tiles: g,g,g,g,g,g,g,g,g
-  WorldX: -600
+  WorldX: 0
   WorldY: 600
   Buildings:
   - IsEnabled: 1
@@ -28,7 +28,7 @@ MonoBehaviour:
     StartingItemsInBuilding:
     - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
       Count: 2
-    NumWorkersStartAtBuilding: 1
+    NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: dda0fe43be1ab4dc695d54f1a2a23154, type: 2}
     TestId: 
