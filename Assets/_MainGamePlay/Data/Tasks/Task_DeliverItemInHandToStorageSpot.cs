@@ -1,7 +1,7 @@
 using System;
 
 [Serializable]
-public class Task_DeliverItemInHandToStorageSpot : Task
+public class Task_DeliverItemInHandToStorageSpot : NewBaseTask
 {
     public override string ToString() => "Deliver item in hand to storage spot";
     public override TaskType Type => TaskType.DeliverItemInHandToStorageSpot;
@@ -12,9 +12,13 @@ public class Task_DeliverItemInHandToStorageSpot : Task
         ReservedItemSpot = itemSpot;
     }
 
-    public override void InitializeStateMachine()
+    public override Subtask GetNextSubtask()
     {
-        Subtasks.Add(new Subtask_WalkToItemSpot(this, ReservedItemSpot));
-        Subtasks.Add(new Subtask_DropItemInItemSpot(this, ReservedItemSpot));
+        return SubtaskIndex switch
+        {
+            0 => new Subtask_WalkToItemSpot(this, ReservedItemSpot),
+            1 => new Subtask_DropItemInItemSpot(this, ReservedItemSpot),
+            _ => null // No more subtasks
+        };
     }
 }

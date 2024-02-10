@@ -271,7 +271,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(new Task_PickupAbandonedItemFromGround(worker, need, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new Task_TransportItemFromGroundToSpot(worker, need, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
