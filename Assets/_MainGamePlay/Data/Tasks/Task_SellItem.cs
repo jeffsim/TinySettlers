@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class Task_SellItem : Task
+public class Task_SellItem : NewBaseTask
 {
     public override string ToString() => $"Sell item {GetTaskItem()}";
     public override TaskType Type => TaskType.SellItem;
@@ -14,10 +14,15 @@ public class Task_SellItem : Task
         SpotWithItemToSell = ReserveSpotOnStart(spotWithItemToSell);
     }
 
-    public override void InitializeStateMachine()
+    public override Subtask GetNextSubtask()
     {
-        Subtasks.Add(new Subtask_WalkToItemSpot(this, SpotWithItemToSell));
-        Subtasks.Add(new Subtask_PickupItemFromItemSpot(this, SpotWithItemToSell));
-        Subtasks.Add(new Subtask_SellItemInHands(this, SpotWithItemToSell));
+        return SubtaskIndex switch
+        {
+            0 => new Subtask_WalkToItemSpot(this, SpotWithItemToSell),
+            1 => new Subtask_PickupItemFromItemSpot(this, SpotWithItemToSell),
+            2 => new Subtask_SellItemInHands(this, SpotWithItemToSell),
+            _ => null // No more subtasks
+        };
     }
+
 }
