@@ -1,3 +1,4 @@
+using System;
 using NUnit.Framework;
 
 public partial class StorageRoomTests : MovePauseDestroyTestBase
@@ -5,14 +6,17 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
     [Test]
     public void StorageRoom_DestroyTests()
     {
-        //   subtask=0: Destroy [buildingToDestroy] while [workerToTest] is walking to [buildingWithItem] to pick something up to store in [buildingToStoreItemIn]
-        //   subtask=1: Destroy [buildingToDestroy] while [workerToTest] is picking up item in [buildingWithItem] to store in [buildingToStoreItemIn]
-        //   subtask=2: Destroy [buildingToDestroy] while [workerToTest] is walking to [buildingToStoreItemIn]
-        //   subtask=3: Destroy [buildingToDestroy] while [workerToTest] is dropping item in [buildingToStoreItemIn]
-        //   subtask=4: Destroy [buildingToDestroy] while [workerToTest] is walking to [buildingToStoreItemIn] and there are no available storage spots
-        //   subtask=5: Destroy [buildingToDestroy] while [workerToTest] is dropping item in [buildingToStoreItemIn] and there are no available storage spots
+        // subtask=0: Pause [buildingToPause] while [workerToTest] is walking to [buildingWithItem] to pick something up to store in [buildingToStoreItemIn]
+        // subtask=1: Pause [buildingToPause] while [workerToTest] is picking up item in [buildingWithItem] to store in [buildingToStoreItemIn]
+        // subtask=2: worker is unreserving spot item was in (shouldn't hit this since should complete instantly)
+        // subtask=3: Pause [buildingToPause] while [workerToTest] is walking to [buildingToStoreItemIn]
+        // subtask=4: Pause [buildingToPause] while [workerToTest] is dropping item in [buildingToStoreItemIn]
+        // subtask=5: Destroy [buildingToDestroy] while [workerToTest] is walking to [buildingToStoreItemIn] and there are no available storage spots
+        // subtask=6: Destroy [buildingToDestroy] while [workerToTest] is dropping item in [buildingToStoreItemIn] and there are no available storage spots
         for (int subtask = 0; subtask < 6; subtask++)
         {
+            if (subtask == 2) continue;
+
             // Test A: Destroy store1 while worker1 is getting an item from woodcutter to store in store1
             // Test B: Destroy store1 while worker2 is getting an item from woodcutter to store in store1
             // Test C: Destroy store2 while worker2 is getting an item from woodcutter to store in store1
@@ -52,19 +56,13 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         var destroyedBuildingOfWorker = buildingWorker == buildingToDestroy;
         var workerOriginalAssignedBuilding = worker.Assignment.AssignedTo;
 
-        switch (workerSubtask)
-        {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.TransportItemFromSpotToSpot, typeof(Subtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.TransportItemFromSpotToSpot, typeof(Subtask_PickupItemFromItemSpot)); break;
-            case 2: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
-            case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
-            case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
-            case 5: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
-        }
+        waitUntilTaskAndSubtaskIndex(worker, TaskType.TransportItemFromSpotToSpot, workerSubtask > 4 ? workerSubtask - 2 : workerSubtask);
+
+        var originalTask = getWorkerCurrentTaskAsType<Task_TransportItemFromSpotToSpot>(worker);
         var originalSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
         Assert.IsNotNull(originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in {buildingToStoreItemIn.TestId} to store the item in");
 
-        if (workerSubtask > 3)
+        if (workerSubtask > 4)
             fillAllTownStorageWithItem("plank");
         int origNumItemsInTownStorage = GetNumItemsInTownStorage();
         int origNumItemsOnGround = Town.ItemsOnGround.Count;
@@ -73,67 +71,75 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         Town.DestroyBuilding(buildingToDestroy);
 
         // If the worker is returning with the item in hand, then we need to wait one Town turn so that the worker can decide to carry the item they're holding to the Camp.
-        if (workerSubtask >= 2)
+        if (workerSubtask >= 3 || originalTask.IsAbandoned)
             updateTown();
 
         // Verify new state.
-        if (workerSubtask == 0 || workerSubtask == 1)// WorkerSubtask_WalkToItemSpot and WorkerSubtask_PickupItemFromBuilding
+        verify_AssignedBuilding(worker, destroyedBuildingOfWorker ? Camp : workerOriginalAssignedBuilding);
+        if (workerSubtask < 2)// WorkerSubtask_WalkToItemSpot and WorkerSubtask_PickupItemFromBuilding
         {
             verify_ItemDefnInHand(worker, null);
             if (destroyedBuildingWithItemInIt)
             {
-                verify_WorkerTaskType(TaskType.Idle, worker);
+                verify_WorkerTaskType(TaskType.PickupItemFromGround, worker, $"{preface("", 1)} Worker should be picking up the item that was dropped from the building"); // will become Task_CleanupItemOnGround
                 verify_ItemsOnGround(1);
             }
-            else
+            else if (destroyedBuildingOfWorker)
+            {
+                // worker is now assigned to camp, and it getting the same item (maybe?)
+                verify_spotIsReserved(originalSpotWithItem, "Storage spot that originally contained the item should be reserved");
+                verify_WorkerTaskType(TaskType.TransportItemFromSpotToSpot, worker);
+            }
+            else if (destroyedBuildingItemWillBeStoredIn)
             {
                 verify_ItemInStorageSpot(originalSpotWithItem, itemToBePickedUp);
                 verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
-                if (destroyedBuildingOfWorker)
-                {
-                    verify_spotIsUnreserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
-                    verify_WorkerTaskType(TaskType.Idle, worker);
-                }
-                else if (destroyedBuildingItemWillBeStoredIn)
-                {
-                    verify_spotIsReserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
-                    verify_WorkerTaskType(TaskType.TransportItemFromSpotToSpot, worker);
-                    Assert.AreNotEqual(((Task_TransportItemFromSpotToSpot)worker.AI.CurrentTask).SpotToStoreItemIn.Building, buildingToDestroy, $"{preface()} Worker should have reserved a spot in another building to store the item in");
-                }
+
+                verify_spotIsReserved(originalSpotWithItem, "Storage spot that originally contained the item should be reserved");
+                verify_WorkerTaskType(TaskType.TransportItemFromSpotToSpot, worker, $"{preface("", 1)} Worker should still be transporting the item, but to a new building");
+                Assert.AreNotEqual(originalTask.SpotToStoreItemIn.Building, buildingToDestroy, $"{preface("", 1)} Worker should have reserved a spot in another building to store the item in");
             }
+            else Assert.Fail($"{preface("", 1)} unhandled case");
         }
-        else if (workerSubtask == 2 || workerSubtask == 3) // WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot
+        else if (workerSubtask < 5) // WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot
         {
             verify_ItemInHand(worker, itemToBePickedUp);
             verify_ItemInStorageSpot(originalSpotWithItem, null);
             verify_spotIsUnreserved(originalSpotWithItem, "Storage spot that originally contained the item should be unreserved");
-            var task = worker.AI.CurrentTask as Task_DeliverItemInHandToStorageSpot;
-
             if (destroyedBuildingOfWorker)
             {
                 verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding even though their building was destroyed");
+                var newTask = getWorkerCurrentTaskAsType<Task_DeliverItemInHandToStorageSpot>(worker);
                 if (destroyedBuildingItemWillBeStoredIn)
                 {
                     verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
-                    Assert.AreNotEqual(task.ReservedItemSpot.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
+                    Assert.AreNotEqual(newTask.ReservedItemSpot.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
                 }
                 else
                 {
-                    verify_spotIsReserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should still be reserved");
-                    Assert.AreEqual(task.ReservedItemSpot.Building, originalSpotToStoreItemIn.Building, $"{preface("", 1)} Worker should still have reserved the same spot to store the item in");
+                    // could have found a closer spot
+                    var newSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
+                    if (originalSpotToStoreItemIn == newSpotToStoreItemIn)
+                        verify_spotIsReserved(originalSpotToStoreItemIn, $"{preface("", 1)}");
+                    else
+                        verify_spotIsUnreserved(originalSpotToStoreItemIn, $"{preface("", 1)}");
                 }
             }
-            if (destroyedBuildingWithItemInIt)
+            else if (destroyedBuildingWithItemInIt)
             {
-                verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker);
+                var newTask = getWorkerCurrentTaskAsType<Task_TransportItemFromSpotToSpot>(worker);
+                Assert.AreEqual(originalTask, newTask, $"{preface("", 1)} Worker should have same task");
                 verify_spotIsReserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be reserved");
             }
-            if (destroyedBuildingItemWillBeStoredIn)
+            else if (destroyedBuildingItemWillBeStoredIn)
             {
-                verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker);
+                var newTask = getWorkerCurrentTaskAsType<Task_TransportItemFromSpotToSpot>(worker);
+                Assert.AreEqual(originalTask, newTask, $"{preface("", 1)} Worker should have same task");
+
                 verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
-                Assert.AreNotEqual(task.ReservedItemSpot.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
+                Assert.AreNotEqual(newTask.SpotToStoreItemIn.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
             }
+            else Assert.Fail($"{preface("", 1)} unhandled case");
         }
         else // STORAGE FULL: WorkerSubtask_WalkToItemSpot and WorkerSubtask_DropItemInItemSpot 
         {
@@ -144,21 +150,36 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
             verify_AssignedBuilding(worker, destroyedBuildingOfWorker ? Camp : workerOriginalAssignedBuilding);
             Assert.AreEqual(origNumItemsInTownStorage + origNumItemsOnGround + origNumItemsInWorkersHands, newNumItemsInTownStorage + newNumItemsOnGround + newNumItemsInWorkersHands, $"{preface("", 1)} Number of items in town (in storage+onground) should not have changed");
 
-            // worker had a reserved spot in store1;
-            //  if store1 was destroyed then their reservation should be removed and they should be assigned to camp and should have no item.  we were able to fill it above.
-            //  if store2 was destroyed then their reservation should be valid and they should be assigned to origBuilding and should still be carrying to store1.  we couldn't fill it above.
-            //  if woodcutter was destroyed then their reservation should be valid and they should be assigned to origBuilding and should still be carrying to store1.  we couldn't fill it above.
-            if (buildingToDestroy.TestId == "store1")
+            if (destroyedBuildingWithItemInIt)
             {
-                verify_ItemInHand(worker, null);
-                verify_WorkerTaskType(TaskType.Idle, worker);
-                verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
+                // nothing should have changed; we're already past the pick up spot
+                verify_WorkerTaskType(TaskType.TransportItemFromSpotToSpot, worker, $"{preface("", 1)} Nothing should have changed");
+                // The worker could have found a better reserved spot. If so, then the original spot should be unreserved.
+                var newSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
+                if (originalSpotToStoreItemIn == newSpotToStoreItemIn)
+                    verify_spotIsReserved(originalSpotToStoreItemIn, $"{preface("", 1)}");
+                else
+                    verify_spotIsUnreserved(originalSpotToStoreItemIn, $"{preface("", 1)}");
             }
             else
             {
-                verify_ItemInHand(worker, itemToBePickedUp);
-                verify_spotReservedByWorker(originalSpotToStoreItemIn, worker);
-                verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
+                // if we paused the building to store in then worker can't deliver, so drops item to ground. in all other cases is still carrying it, but if
+                // assigned building was paused then they're carrying to Camp now
+                if (destroyedBuildingItemWillBeStoredIn)
+                {
+                    verify_ItemInHand(worker, null);
+                    verify_WorkerTaskType(TaskType.Idle, worker);
+                    verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
+                }
+                else
+                {
+                    verify_ItemInHand(worker, itemToBePickedUp);
+                    verify_spotReservedByWorker(originalSpotToStoreItemIn, worker);
+                    if (destroyedBuildingOfWorker)
+                        verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
+                    else
+                        verify_WorkerTaskType(TaskType.GatherResource, worker, "Should still be delivering the item that the worker is holding");
+                }
             }
         }
     }

@@ -71,7 +71,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 
         waitUntilTaskAndSubtaskIndex(worker, TaskType.GatherResource, workerSubtask > 5 ? workerSubtask - 2 : workerSubtask);
 
-        var originalTask = worker.AI.CurrentTask as Task_GatherResource;
+        var originalTask = getWorkerCurrentTaskAsType<Task_GatherResource>(worker);
         var originalSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
         Assert.IsNotNull(originalSpotToStoreItemIn, $"{preface()} Worker should have reserved a spot in {buildingToStoreItemIn.TestId} to store the item in");
 

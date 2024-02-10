@@ -332,6 +332,16 @@ public abstract class TestBase
     }
     protected ItemData CreateItem(string itemDefnId) => new() { DefnId = itemDefnId };
 
+    protected T getWorkerCurrentTaskAsType<T>(WorkerData worker) where T : Task
+    {
+        var task = worker.AI.CurrentTask;
+        var actualTaskType = task.GetType();
+        var expectedTaskType = typeof(T);
+        Assert.IsNotNull(task, $"{preface()} Worker should have a current task");
+        Assert.AreEqual(expectedTaskType, actualTaskType, $"{preface()} Worker's current task should be of type {expectedTaskType} but is {actualTaskType}");
+        return (T)task;
+    }
+
     protected void updateTown(int times = 1)
     {
         for (int i = 0; i < times; i++)

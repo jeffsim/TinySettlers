@@ -7,7 +7,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
     {
         // subtask=0: Move [buildingToMove] while [workerToTest] is walking to [buildingWithItem] to pick something up to store in [buildingToStoreItemIn]
         // subtask=1: Move [buildingToMove] while [workerToTest] is picking up item in [buildingWithItem] to store in [buildingToStoreItemIn]
-        // subtask=2: woodcutter is unreserving spot in forest (shouldn't hit this since should complete instantly)
+        // subtask=2: worker is unreserving spot item was in (shouldn't hit this since should complete instantly)
         // subtask=3: Move [buildingToMove] while [workerToTest] is walking to [buildingToStoreItemIn]
         // subtask=4: Move [buildingToMove] while [workerToTest] is dropping item in [buildingToStoreItemIn]
         for (int subtask = 0; subtask < 5; subtask++)
