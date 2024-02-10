@@ -22,7 +22,7 @@ public class Task_GatherResource : Task
         Subtasks.Add(new Subtask_WalkToItemSpot(this, null));
         Subtasks.Add(new Subtask_ReapItem(this, null));
         Subtasks.Add(new Subtask_PickupItemFromItemSpot(this, null));
-        Subtasks.Add(new Subtask_UnreserveSpot(this, null)); //preemptively unreserve the spot so that others can use it
+        Subtasks.Add(new Subtask_UnreserveSpot(this));
         Subtasks.Add(new Subtask_WalkToItemSpot(this, null));
         Subtasks.Add(new Subtask_DropItemInItemSpot(this, null));
     }
