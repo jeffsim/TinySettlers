@@ -25,7 +25,7 @@ public class TownTaskMgr
     }
 
     // Only do this for one worker per Town update, because need priorities change
-    private WorkerTask GetBestTaskForOneIdleWorker()
+    private Task GetBestTaskForOneIdleWorker()
     {
         // Assume we find no task
         HighestPriorityTask.Task = null;
@@ -75,15 +75,16 @@ public class TownTaskMgr
             // reserved a storage spot for the item, but we'll first look around to see if any building needs the item.  If so, 
             // we'll assign the worker to that building.  If not, we'll deliver the item to the reserved storage spot.
             NeedData highestNeed = GetHighestUnmetNeedForItemInBuildingWithAvailableStorage(worker.Hands.Item.DefnId);
+            IItemSpotInBuilding spotToReserve = null;
             if (highestNeed != null)
             {
                 // found a building that needs the item and can store it.  Swap out the storage spot reserved for the item with the building's storage spot
                 // unreserve the original storage spot
-                worker.StorageSpotReservedForItemInHand?.Reservation.Unreserve();
+                spotToReserve?.Reservation.Unreserve();
 
                 // Get the nearest storage spot in the building that needs the item and reserve it for this worker to carry the item-in-hand to.
-                worker.StorageSpotReservedForItemInHand = highestNeed.BuildingWithNeed.GetClosestEmptyStorageSpot(worker.Location);
-                worker.StorageSpotReservedForItemInHand.Reservation.ReserveBy(worker);
+                spotToReserve = highestNeed.BuildingWithNeed.GetClosestEmptyStorageSpot(worker.Location);
+                spotToReserve.Reservation.ReserveBy(worker);
 
                 // Tell the Need that we'll be fulfilling it now.
                 highestNeed.AssignWorkerToMeetNeed(worker);
@@ -91,24 +92,24 @@ public class TownTaskMgr
             else
             {
                 // No building needs it; find a storage spot for it
-                if (worker.StorageSpotReservedForItemInHand == null)
+                if (spotToReserve == null)
                 {
                     // We didn't have a storage spot reserved; find the nearest storage spot and reserve it.  If we can't find one, then abandon (drop) the item and abort
-                    worker.StorageSpotReservedForItemInHand = FindAndReserveOptimalStorageSpotToDeliverItemTo(worker);
+                    spotToReserve = FindAndReserveOptimalStorageSpotToDeliverItemTo(worker);
                 }
-                else if (worker.StorageSpotReservedForItemInHand.Building.IsPaused)
+                else if (spotToReserve.Building.IsPaused)
                 {
                     // We had a storage spot reserved for hte item, but it's in a building that is now Paused.  When a building is paused, it's storage spots are no longer valid.
                     // So, we need to find a new storage spot for the item.  If we can't find one, then abandon (drop) the item and abort
-                    worker.StorageSpotReservedForItemInHand.Reservation.Unreserve();
-                    worker.StorageSpotReservedForItemInHand = FindAndReserveOptimalStorageSpotToDeliverItemTo(worker);
+                    spotToReserve.Reservation.Unreserve();
+                    spotToReserve = FindAndReserveOptimalStorageSpotToDeliverItemTo(worker);
                 }
                 else
                 {
                     // The Worker has a storage spot reserved for the item they're holding and it's still valid, so we'll use it. Nothing to do here
                 }
 
-                if (worker.StorageSpotReservedForItemInHand == null)
+                if (spotToReserve == null)
                 {
                     worker.DropItemOnGround();
                     worker.AI.StartIdling();
@@ -116,7 +117,7 @@ public class TownTaskMgr
                 }
                 highestNeed = worker.OriginalPickupItemNeed;
             }
-            HighestPriorityTask.Set(new WorkerTask_DeliverItemInHandToStorageSpot(worker, highestNeed), highestPrioritySoFar);
+            HighestPriorityTask.Set(new Task_DeliverItemInHandToStorageSpot(worker, highestNeed, spotToReserve), highestPrioritySoFar);
             return true;
         }
 
@@ -146,7 +147,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(new WorkerTask_SellItem(worker, need, closestSpotWithItemToWorker), highestPrioritySoFar);
+                HighestPriorityTask.Set(new Task_SellItem(worker, need, closestSpotWithItemToWorker), highestPrioritySoFar);
             }
         }
     }
@@ -206,7 +207,7 @@ public class TownTaskMgr
                 // a better (non gathering) task to perform may still be found by caller.
                 var closestStorageSpot = need.BuildingWithNeed.GetClosestEmptyStorageSpot(optimalSpot.Location);
                 Debug.Assert(closestStorageSpot != null, "No storage spot found for item that we're about to gather");
-                HighestPriorityTask.Set(new WorkerTask_PickupItemFromStorageSpot(worker, need, optimalSpot, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new Task_PickupItemFromStorageSpot(worker, need, optimalSpot, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
@@ -239,7 +240,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(new WorkerTask_CraftItem(worker, need, craftingSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new Task_CraftItem(worker, need, craftingSpot), highestPrioritySoFar);
             }
         }
     }
@@ -269,7 +270,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(new WorkerTask_PickupAbandonedItemFromGround(worker, need, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new Task_PickupAbandonedItemFromGround(worker, need, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
@@ -314,7 +315,7 @@ public class TownTaskMgr
             if (priorityOfMeetingNeedWithThisWorker > highestPrioritySoFar)
             {
                 highestPrioritySoFar = priorityOfMeetingNeedWithThisWorker;
-                HighestPriorityTask.Set(new WorkerTask_PickupItemFromStorageSpot(worker, need, spotWithItem, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new Task_PickupItemFromStorageSpot(worker, need, spotWithItem, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }
@@ -368,7 +369,7 @@ public class TownTaskMgr
                 // a better (non gathering) task to perform may still be found by caller.
                 var closestStorageSpot = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, optimalGatheringSpot.Location, worker);
                 Debug.Assert(closestStorageSpot != null, "No storage spot found for item that we're about to gather");
-                HighestPriorityTask.Set(new WorkerTask_PickupGatherableResource(worker, need, optimalGatheringSpot, closestStorageSpot), highestPrioritySoFar);
+                HighestPriorityTask.Set(new Task_GatherResource(worker, need, optimalGatheringSpot, closestStorageSpot), highestPrioritySoFar);
             }
         }
     }

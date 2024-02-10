@@ -46,10 +46,10 @@ public partial class MarketTests : MovePauseDestroyTestBase
 
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(WorkerSubtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(WorkerSubtask_PickupItemFromBuilding)); break;
-            case 2: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(WorkerSubtask_SellItemInHands)); break;
-            case 3: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(WorkerSubtask_SellItemInHands)); break;
+            case 0: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(Subtask_WalkToItemSpot)); break;
+            case 1: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(Subtask_PickupItemFromItemSpot)); break;
+            case 2: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(Subtask_SellItemInHands)); break;
+            case 3: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(Subtask_SellItemInHands)); break;
         }
 
         var originalSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
@@ -84,7 +84,8 @@ public partial class MarketTests : MovePauseDestroyTestBase
 
             verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker);
             verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
-            Assert.AreNotEqual(worker.StorageSpotReservedForItemInHand.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
+            var task = worker.AI.CurrentTask as Task_DeliverItemInHandToStorageSpot;
+            Assert.AreNotEqual(task.ReservedItemSpot.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
         }
         else // STORAGE FULL: WorkerSubtask_SellItemInHands
         {

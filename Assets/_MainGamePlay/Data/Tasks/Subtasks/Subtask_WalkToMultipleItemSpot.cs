@@ -1,19 +1,19 @@
 using UnityEngine;
 
-public class WorkerSubtask_WalkToItemSpot : BaseWorkerSubtask_Moving
+public class Subtask_WalkToMultipleItemSpot : BaseSubtask_Moving
 {
-    [SerializeField] public IItemSpotInBuilding ItemSpot;
+    [SerializeField] public IMultipleItemSpotInBuilding ItemSpot;
 
     public override ItemDefn GetTaskItem()
     {
-        if (ItemSpot.ItemContainer.HasItem)
-            return ItemSpot.ItemContainer.Item.Defn;
+        if (ItemSpot.ItemsContainer.HasItem)
+            return ItemSpot.ItemsContainer.Items[0].Defn;
         if (Task.Worker.Hands.HasItem)
             return Task.Worker.Hands.Item.Defn;
         return null;
     }
 
-    public WorkerSubtask_WalkToItemSpot(WorkerTask parentTask, IItemSpotInBuilding itemSpot) : base(parentTask, itemSpot.Location)
+    public Subtask_WalkToMultipleItemSpot(Task parentTask, IMultipleItemSpotInBuilding itemSpot) : base(parentTask, itemSpot.Location)
     {
         ItemSpot = itemSpot;
         UpdateMoveTargetWhenBuildingMoves(ItemSpot.Building);

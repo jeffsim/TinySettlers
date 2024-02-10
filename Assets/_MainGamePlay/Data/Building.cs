@@ -441,6 +441,12 @@ public class BuildingData : BaseData, ILocationProvider
         return loc.GetClosest(GatheringSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.HasItem);
     }
 
+    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent loc, ItemDefn itemDefn) => GetClosestUnreservedGatheringSpotWithItemToReap(loc, itemDefn, out float _);
+    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent loc, ItemDefn itemDefn, out float distance)
+    {
+        return loc.GetClosest(GatheringSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.HasItem && spot.ItemContainer.Item.DefnId == itemDefn.Id);
+    }
+
     public CraftingSpotData ReserveCraftingSpot(WorkerData worker) => worker.ReserveFirstReservable(CraftingSpots);
     public StorageSpotData ReserveStorageSpot(WorkerData worker) => worker.ReserveFirstReservable(StorageSpots);
     public GatheringSpotData ReserveGatheringSpot(WorkerData worker) => worker.ReserveFirstReservable(GatheringSpots);

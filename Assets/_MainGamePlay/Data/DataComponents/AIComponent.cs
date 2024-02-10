@@ -10,16 +10,16 @@ public class AIComponent : BaseData
 {
     public override string ToString() => $"Task: {CurrentTask} - {CurrentTask.CurSubTask}";
 
-    public WorkerTask CurrentTask;
+    public Task CurrentTask;
     public bool IsIdle => CurrentTask.Type == TaskType.Idle;
-    public WorkerTask_Idle IdleTask;
+    public Task_Idle IdleTask;
 
     public AIComponent(WorkerData worker)
     {
-        StartTask(IdleTask = new WorkerTask_Idle(worker));
+        StartTask(IdleTask = new Task_Idle(worker));
     }
 
-    internal void StartTask(WorkerTask task)
+    internal void StartTask(Task task)
     {
         CurrentTask = task;
         CurrentTask.Start();

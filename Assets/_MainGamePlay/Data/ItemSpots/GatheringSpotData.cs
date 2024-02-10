@@ -4,7 +4,7 @@ using UnityEngine;
 [Serializable]
 public class GatheringSpotData : BaseData, ILocationProvider, IReservationProvider, IItemSpotInBuilding
 {
-    public override string ToString() => "GatheringSpot " + InstanceId;
+    public override string ToString() => $"Gathering {InstanceId}: {ItemContainer} {Reservation}";
     [SerializeField] public BuildingData Building { get; set; }
 
     public string ItemGrownInSpotDefnId;

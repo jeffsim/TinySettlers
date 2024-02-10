@@ -1,22 +1,25 @@
 using UnityEngine;
 
-public class WorkerSubtask_CraftItem : WorkerSubtask
+public class Subtask_DropItemInMultipleItemSpot : Subtask
 {
-    protected override float RunTime => 1;
+    protected override float RunTime => 0.5f;
     [SerializeField] IMultipleItemSpotInBuilding ItemSpot;
     public override ItemDefn GetTaskItem() => Task.Worker.Hands.Item.Defn;
-    public string CraftingItemDefnId;
 
-    public WorkerSubtask_CraftItem(WorkerTask parentTask, string craftingItemDefnId, IMultipleItemSpotInBuilding itemSpot) : base(parentTask)
+    public Subtask_DropItemInMultipleItemSpot(Task parentTask, IMultipleItemSpotInBuilding itemSpot) : base(parentTask)
     {
         ItemSpot = itemSpot;
-        CraftingItemDefnId = craftingItemDefnId;
         UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);
+    }
+    public override void Start()
+    {
+        Debug.Assert(Task.Worker.Hands.HasItem);
+        base.Start();
     }
 
     public override void SubtaskComplete()
     {
-        Task.Worker.Hands.SetItem(new ItemData() { DefnId = CraftingItemDefnId });
+        Task.Worker.DropItemInHandInSpot(ItemSpot);
     }
 
     public override void OnAnyBuildingPauseToggled(BuildingData building)

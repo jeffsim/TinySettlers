@@ -4,7 +4,7 @@ using UnityEngine;
 [Serializable]
 public class CraftingSpotData : BaseData, ILocationProvider, IReservationProvider, IMultipleItemSpotInBuilding
 {
-    public override string ToString() => ItemsContainer.ToString();
+    public override string ToString() => $"Crafting {InstanceId}: {ItemsContainer} {Reservation}";
 
     [SerializeField] public BuildingData Building { get; set; }
 

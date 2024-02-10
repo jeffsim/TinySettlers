@@ -5,15 +5,15 @@ public class PrioritizedTask
 {
     public override string ToString() => $"{Priority:F1} {Task}";
 
-    internal void Set(WorkerTask task, float priority)
+    internal void Set(Task task, float priority)
     {
         Task = task; Priority = priority;
     }
 
-    public WorkerTask Task;
+    public Task Task;
     public float Priority;
 
-    public PrioritizedTask(WorkerTask task = null, float priority = 0)
+    public PrioritizedTask(Task task = null, float priority = 0)
     {
         Task = task; Priority = priority;
     }

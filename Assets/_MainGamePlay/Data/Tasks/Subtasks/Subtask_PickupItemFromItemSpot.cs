@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class WorkerSubtask_PickupItemFromBuilding : WorkerSubtask
+public class Subtask_PickupItemFromItemSpot : Subtask
 {
     protected override float RunTime => 0.5f;
     [SerializeField] IItemSpotInBuilding ItemSpot;
     public override ItemDefn GetTaskItem() => ItemSpot.ItemContainer.Item.Defn;
 
-    public WorkerSubtask_PickupItemFromBuilding(WorkerTask parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
+    public Subtask_PickupItemFromItemSpot(Task parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
     {
         ItemSpot = itemSpot;
         Debug.Assert(ItemSpot.ItemContainer.HasItem);
@@ -18,8 +18,6 @@ public class WorkerSubtask_PickupItemFromBuilding : WorkerSubtask
         Debug.Assert(ItemSpot.ItemContainer.HasItem);
         Task.Worker.Hands.SetItem(ItemSpot.ItemContainer.ClearItem());
         Debug.Assert(Task.Worker.Hands.HasItem);
-        
-        Task.Worker.StorageSpotReservedForItemInHand = null; // TODO
     }
 
     public override void OnAnyBuildingPauseToggled(BuildingData building)

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
+public class Task_PickupAbandonedItemFromGround : Task
 {
     public override string ToString() => $"Pickup item {ItemToPickup} from ground";
     public override TaskType Type => TaskType.PickupItemFromGround;
@@ -10,7 +10,7 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
     [SerializeField] public ItemData ItemToPickup;
     [SerializeField] IItemSpotInBuilding ReservedSpotToStoreItemIn;
 
-    public WorkerTask_PickupAbandonedItemFromGround(WorkerData worker, NeedData needData, IItemSpotInBuilding reservedSpotToStoreItemIn) : base(worker, needData)
+    public Task_PickupAbandonedItemFromGround(WorkerData worker, NeedData needData, IItemSpotInBuilding reservedSpotToStoreItemIn) : base(worker, needData)
     {
         ItemToPickup = Need.AbandonedItemToPickup;
         ReservedSpotToStoreItemIn = ReserveSpotOnStart(reservedSpotToStoreItemIn);
@@ -24,14 +24,15 @@ public class WorkerTask_PickupAbandonedItemFromGround : WorkerTask
 
     public override void InitializeStateMachine()
     {
-        Subtasks.Add(new WorkerSubtask_WalkToLocation(this, ItemToPickup.Location));
-        Subtasks.Add(new WorkerSubtask_PickupItemFromGround(this, ItemToPickup));
+        Subtasks.Add(new Subtask_WalkToLocation(this, ItemToPickup.Location));
+        Subtasks.Add(new Subtask_PickupItemFromGround(this, ItemToPickup));
+        Subtasks.Add(new Subtask_WalkToItemSpot(this, ReservedSpotToStoreItemIn));
+        Subtasks.Add(new Subtask_DropItemInItemSpot(this, ReservedSpotToStoreItemIn));
     }
 
     public override void AllSubtasksComplete()
     {
         CompleteTask();
-        Worker.StorageSpotReservedForItemInHand = ReservedSpotToStoreItemIn;
         Worker.OriginalPickupItemNeed = Need;
         ReservedSpotToStoreItemIn.Reservation.ReserveBy(Worker);
     }

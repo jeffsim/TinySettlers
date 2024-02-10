@@ -1,20 +1,22 @@
 using UnityEngine;
 
-public class WorkerSubtask_SellItemInHands : WorkerSubtask
+public class Subtask_CraftItem : Subtask
 {
     protected override float RunTime => 1;
-    [SerializeField] IItemSpotInBuilding ItemSpot;
+    [SerializeField] IMultipleItemSpotInBuilding ItemSpot;
     public override ItemDefn GetTaskItem() => Task.Worker.Hands.Item.Defn;
+    public string CraftingItemDefnId;
 
-    public WorkerSubtask_SellItemInHands(WorkerTask parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
+    public Subtask_CraftItem(Task parentTask, string craftingItemDefnId, IMultipleItemSpotInBuilding itemSpot) : base(parentTask)
     {
         ItemSpot = itemSpot;
+        CraftingItemDefnId = craftingItemDefnId;
         UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);
     }
 
     public override void SubtaskComplete()
     {
-        Task.Worker.Town.ItemSold(Task.Worker.Hands.ClearItem());
+        Task.Worker.Hands.SetItem(new ItemData() { DefnId = CraftingItemDefnId });
     }
 
     public override void OnAnyBuildingPauseToggled(BuildingData building)

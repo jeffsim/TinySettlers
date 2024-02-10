@@ -7,7 +7,7 @@ public enum TaskType
     Unset,
     Idle,
     DeliverItemInHandToStorageSpot,
-    PickupGatherableResource,
+    GetGatherableResource,
     PickupItemInStorageSpot,
     PickupItemFromGround,
     SellItem,
@@ -17,7 +17,7 @@ public enum TaskType
 public enum TaskState { Unset, NotStarted, Started, Completed, Abandoned };
 
 [Serializable]
-public abstract class WorkerTask
+public abstract class Task
 {
     public override string ToString() => $"{Type} ToString() not implemented"; // used for VS Code debugging pane
 
@@ -30,8 +30,8 @@ public abstract class WorkerTask
     [SerializeReference] public WorkerData Worker;
 
     // == Subtasks =============================
-    public List<WorkerSubtask> Subtasks = new();
-    [SerializeField] public WorkerSubtask CurSubTask;
+    public List<Subtask> Subtasks = new();
+    [SerializeField] public Subtask CurSubTask;
     public int SubtaskIndex = 0;
 
     // == Movement and Location ================
@@ -53,7 +53,7 @@ public abstract class WorkerTask
 
     // ====================================================================
     // Constructor
-    protected WorkerTask(WorkerData workerData, NeedData need)
+    protected Task(WorkerData workerData, NeedData need)
     {
         Need = need;
         Worker = workerData;
@@ -92,7 +92,10 @@ public abstract class WorkerTask
         else
         {
             CurSubTask = Subtasks[++SubtaskIndex];
-            CurSubTask.Start();
+            if (CurSubTask.InstantlyRun)
+                GotoNextSubstate();
+            else
+                CurSubTask.Start();
         }
     }
 
@@ -126,7 +129,7 @@ public abstract class WorkerTask
         return spot;
     }
 
-    protected void UnreserveSpot(IReservationProvider spot)
+    public void UnreserveSpot(IReservationProvider spot)
     {
         spot.Reservation.Unreserve();
 
@@ -186,7 +189,7 @@ public abstract class WorkerTask
             CurSubTask.OnAnyBuildingDestroyed(building);
     }
 
-    public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
+    public virtual void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
     {
         if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingMoved && Worker.Assignment.AssignedTo == building)
         {
@@ -211,7 +214,7 @@ public abstract class WorkerTask
     // ====================================================================================================================
     // Other functions
 
-    protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpotToDeliverItemTo(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation)
+    protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpotOld(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation, bool updateReservedSpots = false)
     {
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
         if (optimalStorageSpotToDeliverItemTo == null)
@@ -220,8 +223,40 @@ public abstract class WorkerTask
         if (optimalStorageSpotToDeliverItemTo != originalReservedSpot)
         {
             originalReservedSpot.Reservation.Unreserve();
+            if (updateReservedSpots) ReservedSpots.Remove(originalReservedSpot);
             originalReservedSpot = optimalStorageSpotToDeliverItemTo;
             originalReservedSpot.Reservation.ReserveBy(Worker);
+            if (updateReservedSpots) ReservedSpots.Add(originalReservedSpot);
+        }
+        return originalReservedSpot;
+    }
+
+    protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpot(IItemSpotInBuilding originalReservedSpot,
+                                                                       LocationComponent closestLocation, bool updateMoveLoc)
+    {
+        var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
+        if (optimalStorageSpotToDeliverItemTo != null && optimalStorageSpotToDeliverItemTo != originalReservedSpot)
+        {
+            UnreserveSpot(originalReservedSpot);
+            originalReservedSpot = optimalStorageSpotToDeliverItemTo;
+            ReserveSpot(originalReservedSpot);
+            if (updateMoveLoc)
+                LastMoveToTarget.SetWorldLoc(originalReservedSpot.Location);
+        }
+        return originalReservedSpot;
+    }
+
+    protected IItemSpotInBuilding FindAndReserveNewOptimalGatheringSpot(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation,
+                                                                        ItemDefn itemDefn, bool isCurrentMoveTarget)
+    {
+        var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableGatheringSpot(closestLocation, itemDefn, Worker);
+        if (optimalStorageSpotToDeliverItemTo != null && optimalStorageSpotToDeliverItemTo != originalReservedSpot)
+        {
+            UnreserveSpot(originalReservedSpot);
+            originalReservedSpot = optimalStorageSpotToDeliverItemTo;
+            ReserveSpot(originalReservedSpot);
+            if (isCurrentMoveTarget)
+                LastMoveToTarget.SetWorldLoc(originalReservedSpot.Location);
         }
         return originalReservedSpot;
     }

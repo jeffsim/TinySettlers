@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class WorkerSubtask_ReapGatherableResource : WorkerSubtask
+public class Subtask_ReapItem : Subtask
 {
     protected override float RunTime => 1;
     [SerializeField] IItemSpotInBuilding ItemSpot;
     public override ItemDefn GetTaskItem() => ItemSpot.ItemContainer.Item.Defn;
 
-    public WorkerSubtask_ReapGatherableResource(WorkerTask parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
+    public Subtask_ReapItem(Task parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
     {
         ItemSpot = itemSpot;
         UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);

@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public abstract class BaseWorkerTask_TransportItemFromSpotToStorage : WorkerTask
+public abstract class BaseTask_TransportItemFromSpotToStorage : Task
 {
     [SerializeField] public IItemSpotInBuilding SpotWithItemToPickup;
     [SerializeField] public IItemSpotInBuilding ReservedSpotToStoreItemIn;
 
-    public BaseWorkerTask_TransportItemFromSpotToStorage(WorkerData worker, NeedData need, IItemSpotInBuilding spotWithItemToPickup, IItemSpotInBuilding reservedSpotToStoreItemIn) : base(worker, need)
+    public BaseTask_TransportItemFromSpotToStorage(WorkerData worker, NeedData need, IItemSpotInBuilding spotWithItemToPickup, IItemSpotInBuilding reservedSpotToStoreItemIn) : base(worker, need)
     {
         SpotWithItemToPickup = ReserveSpotOnStart(spotWithItemToPickup);
         ReservedSpotToStoreItemIn = ReserveSpotOnStart(reservedSpotToStoreItemIn);
@@ -19,7 +19,7 @@ public abstract class BaseWorkerTask_TransportItemFromSpotToStorage : WorkerTask
         if (building == ReservedSpotToStoreItemIn.Building)
         {
             ReservedSpots.Remove(ReservedSpotToStoreItemIn);
-            ReservedSpotToStoreItemIn = FindAndReserveNewOptimalStorageSpotToDeliverItemTo(ReservedSpotToStoreItemIn, SpotWithItemToPickup.Location);
+            ReservedSpotToStoreItemIn = FindAndReserveNewOptimalStorageSpotOld(ReservedSpotToStoreItemIn, SpotWithItemToPickup.Location);
             if (ReservedSpotToStoreItemIn == null)
             {
                 Abandon(); // failed to find a new spot to store the item in
@@ -36,8 +36,7 @@ public abstract class BaseWorkerTask_TransportItemFromSpotToStorage : WorkerTask
     public override void AllSubtasksComplete()
     {
         CompleteTask();
-        Worker.StorageSpotReservedForItemInHand = ReservedSpotToStoreItemIn;
         Worker.OriginalPickupItemNeed = Need;
-        ReservedSpotToStoreItemIn.Reservation.ReserveBy(Worker);
+    //    ReservedSpotToStoreItemIn.Reservation.ReserveBy(Worker);
     }
 }

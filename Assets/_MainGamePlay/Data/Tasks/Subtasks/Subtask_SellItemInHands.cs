@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class WorkerSubtask_DropItemInItemSpot : WorkerSubtask
+public class Subtask_SellItemInHands : Subtask
 {
-    protected override float RunTime => 0.5f;
+    protected override float RunTime => 1;
     [SerializeField] IItemSpotInBuilding ItemSpot;
     public override ItemDefn GetTaskItem() => Task.Worker.Hands.Item.Defn;
 
-    public WorkerSubtask_DropItemInItemSpot(WorkerTask parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
+    public Subtask_SellItemInHands(Task parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)
     {
         ItemSpot = itemSpot;
         UpdateWorkerLocWhenBuildingMoves(ItemSpot.Building);
@@ -14,7 +14,7 @@ public class WorkerSubtask_DropItemInItemSpot : WorkerSubtask
 
     public override void SubtaskComplete()
     {
-        Task.Worker.DropItemInHandInSpot(Task.Worker.StorageSpotReservedForItemInHand);
+        Task.Worker.Town.ItemSold(Task.Worker.Hands.ClearItem());
     }
 
     public override void OnAnyBuildingPauseToggled(BuildingData building)

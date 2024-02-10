@@ -16,7 +16,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         
         var reservedStorageSpot = getStorageSpotInBuildingReservedByWorker(storage, worker);
         
-        waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_DropItemInItemSpot));
+        waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot));
         waitUntilTaskDone(worker);
         
         verify_spotIsUnreserved(reservedStorageSpot);

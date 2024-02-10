@@ -246,6 +246,26 @@ public class TownData : BaseData
         return closestBuilding?.GetClosestEmptyStorageSpot(location, out dist);
     }
 
+    public GatheringSpotData GetClosestAvailableGatheringSpot(LocationComponent location, ItemDefn itemDefn, WorkerData worker = null) => GetClosestAvailableGatheringSpot(location, itemDefn, worker, out float _);
+    public GatheringSpotData GetClosestAvailableGatheringSpot(LocationComponent location, ItemDefn itemDefn, WorkerData worker, out float dist)
+    {
+        BuildingData closestBuilding = null;
+        dist = float.MaxValue;
+        foreach (var building in Buildings)
+        {
+            if (!building.IsPaused && building.ResourceCanBeGatheredFromHere(itemDefn))
+            {
+                var distanceToBuilding = location.DistanceTo(building.Location);
+                if (distanceToBuilding < dist)
+                {
+                    closestBuilding = building;
+                    dist = distanceToBuilding;
+                }
+            }
+        }
+        return closestBuilding?.GetClosestUnreservedGatheringSpotWithItemToReap(location, itemDefn, out dist);
+    }
+
     internal int Chart_GetNumOfItemInTown(string itemId)
     {
         int numInStorage = 0;

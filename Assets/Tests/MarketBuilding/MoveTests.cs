@@ -39,9 +39,9 @@ public partial class MarketTests : MovePauseDestroyTestBase
         
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(WorkerSubtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(WorkerSubtask_PickupItemFromBuilding)); break;
-            case 2: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(WorkerSubtask_SellItemInHands)); break;
+            case 0: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(Subtask_WalkToItemSpot)); break;
+            case 1: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(Subtask_PickupItemFromItemSpot)); break;
+            case 2: waitUntilTaskAndSubtask(worker, TaskType.SellItem, typeof(Subtask_SellItemInHands)); break;
         }
 
         var movedBuildingWithItemInIt = true;

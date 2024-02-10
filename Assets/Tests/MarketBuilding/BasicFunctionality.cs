@@ -14,7 +14,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
         var origGold = Town.Gold;
 
         waitUntilTask(worker, TaskType.SellItem);
-        var item = (worker.AI.CurrentTask as WorkerTask_SellItem).SpotWithItemToSell.ItemContainer.Item;
+        var item = (worker.AI.CurrentTask as Task_SellItem).SpotWithItemToSell.ItemContainer.Item;
         waitUntilTaskDone(worker);
 
         verify_spotIsUnreserved( Market.StorageSpots[0]);

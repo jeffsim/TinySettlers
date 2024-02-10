@@ -43,10 +43,10 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(WorkerSubtask_PickupItemFromBuilding)); break;
-            case 2: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
-            case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_DropItemInItemSpot)); break;
+            case 0: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
+            case 1: waitUntilTaskAndSubtask(worker, TaskType.PickupItemInStorageSpot, typeof(Subtask_PickupItemFromItemSpot)); break;
+            case 2: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
+            case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
         }
 
         var movedBuildingWithItemInIt = buildingWithItem == buildingToMove;

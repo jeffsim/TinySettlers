@@ -1,11 +1,11 @@
 using UnityEngine;
 
-public abstract class BaseWorkerSubtask_Moving : WorkerSubtask
+public abstract class BaseSubtask_Moving : Subtask
 {
-    [SerializeField] LocationComponent Location;
+    [SerializeField] public LocationComponent Location;
     public override bool IsWalkingToTarget => true;
 
-    public BaseWorkerSubtask_Moving(WorkerTask parentTask, LocationComponent location) : base(parentTask)
+    public BaseSubtask_Moving(Task parentTask, LocationComponent location) : base(parentTask)
     {
         Location = location;
     }

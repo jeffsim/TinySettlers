@@ -17,7 +17,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
 
     public TownData Town;
 
-    public IItemSpotInBuilding StorageSpotReservedForItemInHand;
+    // public IItemSpotInBuilding StorageSpotReservedForItemInHand;
 
     public NeedData OriginalPickupItemNeed;
 
@@ -49,13 +49,6 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     // what we should do (if anything).
     public void OnBuildingDestroyed(BuildingData building)
     {
-        if (StorageSpotReservedForItemInHand != null && StorageSpotReservedForItemInHand.Building == building)
-        {
-            StorageSpotReservedForItemInHand.Reservation.Unreserve();
-            StorageSpotReservedForItemInHand = null;
-            OriginalPickupItemNeed = null;
-        }
-
         AI.CurrentTask.OnBuildingDestroyed(building);
 
         // If we are assigned to the destroyed building, then assign ourselves to the Camp instead
@@ -96,9 +89,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
 
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
         spot.ItemContainer.SetItem(Hands.ClearItem());
-        spot.Reservation.Unreserve();
-        if (spot == StorageSpotReservedForItemInHand)
-            StorageSpotReservedForItemInHand = null;
+       // spot.Reservation.Unreserve();
     }
 
     internal void DropItemInHandInSpot(IMultipleItemSpotInBuilding spot)
@@ -107,9 +98,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
 
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
         spot.ItemsContainer.AddItem(Hands.ClearItem());
-        spot.Reservation.Unreserve();
-        if (spot == StorageSpotReservedForItemInHand)
-            StorageSpotReservedForItemInHand = null;
+  //      spot.Reservation.Unreserve();
     }
 
     // TODO: Rather than tie following to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when

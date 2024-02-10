@@ -53,11 +53,11 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         var worker = Town.CreateWorkerInBuilding(buildingWorker);
         switch (workerSubtask)
         {
-            case 0: waitUntilTaskAndSubtask(worker, TaskType.PickupGatherableResource, typeof(WorkerSubtask_WalkToItemSpot)); break;
-            case 1: waitUntilTaskAndSubtask(worker, TaskType.PickupGatherableResource, typeof(WorkerSubtask_ReapGatherableResource)); break;
-            case 2: waitUntilTaskAndSubtask(worker, TaskType.PickupGatherableResource, typeof(WorkerSubtask_PickupItemFromBuilding)); break;
-            case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_WalkToItemSpot)); break;
-            case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(WorkerSubtask_DropItemInItemSpot)); break;
+            case 0: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_WalkToItemSpot)); break;
+            case 1: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_ReapItem)); break;
+            case 2: waitUntilTaskAndSubtask(worker, TaskType.GetGatherableResource, typeof(Subtask_PickupItemFromItemSpot)); break;
+            case 3: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_WalkToItemSpot)); break;
+            case 4: waitUntilTaskAndSubtask(worker, TaskType.DeliverItemInHandToStorageSpot, typeof(Subtask_DropItemInItemSpot)); break;
         }
 
         var movedBuildingWithItemInIt = buildingWithItem == buildingToMove;

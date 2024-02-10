@@ -9,10 +9,10 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         LoadTestTown("woodcutter_MovePauseDestroy");
         var worker = Town.CreateWorkerInBuilding(WoodcuttersHut);
 
-        waitUntilTask(worker, TaskType.PickupGatherableResource);
-        var item = (worker.AI.CurrentTask as BaseWorkerTask_TransportItemFromSpotToStorage).SpotWithItemToPickup.ItemContainer.Item;
-        waitUntilTask(worker, TaskType.DeliverItemInHandToStorageSpot);
-        var storageSpot = worker.StorageSpotReservedForItemInHand;
+        waitUntilTask(worker, TaskType.GetGatherableResource);
+        var task = worker.AI.CurrentTask as Task_GatherResource;
+        var item = task.SpotToGatherFrom.ItemContainer.Item;
+        var storageSpot = task.SpotToStoreItemIn;
         waitUntilTaskDone(worker);
         
         verify_spotIsUnreserved(storageSpot);

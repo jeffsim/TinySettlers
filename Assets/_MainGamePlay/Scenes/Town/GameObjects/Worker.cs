@@ -82,7 +82,22 @@ public class Worker : MonoBehaviour
         var item = Data.AI.CurrentTask.GetTaskItem();
         CarriedItem.text = item == null ? "" : item.Id.Substring(0, 2);
         CarriedItem.gameObject.SetActive(true);
-
+        switch (Data.AI.CurrentTask.CurSubTask)
+        {
+            case BaseSubtask_Moving _: updateCarriedItem(itemDown, scaleNormal, Color.red); break;
+            case Subtask_DropItemInItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
+            case Subtask_DropItemInMultipleItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
+            case Subtask_PickupItemFromItemSpot _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
+            case Subtask_PickupItemFromGround _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
+            case Subtask_ReapItem _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
+            case Subtask_SellItemInHands _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
+            case Subtask_CraftItem _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
+            case Subtask_Wait _: updateCarriedItem(itemDown, scaleNormal, Color.Lerp(Color.green, Color.white, percentDone)); break;
+            default:
+                // Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);
+                break;
+        }
+        /*
         switch (Data.AI.CurrentTask.Type)
         {
             case TaskType.SellItem:
@@ -100,7 +115,7 @@ public class Worker : MonoBehaviour
                 }
                 break;
 
-            case TaskType.PickupGatherableResource:
+            case TaskType.GetGatherableResource:
                 switch (Data.AI.CurrentTask.SubtaskIndex)
                 {
                     case 0: // WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot:
@@ -154,12 +169,12 @@ public class Worker : MonoBehaviour
             case TaskType.CraftGood:
                 switch (Data.AI.CurrentTask.CurSubTask)
                 {
-                    case WorkerSubtask_WalkToItemSpot _:             updateCarriedItem(itemDown, scaleNormal, Color.red); break;
-                    case WorkerSubtask_WalkToMultipleItemSpot _:     updateCarriedItem(itemDown, scaleNormal, Color.red); break;
-                    case WorkerSubtask_DropItemInItemSpot _:         updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
+                    case WorkerSubtask_WalkToItemSpot _: updateCarriedItem(itemDown, scaleNormal, Color.red); break;
+                    case WorkerSubtask_WalkToMultipleItemSpot _: updateCarriedItem(itemDown, scaleNormal, Color.red); break;
+                    case WorkerSubtask_DropItemInItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
                     case WorkerSubtask_DropItemInMultipleItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
-                    case WorkerSubtask_PickupItemFromBuilding _:     updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
-                    case WorkerSubtask_CraftItem _:                  updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
+                    case WorkerSubtask_PickupItemFromBuilding _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
+                    case WorkerSubtask_CraftItem _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
                     default:
                         Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);
                         break;
@@ -191,7 +206,7 @@ public class Worker : MonoBehaviour
                 //     }
                 //     break;
         }
-
+*/
         // If this worker is assigned to currently selected building then highlight
         bool showHighlight = scene.BuildingDetails.isActiveAndEnabled &&
                              scene.BuildingDetails.building != null &&

@@ -2,14 +2,15 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class WorkerSubtask
+public abstract class Subtask
 {
-    [SerializeField] protected WorkerTask Task;
+    [SerializeField] protected Task Task;
     [SerializeField] public virtual bool IsWalkingToTarget { get; set; } = false;
     [SerializeField] protected virtual float RunTime { get; set; } = 0;
     [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingPaused { get; set; } = true;
     [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingDestroyed { get; set; } = true;
     [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingMoved { get; set; } = false;
+    [SerializeField] public virtual bool InstantlyRun { get; set; } = false;
 
     public List<BuildingData> UpdateWorkerLocWhenTheseBuildingsMove = new();
     public List<BuildingData> UpdateMoveTargetWhenTheseBuildingsMove = new();
@@ -21,7 +22,7 @@ public abstract class WorkerSubtask
 
     public virtual ItemDefn GetTaskItem() => null;
 
-    public WorkerSubtask(WorkerTask parentTask)
+    public Subtask(Task parentTask)
     {
         Task = parentTask;
     }
@@ -56,7 +57,7 @@ public abstract class WorkerSubtask
     {
         StartTime = GameTime.time;
     }
-
+    
     public virtual void Update()
     {
         if (IsSubstateDone)
