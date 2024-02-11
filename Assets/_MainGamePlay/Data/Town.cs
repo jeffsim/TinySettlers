@@ -15,6 +15,8 @@ public class TownData : BaseData
     public string DefnId;
 
     public int Gold;
+    public int NumMaxWorkers;
+
     [NonSerialized] public OnItemAddedToGroundEvent OnItemAddedToGround;
     [NonSerialized] public Action<ItemData> OnItemRemovedFromGround;
     [NonSerialized] public Action<ItemData> OnItemSold;
@@ -55,6 +57,9 @@ public class TownData : BaseData
         for (int y = 0; y < Defn.Height; y++)
             for (int x = 0; x < Defn.Width; x++)
                 Tiles.Add(new TileData(x, y, tiles[y * Defn.Width + x]));
+
+        Gold = 0;
+        NumMaxWorkers = 0; // Camp will add some
 
         Buildings.Clear();
         Workers.Clear();
@@ -99,6 +104,7 @@ public class TownData : BaseData
         Buildings.Add(building);
         Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
 
+        NumMaxWorkers += buildingDefn.MaxTownWorkersIncreasedWhenBuilt;
         OnBuildingAdded?.Invoke(building);
 
         return building;

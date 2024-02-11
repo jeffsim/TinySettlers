@@ -132,7 +132,7 @@ public class Map : MonoBehaviour
 
         scene.Gold.text = "Gold: " + Town.Gold.ToString();
         scene.Gold.text += "\nTime: " + GameTime.time.ToString("0.0");
-
+        scene.Gold.text += "\nWorkers: " + Town.Workers.Count + "/" + Town.NumMaxWorkers;
         var numReservedStorageSpots = Town.Buildings.Sum(b => b.NumReservedStorageSpots);
     }
 

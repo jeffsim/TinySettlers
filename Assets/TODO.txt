@@ -1,6 +1,8 @@
 * add: primary storage: specify per-building hwt can be stored (defaults to 'anything')
     - silo: can only store items of type 'food'
 
+* Combine IMultipleItemSpot and IItemSpotInBuilding into IMultipleItemSpotInBuilding.  Clean up interfaces
+
 * Add building construction
 * if two workers are going to pick up items from the same storagepile then have the second one wait while the first-to-arrive is picking up their item
 
@@ -10,11 +12,18 @@
   - add buildings: farm+wheatfield (=>wheat); well (=>water. one gatherspot); bakery (water+wheat=>bread)
   - add worker hunger
 
-* Add building: house?
-
+* House added. All it does now is increase max # workers.  TBD: what to do with it?
+  - Workers autoassign to house.  goes there when sleepy or hungry
+  - Houses broadcast need for Food.
+  - Does building a house instantly grant the additional worker(s)?  Or does it enable them to join on 'end of year' period?
+  
+* Remove tile-snapping for buildings, allow placement anywhere that doesn't overlap another buildng (or 'nonbuildable ground' e.g. water)
+  - explore witchhand-meets-settlers
+  
 * Add buildings: forest-with-animals, and Hunter
     animals wander in tile.  new worker type.
     hunter goes and gathers them just like miner gathers stone, except the animals move.  maybe fake an arrow?
+
 * new building forester
     goes to neighboring forest and plants trees
         that adds new gatheringspots

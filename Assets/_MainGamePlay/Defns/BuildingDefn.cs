@@ -34,6 +34,9 @@ public class BuildingDefn : BaseDefn
     public bool HasWorkers = true;
     [ShowIf("HasWorkers")]
     public int MaxWorkers = 4;
+    
+    // e.g. Camp and House: building it grants additional max workers to the Town
+    public int MaxTownWorkersIncreasedWhenBuilt = 0;
 
     // used in the editor
     public Color EditorColor;
