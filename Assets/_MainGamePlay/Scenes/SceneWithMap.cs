@@ -1,8 +1,6 @@
-using System;
 using TMPro;
 using UnityEditor.Compilation;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class SceneWithMap : SceneMgr
 {
@@ -10,7 +8,7 @@ public class SceneWithMap : SceneMgr
 
     public Tile TilePrefab;
     public Building BuildingPrefab;
-    // public DraggedBuilding DraggedBuildingPrefab;
+    public DraggedBuilding DraggedBuildingPrefab;
     public Worker WorkerPrefab;
 
     public StorageArea BuildingStorageAreaPrefab;

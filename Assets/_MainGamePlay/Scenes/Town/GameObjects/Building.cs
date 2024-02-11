@@ -17,7 +17,7 @@ public class Building : MonoBehaviour
     private Vector3 offset;
 
     // Dragging properties
-    // DraggedBuilding draggingGO;
+    DraggedBuilding draggingGO;
     enum DragState { NotDragging, PreDrag, Dragging };
     DragState dragState;
     Vector3 dragStartPoint;
@@ -65,64 +65,133 @@ public class Building : MonoBehaviour
 
     private void OnLocationChanged()
     {
-        if (dragState == DragState.Dragging)
-            transform.position = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -6);
+        if (Settings.AllowFreeBuildingPlacement)
+        {
+            if (dragState == DragState.Dragging)
+                transform.position = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -6);
+            else
+                transform.position = (Vector3)Data.Location.WorldLoc;
+        }
         else
-            transform.position = (Vector3)Data.Location.WorldLoc;
+            transform.position = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -6);
+
+    }
+
+    void OnMouseDown()
+    {
+        if (Settings.AllowFreeBuildingPlacement)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                dragState = DragState.PreDrag;
+                dragStartPoint = GetMouseWorldPosition();
+                offset = transform.position - dragStartPoint;
+            }
+        }
+        else
+        {
+            if (!Data.Defn.PlayerCanMove)
+                return;
+            dragState = DragState.PreDrag;
+            dragStartPoint = Input.mousePosition;
+        }
+    }
+
+    public void OnMouseDrag()
+    {
+        if (!Settings.AllowFreeBuildingPlacement)
+        {
+            if (dragState == DragState.PreDrag)
+            {
+                if (Vector3.Distance(dragStartPoint, Input.mousePosition) > 10)
+                {
+                    dragState = DragState.Dragging;
+                    draggingGO = GameObject.Instantiate(scene.DraggedBuildingPrefab);
+                    draggingGO.Initialize(Data.Defn, this);
+                    draggingGO.transform.position = transform.position + new Vector3(0, 0, 10);
+                    dragStartPoint = transform.position;
+                }
+            }
+            else if (dragState == DragState.Dragging)
+            {
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                Plane plane = new Plane(Vector3.forward, dragStartPoint);
+                plane.Raycast(ray, out float distance);
+                Vector3 mouseIntersectPoint = ray.GetPoint(distance);
+
+                draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, mouseIntersectPoint.y, -5));
+            }
+        }
+    }
+
+    void OnMouseUp()
+    {
+        if (Settings.AllowFreeBuildingPlacement)
+        {
+            if (dragState == DragState.Dragging)
+            {
+                dragState = DragState.NotDragging;
+                Data.Location.WorldLoc = new(transform.position.x, transform.position.y);
+
+                putBuildingOnTopOfOthers();
+            }
+            else
+            {
+                dragState = DragState.NotDragging;
+                if (!EventSystem.current.IsPointerOverGameObject())
+                    scene.OnBuildingClicked(this);
+            }
+        }
+        else
+        {
+            if (dragState != DragState.Dragging)
+            {
+                if (!EventSystem.current.IsPointerOverGameObject())
+                    scene.OnBuildingClicked(this);
+            }
+            else
+            {
+                if (dragState == DragState.Dragging)
+                    Destroy(draggingGO.gameObject);
+                dragState = DragState.NotDragging;
+
+                var validDropSpotForBuilding = scene.Map.IsValidDropSpotForBuilding(Input.mousePosition, this);
+                if (validDropSpotForBuilding)
+                {
+                    var tile = scene.Map.getTileAt(Input.mousePosition);
+                    scene.Map.Town.MoveBuilding(Data, tile.Data.TileX, tile.Data.TileY);
+                }
+            }
+        }
     }
 
     void Update()
     {
         StorageFullIndicator.SetActive(Data.Defn.CanStoreItems && Data.IsStorageFull);
         PausedIndicator.SetActive(Data.IsPaused);
-
-        if (dragState == DragState.PreDrag)
+        if (Settings.AllowFreeBuildingPlacement)
         {
-            Vector3 mousePosition = GetMouseWorldPosition();
-            if (Vector3.Distance(dragStartPoint, mousePosition) > .25f)
+            if (dragState == DragState.PreDrag)
             {
-                dragState = DragState.Dragging;
-                putBuildingOnTopOfOthers();
+                Vector3 mousePosition = GetMouseWorldPosition();
+                if (Vector3.Distance(dragStartPoint, mousePosition) > .25f)
+                {
+                    dragState = DragState.Dragging;
+                    putBuildingOnTopOfOthers();
+                }
             }
-        }
-        else if (dragState == DragState.Dragging)
-        {
-            Vector3 mousePosition = GetMouseWorldPosition() + offset;
-            // snap to grid if shift is pressed
-            if (Input.GetKey(KeyCode.LeftShift))
+            else if (dragState == DragState.Dragging)
             {
-                var snap = .5f;
-                mousePosition.x = Mathf.Round(mousePosition.x * snap) / snap;
-                mousePosition.y = Mathf.Round(mousePosition.y * snap) / snap;
+                Vector3 mousePosition = GetMouseWorldPosition() + offset;
+                // snap to grid if shift is pressed
+                if (Input.GetKey(KeyCode.LeftShift))
+                {
+                    var snap = .5f;
+                    mousePosition.x = Mathf.Round(mousePosition.x * snap) / snap;
+                    mousePosition.y = Mathf.Round(mousePosition.y * snap) / snap;
+                }
+                scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, mousePosition.y));
             }
-            scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, mousePosition.y));
-        }
-    }
-
-    void OnMouseDown()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            dragState = DragState.PreDrag;
-            dragStartPoint = GetMouseWorldPosition();
-            offset = transform.position - dragStartPoint;
-        }
-    }
-
-    void OnMouseUp()
-    {
-        if (dragState == DragState.Dragging)
-        {
-            dragState = DragState.NotDragging;
-            Data.Location.WorldLoc = new(transform.position.x, transform.position.y);
-
-            putBuildingOnTopOfOthers();
-        }
-        else
-        {
-            dragState = DragState.NotDragging;
-            if (!EventSystem.current.IsPointerOverGameObject())
-                scene.OnBuildingClicked(this);
         }
     }
 

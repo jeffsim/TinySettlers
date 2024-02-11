@@ -12255,6 +12255,7 @@ MonoBehaviour:
   Map: {fileID: 0}
   TilePrefab: {fileID: -7417832585735767131, guid: ff6effdaee6f14404b1c172d5a7a32f5, type: 3}
   BuildingPrefab: {fileID: 6278820638639636254, guid: ff4ebe99d4ed54186a7364928bac875b, type: 3}
+  DraggedBuildingPrefab: {fileID: 1359999793770214668, guid: 6d7c2849e1d544a83a0cfff6cbfd9057, type: 3}
   WorkerPrefab: {fileID: 6794300061091766363, guid: b483223481775422e944c15510898483, type: 3}
   BuildingStorageAreaPrefab: {fileID: 7994943468849512291, guid: fdca9a12c94b642149b01e2aff5e7990, type: 3}
   BuildingStoragePilePrefab: {fileID: 1910754369159479611, guid: 8ba92c26b0a22ca4bad79cbb7dc0dae0, type: 3}
