@@ -52,7 +52,7 @@ public class CameraDragger : MonoBehaviour
             Vector3 newPosition = transform.position + direction * zoomAmount;
 
             Camera.main.orthographicSize -= zoomAmount;
-
+            Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, 5, 50);
             // Optional: Clamp the zoom to prevent the camera from going too far or too close
             float distance = Vector3.Distance(newPosition, transform.position);
             // Debug.Log(distance);

@@ -10,7 +10,7 @@ public class SceneWithMap : SceneMgr
 
     public Tile TilePrefab;
     public Building BuildingPrefab;
-    public DraggedBuilding DraggedBuildingPrefab;
+    // public DraggedBuilding DraggedBuildingPrefab;
     public Worker WorkerPrefab;
 
     public StorageArea BuildingStorageAreaPrefab;
@@ -76,7 +76,7 @@ public class SceneWithMap : SceneMgr
 #endif
         Background.Initialize(this);
         HideAllDialogs();
-        
+
         // AllNeedsDetails.Show(this, SortNeedsDisplayBy.Priority);
     }
 
@@ -146,6 +146,15 @@ public class SceneWithMap : SceneMgr
         AvailableTasksDialog.Show(this);
     }
 
+    public bool AnyDialogIsOpen()
+    {
+        return WorkerDetails.gameObject.activeSelf || BuildingDetails.gameObject.activeSelf ||
+               StorageSpotDetails.gameObject.activeSelf || GatheringSpotDetails.gameObject.activeSelf ||
+               CraftingSpotDetails.gameObject.activeSelf || ItemOnGroundDetails.gameObject.activeSelf ||
+               AllNeedsDetails.gameObject.activeSelf || SelectBuildingToConstruct.gameObject.activeSelf ||
+               AvailableTasksDialog.gameObject.activeSelf;
+    }
+    
     public void HideAllDialogs()
     {
         AllNeedsDetails.Hide();
@@ -194,6 +203,16 @@ public class SceneWithMap : SceneMgr
     internal void PlayerSelectedBuildingToConstructInTile(BuildingDefn buildingDefn, TileData tile)
     {
         var building = Map.Town.ConstructBuilding(buildingDefn, tile.TileX, tile.TileY);
+
+        // Autoassign one worker to the newly constructed building
+        if (buildingDefn.HasWorkers)
+            Map.Town.AssignWorkerToBuilding(building);
+        SelectBuildingToConstruct.Hide();
+    }
+
+    internal void PlayerSelectedBuildingToConstructAtWorldLoc(BuildingDefn buildingDefn, Vector3 worldLoc)
+    {
+        var building = Map.Town.ConstructBuilding(buildingDefn, worldLoc);
 
         // Autoassign one worker to the newly constructed building
         if (buildingDefn.HasWorkers)

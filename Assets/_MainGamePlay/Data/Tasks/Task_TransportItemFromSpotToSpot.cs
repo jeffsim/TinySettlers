@@ -10,8 +10,11 @@ public class Task_TransportItemFromSpotToSpot : Task
     [SerializeField] public IItemSpotInBuilding SpotWithItemToPickup;
     [SerializeField] public IItemSpotInBuilding SpotToStoreItemIn;
 
-    public bool IsWalkingToSpotToGatherFrom => SubtaskIndex == 0;
-    public bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 2;
+    bool IsWalkingToSpotWithItem => SubtaskIndex == 0;
+    bool IsPickingUpItemInSpot => SubtaskIndex == 1;
+    bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 3;
+    bool IsDroppingItemInSpot => SubtaskIndex == 4;
+    bool IsWalking => SubtaskIndex == 0 || SubtaskIndex == 3;
 
     public Task_TransportItemFromSpotToSpot(WorkerData worker, NeedData needData, IItemSpotInBuilding spotWithItemToPickup, IItemSpotInBuilding reservedSpotToStoreItemIn) :
         base(worker, needData)
@@ -43,6 +46,17 @@ public class Task_TransportItemFromSpotToSpot : Task
     {
         base.OnBuildingPauseToggled(building);
         if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, false);
+    }
+
+    public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
+    {
+        base.OnBuildingMoved(building, previousLoc);
+
+        if (IsWalkingToSpotToDropItemIn)
+        {
+            SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotWithItemToPickup.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building);
+            LastMoveToTarget.SetWorldLoc(SpotToStoreItemIn.Location);
+        }
     }
 
     private void HandleOnBuildingDestroyedOrPaused(BuildingData building, bool destroyed)

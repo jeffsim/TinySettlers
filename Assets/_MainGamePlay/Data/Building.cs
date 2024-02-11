@@ -122,6 +122,12 @@ public class BuildingData : BaseData, ILocationProvider
         Location = new(new(TileX * TileSize, TileY * TileSize));
     }
 
+    public BuildingData(BuildingDefn buildingDefn, Vector3 worldLoc)
+    {
+        DefnId = buildingDefn.Id;
+        Location = new(worldLoc);
+    }
+
     public void Initialize(TownData town)
     {
         Town = town;
@@ -503,6 +509,19 @@ public class BuildingData : BaseData, ILocationProvider
         foreach (var spot in CraftingSpots) spot.OnBuildingDestroyed();
         foreach (var spot in GatheringSpots) spot.OnBuildingDestroyed();
         foreach (var area in StorageAreas) area.OnBuildingDestroyed();
+    }
+    
+    public void MoveTo(Vector3 worldLoc)
+    {
+        LocationComponent previousWorldLoc = new(Location.WorldLoc);
+        Location.SetWorldLoc(worldLoc);
+        UpdateWorldLoc();
+
+        // Update Workers that are assigned to or have Tasks which involve this building.
+        foreach (var worker in Town.Workers)
+            worker.OnBuildingMoved(this, previousWorldLoc);
+
+        OnLocationChanged?.Invoke();
     }
 
     public void MoveTo(int tileX, int tileY)

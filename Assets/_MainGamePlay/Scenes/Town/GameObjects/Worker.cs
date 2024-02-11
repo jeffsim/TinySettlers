@@ -13,7 +13,7 @@ public class Worker : MonoBehaviour
     public TextMeshPro CarriedItem;
 
     public SceneWithMap scene;
-    static float WorkerZ = -6.2f;
+    static float WorkerZ = -12f;
     RectTransform carriedItemRectTransform;
     public void Initialize(WorkerData data, SceneWithMap scene)
     {

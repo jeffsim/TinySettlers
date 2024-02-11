@@ -16,11 +16,14 @@ public class Tile : MonoBehaviour
         Data = data;
         name = "Tile " + data.TileX + " " + data.TileY;
 
-        GetComponentInChildren<Renderer>().material = data.Defn.TileColor;
+        if (Settings.AllowFreeBuildingPlacement)
+            gameObject.RemoveAllChildren();
+        else
+            GetComponentInChildren<Renderer>().material = data.Defn.TileColor;
         transform.position = new Vector3(data.WorldX, data.WorldY, TileZ);
     }
 
-    public void OnClicked() 
+    public void OnClicked()
     {
         // if mouse is still over this tile then call scene.OnTileClicked
         if (scene.Map.getTileAt(Input.mousePosition) == this)

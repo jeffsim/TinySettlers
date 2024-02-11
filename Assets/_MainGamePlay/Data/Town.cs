@@ -110,6 +110,19 @@ public class TownData : BaseData
         return building;
     }
 
+    public BuildingData ConstructBuilding(BuildingDefn buildingDefn, Vector3 worldLoc)
+    {
+        var building = new BuildingData(buildingDefn, worldLoc);
+        building.Initialize(this);
+        Buildings.Add(building);
+        // Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
+
+        NumMaxWorkers += buildingDefn.MaxTownWorkersIncreasedWhenBuilt;
+        OnBuildingAdded?.Invoke(building);
+
+        return building;
+    }
+
     public void DestroyBuilding(BuildingData building)
     {
         Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
@@ -122,6 +135,15 @@ public class TownData : BaseData
     {
         Workers.Remove(worker);
         worker.OnDestroyed();
+    }
+
+    public void MoveBuilding(BuildingData building, Vector3 worldLoc)
+    {
+        // var tileX = Mathf.FloorToInt(worldLoc.x);
+        // var tileY = Mathf.FloorToInt(worldLoc.y);
+        // Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
+        building.MoveTo(worldLoc);
+        // Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
     }
 
     public void MoveBuilding(BuildingData building, int tileX, int tileY)

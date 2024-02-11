@@ -13,6 +13,11 @@ public class Background : MonoBehaviour
     public void OnMouseUp()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
-            scene.HideAllDialogs();
+        {
+            if (scene.AnyDialogIsOpen())
+                scene.HideAllDialogs();
+            else
+                scene.SelectBuildingToConstruct.ShowAtWorldLoc(scene, Input.mousePosition);
+        }
     }
 }

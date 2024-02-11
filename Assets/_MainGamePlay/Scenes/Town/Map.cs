@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -59,23 +60,37 @@ public class Map : MonoBehaviour
 
     private void addTileGO(TileData tile)
     {
-        var tileGO = Worker.Instantiate<Tile>(scene.TilePrefab);
+        if (this == null) return; // destroyed
+        var tileGO = Instantiate(scene.TilePrefab);
         tileGO.transform.SetParent(TilesFolder.transform, false);
         tileGO.Initialize(tile, scene);
     }
 
     private void addWorkerGO(WorkerData worker)
     {
-        var workerGO = Worker.Instantiate<Worker>(scene.WorkerPrefab);
+        if (this == null) return; // destroyed
+        var workerGO = Instantiate(scene.WorkerPrefab);
         workerGO.transform.SetParent(WorkersFolder.transform, false);
         workerGO.Initialize(worker, scene);
     }
 
     private void addBuildingGO(BuildingData building)
     {
-        var buildingGO = Worker.Instantiate<Building>(scene.BuildingPrefab);
+        if (this == null) return; // destroyed
+        var buildingGO = Instantiate(scene.BuildingPrefab);
         buildingGO.transform.SetParent(BuildingsFolder.transform, false);
         buildingGO.Initialize(building, scene);
+    }
+    public List<Building> GetBuildingGOs()
+    {
+        var buildings = new List<Building>();
+        foreach (Transform child in BuildingsFolder.transform)
+        {
+            var building = child.GetComponent<Building>();
+            if (building != null)
+                buildings.Add(building);
+        }
+        return buildings;
     }
 
     private void addItemOnGroundGO(ItemData item)
@@ -89,7 +104,6 @@ public class Map : MonoBehaviour
     private void OnItemRemovedFromGround(ItemData item)
     {
         if (this == null) return; // destroyed
-
         var itemGO = getItemGO(item);
         if (itemGO != null)
             Destroy(itemGO.gameObject);
@@ -147,6 +161,9 @@ public class Map : MonoBehaviour
 
     internal bool IsValidDropSpotForBuilding(Vector3 mousePosition, Building building)
     {
+        if (Settings.AllowFreeBuildingPlacement)
+            return true;
+
         var tile = getTileAt(Input.mousePosition);
         if (tile == null) return false;
         if (!tile.Data.Defn.PlayerCanBuildOn) return false;
