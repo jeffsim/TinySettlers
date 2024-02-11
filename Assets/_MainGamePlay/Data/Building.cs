@@ -429,6 +429,12 @@ public class BuildingData : BaseData, ILocationProvider
         return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.ContainsItem(itemDefn));
     }
 
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItemIgnoreList(LocationComponent loc, ItemDefn itemDefn, List<StorageSpotData> ignore) => GetClosestUnreservedStorageSpotWithItemIgnoreList(loc, itemDefn, ignore, out float _);
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItemIgnoreList(LocationComponent loc, ItemDefn itemDefn, List<StorageSpotData> ignore, out float distance)
+    {
+        return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.ContainsItem(itemDefn) && !ignore.Contains(spot));
+    }
+
     public StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(LocationComponent loc) => GetClosestUnreservedStorageSpotWithItemToReapOrSell(loc, out float _);
     public StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(LocationComponent loc, out float distance)
     {

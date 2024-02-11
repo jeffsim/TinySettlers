@@ -62,6 +62,7 @@ public class Worker : MonoBehaviour
         transform.position = new Vector3(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, WorkerZ);
 
         if (scene.Debug_DrawPaths)
+        {
             if (Data.AI.CurrentTask.IsWalkingToTarget)
             {
                 // Draw path
@@ -73,6 +74,27 @@ public class Worker : MonoBehaviour
                         Drawing.Draw.ingame.Line(loc1, loc2);
                 }
             }
+            // Draw line to worker's reserved slots if the worker's detail dialog is currently open
+            if (scene.WorkerDetails.gameObject.activeSelf && scene.WorkerDetails.worker == this)
+            {
+                var reservedSpots = Data.AI.CurrentTask.ReservedSpots;
+                foreach (var reservedSpot in reservedSpots)
+                {
+                    if (reservedSpot is StorageSpotData spot)
+                    {
+                        using (Drawing.Draw.ingame.WithColor(Color.red))
+                        {
+                            Vector3 loc1 = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -6);
+                            Vector3 loc2 = new(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, -6);
+                            using (Drawing.Draw.ingame.WithLineWidth(1))
+                                Drawing.Draw.ingame.Line(loc1, loc2);
+                            using (Drawing.Draw.ingame.WithLineWidth(3))
+                                Drawing.Draw.ingame.xy.Circle(new Vector3(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, -6), .125f);
+                        }
+                    }
+                }
+            }
+        }
 
         var itemUp = new Vector3(0, 1f, -1);
         var itemDown = new Vector3(0, 0f, -1);
@@ -97,116 +119,7 @@ public class Worker : MonoBehaviour
                 // Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);
                 break;
         }
-        /*
-        switch (Data.AI.CurrentTask.Type)
-        {
-            case TaskType.SellItem:
-                switch (Data.AI.CurrentTask.SubtaskIndex)
-                {
-                    case 0://WorkerTask_SellItemSubstate.GotoItemToSell:
-                        updateCarriedItem(itemDown, scaleNormal, Color.red);
-                        break;
-                    case 1://WorkerTask_SellItemSubstate.PickupItemToSell:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
-                        break;
-                    case 2:// WorkerTask_SellItemSubstate.SellItem:
-                        updateCarriedItem(itemUp, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.red, Color.white, percentDone));
-                        break;
-                }
-                break;
 
-            case TaskType.GetGatherableResource:
-                switch (Data.AI.CurrentTask.SubtaskIndex)
-                {
-                    case 0: // WorkerTask_PickupGatherableResourceSubstate.GotoGatheringSpot:
-                        updateCarriedItem(itemDown, scaleNormal, Color.red);
-                        break;
-                    case 1: // WorkerTask_PickupGatherableResourceSubstate.ReapGatherableResource:
-                        updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.red, Color.white, percentDone));
-                        break;
-                    case 2: // WorkerTask_PickupGatherableResourceSubstate.PickupGatherableResource:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
-                        break;
-                }
-                break;
-
-            case TaskType.PickupItemFromGround:
-                switch (Data.AI.CurrentTask.SubtaskIndex)
-                {
-                    case 0:// WorkerTask_PickupAbandonedItemFromGroundSubstate.GotoItemOnGround:
-                        updateCarriedItem(itemDown, scaleNormal, Color.red);
-                        break;
-                    case 1: //WorkerTask_PickupAbandonedItemFromGroundSubstate.PickupItemFromGround:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
-                        break;
-                }
-                break;
-
-            case TaskType.PickupItemInStorageSpot:
-                switch (Data.AI.CurrentTask.SubtaskIndex)
-                {
-                    case 0: //WorkerTask_PickupItemFromStorageSpotSubstate.GotoItemSpotWithItem:
-                        updateCarriedItem(itemDown, scaleNormal, Color.red);
-                        break;
-                    case 1: //WorkerTask_PickupItemFromStorageSpotSubstate.PickupItemFromItemSpot:
-                        updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white);
-                        break;
-                }
-                break;
-
-            case TaskType.DeliverItemInHandToStorageSpot:
-                switch (Data.AI.CurrentTask.SubtaskIndex)
-                {
-                    case 0: //WorkerTask_DeliverItemInHandToStorageSpotSubstate.GotoStorageSpotToDeliverItemTo:
-                        updateCarriedItem(itemUp, scaleNormal, Color.white);
-                        break;
-                    case 1: //WorkerTask_DeliverItemInHandToStorageSpotSubstate.DropItemInDestinationStorageSpot:
-                        updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white);
-                        break;
-                }
-                break;
-
-            case TaskType.CraftGood:
-                switch (Data.AI.CurrentTask.CurSubTask)
-                {
-                    case WorkerSubtask_WalkToItemSpot _: updateCarriedItem(itemDown, scaleNormal, Color.red); break;
-                    case WorkerSubtask_WalkToMultipleItemSpot _: updateCarriedItem(itemDown, scaleNormal, Color.red); break;
-                    case WorkerSubtask_DropItemInItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
-                    case WorkerSubtask_DropItemInMultipleItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
-                    case WorkerSubtask_PickupItemFromBuilding _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
-                    case WorkerSubtask_CraftItem _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
-                    default:
-                        Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);
-                        break;
-                }
-                break;
-
-            case TaskType.Idle:
-                updateCarriedItem(itemDown, scaleNormal, Color.white);
-                CarriedItem.text = "<i>i</i>";
-                break;
-
-                // case TaskType.SellGood:
-                //     CarriedItem.gameObject.SetActive(true);
-
-                //     switch ((WorkerTask_SellGoodSubstate)Data.AI.CurrentTask.substate)
-                //     {
-                //         case WorkerTask_SellGoodSubstate.GotoSpotWithGoodToSell:
-                //             CarriedItem.text = (Data.AI.CurrentTask as WorkerTask_SellGood).GetTaskItem().Id.Substring(0, 2);
-                //             carriedItemRectTransform.localPosition = itemDown;
-                //             CarriedItem.color = Color.red;
-                //             break;
-                //         case WorkerTask_SellGoodSubstate.SellGood:
-                //             var sellPrice = (Data.AI.CurrentTask as WorkerTask_SellGood).GetTaskItem().BaseSellPrice; // TODO: Multipliers
-                //             CarriedItem.text = sellPrice + "gp";
-                //             var t = Data.AI.CurrentTask.getPercentSubstateDone(WorkerTask_SellGood.secondsToSell);
-                //             carriedItemRectTransform.localPosition = Vector3.Lerp(itemDown, itemUp, t);
-                //             CarriedItem.color = Color.white;
-                //             break;
-                //     }
-                //     break;
-        }
-*/
         // If this worker is assigned to currently selected building then highlight
         bool showHighlight = scene.BuildingDetails.isActiveAndEnabled &&
                              scene.BuildingDetails.building != null &&

@@ -53,5 +53,22 @@ public class StoragePile : MonoBehaviour
         else
             GetComponentInChildren<Renderer>().material.color = Color.black;
         ReservedIndicator.SetActive(isAnySpotReserved);
+
+
+        // Draw line to all workers that have reserved this cell if it's currently showing details dialog
+        foreach (var spot in Data.StorageSpots)
+            if (scene.StorageSpotDetails.gameObject.activeSelf && scene.StorageSpotDetails.pile.Data.StorageSpots.Contains(spot))
+            {
+                if (spot.Reservation.IsReserved)
+                {
+                    using (Drawing.Draw.ingame.WithColor(Color.red))
+                    using (Drawing.Draw.ingame.WithLineWidth(2))
+                    {
+                        Vector3 loc1 = new(transform.position.x, transform.position.y, -6);
+                        Vector3 loc2 = new(spot.Reservation.ReservedBy.Location.WorldLoc.x, spot.Reservation.ReservedBy.Location.WorldLoc.y, -6);
+                        Drawing.Draw.ingame.Line(loc1, loc2);
+                    }
+                }
+            }
     }
 }

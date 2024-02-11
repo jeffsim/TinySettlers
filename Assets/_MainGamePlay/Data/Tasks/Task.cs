@@ -111,6 +111,7 @@ public abstract class Task
 
     public T ReserveSpotOnStart<T>(T spot) where T : IReservationProvider
     {
+        Debug.Assert(!ReservedSpots.Contains(spot), $"Task is trying to reserve {spot} on Start but it's already reserved");
         SpotsToReserveOnStart.Add(spot);
         return spot;
     }
