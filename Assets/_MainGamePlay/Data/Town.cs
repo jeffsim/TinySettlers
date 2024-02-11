@@ -304,8 +304,8 @@ public class TownData : BaseData
 
     // ====================================================================================================
     // Assign/Unassign worker from building
-    internal void UnassignWorkerFromBuilding(BuildingData data) => GetWorkerInBuilding(data)?.Assignment.AssignTo(Camp);
-    internal void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.Assignment.AssignTo(data);
+    public void UnassignWorkerFromBuilding(BuildingData data) => GetWorkerInBuilding(data)?.Assignment.AssignTo(Camp);
+    public void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.Assignment.AssignTo(data);
 
     private WorkerData GetWorkerInBuilding(BuildingData building) => Workers.FirstOrDefault(worker => worker.Assignment.AssignedTo == building);
     internal int NumBuildingWorkers(BuildingData building) => Workers.Count(worker => worker.Assignment.AssignedTo == building);

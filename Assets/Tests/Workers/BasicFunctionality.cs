@@ -1,27 +1,33 @@
-// using NUnit.Framework;
+using NUnit.Framework;
 
-// public partial class WorkerTests : TestBase
-// {
+public partial class WorkerTests : TestBase
+{
+    [Test]
+    public void Worker_CancelTaskOnUnassign()
+    {
+        // DropItem in storage room: unreserves storage spot
+        LoadTestTown("worker_Unassign");
+        var worker = Town.CreateWorkerInBuilding(Camp);
 
-//     // * RESET; while woodsman is walking to forest, SAVE; LOAD; unassign. still goes to forest before switching to camp
-//     //   - abandon worker.task on assign.
-//     //   - DOES work w/o the save/load.  Why?
-//     //   - write test
-//     [Test]
-//     public void Worker_CancelTaskOnUnassign()
-//     {
-//         // DropItem in storage room: unreserves storage spot
-//         LoadTestTown("woodcutter_MovePauseDestroy");
-//         var worker = Town.CreateWorkerInBuilding(WoodcuttersHut);
+        waitUntilTask(worker, TaskType.TransportItemFromSpotToSpot);
+        var task = worker.AI.CurrentTask as Task_TransportItemFromSpotToSpot;
+        var item = task.SpotWithItemToPickup.ItemContainer.Item;
+        var origStorageSpot = task.SpotToStoreItemIn;
 
-//         waitUntilTask(worker, TaskType.PickupGatherableResource);
-//         var item = (worker.AI.CurrentTask as BaseWorkerTask_TransportItemFromSpotToStorage).SpotWithItemToPickup.ItemContainer.Item;
-//         waitUntilTask(worker, TaskType.DeliverItemInHandToStorageSpot);
-//         var storageSpot = worker.StorageSpotReservedForItemInHand;
-//         waitUntilTaskDone(worker);
+        waitUntilSubtask(worker, typeof(Subtask_PickupItemFromItemSpot));
+        Town.AssignWorkerToBuilding(StorageRoom);
 
-//         verify_spotIsUnreserved(storageSpot);
-//         verify_ItemInHand(worker, null);
-//         verify_ItemInSpot(storageSpot, item, "Item should be in new storage spot");
-//     }
-// }
+        waitUntilSubtask(worker, typeof(Subtask_DropItemInItemSpot));
+        var newStorageSpot = (task.CurSubTask as Subtask_DropItemInItemSpot).ItemSpot;
+        waitUntilTaskDone(worker);
+
+        verify_ItemInSpot(newStorageSpot, item);
+        verify_spotIsUnreserved(task.SpotWithItemToPickup);
+        verify_spotIsUnreserved(newStorageSpot);
+        
+        verify_ItemInSpot(origStorageSpot, null);
+        verify_spotIsUnreserved(origStorageSpot);
+
+        verify_ItemInHand(worker, null);
+    }
+}
