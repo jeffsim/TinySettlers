@@ -56,6 +56,7 @@ public class Worker : MonoBehaviour
         name = "Worker - " + (Data.Assignment.IsAssigned ? Data.Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + Data.InstanceId + ")" : "none");
     }
 
+    float lineZ = -10;
     public void Update()
     {
         // Data.Update();
@@ -68,8 +69,8 @@ public class Worker : MonoBehaviour
                 // Draw path
                 using (Drawing.Draw.ingame.WithColor(Color.blue))
                 {
-                    Vector3 loc1 = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -6);
-                    Vector3 loc2 = new(Data.AI.CurrentTask.LastMoveToTarget.WorldLoc.x, Data.AI.CurrentTask.LastMoveToTarget.WorldLoc.y, -6);
+                    Vector3 loc1 = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, lineZ);
+                    Vector3 loc2 = new(Data.AI.CurrentTask.LastMoveToTarget.WorldLoc.x, Data.AI.CurrentTask.LastMoveToTarget.WorldLoc.y, lineZ);
                     using (Drawing.Draw.ingame.WithLineWidth(3))
                         Drawing.Draw.ingame.Line(loc1, loc2);
                 }
@@ -84,12 +85,12 @@ public class Worker : MonoBehaviour
                     {
                         using (Drawing.Draw.ingame.WithColor(Color.red))
                         {
-                            Vector3 loc1 = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -6);
-                            Vector3 loc2 = new(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, -6);
+                            Vector3 loc1 = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, lineZ);
+                            Vector3 loc2 = new(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, lineZ);
                             using (Drawing.Draw.ingame.WithLineWidth(1))
                                 Drawing.Draw.ingame.Line(loc1, loc2);
                             using (Drawing.Draw.ingame.WithLineWidth(3))
-                                Drawing.Draw.ingame.xy.Circle(new Vector3(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, -6), .125f);
+                                Drawing.Draw.ingame.xy.Circle(new Vector3(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, lineZ), .125f);
                         }
                     }
                 }
@@ -106,7 +107,7 @@ public class Worker : MonoBehaviour
         CarriedItem.gameObject.SetActive(true);
         switch (Data.AI.CurrentTask.CurSubTask)
         {
-            case BaseSubtask_Moving _: updateCarriedItem(Data.Hands.HasItem ? itemUp : itemDown, scaleNormal, Color.red); break;
+            case BaseSubtask_Moving _: updateCarriedItem(Data.Hands.HasItem ? itemUp : itemDown, scaleNormal, Data.Hands.HasItem ? Color.white : Color.red); break;
             case Subtask_DropItemInItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
             case Subtask_DropItemInMultipleItemSpot _: updateCarriedItem(Vector3.Lerp(itemUp, itemDown, percentDone), scaleNormal, Color.white); break;
             case Subtask_PickupItemFromItemSpot _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;

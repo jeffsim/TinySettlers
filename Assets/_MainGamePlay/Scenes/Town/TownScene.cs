@@ -34,7 +34,7 @@ public class TownScene : SceneWithMap
 
         CreateMap(gameDataMgr.GameData.CurrentTown);
 
-        NeedsGraph.ShowForScene(this);
+        // NeedsGraph.ShowForScene(this);
         wthEnableRan = false;
     }
 

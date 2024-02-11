@@ -39,11 +39,11 @@ public class Task_GatherResource : Task
     {
         base.OnBuildingMoved(building, previousLoc);
 
-        if (IsWalkingToSpotToGatherFrom)
-            SpotToGatherFrom = FindAndReserveNewOptimalGatheringSpot(SpotToGatherFrom, Worker.Location, Need.NeededItem, true);
-
-        if (!IsDroppingItemInSpot)
+        if (IsWalkingToSpotToDropItemIn)
+        {
             SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building);
+            LastMoveToTarget.SetWorldLoc(SpotToStoreItemIn.Location);
+        }
     }
 
     public override void OnBuildingDestroyed(BuildingData building)
