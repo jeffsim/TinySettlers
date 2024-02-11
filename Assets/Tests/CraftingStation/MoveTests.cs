@@ -10,21 +10,25 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
 
         // example scenario: 2 resources needed for crafting. subtasks:
         // --- transport resouce 1 to crafting spot
-        // subtask=0: walk to resource in itemspot 1
-        // subtask=1: pickup resource from itemspot 1
-        // subtask=2: walk to crafting spot
-        // subtask=3: drop resource in crafting spot
+        // 0    walk to resource in itemspot 1
+        // 1    pickup resource from itemspot 1
+        // 2    unreserve resource spot 1 IFF it's not the spot we're dropping the crafted item into; otherwise do a noop
+        // 3    walk to crafting spot
+        // 4    drop resource in crafting spot
         // --- transport resouce 2 to crafting spot
-        // subtask=4: walk to resource in itemspot 2
-        // subtask=5: pickup resource from itemspot 2
-        // subtask=6: walk to crafting spot
-        // subtask=7: drop resource in crafting spot
+        // 5    walk to resource in itemspot 2
+        // 6    pickup resource from itemspot 2
+        // 7    unreserve resource spot 1 IFF it's not the spot we're dropping the crafted item into; otherwise do a noop
+        // 8    walk to crafting spot
+        // 9    drop resource in crafting spot
         // --- ready to craft
-        // subtask=8: craft item
-        // subtask=9: walk to storage spot
-        // subtask=10: drop item in storage spot
-        for (int subtask = 0; subtask < 11; subtask++)
+        // 10   craft item
+        // 11   walk to storage spot
+        // 12   drop item in storage spot
+        for (int subtask = 0; subtask < 13; subtask++)
         {
+            if (subtask == 2 || subtask == 7) continue;
+
             // Test A: Move craftingstation while worker1 is crafting item
             LoadTestTown("craftingstation_MovePauseDestroy", subtask);
             runMoveTest("Test A", subtask);
@@ -43,15 +47,17 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         {
             case 0: TestName += $"walking to 1st storage spot to pick up 1st resource and bring to craftingspot"; break;
             case 1: TestName += $"picking up 1st resource"; break;
-            case 2: TestName += $"Carrying 1st resource to craftingspot"; break;
-            case 3: TestName += $"Dropping 1st resource in craftingspot"; break;
-            case 4: TestName += $"walking to 2nd storage spot to pick up 2nd resource and bring to craftingspot"; break;
-            case 5: TestName += $"picking up 2nd resource"; break;
-            case 6: TestName += $"Carrying 2nd resource to craftingspot"; break;
-            case 7: TestName += $"Dropping 2nd resource in craftingspot"; break;
-            case 8: TestName += $"Crafting the item"; break;
-            case 9: TestName += $"walking to storage spot to storage crafted item"; break;
-            case 10: TestName += $"dropping crafted item in storage spot"; break;
+            case 2: TestName += $"Unreserving 1st resource storagespot; shouldn't hit this"; break;
+            case 3: TestName += $"Carrying 1st resource to craftingspot"; break;
+            case 4: TestName += $"Dropping 1st resource in craftingspot"; break;
+            case 5: TestName += $"walking to 2nd storage spot to pick up 2nd resource and bring to craftingspot"; break;
+            case 6: TestName += $"picking up 2nd resource"; break;
+            case 7: TestName += $"Unreserving 2nd resource storagespot; shouldn't hit this"; break;
+            case 8: TestName += $"Carrying 2nd resource to craftingspot"; break;
+            case 9: TestName += $"Dropping 2nd resource in craftingspot"; break;
+            case 10: TestName += $"Crafting the item"; break;
+            case 11: TestName += $"walking to storage spot to storage crafted item"; break;
+            case 12: TestName += $"dropping crafted item in storage spot"; break;
         }
         TestName += "\n  ";
         // if (workerSubtask == 0) Debug.Log(TestName);
@@ -74,7 +80,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         verify_spotReservedByWorker(originalSpotToStoreItemIn, worker);
         verify_WorkerTaskTypeAndSubtask(worker, workerOriginalTask, workerOriginalSubtask);
 
-        var isWalking = workerSubtask == 0 || workerSubtask == 2 || workerSubtask == 4 || workerSubtask == 6 || workerSubtask == 9;
+        var isWalking = workerSubtask == 0 || workerSubtask == 3 || workerSubtask == 5 || workerSubtask == 8 || workerSubtask == 11;
         if (isWalking)
         {
             var workerNewMoveTargetRelativeToBuilding = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - buildingToMove.Location.WorldLoc;

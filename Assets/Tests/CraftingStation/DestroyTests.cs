@@ -12,21 +12,25 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
 
         // example scenario: 2 resources needed for crafting. subtasks:
         // --- transport resouce 1 to crafting spot
-        // subtask=0: walk to resource in itemspot 1
-        // subtask=1: pickup resource from itemspot 1
-        // subtask=2: walk to crafting spot
-        // subtask=3: drop resource in crafting spot
+        // 0    walk to resource in itemspot 1
+        // 1    pickup resource from itemspot 1
+        // 2    unreserve resource spot 1 IFF it's not the spot we're dropping the crafted item into; otherwise do a noop
+        // 3    walk to crafting spot
+        // 4    drop resource in crafting spot
         // --- transport resouce 2 to crafting spot
-        // subtask=4: walk to resource in itemspot 2
-        // subtask=5: pickup resource from itemspot 2
-        // subtask=6: walk to crafting spot
-        // subtask=7: drop resource in crafting spot
+        // 5    walk to resource in itemspot 2
+        // 6    pickup resource from itemspot 2
+        // 7    unreserve resource spot 1 IFF it's not the spot we're dropping the crafted item into; otherwise do a noop
+        // 8    walk to crafting spot
+        // 9    drop resource in crafting spot
         // --- ready to craft
-        // subtask=8: craft item
-        // subtask=9: walk to storage spot
-        // subtask=10: drop item in storage spot
-        for (int subtask = 0; subtask < 11; subtask++)
+        // 10   craft item
+        // 11   walk to storage spot
+        // 12   drop item in storage spot
+        for (int subtask = 0; subtask < 13; subtask++)
         {
+            if (subtask == 2 || subtask == 7) continue;
+
             // Test A: Move craftingstation while worker1 is crafting item
             LoadTestTown("craftingstation_MovePauseDestroy", subtask); runDestroyTest("Test A", subtask, false);
             LoadTestTown("craftingstation_MovePauseDestroy", subtask); runDestroyTest("Test B", subtask, true);
@@ -45,15 +49,17 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         {
             case 0: TestName += $"walking to 1st storage spot to pick up 1st resource and bring to craftingspot"; break;
             case 1: TestName += $"picking up 1st resource"; break;
-            case 2: TestName += $"Carrying 1st resource to craftingspot"; break;
-            case 3: TestName += $"Dropping 1st resource in craftingspot"; break;
-            case 4: TestName += $"walking to 2nd storage spot to pick up 2nd resource and bring to craftingspot"; break;
-            case 5: TestName += $"picking up 2nd resource"; break;
-            case 6: TestName += $"Carrying 2nd resource to craftingspot"; break;
-            case 7: TestName += $"Dropping 2nd resource in craftingspot"; break;
-            case 8: TestName += $"Crafting the item"; break;
-            case 9: TestName += $"walking to storage spot to storage crafted item"; break;
-            case 10: TestName += $"dropping crafted item in storage spot"; break;
+            case 2: TestName += $"Unreserving 1st resource storagespot; shouldn't hit this"; break;
+            case 3: TestName += $"Carrying 1st resource to craftingspot"; break;
+            case 4: TestName += $"Dropping 1st resource in craftingspot"; break;
+            case 5: TestName += $"walking to 2nd storage spot to pick up 2nd resource and bring to craftingspot"; break;
+            case 6: TestName += $"picking up 2nd resource"; break;
+            case 7: TestName += $"Unreserving 2nd resource storagespot; shouldn't hit this"; break;
+            case 8: TestName += $"Carrying 2nd resource to craftingspot"; break;
+            case 9: TestName += $"Dropping 2nd resource in craftingspot"; break;
+            case 10: TestName += $"Crafting the item"; break;
+            case 11: TestName += $"walking to storage spot to storage crafted item"; break;
+            case 12: TestName += $"dropping crafted item in storage spot"; break;
         }
         if (forceFillAllStorage) TestName += " (forceFillAllStorage)";
         TestName += "\n  ";
@@ -73,6 +79,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         StorageSpotData resourceSpot2 = (StorageSpotData)newTask.ReservedSpots[1];
         var origResource1 = resourceSpot1.ItemContainer.Item;
         var origResource2 = resourceSpot2.ItemContainer.Item;
+
         if (workerSubtask > 0)
             waitUntilTaskAndSubtaskIndex(worker, TaskType.Task_CraftItem, workerSubtask);
 
@@ -95,17 +102,16 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         verify_ItemInStorageSpot(resourceSpot1, null);
         verify_ItemInStorageSpot(resourceSpot2, null);
         verify_ItemIsInCraftingSpot(reservedCraftingSpot, null);
-        if (workerSubtask == 0 || workerSubtask == 1 || workerSubtask == 4 || workerSubtask == 5) // Walking to 1st or 2nd storage spot to pick up resource, or picking it up
+        if (workerSubtask == 0 || workerSubtask == 1 || workerSubtask == 5 || workerSubtask == 6)// Walking to 1st or 2nd storage spot to pick up resource, or picking it up
         {
             var isFirstResource = workerSubtask == 0 || workerSubtask == 1;
             verify_ItemDefnInHand(worker, null);
             verify_WorkerTaskType(isFirstResource || forceFillAllStorage ? TaskType.Idle : TaskType.PickupItemFromGround, worker);
             verify_ItemsOnGround(2);
         }
-        else if (workerSubtask == 2 || workerSubtask == 3 || workerSubtask == 6 || workerSubtask == 7) // Walking to crafting spot to drop 1st or 2nd resource, or dropping it
+        else if (workerSubtask == 3 || workerSubtask == 4 || workerSubtask == 8 || workerSubtask == 9) // Walking to crafting spot to drop 1st or 2nd resource, or dropping it
         {
-            var isFirstResource = workerSubtask == 2 || workerSubtask == 3;
-            // we should now be carrying the resource to a storage spot in the Camp since we're paused
+            var isFirstResource = workerSubtask == 3 || workerSubtask == 4;
 
             if (forceFillAllStorage)
             {
@@ -122,13 +128,13 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
                 verify_spotIsReserved(getWorkerCurrentSubtaskAsType<Subtask_WalkToItemSpot>(worker).ItemSpot);
             }
         }
-        else if (workerSubtask == 8) // Crafting the item
+        else if (workerSubtask == 10) // Crafting the item
         {
             verify_ItemDefnInHand(worker, null);
             verify_ItemsOnGround(2);
             verify_WorkerTaskType(forceFillAllStorage ? TaskType.Idle : TaskType.PickupItemFromGround, worker);
         }
-        else if (workerSubtask == 9 || workerSubtask == 10) // walking to final storage spot to drop crafted resource, or dropping it
+        else if (workerSubtask == 11 || workerSubtask == 12) // walking to final storage spot to drop crafted resource, or dropping it
         {
             // we should now be carrying the crafted good to a storage spot in the Camp since we're paused
             if (forceFillAllStorage)
