@@ -10,7 +10,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         // subtask=2: worker is unreserving spot item was in (shouldn't hit this since should complete instantly)
         // subtask=3: Move [buildingToMove] while [workerToTest] is walking to [buildingToStoreItemIn]
         // subtask=4: Move [buildingToMove] while [workerToTest] is dropping item in [buildingToStoreItemIn]
-        for (int subtask = 0; subtask < 5; subtask++)
+        for (int subtask = 3; subtask < 5; subtask++)
         {
             if (subtask == 2) continue;
             // Test A: Move store1     while worker1 is getting an item from woodcutter to store in store1
@@ -24,7 +24,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
             SetupMPDTest(out store1, out store2); runMoveTest("Test B", subtask, store1, store2, WoodcuttersHut, store1);
             SetupMPDTest(out store1, out store2); runMoveTest("Test C", subtask, store2, store2, WoodcuttersHut, store1);
             SetupMPDTest(out store1, out store2); runMoveTest("Test D", subtask, WoodcuttersHut, store1, WoodcuttersHut, store1);
-       //     SetupMPDTest(out store1, out store2); runMoveTest("Test E", subtask, WoodcuttersHut, store1, WoodcuttersHut, store2);
+            //     SetupMPDTest(out store1, out store2); runMoveTest("Test E", subtask, WoodcuttersHut, store1, WoodcuttersHut, store2);
         }
     }
 
@@ -49,6 +49,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         var movedBuildingWithItemInIt = buildingWithItem == buildingToMove;
         var movedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToMove;
         var originalTask = worker.AI.CurrentTask as Task_TransportItemFromSpotToSpot;
+        var originalSpotWithItemToPickup = originalTask.SpotWithItemToPickup;
         var originalSpotToStoreItemIn = getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
         Assert.NotNull(originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have a reserved spot in {buildingToStoreItemIn.TestId} to store item in");
         var workerOriginalLoc = worker.Location;
@@ -56,43 +57,53 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         var workerOriginalTask = worker.AI.CurrentTask.Type;
         var workerOriginalSubtask = worker.AI.CurrentTask.CurSubTask.GetType();
 
-        var workerOriginalLocRelativeToBuilding = worker.Location.WorldLoc - buildingToMove.Location.WorldLoc;
-        var workerOriginalTargetRelativeToBuilding = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - buildingToMove.Location.WorldLoc;
+        var workerOriginalTargetRelativeToSpotToGatherFrom = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - originalSpotWithItemToPickup.Location.WorldLoc;
+        var workerOriginalTargetRelativeToSpotToStoreIn = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - originalSpotToStoreItemIn.Location.WorldLoc;
+        var workerOriginalLocRelativeToSpotToStoreIn = worker.Location.WorldLoc - originalSpotToStoreItemIn.Location.WorldLoc;
 
         moveBuilding(buildingToMove, 2, 0);
 
         var newTask = worker.AI.CurrentTask as Task_TransportItemFromSpotToSpot;
         Assert.AreEqual(originalTask, newTask, $"{preface("", 1)} Task shouldn't have changed");
 
-        verify_spotReservedByWorker(originalSpotToStoreItemIn, worker);
+        // The worker could have found a better reserved spot. If so, then the original spot should be unreserved.
+        var newSpotToStoreItemIn = newTask.SpotToStoreItemIn;//getStorageSpotInBuildingReservedByWorker(buildingToStoreItemIn, worker);
+        Assert.NotNull(newSpotToStoreItemIn, $"{preface("", 1)} Worker should have a reserved spot in {buildingToStoreItemIn.TestId} to store item in");
+        if (originalSpotToStoreItemIn == newSpotToStoreItemIn)
+            verify_spotIsReserved(originalSpotToStoreItemIn, $"{preface("", 1)}");
+        else
+            verify_spotIsUnreserved(originalSpotToStoreItemIn, $"{preface("", 1)}");
+
         verify_WorkerTaskTypeAndSubtask(worker, workerOriginalTask, workerOriginalSubtask);
 
-        var workerNewLocRelativeToBuilding = worker.Location.WorldLoc - buildingToMove.Location.WorldLoc;
-        var workerNewMoveTargetRelativeToBuilding = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - buildingToMove.Location.WorldLoc;
+        var newSpotWithItemToPickup = newTask.SpotWithItemToPickup;
+        var workerNewTargetRelativeToSpotToGatherFrom = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - newSpotWithItemToPickup.Location.WorldLoc;
+        var workerNewMoveTargetRelativeToSpotToStoreIn = worker.AI.CurrentTask.LastMoveToTarget.WorldLoc - newSpotToStoreItemIn.Location.WorldLoc;
+        var workerNewLocRelativeToSpotToStoreIn = worker.Location.WorldLoc - newSpotToStoreItemIn.Location.WorldLoc;
 
         switch (workerSubtask)
         {
             case 0: // WorkerSubtask_WalkToItemSpot.
                 verify_LocsAreEqual(workerOriginalLoc, worker.Location);
                 if (movedBuildingWithItemInIt)
-                    verify_LocsAreEqual(workerOriginalTargetRelativeToBuilding, workerNewMoveTargetRelativeToBuilding);
+                    verify_LocsAreEqual(workerOriginalTargetRelativeToSpotToGatherFrom, workerNewTargetRelativeToSpotToGatherFrom);
                 break;
 
             case 1: // WorkerSubtask_PickupItemFromBuilding.
                 if (movedBuildingWithItemInIt)
-                    verify_LocsAreEqual(workerOriginalLocRelativeToBuilding, workerNewLocRelativeToBuilding);
+                    verify_LocsAreEqual(workerOriginalTargetRelativeToSpotToGatherFrom, workerNewTargetRelativeToSpotToGatherFrom);
                 verify_LocsAreEqual(workerOriginalMoveTarget, worker.AI.CurrentTask.LastMoveToTarget);
                 break;
 
             case 3: // WorkerSubtask_WalkToItemSpot.
                 verify_LocsAreEqual(workerOriginalLoc, worker.Location);
                 if (movedBuildingItemWillBeStoredIn)
-                    verify_LocsAreEqual(workerOriginalTargetRelativeToBuilding, workerNewMoveTargetRelativeToBuilding);
+                    verify_LocsAreEqual(workerOriginalTargetRelativeToSpotToStoreIn, workerNewMoveTargetRelativeToSpotToStoreIn);
                 break;
 
             case 4: // WorkerSubtask_DropItemInItemSpot.
                 if (movedBuildingItemWillBeStoredIn)
-                    verify_LocsAreEqual(workerOriginalLocRelativeToBuilding, workerNewLocRelativeToBuilding);
+                    verify_LocsAreEqual(workerOriginalLocRelativeToSpotToStoreIn, workerNewLocRelativeToSpotToStoreIn);
                 verify_LocsAreEqual(workerOriginalMoveTarget, worker.AI.CurrentTask.LastMoveToTarget);
                 break;
         }

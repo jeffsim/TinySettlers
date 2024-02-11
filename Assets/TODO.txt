@@ -1,7 +1,6 @@
 undo the fix for the movetarget being way off after mopving buildings, then create test and re-fix.
 	test agasint all biuldings?
-
-implement freeplacemeent so that i can disable settings and tile works again. okay taht can't save.load across
+BUG: open unassign tests.  addworker. move store while worker walking to wood.  doesn't update spottostoreitemin
 
 imlement storagepiledeatils
 figre out what brown is and why it just sits there.  market not selling?
