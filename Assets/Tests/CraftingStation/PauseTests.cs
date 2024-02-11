@@ -119,7 +119,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
                 verify_ItemDefnInHand(worker, "wood");
                 var newSubtask = getWorkerCurrentSubtaskAsType<Subtask_WalkToItemSpot>(worker);
                 verify_spotIsReserved(newSubtask.ItemSpot);
-                verify_BuildingsAreEqual(newTask2.ReservedItemSpot.Building, Camp);
+                verify_BuildingsAreEqual(newTask2.SpotToStoreItemIn.Building, Camp);
                 verify_ItemInStorageSpot(resourceSpot1, null);
                 verify_ItemInStorageSpot(resourceSpot2, isFirstResource ? origResource2 : null);
                 verify_ItemCountInCraftingSpot(reservedCraftingSpot, isFirstResource ? 0 : 1);
@@ -154,7 +154,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
                 verify_ItemDefnInHand(worker, "GardenPlot");
                 var newSubtask = getWorkerCurrentSubtaskAsType<Subtask_WalkToItemSpot>(worker);
                 verify_spotIsReserved(newSubtask.ItemSpot);
-                verify_BuildingsAreEqual(newTask3.ReservedItemSpot.Building, Camp);
+                verify_BuildingsAreEqual(newTask3.SpotToStoreItemIn.Building, Camp);
                 verify_ItemCountInCraftingSpot(reservedCraftingSpot, 0);
                 verify_ItemInStorageSpot(resourceSpot1, null);
                 verify_ItemInStorageSpot(resourceSpot2, null);

@@ -25,6 +25,7 @@ public abstract class TestBase
         CurStep = stepNum;
         if (GameDefns.Instance == null)
         {
+            // TODO: I suspect this is slowing down the tests.  How can I avoid the need to do it, keeping in mind that the main code uses it everywhere
             var go = new GameObject("GameDefns");
             GameDefns.Instance = go.AddComponent<GameDefns>();
             GameDefns.Instance.Test_ForceAwake();
@@ -151,6 +152,11 @@ public abstract class TestBase
     public void verify_BuildingsAreEqual(BuildingData building1, BuildingData building2, string message = "")
     {
         Assert.AreEqual(building1, building2, $"{preface(message)} Buildings not equal - {building1} vs {building2}");
+    }
+
+    public void verify_ItemsAreEqual(ItemData item1, ItemData item2, string message = "")
+    {
+        Assert.AreEqual(item1, item2, $"{preface(message)} Items not equal - {item1} vs {item2}");
     }
 
     public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker, string message = "", int frame = 2)
@@ -303,7 +309,10 @@ public abstract class TestBase
         Assert.NotNull(spot, $"{preface(message)} spot is null");
         Assert.NotNull(spot.ItemContainer, $"{preface(message)} spot.ItemContainer is null");
         var actualItem = spot.ItemContainer.Item;
-        Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in spot to be '{expectedItem}', but is '{actualItem}'");
+        if (expectedItem == null)
+            Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected spot to be empty, but it contains '{actualItem}'");
+        else
+            Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in spot to be '{expectedItem}', but is '{actualItem}'");
     }
 
     protected void forceMoveWorkerAwayFromAssignedBuilding(WorkerData worker)
@@ -346,20 +355,20 @@ public abstract class TestBase
     protected int GetNumItemsInTownStorage() => Town.Buildings.Sum(building => building.StorageSpots.Count(spot => spot.ItemContainer.HasItem));
     protected int GetNumItemsInTownGatheringSpots() => Town.Buildings.Sum(building => building.GatheringSpots.Count(spot => spot.ItemContainer.HasItem));
 
-    protected void moveBuilding(BuildingData buildingToMove, int tileX, int tileY)
+    protected void moveBuilding(BuildingData buildingToMove, int tileX, int tileY, string message = "")
     {
-        Assert.IsNull(Town.Tiles[tileY * Town.Defn.Width + tileX].BuildingInTile, $"{preface()} Tile {tileX}, {tileY} is already occupied by a building");
+        Assert.IsNull(Town.Tiles[tileY * Town.Defn.Width + tileX].BuildingInTile, $"{preface(message)} Tile {tileX}, {tileY} is already occupied by a building");
         Town.MoveBuilding(buildingToMove, tileX, tileY);
     }
     protected ItemData CreateItem(string itemDefnId) => new() { DefnId = itemDefnId };
 
-    protected T getWorkerCurrentTaskAsType<T>(WorkerData worker) where T : Task
+    protected T getWorkerCurrentTaskAsType<T>(WorkerData worker, string message = "") where T : Task
     {
         var task = worker.AI.CurrentTask;
         var actualTaskType = task.GetType();
         var expectedTaskType = typeof(T);
         Assert.IsNotNull(task, $"{preface()} Worker should have a current task");
-        Assert.AreEqual(expectedTaskType, actualTaskType, $"{preface()} Worker's current task should be of type {expectedTaskType} but is {actualTaskType}");
+        Assert.AreEqual(expectedTaskType, actualTaskType, $"{preface(message)} Worker's current task should be of type {expectedTaskType} but is {actualTaskType}");
         return (T)task;
     }
 

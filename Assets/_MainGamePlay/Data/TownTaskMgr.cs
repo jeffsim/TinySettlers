@@ -85,7 +85,6 @@ public class TownTaskMgr
 
                 // Get the nearest storage spot in the building that needs the item and reserve it for this worker to carry the item-in-hand to.
                 spotToReserve = highestNeed.BuildingWithNeed.GetClosestEmptyStorageSpot(worker.Location);
-                spotToReserve.Reservation.ReserveBy(worker);
 
                 // Tell the Need that we'll be fulfilling it now.
                 highestNeed.AssignWorkerToMeetNeed(worker);
@@ -96,18 +95,21 @@ public class TownTaskMgr
                 if (spotToReserve == null)
                 {
                     // We didn't have a storage spot reserved; find the nearest storage spot and reserve it.  If we can't find one, then abandon (drop) the item and abort
-                    spotToReserve = FindAndReserveOptimalStorageSpotToDeliverItemTo(worker);
+                    spotToReserve = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worker.Location, worker);
                 }
-                else if (spotToReserve.Building.IsPaused)
+                else if (spotToReserve.Building.IsPaused || spotToReserve.Building.IsDestroyed)
                 {
-                    // We had a storage spot reserved for hte item, but it's in a building that is now Paused.  When a building is paused, it's storage spots are no longer valid.
+                    // We had a storage spot reserved for the item, but it's in a building that is now Paused.  When a building is paused, it's storage spots are no longer valid.
                     // So, we need to find a new storage spot for the item.  If we can't find one, then abandon (drop) the item and abort
                     spotToReserve.Reservation.Unreserve();
-                    spotToReserve = FindAndReserveOptimalStorageSpotToDeliverItemTo(worker);
+                    spotToReserve = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worker.Location, worker);
                 }
                 else
                 {
                     // The Worker has a storage spot reserved for the item they're holding and it's still valid, so we'll use it. Nothing to do here
+                    // Unreserve it since the Task_DeliverItemInHandToStorageSpot task will reserve it.  Note that we're gauranteed to do this task
+                    // however if we didn't, then this unreserve would cause issues.  So, warning to future self.
+                    spotToReserve.Reservation.Unreserve();
                 }
 
                 if (spotToReserve == null)

@@ -124,7 +124,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
                 verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker);
                 verify_ItemDefnInHand(worker, "wood");
                 verify_ItemsOnGround(1);
-                verify_BuildingsAreEqual(getWorkerCurrentTaskAsType<Task_DeliverItemInHandToStorageSpot>(worker).ReservedItemSpot.Building, Camp);
+                verify_BuildingsAreEqual(getWorkerCurrentTaskAsType<Task_DeliverItemInHandToStorageSpot>(worker).SpotToStoreItemIn.Building, Camp);
                 verify_spotIsReserved(getWorkerCurrentSubtaskAsType<Subtask_WalkToItemSpot>(worker).ItemSpot);
             }
         }
@@ -148,7 +148,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
                 verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker);
                 verify_ItemDefnInHand(worker, "GardenPlot");
                 verify_ItemsOnGround(0);
-                verify_BuildingsAreEqual(getWorkerCurrentTaskAsType<Task_DeliverItemInHandToStorageSpot>(worker).ReservedItemSpot.Building, Camp);
+                verify_BuildingsAreEqual(getWorkerCurrentTaskAsType<Task_DeliverItemInHandToStorageSpot>(worker).SpotToStoreItemIn.Building, Camp);
                 verify_spotIsReserved(getWorkerCurrentSubtaskAsType<Subtask_WalkToItemSpot>(worker).ItemSpot);
             }
         }

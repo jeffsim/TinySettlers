@@ -122,7 +122,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             else if (pausedBuildingOfWorker)
             {
                 verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, $"{preface("", 1)} Worker's assigned building was paused, so they should have abandoned the gather task and instead now be transporting the item to the storage spot");
-                Assert.AreNotEqual((worker.AI.CurrentTask as Task_DeliverItemInHandToStorageSpot).ReservedItemSpot.Building, buildingToPause, $"{preface("", 1)} Worker should have reserved a spot in another building to store the item in");
+                Assert.AreNotEqual((worker.AI.CurrentTask as Task_DeliverItemInHandToStorageSpot).SpotToStoreItemIn.Building, buildingToPause, $"{preface("", 1)} Worker should have reserved a spot in another building to store the item in");
                 if (pausedBuildingItemWillBeStoredIn)
                     verify_spotIsUnreserved(originalSpotToStoreItemIn, $"{preface("", 1)} Storage spot that item was going to be stored in should not be reserved");
                 else
@@ -134,7 +134,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
                 if (pausedBuildingOfWorker)
                 {
                     verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker, "Should still be delivering the item that the worker is holding");
-                    Assert.AreNotEqual((worker.AI.CurrentTask as Task_DeliverItemInHandToStorageSpot).ReservedItemSpot.Building, buildingToPause, $"{preface("", 1)} Worker should have reserved a spot in another building to store the item in");
+                    Assert.AreNotEqual((worker.AI.CurrentTask as Task_DeliverItemInHandToStorageSpot).SpotToStoreItemIn.Building, buildingToPause, $"{preface("", 1)} Worker should have reserved a spot in another building to store the item in");
                 }
                 else
                 {

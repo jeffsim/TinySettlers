@@ -86,7 +86,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
             verify_WorkerTaskType(TaskType.DeliverItemInHandToStorageSpot, worker);
             verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
             var task = worker.AI.CurrentTask as Task_DeliverItemInHandToStorageSpot;
-            Assert.AreNotEqual(task.ReservedItemSpot.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
+            Assert.AreNotEqual(task.SpotToStoreItemIn.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
         }
         else // STORAGE FULL: WorkerSubtask_SellItemInHands
         {

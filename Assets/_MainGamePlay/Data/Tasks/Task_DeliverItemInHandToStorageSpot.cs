@@ -5,19 +5,19 @@ public class Task_DeliverItemInHandToStorageSpot : Task
 {
     public override string ToString() => "Deliver item in hand to storage spot";
     public override TaskType Type => TaskType.DeliverItemInHandToStorageSpot;
-    public IItemSpotInBuilding ReservedItemSpot;
+    public IItemSpotInBuilding SpotToStoreItemIn;
 
     public Task_DeliverItemInHandToStorageSpot(WorkerData worker, NeedData need, IItemSpotInBuilding itemSpot) : base(worker, need)
     {
-        ReservedItemSpot = itemSpot;
+        SpotToStoreItemIn = ReserveSpotOnStart(itemSpot);
     }
 
     public override Subtask GetNextSubtask()
     {
         return SubtaskIndex switch
         {
-            0 => new Subtask_WalkToItemSpot(this, ReservedItemSpot),
-            1 => new Subtask_DropItemInItemSpot(this, ReservedItemSpot),
+            0 => new Subtask_WalkToItemSpot(this, SpotToStoreItemIn),
+            1 => new Subtask_DropItemInItemSpot(this, SpotToStoreItemIn),
             _ => null // No more subtasks
         };
     }

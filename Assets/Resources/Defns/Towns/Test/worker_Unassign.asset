@@ -18,7 +18,7 @@ MonoBehaviour:
   Height: 3
   Tiles: g,g,g,g,g,g,g,g,g
   WorldX: -600
-  WorldY: 900
+  WorldY: 0
   Buildings:
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: dda0fe43be1ab4dc695d54f1a2a23154, type: 2}

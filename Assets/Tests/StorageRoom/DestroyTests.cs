@@ -113,7 +113,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
                 if (destroyedBuildingItemWillBeStoredIn)
                 {
                     verify_spotIsUnreserved(originalSpotToStoreItemIn, "Storage spot that item was going to be stored in should be unreserved");
-                    Assert.AreNotEqual(newTask.ReservedItemSpot.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
+                    Assert.AreNotEqual(newTask.SpotToStoreItemIn.Building, originalSpotToStoreItemIn, $"{preface("", 1)} Worker should have reserved a spot in a different building to store the item in");
                 }
                 else
                 {

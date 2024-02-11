@@ -1,19 +1,5 @@
-* carnation: storer carrying item to storage room; pause room, storer picks a new spot in camp; unpause; storer keeps going to camp.
-  - should go to store?
-* carnation: remove store.  build a new store while courer carrying item.
-  - should go to store?
-
-* market_MovePauseDestroy: one worker in storage, 1 wood in woodcutter
-  - storer goes to woodcutter to pick up wood. good
-  - then immediately drops it (bad), picks it up, drops it..
-
-
-
-
-
 * add: primary storage: specify per-building hwt can be stored (defaults to 'anything')
     - silo: can only store items of type 'food'
-
 
 * Add building construction
 * if two workers are going to pick up items from the same storagepile then have the second one wait while the first-to-arrive is picking up their item
