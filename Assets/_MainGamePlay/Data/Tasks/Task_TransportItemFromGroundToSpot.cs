@@ -8,7 +8,7 @@ public class Task_TransportItemFromGroundToSpot : Task
     public override TaskType Type => TaskType.PickupItemFromGround;
 
     [SerializeField] public ItemData ItemToPickup;
-    [SerializeField] IItemSpotInBuilding SpotToStoreItemIn;
+    [SerializeField] public IItemSpotInBuilding SpotToStoreItemIn;
 
     public bool IsWalkingToItemOnGround => SubtaskIndex == 0;
     public bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 2;

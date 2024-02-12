@@ -159,6 +159,11 @@ public abstract class TestBase
         Assert.AreEqual(item1, item2, $"{preface(message)} Items not equal - {item1} vs {item2}");
     }
 
+    public void verify_SpotsAreEqual(IItemSpotInBuilding spot1, IItemSpotInBuilding spot2, string message = "")
+    {
+        Assert.AreEqual(spot1, spot2, $"{preface(message)} Spots not equal - {spot1} vs {spot2}");
+    }
+
     public void verify_WorkerTaskType(TaskType expectedType, WorkerData worker, string message = "", int frame = 2)
     {
         Assert.NotNull(worker.AI.CurrentTask, $"{preface(message, frame)}: Expected worker {worker} to have a task, but worker.AI.CurrentTask is null");

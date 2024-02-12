@@ -36,7 +36,7 @@ public class Task_GatherResource : Task
     }
 
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
-    {
+    { 
         base.OnBuildingMoved(building, previousLoc);
 
         if (IsWalkingToSpotToDropItemIn)
