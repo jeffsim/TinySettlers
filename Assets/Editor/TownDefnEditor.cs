@@ -1,5 +1,6 @@
 using System;
 using Sirenix.OdinInspector.Editor;
+using Sirenix.Utilities;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ public class TownDefnEditor : OdinEditor
 
     public override void OnInspectorGUI()
     {
-        TownDefn mapDefn = (TownDefn)Selection.activeObject as TownDefn;
+        TownDefn mapDefn = (TownDefn)Selection.activeObject;
 
         DrawDefaultInspector();
 
@@ -18,17 +19,25 @@ public class TownDefnEditor : OdinEditor
         myGameDefns = new GameDefnsMgr();
         myGameDefns.RefreshDefns();
 
-        EditorGUILayout.BeginHorizontal();
-        Rect rect = EditorGUILayout.GetControlRect(true, 64);
-        if (rect.width > 2)
-            renderMap(rect, mapDefn);
-        EditorGUILayout.EndHorizontal();
+        GUILayout.Space(6);
+        GUILayout.BeginHorizontal();
+        //   GUILayout.FlexibleSpace(); // Center the box horizontally
+
+        var width = mapDefn.Width * 64;
+        var height = mapDefn.Height * 64;
+        Rect gridRect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(height));
+        var borderRect = gridRect.Expand(2, 2);
+        GUI.Box(borderRect, "");
+        renderMap(gridRect, mapDefn);
+
+        //     GUILayout.FlexibleSpace();
+        GUILayout.EndHorizontal();
+        HandleMouseInput(gridRect);
     }
 
     private void renderMap(Rect rect, TownDefn mapDefn)
     {
-        int width = mapDefn.Width, height = mapDefn.Height;
-        float tileSize = Mathf.Min(rect.width * 2 / width, rect.height * 2 / height);
+        float tileSize = Mathf.Min(64, 64);
 
         var shadowStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.black } };
         var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.yellow } };
@@ -49,7 +58,6 @@ public class TownDefnEditor : OdinEditor
                 EditorGUI.DrawRect(new Rect(finalX, finalY, tileSize - 1, tileSize - 1), tile.EditorColor);
                 EditorGUI.LabelField(new Rect(finalX + 1, finalY + 1, tileSize - 3, tileSize - 3), name, shadowStyle);
                 EditorGUI.LabelField(new Rect(finalX, finalY, tileSize - 3, tileSize - 3), name, whiteStyle);
-
             }
 
         foreach (var buildingDefn in mapDefn.Buildings)
@@ -67,6 +75,25 @@ public class TownDefnEditor : OdinEditor
                 EditorGUI.LabelField(new Rect(finalX + 2, finalY + 1, tileSize - 3, tileSize - 3), text, shadowStyle);
                 EditorGUI.LabelField(new Rect(finalX + 1, finalY, tileSize - 3, tileSize - 3), text, style);
             }
+        }
+    }
+
+    private void HandleMouseInput(Rect gridRect)
+    {
+        // Get the current event
+        Event currentEvent = Event.current;
+
+        // Check if the event is a mouse click within the gridRect
+        if (currentEvent.type == EventType.MouseDown && gridRect.Contains(currentEvent.mousePosition))
+        {
+            // Calculate the position relative to the upper-left corner of the grid
+            Vector2 relativePosition = currentEvent.mousePosition - new Vector2(gridRect.x, gridRect.y);
+
+            // Log the relative position
+            Debug.Log($"Grid Clicked at: {relativePosition}");
+
+            // Use this to consume the event so it doesn't propagate further
+            currentEvent.Use();
         }
     }
 }

@@ -1,4 +1,4 @@
-bae: camper brings wood to carpenter then picks it up and brings it to market
+bad: camper brings wood to carpenter then picks it up and brings it to market
 bad: NOTE: takes wood from market instead of selling it.
 
 implement needs as
