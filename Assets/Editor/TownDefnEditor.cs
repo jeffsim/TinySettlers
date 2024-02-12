@@ -8,6 +8,10 @@ using UnityEngine;
 public class TownDefnEditor : OdinEditor
 {
     GameDefnsMgr myGameDefns;
+    private Town_BuildingDefn draggingBuilding = null;
+    private bool isDragging = false;
+    float tileSize = 64;
+    private Vector2 dragMousePosition;
 
     public override void OnInspectorGUI()
     {
@@ -19,21 +23,43 @@ public class TownDefnEditor : OdinEditor
         myGameDefns = new GameDefnsMgr();
         myGameDefns.RefreshDefns();
 
+        // render map
         GUILayout.Space(6);
         GUILayout.BeginHorizontal();
         //   GUILayout.FlexibleSpace(); // Center the box horizontally
-
-        var width = mapDefn.Width * 64;
-        var height = mapDefn.Height * 64;
+        var width = mapDefn.Width * tileSize;
+        var height = mapDefn.Height * tileSize;
         Rect gridRect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(height));
         var borderRect = gridRect.Expand(2, 2);
         GUI.Box(borderRect, "");
         renderMap(gridRect, mapDefn);
-
         //     GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
-        HandleMouseInput(mapDefn, gridRect);
+
+        // handle drag
+        if (Event.current.type != EventType.Layout && Event.current.type != EventType.Repaint)
+            HandleMouseInput(mapDefn, gridRect);
+
+        // Show dragsquare
+        if (isDragging)
+        {
+            // If the mouse cursor is over a gridtile then render a yellow faded square in the tile to hint that dropping would place the building there
+            Vector2 relativePosition = Event.current.mousePosition - new Vector2(gridRect.x, gridRect.y);
+            int newTileX = Mathf.FloorToInt(relativePosition.x / tileSize);
+            int newTileY = Mathf.FloorToInt(relativePosition.y / tileSize);
+            if (newTileX >= 0 && newTileX < mapDefn.Width && newTileY >= 0 && newTileY < mapDefn.Height)
+            {
+                var rect = new Rect(gridRect.x + newTileX * tileSize, gridRect.y + newTileY * tileSize, tileSize, tileSize);
+                EditorGUI.DrawRect(rect.Expand(-2, -2), new(1, 1, 0, 0.5f));
+            }
+
+            Rect dragSquare = new(dragMousePosition.x - tileSize / 2 - dragOffset.x, dragMousePosition.y - tileSize / 2 - dragOffset.y, tileSize, tileSize);
+            EditorGUI.DrawRect(dragSquare, draggingBuilding.Building.EditorColor);
+
+            Repaint();
+        }
     }
+    Vector2 dragOffset;
 
     private void renderMap(Rect rect, TownDefn mapDefn)
     {
@@ -77,9 +103,6 @@ public class TownDefnEditor : OdinEditor
             }
         }
     }
-    private Town_BuildingDefn draggingBuilding = null; // Track the building being dragged
-    private bool isDragging = false; // Is a drag operation in progress
-    float tileSize = 64;
 
     private void HandleMouseInput(TownDefn mapDefn, Rect gridRect)
     {
@@ -91,15 +114,17 @@ public class TownDefnEditor : OdinEditor
         {
             foreach (var building in mapDefn.Buildings)
             {
-                var tileSize = Mathf.Min(64, 64); // Assuming tileSize is constant
-                var finalX = building.TileX * tileSize;
-                var finalY = (mapDefn.Height - 1 - building.TileY) * tileSize; // Assuming Y is inverted
-                var buildingRect = new Rect(gridRect.x + finalX, gridRect.y + finalY, tileSize, tileSize);
-
+                var tileX = building.TileX * tileSize;
+                var tileY = (mapDefn.Height - 1 - building.TileY) * tileSize; // Assuming Y is inverted
+                var buildingRect = new Rect(gridRect.x + tileX, gridRect.y + tileY, tileSize, tileSize);
+                var xMouseDiffFromTileCenter = currentEvent.mousePosition.x - buildingRect.center.x;
+                var yMouseDiffFromTileCenter = currentEvent.mousePosition.y - buildingRect.center.y;
                 if (buildingRect.Contains(currentEvent.mousePosition))
                 {
                     draggingBuilding = building; // Mark this building as being dragged
                     isDragging = true;
+                    dragMousePosition = currentEvent.mousePosition;
+                    dragOffset = new(xMouseDiffFromTileCenter, yMouseDiffFromTileCenter);
                     currentEvent.Use();
                     break; // Stop checking other buildings
                 }
@@ -109,13 +134,9 @@ public class TownDefnEditor : OdinEditor
         // Handle Mouse Drag - Show Drag Square
         if (currentEvent.type == EventType.MouseDrag && isDragging)
         {
-            EditorGUI.DrawRect(new Rect(currentEvent.mousePosition.x - tileSize / 2, currentEvent.mousePosition.y - tileSize / 2, tileSize, tileSize), Color.gray);
-
-            GUI.changed = true; // Request repaint
-            Repaint();
+            dragMousePosition = currentEvent.mousePosition;
             currentEvent.Use();
         }
-
 
         // Handle Mouse Up - Drop and Record Undo
         if (currentEvent.type == EventType.MouseUp && isDragging)
@@ -131,12 +152,8 @@ public class TownDefnEditor : OdinEditor
             if (draggingBuilding != null)
             {
                 draggingBuilding.TileX = newTileX;
-                draggingBuilding.TileY = mapDefn.Height - 1 - newTileY; // Assuming Y is inverted
-
-                // Since we've now made a change, let's ensure it can be undone
-                Undo.FlushUndoRecordObjects(); // Ensure changes are recorded for undo
-
-                // Mark the mapDefn object as dirty to ensure changes are saved
+                draggingBuilding.TileY = mapDefn.Height - 1 - newTileY;
+                Undo.FlushUndoRecordObjects();
                 EditorUtility.SetDirty(mapDefn);
             }
 
@@ -146,4 +163,5 @@ public class TownDefnEditor : OdinEditor
             currentEvent.Use();
         }
     }
+
 }
