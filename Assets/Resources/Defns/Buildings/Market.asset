@@ -21,6 +21,7 @@ MonoBehaviour:
   AssignedWorkerFriendlyName: Marketer
   HasWorkers: 1
   MaxWorkers: 2
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 1, g: 0.6673894, b: 0.009433806, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
@@ -33,9 +34,6 @@ MonoBehaviour:
   CraftingSpots: []
   CanStoreItems: 1
   IsPrimaryStorage: 0
-  StorageAreaLocations:
-  - {x: 0, y: 0, z: 0}
-  StorageAreaSize: {x: 3, y: 3}
   StorageAreas:
   - Location: {x: 0, y: 0, z: 0}
     StorageAreaSize: {x: 3, y: 3}
@@ -52,3 +50,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0f7a65437217c4f3c8bdf660e2b482c4, type: 2}
   - {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
   - {fileID: 11400000, guid: 8299fd30f1aba4fbea13091ddf0ceeb2, type: 2}
+  - {fileID: 11400000, guid: a806f05d763e8a744aa2323085bb94cb, type: 2}
+  - {fileID: 11400000, guid: 06ea90791fa6045cea5d2005d2eeb22c, type: 2}

@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba40ddb7a672144348894273f778f708, type: 3}
+  m_Name: move_bug3
+  m_EditorClassIdentifier: 
+  Id: move_bug3
+  FriendlyName: move_bug3
+  Width: 3
+  Height: 3
+  Tiles: g,g,g,g,g,g,g,g,g
+  WorldX: -300
+  WorldY: 0
+  Buildings:
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: 5166dfc13ba45214dae5135b910646f6, type: 2}
+    TestId: store1
+    TileX: 1
+    TileY: 1
+    StartingItemsInBuilding: []
+    NumWorkersStartAtBuilding: 1
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: dda0fe43be1ab4dc695d54f1a2a23154, type: 2}
+    TestId: camp
+    TileX: 1
+    TileY: 2
+    StartingItemsInBuilding: []
+    NumWorkersStartAtBuilding: 1
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: 716a56f780483e24b9d1bb58c94cf5e1, type: 2}
+    TestId: woodc1
+    TileX: 0
+    TileY: 2
+    StartingItemsInBuilding:
+    - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
+      Count: 3
+    NumWorkersStartAtBuilding: 0
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: ae55035fa9a964b47a42844372fcd9c8, type: 2}
+    TestId: store1
+    TileX: 0
+    TileY: 1
+    StartingItemsInBuilding: []
+    NumWorkersStartAtBuilding: 1
