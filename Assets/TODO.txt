@@ -1,5 +1,5 @@
-camper brings wood to carpenter then picks it up and brings it to market
-NOTE: takes above from amrket -=bad
+bae: camper brings wood to carpenter then picks it up and brings it to market
+bad: NOTE: takes wood from market instead of selling it.
 
 implement needs as
 	if global need for X is high and I can geenrate X if I have Y, then I hae a high need for Y.  pass the need through.
@@ -7,7 +7,7 @@ implement needs as
 * add: primary storage: specify per-building hwt can be stored (defaults to 'anything')
     - silo: can only store items of type 'food'
 
-* Combine IMultipleItemSpot and IItemSpotInBuilding into IMultipleItemSpotInBuilding.  Clean up interfaces
+* Combine IMultipleItemSpot and IItemSpotInBuilding into IMultipleItemSpotInBuilding (rename to IItemContainerInBuilding).  Clean up interfaces
 
 * Add building construction
 * if two workers are going to pick up items from the same storagepile then have the second one wait while the first-to-arrive is picking up their item
