@@ -32,7 +32,7 @@ public class TownDefnEditor : OdinEditor
 
         //     GUILayout.FlexibleSpace();
         GUILayout.EndHorizontal();
-        HandleMouseInput(gridRect);
+        HandleMouseInput(mapDefn, gridRect);
     }
 
     private void renderMap(Rect rect, TownDefn mapDefn)
@@ -77,22 +77,72 @@ public class TownDefnEditor : OdinEditor
             }
         }
     }
+    private Town_BuildingDefn draggingBuilding = null; // Track the building being dragged
+    private bool isDragging = false; // Is a drag operation in progress
+    float tileSize = 64;
 
-    private void HandleMouseInput(Rect gridRect)
+    private void HandleMouseInput(TownDefn mapDefn, Rect gridRect)
     {
-        // Get the current event
         Event currentEvent = Event.current;
+        Vector2 relativePosition = currentEvent.mousePosition - new Vector2(gridRect.x, gridRect.y);
 
-        // Check if the event is a mouse click within the gridRect
+        // Handle Mouse Down - Start Drag
         if (currentEvent.type == EventType.MouseDown && gridRect.Contains(currentEvent.mousePosition))
         {
-            // Calculate the position relative to the upper-left corner of the grid
-            Vector2 relativePosition = currentEvent.mousePosition - new Vector2(gridRect.x, gridRect.y);
+            foreach (var building in mapDefn.Buildings)
+            {
+                var tileSize = Mathf.Min(64, 64); // Assuming tileSize is constant
+                var finalX = building.TileX * tileSize;
+                var finalY = (mapDefn.Height - 1 - building.TileY) * tileSize; // Assuming Y is inverted
+                var buildingRect = new Rect(gridRect.x + finalX, gridRect.y + finalY, tileSize, tileSize);
 
-            // Log the relative position
-            Debug.Log($"Grid Clicked at: {relativePosition}");
+                if (buildingRect.Contains(currentEvent.mousePosition))
+                {
+                    draggingBuilding = building; // Mark this building as being dragged
+                    isDragging = true;
+                    currentEvent.Use();
+                    break; // Stop checking other buildings
+                }
+            }
+        }
 
-            // Use this to consume the event so it doesn't propagate further
+        // Handle Mouse Drag - Show Drag Square
+        if (currentEvent.type == EventType.MouseDrag && isDragging)
+        {
+            EditorGUI.DrawRect(new Rect(currentEvent.mousePosition.x - tileSize / 2, currentEvent.mousePosition.y - tileSize / 2, tileSize, tileSize), Color.gray);
+
+            GUI.changed = true; // Request repaint
+            Repaint();
+            currentEvent.Use();
+        }
+
+
+        // Handle Mouse Up - Drop and Record Undo
+        if (currentEvent.type == EventType.MouseUp && isDragging)
+        {
+            // Only record the undo event here, right before the change
+            Undo.RecordObject(mapDefn, "Move Building");
+
+            // Calculate new position based on mouse position
+            int newTileX = Mathf.FloorToInt(relativePosition.x / tileSize);
+            int newTileY = Mathf.FloorToInt(relativePosition.y / tileSize);
+
+            // Update the building's position
+            if (draggingBuilding != null)
+            {
+                draggingBuilding.TileX = newTileX;
+                draggingBuilding.TileY = mapDefn.Height - 1 - newTileY; // Assuming Y is inverted
+
+                // Since we've now made a change, let's ensure it can be undone
+                Undo.FlushUndoRecordObjects(); // Ensure changes are recorded for undo
+
+                // Mark the mapDefn object as dirty to ensure changes are saved
+                EditorUtility.SetDirty(mapDefn);
+            }
+
+            // Reset drag state
+            draggingBuilding = null;
+            isDragging = false;
             currentEvent.Use();
         }
     }

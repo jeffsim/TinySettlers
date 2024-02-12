@@ -22,18 +22,21 @@ MonoBehaviour:
   Buildings:
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: dda0fe43be1ab4dc695d54f1a2a23154, type: 2}
-    TileX: 2
+    TestId: 
+    TileX: 1
     TileY: 2
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: a8686a94d58b44b0b8400d3c70613146, type: 2}
-    TileX: 0
-    TileY: 0
+    TestId: 
+    TileX: 1
+    TileY: 1
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 1
   - IsEnabled: 0
     Building: {fileID: 11400000, guid: 7494875aee3f5468b92e65b7ae31d238, type: 2}
+    TestId: 
     TileX: 0
     TileY: 1
     StartingItemsInBuilding: []
