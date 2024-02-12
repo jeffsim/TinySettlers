@@ -7,6 +7,9 @@ public class Task_DeliverItemInHandToStorageSpot : Task
     public override TaskType Type => TaskType.DeliverItemInHandToStorageSpot;
     public IItemSpotInBuilding SpotToStoreItemIn;
 
+    public bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 0;
+    bool IsDroppingItemInSpot => SubtaskIndex == 1;
+
     public Task_DeliverItemInHandToStorageSpot(WorkerData worker, NeedData need, IItemSpotInBuilding itemSpot) : base(worker, need)
     {
         SpotToStoreItemIn = ReserveSpotOnStart(itemSpot);
@@ -20,5 +23,17 @@ public class Task_DeliverItemInHandToStorageSpot : Task
             1 => new Subtask_DropItemInItemSpot(this, SpotToStoreItemIn),
             _ => null // No more subtasks
         };
+    }
+
+    public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
+    {
+        base.OnBuildingMoved(building, previousLoc);
+
+        if (!IsDroppingItemInSpot)
+        {
+            SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, Worker.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building);
+            if (IsWalkingToSpotToDropItemIn)
+                LastMoveToTarget.SetWorldLoc(SpotToStoreItemIn.Location);
+        }
     }
 }

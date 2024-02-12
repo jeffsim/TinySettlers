@@ -12,6 +12,7 @@ public class Task_TransportItemFromGroundToSpot : Task
 
     public bool IsWalkingToItemOnGround => SubtaskIndex == 0;
     public bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 2;
+    bool IsDroppingItemInSpot => SubtaskIndex == 4;
 
     public Task_TransportItemFromGroundToSpot(WorkerData worker, NeedData needData, IItemSpotInBuilding reservedSpotToStoreItemIn) : base(worker, needData)
     {
@@ -41,6 +42,18 @@ public class Task_TransportItemFromGroundToSpot : Task
     {
         CompleteTask();
         Worker.OriginalPickupItemNeed = Need;
+    }
+
+    public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
+    {
+        base.OnBuildingMoved(building, previousLoc);
+
+        if (!IsDroppingItemInSpot)
+        {
+            SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : ItemToPickup.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building);
+            if (IsWalkingToSpotToDropItemIn)
+                LastMoveToTarget.SetWorldLoc(SpotToStoreItemIn.Location);
+        }
     }
 
     public override void OnBuildingDestroyed(BuildingData building)

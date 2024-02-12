@@ -28,7 +28,14 @@ public class StorageSpotDetails : MonoBehaviour
     {
         if (pile == null) return;
 
-        Item.text = "TODO; pile details";
+        Item.text = "";
+        foreach (var spot in pile.Data.StorageSpots)
+        {
+            if (spot.ItemContainer.HasItem)
+                Item.text += spot.InstanceId + " item: " + spot.ItemContainer.Item.DefnId + "\n";
+            if (spot.Reservation.IsReserved)
+                Item.text += spot.InstanceId + " reserved by: " + spot.Reservation.ReservedBy + "\n";
+        }
         // var str = "Item:\n";
         // if (pile.Data.ItemContainer.Item != null)
         //     str += pile.Data.ItemContainer.Item.DefnId;

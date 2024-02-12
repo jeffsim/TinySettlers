@@ -52,10 +52,11 @@ public class Task_TransportItemFromSpotToSpot : Task
     {
         base.OnBuildingMoved(building, previousLoc);
 
-        if (IsWalkingToSpotToDropItemIn)
+        if (!IsDroppingItemInSpot)
         {
             SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotWithItemToPickup.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building);
-            LastMoveToTarget.SetWorldLoc(SpotToStoreItemIn.Location);
+            if (IsWalkingToSpotToDropItemIn)
+                LastMoveToTarget.SetWorldLoc(SpotToStoreItemIn.Location);
         }
     }
 

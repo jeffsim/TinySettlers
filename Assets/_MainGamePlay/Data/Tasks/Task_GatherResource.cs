@@ -36,13 +36,14 @@ public class Task_GatherResource : Task
     }
 
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
-    { 
+    {
         base.OnBuildingMoved(building, previousLoc);
 
-        if (IsWalkingToSpotToDropItemIn)
+        if (!IsDroppingItemInSpot)
         {
             SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building);
-            LastMoveToTarget.SetWorldLoc(SpotToStoreItemIn.Location);
+            if (IsWalkingToSpotToDropItemIn)
+                LastMoveToTarget.SetWorldLoc(SpotToStoreItemIn.Location);
         }
     }
 

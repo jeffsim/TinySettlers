@@ -345,11 +345,11 @@ public class BuildingData : BaseData, ILocationProvider
                         //   numInStorage += building.NumItemsInStorage(item); // doesn't include ferrying items but :shrug:
                     }
                 }
-                if (globalNeedForItem > 0.5f) // TODO: Allow user to modify this to e.g. effect a 'fire sale' in which even highly needed items are sold
-                {
-                    need.Priority = 0;
-                    continue;
-                }
+                // if (globalNeedForItem > 0.5f) // TODO: Allow user to modify this to e.g. effect a 'fire sale' in which even highly needed items are sold
+                // {
+                //     need.Priority = 0;
+                //     continue;
+                // }
 
                 // if here then the item-to-be-sold isn't highly needed.  If there's a lot of it in storage, then sell it
                 int numInStorage = Town.NumTotalItemsInStorage(item);

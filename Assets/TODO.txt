@@ -1,11 +1,3 @@
-undo the fix for the movetarget being way off after mopving buildings, then create test and re-fix.
-	test agasint all biuldings?
-    BUG 1: open unassign test.  addworker to camp. move store while worker walking to wood.  doesn't update spottostoreitemin
-    BUG 2: open unassign test.  addworker to woodcutter. wait until its carrying wood to store1.  move store1 so it's no longer the closest building. result: blue line to random place
-
-imlement storagepiledeatils
-figre out what brown is and why it just sits there.  market not selling?
-
 implement needs as
 	if global need for X is high and I can geenrate X if I have Y, then I hae a high need for Y.  pass the need through.
     
