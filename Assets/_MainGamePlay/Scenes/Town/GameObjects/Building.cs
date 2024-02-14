@@ -12,6 +12,8 @@ public class Building : MonoBehaviour
     public GameObject StorageFullIndicator;
     public GameObject PausedIndicator;
     public GameObject Visual;
+    public GameObject Background;
+    public GameObject Bottom;
     public SceneWithMap scene;
 
     private Vector3 offset;
@@ -32,7 +34,9 @@ public class Building : MonoBehaviour
         Data.OnLocationChanged += OnLocationChanged;
 
         Name.text = data.Defn.FriendlyName;
-        GetComponentInChildren<Renderer>().material.color = data.Defn.BuildingColor;
+        Background.GetComponent<Renderer>().material.color = data.Defn.BuildingColor;
+        var color = data.Defn.BuildingColor / 2f;
+        Bottom.GetComponent<Renderer>().material.color = color;
         transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, 0);
 
         for (int i = 0; i < Data.Defn.StorageAreas.Count; i++)
