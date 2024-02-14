@@ -102,4 +102,9 @@ public partial class WorkerTests : TestBase
         verify_SpotsAreEqual(origSpotToStoreItem, newSpotToStoreItem);
         verify_LocsAreEqual(origMoveTarget, newMoveTarget);
     }
+
+    // bug 3: camper brings wood to carpenter then picks it up and brings it to market
+    //  takes it from carpenter even thoguh carpetner needs it.
+    // bug 3b: NOTE: takes wood from market instead of selling it.
+
 }

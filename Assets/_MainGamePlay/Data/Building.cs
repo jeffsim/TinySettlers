@@ -240,19 +240,13 @@ public class BuildingData : BaseData, ILocationProvider
         return null;
     }
 
-    public bool HasUnreservedItemOfType(ItemDefn itemDefn)
-    {
-        foreach (var spot in StorageSpots)
-            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
-                return true;
-
-        return false;
-    }
+    public bool NeedsItemForSelf(ItemDefn itemDefn) => ItemNeeds.Find(need => need.NeededItem == itemDefn) != null;
+    public bool HasUnreservedItemOfTypeAndDoesntNeedIt(ItemDefn itemDefn) => StorageSpots.Any(spot => !spot.Reservation.IsReserved && spot.ItemContainer.ContainsItem(itemDefn) && !NeedsItemForSelf(itemDefn));
 
     /**
         returns true if this building supports gathering the required resource AND there's
         an available gathering spot
-*/
+    */
     public bool ResourceCanBeGatheredFromHere(ItemDefn itemDefn)
     {
         return Defn.ResourcesCanBeGatheredFromHere &&
@@ -354,7 +348,7 @@ public class BuildingData : BaseData, ILocationProvider
                 // if here then the item-to-be-sold isn't highly needed.  If there's a lot of it in storage, then sell it
                 int numInStorage = Town.NumTotalItemsInStorage(item);
                 var storageImpact = Mathf.Clamp(numInStorage / 10f, 0, 2);
-                need.Priority = storageImpact / 2f + .2f;
+                need.Priority = 1; //storageImpact / 2f + .2f;
             }
         }
         foreach (var need in GatheringNeeds)
@@ -510,7 +504,7 @@ public class BuildingData : BaseData, ILocationProvider
         foreach (var spot in GatheringSpots) spot.OnBuildingDestroyed();
         foreach (var area in StorageAreas) area.OnBuildingDestroyed();
     }
-    
+
     public void MoveTo(Vector3 worldLoc)
     {
         LocationComponent previousWorldLoc = new(Location.WorldLoc);

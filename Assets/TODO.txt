@@ -1,6 +1,3 @@
-bad: camper brings wood to carpenter then picks it up and brings it to market
-bad: NOTE: takes wood from market instead of selling it.
-
 implement needs as
 	if global need for X is high and I can geenrate X if I have Y, then I hae a high need for Y.  pass the need through.
     

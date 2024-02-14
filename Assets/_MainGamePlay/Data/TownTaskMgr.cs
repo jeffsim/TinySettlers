@@ -167,7 +167,7 @@ public class TownTaskMgr
 
         // Generate the list of all buildings that the item can be picked up from (ie unreserved and in storage)
         // Note: we allow taking items from buildings that need them IF the building is paused
-        var buildingsThatHaveItem = Town.Buildings.Where(building => building.HasUnreservedItemOfType(need.NeededItem)).ToList();
+        var buildingsThatHaveItem = Town.Buildings.Where(building => building.HasUnreservedItemOfTypeAndDoesntNeedIt(need.NeededItem)).ToList();
         if (buildingsThatHaveItem.Count == 0) return; // if no buildings have the item then abort
 
         // =====================================================================================
