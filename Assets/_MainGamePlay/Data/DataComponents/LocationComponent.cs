@@ -12,21 +12,22 @@ public class LocationComponent
 {
     public override string ToString() => WorldLoc.ToString();
 
-    public Vector2 WorldLoc;
+    public Vector3 WorldLoc;
 
     public static LocationComponent operator -(LocationComponent loc1, LocationComponent loc2) => new(loc1.WorldLoc - loc2.WorldLoc);
     public static LocationComponent operator +(LocationComponent loc1, LocationComponent loc2) => new(loc1.WorldLoc + loc2.WorldLoc);
 
-    public LocationComponent() => WorldLoc = Vector2.zero;
-    public LocationComponent(Vector2 worldLoc) => WorldLoc = worldLoc;
+    public LocationComponent() => WorldLoc = Vector3.zero;
+    public LocationComponent(Vector3 worldLoc) => WorldLoc = worldLoc;
     public LocationComponent(float localX, float localY) => WorldLoc = new(localX, localY);
 
-    public void SetWorldLoc(Vector2 location) => WorldLoc = location;
+    public void SetWorldLoc(Vector3 location) => WorldLoc = location;
     public void SetWorldLoc(LocationComponent location)
     {
         WorldLoc = location.WorldLoc;
     }
-    public void SetWorldLoc(float x, float y) => WorldLoc.Set(x, y);
+    public void SetWorldLoc(float x, float y) => WorldLoc.Set(x, y, WorldLoc.z);
+    public void SetWorldLoc(float x, float y, float z) => WorldLoc.Set(x, y, z);
 
     internal float DistanceTo(LocationComponent location) => Vector2.Distance(WorldLoc, location.WorldLoc);
     public bool WithinDistanceOf(LocationComponent location, float closeEnough) => DistanceTo(location) <= closeEnough;

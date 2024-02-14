@@ -11,7 +11,7 @@ public class CraftingSpotData : BaseData, ILocationProvider, IReservationProvide
     [SerializeField] public LocationComponent Location { get; set; } = new();
     [SerializeField] public ReservationComponent Reservation { get; set; } = new();
     [SerializeField] public MultipleItemContainerComponent ItemsContainer { get; set; } = new();
-    public Vector2 LocOffset;
+    public Vector3 LocOffset;
 
     public CraftingSpotData(BuildingData building, int index)
     {

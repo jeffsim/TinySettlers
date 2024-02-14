@@ -37,7 +37,7 @@ public class Building : MonoBehaviour
         Background.GetComponent<Renderer>().material.color = data.Defn.BuildingColor;
         var color = data.Defn.BuildingColor / 2f;
         Bottom.GetComponent<Renderer>().material.color = color;
-        transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, 0);
+        transform.position = data.Location.WorldLoc;
 
         for (int i = 0; i < Data.Defn.StorageAreas.Count; i++)
         {
@@ -69,16 +69,11 @@ public class Building : MonoBehaviour
 
     private void OnLocationChanged()
     {
-        if (Settings.AllowFreeBuildingPlacement)
-        {
-            if (dragState == DragState.Dragging)
-                transform.position = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -6);
-            else
-                transform.position = (Vector3)Data.Location.WorldLoc;
-        }
-        else
-            transform.position = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -6);
-
+        // if (Settings.AllowFreeBuildingPlacement)
+        //     transform.position = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -6);
+        // else
+        //     transform.position = Data.Location.WorldLoc;
+        transform.position = Data.Location.WorldLoc;
     }
 
     void OnMouseDown()
@@ -135,8 +130,7 @@ public class Building : MonoBehaviour
             if (dragState == DragState.Dragging)
             {
                 dragState = DragState.NotDragging;
-                Data.Location.WorldLoc = new(transform.position.x, transform.position.y);
-
+                Data.Location.WorldLoc = transform.position;
                 putBuildingOnTopOfOthers();
             }
             else
@@ -193,7 +187,7 @@ public class Building : MonoBehaviour
                     mousePosition.x = Mathf.Round(mousePosition.x / 2f) * 2f;
                     mousePosition.y = Mathf.Round(mousePosition.y / .5f) * .5f;
                 }
-                scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, mousePosition.y));
+                scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, mousePosition.y, transform.position.z));
             }
         }
     }
@@ -204,14 +198,16 @@ public class Building : MonoBehaviour
 
         // sort by z
         buildings.Sort((a, b) => a.transform.position.z.CompareTo(b.transform.position.z));
-
+        buildings.Remove(this);
+        buildings.Insert(0, this);
         for (int i = 0; i < buildings.Count; i++)
         {
             var building = buildings[i];
             float zPosition = i * .62f - 2.5f;
-            if (building == this)
+            if (building == this && dragState == DragState.Dragging)
                 zPosition = -100;
             building.transform.position = new(building.transform.position.x, building.transform.position.y, zPosition);
+            building.Data.Location.WorldLoc = building.transform.position;
         }
     }
 

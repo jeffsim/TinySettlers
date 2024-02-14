@@ -23,7 +23,7 @@ public class StorageAreaData : BaseData
     public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StoragePiles.Sum(spot => spot.NumItemsOfTypeInStorage(itemDefn));
     public int NumUnreservedItemsOfTypeInStorage(ItemDefn itemDefn) => StoragePiles.Sum(spot => spot.NumUnreservedItemsOfTypeInStorage(itemDefn));
 
-    public Vector2 AreaLocOffset;
+    public Vector3 AreaLocOffset;
 
     public StorageAreaData(BuildingData buildingData, StorageAreaDefn storageAreaDefn)
     {
@@ -34,7 +34,7 @@ public class StorageAreaData : BaseData
         for (int i = 0, y = 0; y < height; y++)
             for (int x = 0; x < width; x++, i++)
             {
-                Vector2 pileLocation = new((x - (width - 1) / 2f) * 1.1f, (y - (height - 1) / 2f) * 1.1f);
+                Vector3 pileLocation = new((x - (width - 1) / 2f) * 1.1f, (y - (height - 1) / 2f) * 1.1f, 0);
                 StoragePiles.Add(new(this, storageAreaDefn, pileLocation, i));
             }
     }

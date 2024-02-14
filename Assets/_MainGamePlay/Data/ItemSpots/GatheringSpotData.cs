@@ -13,7 +13,7 @@ public class GatheringSpotData : BaseData, ILocationProvider, IReservationProvid
     [SerializeField] public LocationComponent Location { get; set; } = new();
     [SerializeField] public ReservationComponent Reservation { get; set; } = new();
     [SerializeField] public ItemContainerComponent ItemContainer { get; set; } = new();
-    public Vector2 LocOffset;
+    public Vector3 LocOffset;
 
     public GatheringSpotData(BuildingData building, int index)
     {

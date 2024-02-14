@@ -19,10 +19,10 @@ public class StoragePileData : BaseData
     public int NumReservedSpots => StorageSpots.Count(spot => spot.Reservation.IsReserved);
     public int NumItemsInPile => StorageSpots.Count(spot => spot.ItemContainer.HasItem);
 
-    public Vector2 PileLocOffset;
+    public Vector3 PileLocOffset;
     [SerializeReference] StorageAreaData Area;
 
-    public StoragePileData(StorageAreaData area, StorageAreaDefn areaDefn, Vector2 pileLocOffset, int pileIndex)
+    public StoragePileData(StorageAreaData area, StorageAreaDefn areaDefn, Vector3 pileLocOffset, int pileIndex)
     {
         Area = area;
         PileLocOffset = pileLocOffset;
