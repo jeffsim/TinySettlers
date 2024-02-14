@@ -15,12 +15,13 @@ MonoBehaviour:
   Id: testStorageRoom
   BuildingColor: {r: 0.20154905, g: 0.29411766, b: 0.003921565, a: 1}
   FriendlyName: store
-  IsTestBuilding: 0
+  IsTestBuilding: 1
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.09818679, g: 0.59607846, b: 0, a: 0}
   AssignedWorkerFriendlyName: Courier
   HasWorkers: 1
   MaxWorkers: 4
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 0.11972148, g: 0.24528301, b: 0, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1

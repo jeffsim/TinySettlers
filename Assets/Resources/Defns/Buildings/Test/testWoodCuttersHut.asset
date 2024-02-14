@@ -15,12 +15,13 @@ MonoBehaviour:
   Id: testWoodCuttersHut
   BuildingColor: {r: 0.122475155, g: 0.0041384757, b: 0.2924528, a: 1}
   FriendlyName: woodcutter
-  IsTestBuilding: 0
+  IsTestBuilding: 1
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.30000722, g: 0, b: 0.5943396, a: 0}
   AssignedWorkerFriendlyName: Wood cutter
   HasWorkers: 1
   MaxWorkers: 4
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 0.24574943, g: 0, b: 0.5566038, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1

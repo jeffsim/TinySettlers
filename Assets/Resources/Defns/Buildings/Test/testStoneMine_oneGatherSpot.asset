@@ -21,6 +21,7 @@ MonoBehaviour:
   AssignedWorkerFriendlyName: none - stonemine
   HasWorkers: 1
   MaxWorkers: 4
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 0.33962262, g: 0.33962262, b: 0.33962262, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1

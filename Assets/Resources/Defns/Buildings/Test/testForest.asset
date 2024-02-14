@@ -15,12 +15,13 @@ MonoBehaviour:
   Id: testForest
   BuildingColor: {r: 0, g: 0.3679245, b: 0.077621974, a: 1}
   FriendlyName: Forest
-  IsTestBuilding: 0
+  IsTestBuilding: 1
   BuildingClass: 2
   AssignedWorkerColor: {r: 0.002558625, g: 0.4245283, b: 0, a: 0}
   AssignedWorkerFriendlyName: n/a
   HasWorkers: 0
   MaxWorkers: 4
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 0, g: 0.38679248, b: 0.047153078, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 0

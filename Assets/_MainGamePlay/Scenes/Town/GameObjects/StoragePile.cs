@@ -17,7 +17,7 @@ public class StoragePile : MonoBehaviour
         Data = pile;
         this.scene = scene;
         name = "Storage " + index;
-        transform.position = new Vector3(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -5);
+        transform.position = new Vector3(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -.25f);
         // spot.OnItemRemoved += OnItemRemoved;
     }
 

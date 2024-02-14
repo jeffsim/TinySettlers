@@ -195,7 +195,7 @@ public class Building : MonoBehaviour
         }
     }
 
-    private void putBuildingOnTopOfOthers()
+    private void putBuildingOnTopOfOethers()
     {
         var buildings = scene.Map.GetBuildingGOs();
         foreach (var building in buildings)
@@ -204,7 +204,7 @@ public class Building : MonoBehaviour
     }
 
 
-    private void putBuildingOnTopOfOthers2()
+    private void putBuildingOnTopOfOthers()
     {
         var buildings = scene.Map.GetBuildingGOs();
         for (int i = 0; i < buildings.Count; i++)

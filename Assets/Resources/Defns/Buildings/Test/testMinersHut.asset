@@ -21,6 +21,7 @@ MonoBehaviour:
   AssignedWorkerFriendlyName: test Miner
   HasWorkers: 1
   MaxWorkers: 4
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 0.24528301, g: 0.12491265, b: 0, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1

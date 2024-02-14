@@ -25,7 +25,9 @@ MonoBehaviour:
     TestId: store1
     TileX: 1
     TileY: 1
-    StartingItemsInBuilding: []
+    StartingItemsInBuilding:
+    - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
+      Count: 1
     NumWorkersStartAtBuilding: 1
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: dda0fe43be1ab4dc695d54f1a2a23154, type: 2}
@@ -39,14 +41,16 @@ MonoBehaviour:
     TestId: woodc1
     TileX: 0
     TileY: 2
-    StartingItemsInBuilding:
-    - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
-      Count: 3
+    StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
     Building: {fileID: 11400000, guid: ae55035fa9a964b47a42844372fcd9c8, type: 2}
     TestId: store1
     TileX: 0
     TileY: 1
-    StartingItemsInBuilding: []
+    StartingItemsInBuilding:
+    - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
+      Count: 1
+    - Item: {fileID: 11400000, guid: 8299fd30f1aba4fbea13091ddf0ceeb2, type: 2}
+      Count: 1
     NumWorkersStartAtBuilding: 1

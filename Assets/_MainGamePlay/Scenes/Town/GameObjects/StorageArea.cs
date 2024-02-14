@@ -7,8 +7,8 @@ public class StorageArea : MonoBehaviour
     internal void Initialize(StorageAreaData areaData, StorageAreaDefn areaDefn, Building building, StoragePile prefab, Transform editorFolder)
     {
         name = "Storage Area";
-        transform.position = new Vector3(areaData.Location.WorldLoc.x, areaData.Location.WorldLoc.y, -3);
-        Background.transform.localScale = new Vector3(1.1f * areaDefn.StorageAreaSize.x + .1f, 1.1f * areaDefn.StorageAreaSize.y + .1f, 3);
+        transform.position = new Vector3(areaData.Location.WorldLoc.x, areaData.Location.WorldLoc.y, -.25f);
+        Background.transform.localScale = new Vector3(1.1f * areaDefn.StorageAreaSize.x + .1f, 1.1f * areaDefn.StorageAreaSize.y + .1f, .1f);
         for (int i = 0; i < areaData.StoragePiles.Count; i++)
         {
             var item = Instantiate(prefab);
