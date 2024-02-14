@@ -12,12 +12,12 @@ public class StoragePile : MonoBehaviour
 
     public SceneWithMap scene;
 
-    internal void Initialize(StoragePileData pile, int index, Building building, SceneWithMap scene)
+    internal void Initialize(StorageAreaData areaData, StoragePileData pileData, int index, Building building, SceneWithMap scene)
     {
-        Data = pile;
+        Data = pileData;
         this.scene = scene;
         name = "Storage " + index;
-        transform.position = new Vector3(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, -.25f);
+        transform.localPosition = pileData.Location.GetWorldLocRelativeTo(areaData.Location, -.25f);
         // spot.OnItemRemoved += OnItemRemoved;
     }
 

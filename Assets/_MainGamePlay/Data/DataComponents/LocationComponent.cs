@@ -60,4 +60,6 @@ public class LocationComponent
         // if (ParentLoc != null)
         // WorldLoc += ParentLoc.WorldLoc;
     }
+
+    internal Vector3 GetWorldLocRelativeTo(LocationComponent location, float dz) => new(WorldLoc.x - location.WorldLoc.x, WorldLoc.y - location.WorldLoc.y, dz);
 }

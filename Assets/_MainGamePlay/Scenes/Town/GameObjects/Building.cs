@@ -190,33 +190,31 @@ public class Building : MonoBehaviour
                 // snap to grid if shift is pressed
                 if (Input.GetKey(KeyCode.LeftShift))
                 {
-                    var snap = .5f;
-                    mousePosition.x = Mathf.Round(mousePosition.x * snap) / snap;
-                    mousePosition.y = Mathf.Round(mousePosition.y * snap) / snap;
+                    mousePosition.x = Mathf.Round(mousePosition.x / 2f) * 2f;
+                    mousePosition.y = Mathf.Round(mousePosition.y / .5f) * .5f;
                 }
                 scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, mousePosition.y));
             }
         }
     }
 
-    private void putBuildingOnTopOfOethers()
-    {
-        var buildings = scene.Map.GetBuildingGOs();
-        foreach (var building in buildings)
-            if (building != this)
-                building.transform.position = new(building.transform.position.x, building.transform.position.y, building == this ? -4 : -2);
-    }
-
-
     private void putBuildingOnTopOfOthers()
     {
         var buildings = scene.Map.GetBuildingGOs();
+
+        // sort by z
+        buildings.Sort((a, b) => a.transform.position.z.CompareTo(b.transform.position.z));
+
         for (int i = 0; i < buildings.Count; i++)
         {
             var building = buildings[i];
-            building.transform.position = new(building.transform.position.x, building.transform.position.y, (building == this ? -4 : -2) - i / 100f);
+            float zPosition = i * .62f - 2.5f;
+            if (building == this)
+                zPosition = -100;
+            building.transform.position = new(building.transform.position.x, building.transform.position.y, zPosition);
         }
     }
+
     Vector3 GetMouseWorldPosition()
     {
         // Convert the mouse screen position to a world position on the same z-axis as the node
