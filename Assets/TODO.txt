@@ -1,3 +1,32 @@
+Add House
+    - sleeping spots    
+    - energy
+        + update
+        + slow down movement every .25
+        + add time of day and night cycle  
+            - by default go to sleep but you can override work hours
+                + add happiness; goes down if make work hours too long
+        + when energy reaches zero or working hours end, go to sleep   
+            - if have assigned spot in house then go there
+            - else sleep on ground.  energy recovery = 1/2 of normal
+    - assignment to house
+        + immediately upon building assign one worker per sleeping spot
+        + add UI showing housed/unhoused worker #s
+    - when hunger reaches 100, go to house to eat IF food there?
+        + Create EatingSpot.  could be in house; could also add them to Marketplace building. etc.
+            - wherever they are, that building broadcasts a need for Food.  Need increases based on hunger/available food
+  - Houses broadcast need for Food.
+
++ Add eating/drinking
++ Add Farm
+
+* House added. All it does now is increase max # workers.  TBD: what to do with it?
+  - Workers autoassign to house.  goes there when sleepy or hungry
+
+* Add Building.IsActive - set to false if destroyed, paused, or under construciton.
+    - create ActiveBuildings in TownData and use that everywhere instead of Buildings; remove checks
+
+-----------
 implement needs as
 	if global need for X is high and I can geenrate X if I have Y, then I hae a high need for Y.  pass the need through.
     
@@ -8,17 +37,12 @@ implement needs as
 
 * Add building construction
 * if two workers are going to pick up items from the same storagepile then have the second one wait while the first-to-arrive is picking up their item
-
+* Ensure that storagepiles only hold one type of item.
 * major change would be: instead of fixed spots per storagepile, make it based on the item type in the pile. can store 4 logs or 16 cups or 2 stone...
 
 * Do economic chains work?
   - add buildings: farm+wheatfield (=>wheat); well (=>water. one gatherspot); bakery (water+wheat=>bread)
   - add worker hunger
-
-* House added. All it does now is increase max # workers.  TBD: what to do with it?
-  - Workers autoassign to house.  goes there when sleepy or hungry
-  - Houses broadcast need for Food.
-  - Does building a house instantly grant the additional worker(s)?  Or does it enable them to join on 'end of year' period?
 
 * Add buildings: forest-with-animals, and Hunter
     animals wander in tile.  new worker type.
