@@ -41,6 +41,7 @@ public class BuildingData : BaseData, ILocationProvider
     public bool IsPaused;
 
     [SerializeField] public LocationComponent Location { get; set; }
+    [SerializeField] public OccupantMgrComponent OccupantMgr { get; set; }
 
     [NonSerialized] public OnLocationChangedEvent OnLocationChanged;
 
@@ -52,6 +53,7 @@ public class BuildingData : BaseData, ILocationProvider
 
     public List<GatheringSpotData> GatheringSpots = new();
     public List<CraftingSpotData> CraftingSpots = new();
+    public List<SleepingSpotData> SleepingSpots = new();
 
     // Storage related fields
     public List<StorageAreaData> StorageAreas = new();
@@ -121,7 +123,7 @@ public class BuildingData : BaseData, ILocationProvider
         TileY = tileY;
         Location = new(new(TileX * TileSize, TileY * TileSize));
     }
-
+    
     public BuildingData(BuildingDefn buildingDefn, Vector3 worldLoc)
     {
         DefnId = buildingDefn.Id;
@@ -131,6 +133,9 @@ public class BuildingData : BaseData, ILocationProvider
     public void Initialize(TownData town)
     {
         Town = town;
+
+        if (Defn.WorkersCanLiveHere)
+            OccupantMgr = new(this);
 
         if (Defn.ResourcesCanBeGatheredFromHere)
         {
@@ -142,6 +147,12 @@ public class BuildingData : BaseData, ILocationProvider
         {
             for (int i = 0; i < Defn.CraftingSpots.Count; i++)
                 CraftingSpots.Add(new(this, i));
+        }
+
+        if (Defn.WorkersCanRestHere)
+        {
+            for (int i = 0; i < Defn.SleepingSpots.Count; i++)
+                SleepingSpots.Add(new(this, i));
         }
 
         if (Defn.CanStoreItems)
@@ -498,7 +509,7 @@ public class BuildingData : BaseData, ILocationProvider
 
         foreach (var need in Needs) need.Cancel();
 
-        foreach (var worker in Town.Workers) worker.OnBuildingDestroyed(this);
+        foreach (var worker in Town.TownWorkerMgr.Workers) worker.OnBuildingDestroyed(this);
         foreach (var spot in CraftingSpots) spot.OnBuildingDestroyed();
         foreach (var spot in GatheringSpots) spot.OnBuildingDestroyed();
         foreach (var area in StorageAreas) area.OnBuildingDestroyed();
@@ -511,7 +522,7 @@ public class BuildingData : BaseData, ILocationProvider
         UpdateWorldLoc();
 
         // Update Workers that are assigned to or have Tasks which involve this building.
-        foreach (var worker in Town.Workers)
+        foreach (var worker in Town.TownWorkerMgr.Workers)
             worker.OnBuildingMoved(this, previousWorldLoc);
 
         OnLocationChanged?.Invoke();
@@ -529,7 +540,7 @@ public class BuildingData : BaseData, ILocationProvider
         UpdateWorldLoc();
 
         // Update Workers that are assigned to or have Tasks which involve this building.
-        foreach (var worker in Town.Workers)
+        foreach (var worker in Town.TownWorkerMgr.Workers)
             worker.OnBuildingMoved(this, previousWorldLoc);
 
         OnLocationChanged?.Invoke();
@@ -538,12 +549,10 @@ public class BuildingData : BaseData, ILocationProvider
     public void UpdateWorldLoc()
     {
         // TODO: UGH
-        foreach (var area in StorageAreas)
-            area.UpdateWorldLoc();
-        foreach (var spot in CraftingSpots)
-            spot.UpdateWorldLoc();
-        foreach (var spot in GatheringSpots)
-            spot.UpdateWorldLoc();
+        foreach (var area in StorageAreas) area.UpdateWorldLoc();
+        foreach (var spot in CraftingSpots) spot.UpdateWorldLoc();
+        foreach (var spot in GatheringSpots) spot.UpdateWorldLoc();
+        foreach (var spot in SleepingSpots) spot.UpdateWorldLoc();
     }
 
     public StorageSpotData GetFirstStorageSpotWithUnreservedItemToRemove()
@@ -603,7 +612,7 @@ public class BuildingData : BaseData, ILocationProvider
     {
         Debug.Assert(Defn.PlayerCanPause, "Toggling paused on building that can't be paused");
         IsPaused = !IsPaused;
-        foreach (var worker in Town.Workers)
+        foreach (var worker in Town.TownWorkerMgr.Workers)
             worker.OnBuildingPauseToggled(this);
     }
 }

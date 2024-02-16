@@ -30,7 +30,7 @@ public class TownTaskMgr
         // Assume we find no task
         HighestPriorityTask.Task = null;
 
-        List<WorkerData> idleWorkers = new(Town.Workers.FindAll(w => w.AI.IsIdle)); // todo (perf): keep list of idle
+        var idleWorkers = Town.TownWorkerMgr.GetIdleWorkers();
         if (idleWorkers.Count == 0) return null;
 
         // =====================================================================================
@@ -52,7 +52,7 @@ public class TownTaskMgr
                 {
                     case NeedType.GatherResource: getHigherPriorityTaskIfExists_GatherResource(need, idleWorkers); break;
                     case NeedType.SellItem: getHigherPriorityTaskIfExists_SellItem(need, idleWorkers); break;
-                 
+
                     case NeedType.ClearStorage: getHigherPriorityTaskIfExists_CleanupStorage(need, idleWorkers); break;
                     case NeedType.PickupAbandonedItem: getHigherPriorityTaskIfExists_PickupAbandonedItem(need, idleWorkers); break;
                     case NeedType.CraftingOrConstructionMaterial: getHigherPriorityTaskIfExists_BuildingWantsAnItem(need, idleWorkers); break;

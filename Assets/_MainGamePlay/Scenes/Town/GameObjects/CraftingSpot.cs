@@ -16,7 +16,7 @@ public class CraftingSpot : MonoBehaviour
         this.index = index;
         this.scene = scene;
         name = "Crafting Spot " + index;
-        transform.position = new Vector3(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, -5);
+        transform.position = new Vector3(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, -.5f);
     }
 
     public void OnMouseUp()

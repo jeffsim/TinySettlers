@@ -11,10 +11,19 @@ public class SleepingSpotData : BaseData, ILocationProvider, IReservationProvide
     [SerializeField] public LocationComponent Location { get; set; } = new();
     [SerializeField] public ReservationComponent Reservation { get; set; } = new();
 
+    public Vector3 LocOffset;
+
     public SleepingSpotData(BuildingData building, int index)
     {
         Building = building;
         Debug.Assert(building.Defn.SleepingSpots.Count > index, "building " + building.DefnId + " missing SleepingSpotData " + index);
+        var loc = building.Defn.SleepingSpots[index];
+        LocOffset = new(loc.x, loc.y);
+    }
+
+    public void UpdateWorldLoc()
+    {
+        Location.SetWorldLoc(Building.Location.WorldLoc + LocOffset);
     }
 
     public void Update()

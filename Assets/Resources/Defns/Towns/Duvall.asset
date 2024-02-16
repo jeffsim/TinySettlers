@@ -86,3 +86,10 @@ MonoBehaviour:
     TileY: 1
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 1
+  - IsEnabled: 1
+    Building: {fileID: 11400000, guid: 3bc399f83064c0e43a5fecb7278e7f95, type: 2}
+    TestId: 
+    TileX: 3
+    TileY: 1
+    StartingItemsInBuilding: []
+    NumWorkersStartAtBuilding: 0

@@ -62,6 +62,14 @@ public class Building : MonoBehaviour
                 spot.transform.SetParent(transform, false);
                 spot.Initialize(Data.CraftingSpots[i], i, this, scene);
             }
+
+        if (Data.Defn.WorkersCanRestHere)
+            for (int i = 0; i < Data.Defn.SleepingSpots.Count; i++)
+            {
+                var spot = Instantiate(scene.SleepingSpotPrefab);
+                spot.transform.SetParent(transform, false);
+                spot.Initialize(scene, Data.SleepingSpots[i], i, this);
+            }
     }
 
     void OnDestroy()

@@ -74,7 +74,7 @@ public abstract class TestBase
 
     protected WorkerData getAssignedWorker(string assignedBuildingId, int num = 0)
     {
-        foreach (var worker in Town.Workers)
+        foreach (var worker in Town.TownWorkerMgr.Workers)
             if (worker.Assignment.AssignedTo.DefnId == assignedBuildingId)
                 if (--num == -1)
                     return worker;

@@ -15,21 +15,21 @@ public class TownData : BaseData
     public string DefnId;
 
     public int Gold;
-    public int NumMaxWorkers;
 
     [NonSerialized] public OnItemAddedToGroundEvent OnItemAddedToGround;
     [NonSerialized] public Action<ItemData> OnItemRemovedFromGround;
     [NonSerialized] public Action<ItemData> OnItemSold;
 
     [NonSerialized] public Action<BuildingData> OnBuildingAdded;
+    [NonSerialized] public Action<BuildingData> OnBuildingRemoved;
     [NonSerialized] public Action<WorkerData> OnWorkerCreated;
 
     public TownTaskMgr TownTaskMgr;
+    public TownWorkerMgr TownWorkerMgr;
 
     // Current Map
     public BuildingData Camp;
     public List<TileData> Tiles = new();
-    public List<WorkerData> Workers = new();
     public List<BuildingData> Buildings = new();
     public List<ItemData> ItemsOnGround = new();
     public List<NeedData> otherTownNeeds = new();
@@ -44,8 +44,7 @@ public class TownData : BaseData
     public void OnLoaded()
     {
         GameTime.time = lastGameTime;
-        // foreach (var building in Buildings) building.OnLoaded();
-        foreach (var worker in Workers) worker.OnLoaded();
+        TownWorkerMgr.OnLoaded();
     }
 
     public void InitializeOnFirstEnter()
@@ -59,10 +58,10 @@ public class TownData : BaseData
                 Tiles.Add(new TileData(x, y, tiles[y * Defn.Width + x]));
 
         Gold = 0;
-        NumMaxWorkers = 0; // Camp will add some
+
+        TownWorkerMgr = new(this);
 
         Buildings.Clear();
-        Workers.Clear();
         otherTownNeeds.Clear();
         foreach (var tbDefn in Defn.Buildings)
         {
@@ -87,7 +86,7 @@ public class TownData : BaseData
     public WorkerData CreateWorkerInBuilding(BuildingData building)
     {
         var worker = new WorkerData(building);
-        Workers.Add(worker);
+        TownWorkerMgr.AddWorker(worker);
         OnWorkerCreated?.Invoke(worker);
         return worker;
     }
@@ -100,50 +99,36 @@ public class TownData : BaseData
     public BuildingData ConstructBuilding(BuildingDefn buildingDefn, int tileX, int tileY)
     {
         var building = new BuildingData(buildingDefn, tileX, tileY);
-        building.Initialize(this);
-        Buildings.Add(building);
         Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
-
-        NumMaxWorkers += buildingDefn.MaxTownWorkersIncreasedWhenBuilt;
-        OnBuildingAdded?.Invoke(building);
-
-        return building;
+        return internalConstructBuilding(building);
     }
 
     public BuildingData ConstructBuilding(BuildingDefn buildingDefn, Vector3 worldLoc)
     {
-        var building = new BuildingData(buildingDefn, worldLoc);
+        return internalConstructBuilding(new BuildingData(buildingDefn, worldLoc));
+    }
+
+    private BuildingData internalConstructBuilding(BuildingData building)
+    {
         building.Initialize(this);
         Buildings.Add(building);
-        // Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
-
-        NumMaxWorkers += buildingDefn.MaxTownWorkersIncreasedWhenBuilt;
         OnBuildingAdded?.Invoke(building);
-
         return building;
     }
 
     public void DestroyBuilding(BuildingData building)
     {
-        Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
-
+        if (!Settings.AllowFreeBuildingPlacement)
+            Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
         Buildings.Remove(building);
         building.Destroy();
+        OnBuildingRemoved?.Invoke(building);
     }
 
-    public void DestroyWorker(WorkerData worker)
-    {
-        Workers.Remove(worker);
-        worker.OnDestroyed();
-    }
 
     public void MoveBuilding(BuildingData building, Vector3 worldLoc)
     {
-        // var tileX = Mathf.FloorToInt(worldLoc.x);
-        // var tileY = Mathf.FloorToInt(worldLoc.y);
-        // Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
         building.MoveTo(worldLoc);
-        // Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
     }
 
     public void MoveBuilding(BuildingData building, int tileX, int tileY)
@@ -164,9 +149,7 @@ public class TownData : BaseData
         updateTownNeeds();
 
         TownTaskMgr.AssignTaskToIdleWorker();
-
-        foreach (var worker in Workers)
-            worker.Update();
+        TownWorkerMgr.Update();
     }
 
     private void updateTownNeeds()
@@ -302,7 +285,7 @@ public class TownData : BaseData
 
         // see how many are being carried
         var numBeingCarried = 0;
-        foreach (var worker in Workers)
+        foreach (var worker in TownWorkerMgr.Workers)
             if (worker.AI.CurrentTask.IsCarryingItem(itemId))
                 numBeingCarried++;
         return numInStorage + numBeingCarried;
@@ -335,8 +318,8 @@ public class TownData : BaseData
     public void UnassignWorkerFromBuilding(BuildingData data) => GetWorkerInBuilding(data)?.Assignment.AssignTo(Camp);
     public void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.Assignment.AssignTo(data);
 
-    private WorkerData GetWorkerInBuilding(BuildingData building) => Workers.FirstOrDefault(worker => worker.Assignment.AssignedTo == building);
-    internal int NumBuildingWorkers(BuildingData building) => Workers.Count(worker => worker.Assignment.AssignedTo == building);
+    private WorkerData GetWorkerInBuilding(BuildingData building) => TownWorkerMgr.Workers.FirstOrDefault(worker => worker.Assignment.AssignedTo == building);
+    internal int NumBuildingWorkers(BuildingData building) => TownWorkerMgr.Workers.Count(worker => worker.Assignment.AssignedTo == building);
     internal int NumTotalItemsInStorage(ItemDefn neededItem) => Buildings.Sum(building => building.NumItemsOfTypeInStorage(neededItem));
     internal int NumTotalStorageSpots() => Buildings.Sum(building => building.NumStorageSpots);
 

@@ -32,7 +32,7 @@ public class Map : MonoBehaviour
         foreach (var tile in Town.Tiles)
             addTileGO(tile);
 
-        foreach (var worker in Town.Workers)
+        foreach (var worker in Town.TownWorkerMgr.Workers)
             addWorkerGO(worker);
 
         foreach (var building in Town.Buildings)
@@ -135,7 +135,7 @@ public class Map : MonoBehaviour
 
     internal void DestroyWorker(Worker worker)
     {
-        Town.DestroyWorker(worker.Data);
+        Town.TownWorkerMgr.DestroyWorker(worker.Data);
         Destroy(worker.gameObject);
     }
 
@@ -146,7 +146,7 @@ public class Map : MonoBehaviour
 
         scene.Gold.text = "Gold: " + Town.Gold.ToString();
         scene.Gold.text += "\nTime: " + GameTime.time.ToString("0.0");
-        scene.Gold.text += "\nWorkers: " + Town.Workers.Count + "/" + Town.NumMaxWorkers;
+        scene.Gold.text += "\nWorkers: " + Town.TownWorkerMgr.Workers.Count + "/" + Town.TownWorkerMgr.NumMaxWorkers;
         var numReservedStorageSpots = Town.Buildings.Sum(b => b.NumReservedStorageSpots);
     }
 

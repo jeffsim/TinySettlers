@@ -84,4 +84,8 @@ public class BuildingDefn : BaseDefn
     public bool WorkersCanRestHere;
     [ShowIf("WorkersCanRestHere")]
     public List<Vector3> SleepingSpots;
+    
+    public bool WorkersCanLiveHere;
+    [ShowIf("WorkersCanLiveHere")]
+    public int MaxWorkersLivingHere = 4;
 }

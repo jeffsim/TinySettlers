@@ -8973,8 +8973,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -86}
-  m_SizeDelta: {x: 184.30042, y: 28}
+  m_AnchoredPosition: {x: 2.1386, y: -86}
+  m_SizeDelta: {x: 567.2586, y: 28}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1241380850
 MonoBehaviour:
@@ -12603,6 +12603,7 @@ MonoBehaviour:
   BuildingStoragePilePrefab: {fileID: 1910754369159479611, guid: 8ba92c26b0a22ca4bad79cbb7dc0dae0, type: 3}
   GatheringSpotPrefab: {fileID: 145167861813597606, guid: e1e88e46a27c640f3afcb75df2152372, type: 3}
   CraftingSpotPrefab: {fileID: 4006523581432375862, guid: 1b0f7997cefd64697a1a2427ca45ec51, type: 3}
+  SleepingSpotPrefab: {fileID: 3447476926318239933, guid: 487edbf75204a43aabfacbde9773b03f, type: 3}
   ItemOnGroundPrefab: {fileID: 7043519063053432247, guid: 3ac5bc85675874831b356ee795afd80b, type: 3}
   WorkerDetails: {fileID: 861838588}
   BuildingDetails: {fileID: 1954432328}

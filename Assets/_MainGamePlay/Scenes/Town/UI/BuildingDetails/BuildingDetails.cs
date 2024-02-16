@@ -33,7 +33,6 @@ public class BuildingDetails : MonoBehaviour
         UnassignWorkerButton.interactable = building.Data.Defn.HasWorkers;
         BuildingDetailsItemList.ShowForBuilding(building);
         BuildingDetailsNeedsList.ShowForBuilding(building);
-
     }
 
     public void OnDebugAddWorkerClicked()
@@ -55,6 +54,9 @@ public class BuildingDetails : MonoBehaviour
     {
         if (building == null)
             return;
+
+        if (building.Data.OccupantMgr != null)
+            Name.text = building.Data.Defn.FriendlyName + " (" + building.Data.InstanceId + ") (w:" + building.Data.OccupantMgr.NumOccupants + "/" + building.Data.OccupantMgr.MaxOccupants + ")";
 
         // todo: store reference (or at least count) of workers in building
         // don't assign/unassign from camp, or if building can't have workers

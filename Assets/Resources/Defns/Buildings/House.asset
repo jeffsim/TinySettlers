@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: house
   BuildingColor: {r: 0.1355365, g: 0.32874182, b: 0.5597484, a: 1}
+  BuildingBottomColor: {r: 0, g: 0, b: 0, a: 0}
   FriendlyName: House
   IsTestBuilding: 0
   BuildingClass: 1
@@ -48,3 +49,11 @@ MonoBehaviour:
   GatheringSpots: []
   CanSellGoods: 0
   GoodsThatCanBeSold: []
+  WorkersCanRestHere: 1
+  SleepingSpots:
+  - {x: -1, y: -0.5, z: 0}
+  - {x: -1, y: 1.5, z: 0}
+  - {x: 1, y: -0.5, z: 0}
+  - {x: 1, y: 1.5, z: 0}
+  WorkersCanLiveHere: 1
+  MaxWorkersLivingHere: 4

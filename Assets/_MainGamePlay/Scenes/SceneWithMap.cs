@@ -15,6 +15,7 @@ public class SceneWithMap : SceneMgr
     public StoragePile BuildingStoragePilePrefab;
     public GatheringSpot GatheringSpotPrefab;
     public CraftingSpot CraftingSpotPrefab;
+    public SleepingSpot SleepingSpotPrefab;
     public Item ItemOnGroundPrefab;
 
     // UI

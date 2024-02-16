@@ -19,7 +19,7 @@ public class GatheringSpot : MonoBehaviour
         this.index = index;
         this.scene = scene;
         name = "Gathering Spot " + index;
-        transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, -5);
+        transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, -.5f);
 
         // spot.OnItemRemoved += OnItemRemoved;
     }
