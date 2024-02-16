@@ -34,6 +34,8 @@ public class SceneWithMap : SceneMgr
     public GameObject RecompilingText;
     public TextMeshProUGUI DebugInfo;
     public TextMeshProUGUI Gold;
+    public TextMeshProUGUI Workers;
+    public TextMeshProUGUI Time;
 
     public bool Debug_DrawPaths = true;
 

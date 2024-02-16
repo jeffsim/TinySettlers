@@ -18,7 +18,7 @@ MonoBehaviour:
   FriendlyName: Wood Cutter
   IsTestBuilding: 0
   BuildingClass: 2
-  AssignedWorkerColor: {r: 0.30000722, g: 0, b: 0.5943396, a: 0}
+  AssignedWorkerColor: {r: 0.14815043, g: 0, b: 0.2924528, a: 0}
   AssignedWorkerFriendlyName: Wood cutter
   HasWorkers: 1
   MaxWorkers: 4
@@ -48,3 +48,7 @@ MonoBehaviour:
   GatheringSpots: []
   CanSellGoods: 0
   GoodsThatCanBeSold: []
+  WorkersCanRestHere: 0
+  SleepingSpots: []
+  WorkersCanLiveHere: 0
+  MaxWorkersLivingHere: 4

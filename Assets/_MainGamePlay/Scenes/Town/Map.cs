@@ -145,8 +145,8 @@ public class Map : MonoBehaviour
             GameTime.TogglePause();
 
         scene.Gold.text = "Gold: " + Town.Gold.ToString();
-        scene.Gold.text += "\nTime: " + GameTime.time.ToString("0.0");
-        scene.Gold.text += "\nWorkers: " + Town.TownWorkerMgr.Workers.Count + "/" + Town.TownWorkerMgr.NumMaxWorkers;
+        scene.Time.text = "Time: " + GameTime.time.ToString("0.0");
+        scene.Workers.text = "Workers: " + Town.TownWorkerMgr.Workers.Count + "/" + Town.TownWorkerMgr.NumMaxWorkers;
         var numReservedStorageSpots = Town.Buildings.Sum(b => b.NumReservedStorageSpots);
     }
 
