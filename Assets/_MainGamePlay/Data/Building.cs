@@ -201,7 +201,7 @@ public class BuildingData : BaseData, ILocationProvider
             foreach (var item in Defn.GoodsThatCanBeSold)
             {
                 // add need to sell (that our assigned sellers can fulfill)
-                Needs.Add(new NeedData(this, NeedType.SellItem, item));
+                Needs.Add(new NeedData(this, NeedType.SellItem, item, 1000));
 
                 // add need for items to sell (that other buildings can fulfill)
                 var needForItemToSell = new NeedData(this, NeedType.CraftingOrConstructionMaterial, item, NumStorageSpots);
@@ -334,13 +334,14 @@ public class BuildingData : BaseData, ILocationProvider
                             priorityToSellItem += otherNeed.Priority;
 
                 need.Priority = storageImpact / 2f + globalPriorityOfNeedForItem + priorityToSellItem + .3f;
+                need.Priority = 2;
             }
 
             if (need.Type == NeedType.SellItem)
             {
                 // The need to sell (for the worker) is always 1.  Howver, the building's need for the item
                 // to be sold is based on how many are in storage and how badly other buildings need it
-                need.Priority = 1;
+                need.Priority = 2;
 
                 // Get the ItemNeed for this item to sell
                 var itemNeed = ItemNeeds.Find(n => n.NeededItem == need.NeededItem);
