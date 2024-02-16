@@ -13,7 +13,7 @@ public class Worker : MonoBehaviour
     public TextMeshPro CarriedItem;
 
     public SceneWithMap scene;
-    static float WorkerZ = -12f;
+    static float WorkerZ = -1.4f;
     RectTransform carriedItemRectTransform;
     public void Initialize(WorkerData data, SceneWithMap scene)
     {
@@ -56,7 +56,7 @@ public class Worker : MonoBehaviour
         name = "Worker - " + (Data.Assignment.IsAssigned ? Data.Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + Data.InstanceId + ")" : "none");
     }
 
-    float lineZ = -10;
+    float lineZ = -1.4f;
     public void Update()
     {
         // Data.Update();

@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: woodCutter
   BuildingColor: {r: 0.30599844, g: 0.0643763, b: 0.6603774, a: 1}
+  BuildingBottomColor: {r: 0, g: 0, b: 0, a: 0}
   FriendlyName: Wood Cutter
   IsTestBuilding: 0
   BuildingClass: 2
@@ -35,7 +36,7 @@ MonoBehaviour:
   CanStoreItems: 1
   IsPrimaryStorage: 0
   StorageAreas:
-  - Location: {x: 0, y: 0, z: 0}
+  - Location: {x: 0, y: 0.5, z: 0}
     StorageAreaSize: {x: 3, y: 3}
     StoragePileSize: {x: 3, y: 3, z: 3}
   WorkersCanFerryItems: 0

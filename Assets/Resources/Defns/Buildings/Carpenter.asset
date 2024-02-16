@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: Carpenter
   BuildingColor: {r: 0.44313726, g: 0.2372913, b: 0, a: 1}
+  BuildingBottomColor: {r: 0, g: 0, b: 0, a: 0}
   FriendlyName: Carpenter
   IsTestBuilding: 0
   BuildingClass: 2
@@ -21,6 +22,7 @@ MonoBehaviour:
   AssignedWorkerFriendlyName: Crafter
   HasWorkers: 1
   MaxWorkers: 4
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 0.4431373, g: 0.2392157, b: 0, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
@@ -35,11 +37,8 @@ MonoBehaviour:
   - {x: 0, y: 3, z: 0}
   CanStoreItems: 1
   IsPrimaryStorage: 0
-  StorageAreaLocations:
-  - {x: 0, y: 0, z: 0}
-  StorageAreaSize: {x: 2, y: 2}
   StorageAreas:
-  - Location: {x: 0, y: 0, z: 0}
+  - Location: {x: 0, y: 0.5, z: 0}
     StorageAreaSize: {x: 2, y: 2}
     StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 0
