@@ -118,7 +118,7 @@ public class Building : MonoBehaviour
                 plane.Raycast(ray, out float distance);
                 Vector3 mouseIntersectPoint = ray.GetPoint(distance);
 
-                draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, mouseIntersectPoint.y, -5));
+                draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, mouseIntersectPoint.y, 5));
             }
         }
     }
@@ -205,7 +205,7 @@ public class Building : MonoBehaviour
             var building = buildings[i];
             float zPosition = i * .62f - 2.5f;
             if (building == this && dragState == DragState.Dragging)
-                zPosition = -100;
+                zPosition = -95;
             building.transform.position = new(building.transform.position.x, building.transform.position.y, zPosition);
             building.Data.Location.WorldLoc = building.transform.position;
         }
