@@ -6,5 +6,5 @@ public class Settings
     public static bool UseBinarySaveFiles = false;
 
     // Testing purposes: don't snap to tiles
-    public static bool AllowFreeBuildingPlacement = true;
+    public static bool AllowFreeBuildingPlacement = false;
 }
