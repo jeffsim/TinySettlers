@@ -12,12 +12,12 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     [SerializeField] public AssignmentComponent Assignment { get; set; } = new();
     [SerializeField] public ItemContainerComponent Hands { get; set; } = new();
     [SerializeField] public AIComponent AI { get; set; }
+    [SerializeField] public EnergyComponent Energy { get; set; } = new();
 
     internal void DropItemOnGround() => Town.AddItemToGround(Hands.ClearItem(), Location);
 
+    public float EnergyLevel;
     public TownData Town;
-
-    // public IItemSpotInBuilding StorageSpotReservedForItemInHand;
 
     public NeedData OriginalPickupItemNeed;
 
@@ -89,7 +89,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
 
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
         spot.ItemContainer.SetItem(Hands.ClearItem());
-       // spot.Reservation.Unreserve();
+        // spot.Reservation.Unreserve();
     }
 
     internal void DropItemInHandInSpot(IMultipleItemSpotInBuilding spot)
@@ -98,7 +98,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
 
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
         spot.ItemsContainer.AddItem(Hands.ClearItem());
-  //      spot.Reservation.Unreserve();
+        //      spot.Reservation.Unreserve();
     }
 
     // TODO: Rather than tie following to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when

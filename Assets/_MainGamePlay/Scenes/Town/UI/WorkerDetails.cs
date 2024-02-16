@@ -6,6 +6,7 @@ public class WorkerDetails : MonoBehaviour
     public TextMeshProUGUI Name;
     public TextMeshProUGUI Task;
     public TextMeshProUGUI Items;
+    public TextMeshProUGUI Energy;
     public Worker worker;
     SceneWithMap scene;
 
@@ -14,7 +15,7 @@ public class WorkerDetails : MonoBehaviour
         gameObject.SetActive(true);
         this.scene = scene;
         this.worker = worker;
-        Name.text = worker.ToString();
+        Name.text = worker.Data.ToString();
     }
 
     public void Hide()
@@ -24,8 +25,8 @@ public class WorkerDetails : MonoBehaviour
 
     void Update()
     {
-        if (worker == null)
-            return;
+        if (worker == null) return;
+        Energy.text = worker.Data.Energy.ToString();
         Task.text = $"Task: {worker.Data.AI.CurrentTask}\n{worker.Data.AI.CurrentTask.CurSubTask}";
         if (worker.Data.Hands.HasItem)
             Items.text = "In hand: " + worker.Data.Hands.Item + "\n";

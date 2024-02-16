@@ -115,7 +115,7 @@ public class Worker : MonoBehaviour
             case Subtask_ReapItem _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
             case Subtask_SellItemInHands _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
             case Subtask_CraftItem _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
-            case Subtask_Wait _: updateCarriedItem(itemDown, scaleNormal, Color.Lerp(Color.green, Color.white, percentDone)); break;
+            case Subtask_Wait _: CarriedItem.text  = "<i>I</i>"; updateCarriedItem(itemDown, scaleNormal, Color.Lerp(Color.green, Color.white, percentDone)); break;
             default:
                 // Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);
                 break;

@@ -59,7 +59,7 @@ public class BuildingData : BaseData, ILocationProvider
     public int NumStorageSpots => StorageAreas.Sum(area => area.NumStorageSpots);
     public bool HasAvailableStorageSpot => StorageAreas.Any(area => area.HasAvailableSpot);
     public bool IsStorageFull => NumAvailableStorageSpots == 0;
-    [SerializeReference] public List<StorageSpotData> StorageSpots= new();
+    [SerializeReference] public List<StorageSpotData> StorageSpots = new();
 
     // Resource gathering fields
     public int NumReservedGatheringSpots
@@ -285,16 +285,36 @@ public class BuildingData : BaseData, ILocationProvider
             }
         }
 
+        foreach (var need in ItemNeeds)
+        {
+            if (IsPaused)
+            {
+                need.Priority = 0;
+                continue;
+            }
+            need.Priority = 1;
+            float storageOccupancyRatio = (float)NumItemsInStorage / totalNumStorageSpot;
+            float fullnessAdjustment = percentFull > 0.99f ? 0 :
+                                       percentFull > 0.75f ? 0.5f :
+                                       percentFull > 0.5f ? 0.75f :
+                                       percentFull > 0.25f ? 0.875f :
+                                       percentFull > 0.1f ? 0.9f : 1f;
+            float occupancyAdjustment = storageOccupancyRatio > 0.5f ? 0.5f :
+                                        storageOccupancyRatio > 0.25f ? 0.75f : 1f;
+
+            need.Priority *= Math.Min(fullnessAdjustment, occupancyAdjustment);
+        }
+
         foreach (var need in Needs)
         {
+            if (need.IsBeingFullyMet || IsPaused)
+            {
+                need.Priority = 0;
+                continue;
+            }
+
             if (need.Type == NeedType.CraftGood)
             {
-                if (need.IsBeingFullyMet || IsPaused)
-                {
-                    need.Priority = 0;
-                    continue;
-                }
-
                 // Priority of Crafting is set by:
                 //  does anyone else need it and how badly (priority of need)
                 //  how many of the item are already in the Town?
@@ -318,12 +338,15 @@ public class BuildingData : BaseData, ILocationProvider
 
             if (need.Type == NeedType.SellItem)
             {
-                if (need.IsBeingFullyMet || IsPaused)
-                {
-                    need.Priority = 0;
-                    continue;
-                }
-                var item = need.NeededItem;
+                // The need to sell (for the worker) is always 1.  Howver, the building's need for the item
+                // to be sold is based on how many are in storage and how badly other buildings need it
+                need.Priority = 1;
+
+                // Get the ItemNeed for this item to sell
+                var itemNeed = ItemNeeds.Find(n => n.NeededItem == need.NeededItem);
+                Debug.Assert(itemNeed != null, "ItemNeed not found for item to sell");
+
+                var item = itemNeed.NeededItem;
                 var globalNeedForItem = 0f;
 
                 // if the item-to-be-sold is highly needed by other buildings, then don't sell it
@@ -348,7 +371,7 @@ public class BuildingData : BaseData, ILocationProvider
                 // if here then the item-to-be-sold isn't highly needed.  If there's a lot of it in storage, then sell it
                 int numInStorage = Town.NumTotalItemsInStorage(item);
                 var storageImpact = Mathf.Clamp(numInStorage / 10f, 0, 2);
-                need.Priority = 1; //storageImpact / 2f + .2f;
+                itemNeed.Priority = storageImpact / 2f + .2f;
             }
         }
         foreach (var need in GatheringNeeds)
@@ -369,31 +392,6 @@ public class BuildingData : BaseData, ILocationProvider
                 need.Priority *= .75f; // storage is 25%-50% full of the needed item
         }
 
-        foreach (var need in ItemNeeds)
-        {
-            if (IsPaused)
-            {
-                need.Priority = 0;
-                continue;
-            }
-            need.Priority = 1;
-            // if we have a lot of them then reduce priority
-            int numOfNeededItemAlreadyInStorage = NumItemsInStorage;
-            if (percentFull > .99f)
-                need.Priority = 0; // full
-            else if (percentFull > .75f)
-                need.Priority *= .5f; // storage is mostly full of any items
-            else if (percentFull > .5f)
-                need.Priority *= .75f; // storage is somewhat full of any items
-            else if (percentFull > .25f)
-                need.Priority *= .875f; // storage has some of item already
-            else if (percentFull > .1f)
-                need.Priority *= .9f; // storage has a couple of item already
-            else if (numOfNeededItemAlreadyInStorage > totalNumStorageSpot / 2)
-                need.Priority *= .5f; // storage is half+ full of the needed item
-            else if (numOfNeededItemAlreadyInStorage > totalNumStorageSpot / 4)
-                need.Priority *= .75f; // storage is 25%-50% full of the needed item
-        }
     }
 
     public bool HasUnreservedResourcesInStorageToCraftItem(ItemDefn item)

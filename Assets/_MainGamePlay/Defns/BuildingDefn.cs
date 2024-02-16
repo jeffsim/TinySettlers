@@ -80,4 +80,8 @@ public class BuildingDefn : BaseDefn
     public bool CanSellGoods;
     [ShowIf("CanSellGoods")]
     public List<ItemDefn> GoodsThatCanBeSold;
+
+    public bool WorkersCanRestHere;
+    [ShowIf("WorkersCanRestHere")]
+    public List<Vector3> SleepingSpots;
 }
