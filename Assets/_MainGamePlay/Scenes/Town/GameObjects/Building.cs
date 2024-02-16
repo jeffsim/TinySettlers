@@ -39,26 +39,29 @@ public class Building : MonoBehaviour
         Bottom.GetComponent<Renderer>().material.color = color;
         transform.position = data.Location.WorldLoc;
 
-        for (int i = 0; i < Data.Defn.StorageAreas.Count; i++)
-        {
-            var item = Instantiate(scene.BuildingStorageAreaPrefab);
-            item.transform.SetParent(StorageEditorFolder.transform, false);
-            item.Initialize(Data.StorageAreas[i], Data.Defn.StorageAreas[i], this, scene.BuildingStoragePilePrefab, StorageEditorFolder.transform);
-        }
+        if (Data.Defn.CanStoreItems)
+            for (int i = 0; i < Data.Defn.StorageAreas.Count; i++)
+            {
+                var item = Instantiate(scene.BuildingStorageAreaPrefab);
+                item.transform.SetParent(StorageEditorFolder.transform, false);
+                item.Initialize(Data.StorageAreas[i], Data.Defn.StorageAreas[i], this, scene.BuildingStoragePilePrefab, StorageEditorFolder.transform);
+            }
 
-        for (int i = 0; i < Data.Defn.GatheringSpots.Count; i++)
-        {
-            var spot = Instantiate(scene.GatheringSpotPrefab);
-            spot.transform.SetParent(transform, false);
-            spot.Initialize(scene, Data.GatheringSpots[i], i, this);
-        }
+        if (Data.Defn.ResourcesCanBeGatheredFromHere)
+            for (int i = 0; i < Data.Defn.GatheringSpots.Count; i++)
+            {
+                var spot = Instantiate(scene.GatheringSpotPrefab);
+                spot.transform.SetParent(transform, false);
+                spot.Initialize(scene, Data.GatheringSpots[i], i, this);
+            }
 
-        for (int i = 0; i < Data.Defn.CraftingSpots.Count; i++)
-        {
-            var spot = Instantiate(scene.CraftingSpotPrefab);
-            spot.transform.SetParent(transform, false);
-            spot.Initialize(Data.CraftingSpots[i], i, this, scene);
-        }
+        if (Data.Defn.CanCraft)
+            for (int i = 0; i < Data.Defn.CraftingSpots.Count; i++)
+            {
+                var spot = Instantiate(scene.CraftingSpotPrefab);
+                spot.transform.SetParent(transform, false);
+                spot.Initialize(Data.CraftingSpots[i], i, this, scene);
+            }
     }
 
     void OnDestroy()

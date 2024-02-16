@@ -48,18 +48,18 @@ public class BuildingData : BaseData, ILocationProvider
     // public float PercentBuilt; 
     // public bool IsConstructed => !(Defn.CanBeConstructed) || (ConstructionState == ConstructionState.FullyConstructed);
 
-    public List<NeedData> Needs;
+    public List<NeedData> Needs = new();
 
-    public List<GatheringSpotData> GatheringSpots;
-    public List<CraftingSpotData> CraftingSpots;
+    public List<GatheringSpotData> GatheringSpots = new();
+    public List<CraftingSpotData> CraftingSpots = new();
 
     // Storage related fields
-    public List<StorageAreaData> StorageAreas;
+    public List<StorageAreaData> StorageAreas = new();
     public int NumAvailableStorageSpots => StorageAreas.Sum(area => area.NumAvailableSpots);
     public int NumStorageSpots => StorageAreas.Sum(area => area.NumStorageSpots);
     public bool HasAvailableStorageSpot => StorageAreas.Any(area => area.HasAvailableSpot);
     public bool IsStorageFull => NumAvailableStorageSpots == 0;
-    [SerializeReference] public List<StorageSpotData> StorageSpots;
+    [SerializeReference] public List<StorageSpotData> StorageSpots= new();
 
     // Resource gathering fields
     public int NumReservedGatheringSpots
@@ -97,11 +97,11 @@ public class BuildingData : BaseData, ILocationProvider
     public int NumWorkers => Town.NumBuildingWorkers(this);
 
     // For easy tracking
-    // public List<NeedData> ConstructionNeeds;
+    // public List<NeedData> ConstructionNeeds = new();
 
     // If this building can craft items or sell items, then ItemNeeds contains the priority of
     // how much we need each of those items.  priority is dependent on how many are in storage.
-    public List<NeedData> ItemNeeds;
+    public List<NeedData> ItemNeeds = new();
 
     // How badly we need a courier to clear out our storage
     public NeedData ClearOutStorageNeed;
@@ -112,7 +112,7 @@ public class BuildingData : BaseData, ILocationProvider
     // * if our storage is nearly full then all resource gathering is at a reduced priority
     // * TODO: If another building has broadcast a need for resource R and we can gather it, then
     //   increase priority to gather it.  note that a settlers-like model may ONLY do these.
-    public List<NeedData> GatheringNeeds;
+    public List<NeedData> GatheringNeeds = new();
 
     public BuildingData(BuildingDefn buildingDefn, int tileX, int tileY)
     {
@@ -132,28 +132,28 @@ public class BuildingData : BaseData, ILocationProvider
     {
         Town = town;
 
-        GatheringSpots = new();
-        for (int i = 0; i < Defn.GatheringSpots.Count; i++)
-            GatheringSpots.Add(new(this, i));
+        if (Defn.ResourcesCanBeGatheredFromHere)
+        {
+            for (int i = 0; i < Defn.GatheringSpots.Count; i++)
+                GatheringSpots.Add(new(this, i));
+        }
 
-        CraftingSpots = new();
-        for (int i = 0; i < Defn.CraftingSpots.Count; i++)
-            CraftingSpots.Add(new(this, i));
+        if (Defn.CanCraft)
+        {
+            for (int i = 0; i < Defn.CraftingSpots.Count; i++)
+                CraftingSpots.Add(new(this, i));
+        }
 
-        StorageAreas = new();
-        foreach (var areaDefn in Defn.StorageAreas)
-            StorageAreas.Add(new(this, areaDefn));
+        if (Defn.CanStoreItems)
+        {
+            foreach (var areaDefn in Defn.StorageAreas)
+                StorageAreas.Add(new(this, areaDefn));
+        }
 
         // Create a unified list of storage spots since I don't want to iteratve over all areas.piles.spots every time
-        StorageSpots = new();
         foreach (var area in StorageAreas)
             foreach (var pile in area.StoragePiles)
                 StorageSpots.AddRange(pile.StorageSpots);
-
-        Needs = new List<NeedData>();
-        // ConstructionNeeds = new List<NeedData>();
-        GatheringNeeds = new();
-        ItemNeeds = new();
 
         // Add need for construction and materials if the building needs to be constructed
         // if (!IsConstructed)
