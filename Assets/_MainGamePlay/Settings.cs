@@ -7,4 +7,6 @@ public class Settings
 
     // Testing purposes: don't snap to tiles
     public static bool AllowFreeBuildingPlacement = false;
+
+    public static float RealTimeToGameTimeMultiplier = .01f;
 }

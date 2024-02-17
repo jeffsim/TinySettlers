@@ -33,9 +33,6 @@ public class SceneWithMap : SceneMgr
 
     public GameObject RecompilingText;
     public TextMeshProUGUI DebugInfo;
-    public TextMeshProUGUI Gold;
-    public TextMeshProUGUI Workers;
-    public TextMeshProUGUI Time;
 
     public bool Debug_DrawPaths = true;
 
@@ -155,7 +152,7 @@ public class SceneWithMap : SceneMgr
                AllNeedsDetails.gameObject.activeSelf || SelectBuildingToConstruct.gameObject.activeSelf ||
                AvailableTasksDialog.gameObject.activeSelf;
     }
-    
+
     public void HideAllDialogs()
     {
         AllNeedsDetails.Hide();
@@ -179,7 +176,7 @@ public class SceneWithMap : SceneMgr
         building.Data.Debug_RemoveAllItemsFromStorage();
     }
 
-    protected virtual void CreateMap(TownData mapData)
+    protected virtual void CreateMap(TownData town)
     {
         // Destroy current Map (if any)
         if (Map != null)
@@ -188,7 +185,11 @@ public class SceneWithMap : SceneMgr
         // Create the gameobject that contains the Map and add and initialize a Map on it
         var mapGO = new GameObject("Map");
         Map = mapGO.AddComponent<Map>();
-        Map.Initialize(this, mapData);
+        Map.Initialize(this, town);
+
+
+        FindAnyObjectByType<TimeOfDayMgr>(FindObjectsInactive.Exclude).InitializeForTown(town);
+        FindAnyObjectByType<TopBar>(FindObjectsInactive.Exclude).InitializeForTown(town);
     }
 
     internal void OnTileClicked(Tile tile)

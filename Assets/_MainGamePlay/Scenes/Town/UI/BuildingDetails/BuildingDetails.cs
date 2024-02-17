@@ -55,34 +55,22 @@ public class BuildingDetails : MonoBehaviour
         if (building == null)
             return;
 
-        if (building.Data.OccupantMgr != null)
-            Name.text = building.Data.Defn.FriendlyName + " (" + building.Data.InstanceId + ") (w:" + building.Data.OccupantMgr.NumOccupants + "/" + building.Data.OccupantMgr.MaxOccupants + ")";
+        var buildingData = building.Data;
+        var buildingDefn = buildingData.Defn;
+        var townWorkerMgr = scene.Map.Town.TownWorkerMgr;
+
+        if (buildingData.OccupantMgr != null)
+            Name.text = buildingDefn.FriendlyName + " (" + buildingData.InstanceId + ") (w:" + buildingData.OccupantMgr.NumOccupants + "/" + buildingData.OccupantMgr.MaxOccupants + ")";
 
         // todo: store reference (or at least count) of workers in building
         // don't assign/unassign from camp, or if building can't have workers
-        var assignable = building.Data.Defn.BuildingClass != BuildingClass.Camp && building.Data.Defn.HasWorkers;
+        var assignable = buildingDefn.BuildingClass != BuildingClass.Camp && buildingDefn.HasWorkers;
         if (assignable)
         {
-            var numWorkersInBuilding = scene.Map.Town.NumBuildingWorkers(building.Data);
-            AssignWorkerButton.interactable = scene.Map.Town.WorkerIsAvailable() && numWorkersInBuilding < building.Data.Defn.MaxWorkers;
-            UnassignWorkerButton.interactable = numWorkersInBuilding > 0;
+            var numWorkersInBuilding = townWorkerMgr.NumBuildingWorkers(building.Data);
+            AssignWorkerButton.interactable = townWorkerMgr.WorkerIsAvailable() && numWorkersInBuilding < buildingDefn.MaxWorkers;
+            UnassignWorkerButton.interactable = numWorkersInBuilding > 0 && buildingData != scene.Map.Town.Camp;
         }
-        // var str = "<color=yellow>Needs:</color>\n";
-        // var needs = new List<NeedData>(building.Data.Needs);
-        // str += Utilities.getNeedsDebugString(needs, false);
-        // Needs.text = str;
-
-        // if (building.Data.Defn.CanStoreItems)
-        // {
-        //     str = "<color=yellow>Items:</color>\n";
-        //     foreach (var area in building.Data.StorageAreas)
-        //         foreach (var spot in area.StorageSpots)
-        //             if (spot.ItemInStorage != null)
-        //                 str += spot.ItemInStorage.DefnId + "\n";
-        //     Items.text = str;
-        // }
-        // else
-        //     Items.text = "";
     }
 
     public void OnDestroyClicked() => scene.DestroyBuilding(this.building);
@@ -91,7 +79,6 @@ public class BuildingDetails : MonoBehaviour
     public void OnAssignWorkerClicked()
     {
         // Assign worker from camp to this building
-        // scene.Map.Town.CreateWorkerInBuilding(building.Data);
         scene.Map.Town.AssignWorkerToBuilding(building.Data);
     }
 

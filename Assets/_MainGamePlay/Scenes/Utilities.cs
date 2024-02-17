@@ -38,6 +38,17 @@ public static class Utilities
     }
 #endif
 
+    public static string ConvertToTimeString(float value)
+    {
+        if (value < 0 || value > 1)
+            throw new ArgumentOutOfRangeException(nameof(value), "Value must be between 0 and 1.");
+
+        var totalMinutes = value * 24 * 60;
+        var hours = (int)totalMinutes / 60;
+        var minutes = (int)totalMinutes % 60;
+
+        return new DateTime(1, 1, 1, hours, minutes, 0).ToString("h:mm tt");
+    }
     public static Vector3 LocationWithinDistance(Vector3 worldLoc, float maxDistance)
     {
         var circle = UnityEngine.Random.insideUnitCircle * maxDistance;

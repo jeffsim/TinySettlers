@@ -5,7 +5,6 @@ public interface IEnergyProvider
 {
     EnergyComponent Energy { get; }
 }
-public delegate void OnEnergyRefilledEvent();
 
 [Serializable]
 public class EnergyComponent : BaseData
@@ -14,18 +13,36 @@ public class EnergyComponent : BaseData
 
     // 0-1
     public float EnergyLevel;
-    public float EnergyRestoredPerSecondWhenSleeping;
+
+    public float EnergyRestoredPerSecondWhenResting = 0.05f;
+    public float EnergyDepletedPerSecondWhenWorking = 0.01f;
 
     public bool IsResting;
-    [NonSerialized] public OnEnergyRefilledEvent OnEnergyRefilled;
+
+    [NonSerialized] public Action OnEnergyFullyRestored;
+    [NonSerialized] public Action OnEnergyExhausted;
 
     public void Update()
     {
-        if (IsResting)
+        if (IsResting && EnergyLevel < 1)
         {
-            EnergyLevel = Mathf.Min(1, EnergyLevel + EnergyRestoredPerSecondWhenSleeping * GameTime.deltaTime);
+            // Resting; restore energy
+            EnergyLevel = Mathf.Min(1, EnergyLevel + EnergyRestoredPerSecondWhenResting * GameTime.deltaTime);
             if (EnergyLevel == 1)
-                OnEnergyRefilled?.Invoke();
+                OnEnergyFullyRestored?.Invoke();
         }
+        else if (!IsResting && EnergyLevel > 0)
+        {
+            // Working; deplete energy
+            EnergyLevel = Mathf.Max(0, EnergyLevel - EnergyDepletedPerSecondWhenWorking * GameTime.deltaTime);
+            if (EnergyLevel == 0)
+                OnEnergyExhausted?.Invoke();
+        }
+    }
+
+    internal void FillUp()
+    {
+        EnergyLevel = 1;
+        OnEnergyFullyRestored?.Invoke();
     }
 }

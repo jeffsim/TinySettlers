@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
+public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOccupantProvider
 {
     public override string ToString() => Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + InstanceId + ")";// + "-" + worker.Data.UniqueId;
 
@@ -13,6 +13,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     [SerializeField] public ItemContainerComponent Hands { get; set; } = new();
     [SerializeField] public AIComponent AI { get; set; }
     [SerializeField] public EnergyComponent Energy { get; set; } = new();
+    [SerializeField] public OccupantComponent Occupant { get; set; } = new();
 
     internal void DropItemOnGround() => Town.AddItemToGround(Hands.ClearItem(), Location);
 
@@ -26,6 +27,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
         Location = Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f);
 
         Town = buildingToStartIn.Town;
+        Energy.FillUp();
 
         Assignment.AssignTo(buildingToStartIn);
         initializeCallbacks();
@@ -57,7 +59,11 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
     }
 
     // pass throughs to current task
-    public void Update() => AI.Update();
+    public void Update()
+    {
+        AI.Update();
+        Energy.Update();
+    }
     public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc) => AI.CurrentTask.OnBuildingMoved(building, previousLoc);
     public void OnBuildingPauseToggled(BuildingData building) => AI.CurrentTask.OnBuildingPauseToggled(building);
 
@@ -69,19 +75,6 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider
             distanceMovedPerSecond *= Hands.Item.Defn.CarryingSpeedModifier;
         return distanceMovedPerSecond;
     }
-
-    // internal void DropItemInHandInReservedStorageSpot()
-    // {
-    //     Debug.Assert(StorageSpotReservedForItemInHand != null, "No StorageSpotReservedForItemInHand");
-    //     Debug.Assert(StorageSpotReservedForItemInHand.Building != null, "No ItemInHand");
-    //     Debug.Assert(!StorageSpotReservedForItemInHand.Building.IsDestroyed, "Building destroyed");
-    //     Debug.Assert(Hands.HasItem, "No ItemInHand");
-
-    //     // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
-    //     StorageSpotReservedForItemInHand.ItemContainer.SetItem(Hands.ClearItem());
-    //     StorageSpotReservedForItemInHand.Reservation.Unreserve();
-    //     StorageSpotReservedForItemInHand = null;
-    // }
 
     internal void DropItemInHandInSpot(IItemSpotInBuilding spot)
     {

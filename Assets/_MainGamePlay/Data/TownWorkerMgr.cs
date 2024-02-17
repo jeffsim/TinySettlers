@@ -10,6 +10,8 @@ public class TownWorkerMgr
     public List<WorkerData> Workers = new();
     public int NumMaxWorkers;
     internal List<WorkerData> GetIdleWorkers() => new(Town.TownWorkerMgr.Workers.FindAll(w => w.AI.IsIdle)); 
+    internal int NumBuildingWorkers(BuildingData building) => Workers.Count(worker => worker.Assignment.AssignedTo == building);
+    [NonSerialized] public Action<WorkerData> OnWorkerCreated;
 
     public TownWorkerMgr(TownData town)
     {
@@ -29,6 +31,10 @@ public class TownWorkerMgr
         foreach (var worker in Workers)
             worker.Update();
     }
+
+    // called when a building is requesting an available worker be assigned to it
+    // For now, assignment is done from Camp, so just check if Camp has any workers
+    internal bool WorkerIsAvailable() => NumBuildingWorkers(Town.Camp) > 0;
 
     private void OnBuildingRemoved(BuildingData building)
     {
@@ -50,5 +56,6 @@ public class TownWorkerMgr
     internal void AddWorker(WorkerData worker)
     {
         Workers.Add(worker);
+        OnWorkerCreated?.Invoke(worker);
     }
 }

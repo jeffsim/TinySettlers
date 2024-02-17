@@ -20,5 +20,12 @@ public class MultipleItemContainerComponent : BaseData
         Items.Add(item);
     }
 
+    public void RemoveItem(ItemData item)
+    {
+        Debug.Assert(item != null, "Removing null item from " + this);
+        Debug.Assert(Items.Contains(item), item + " not in " + this);
+        Items.Remove(item);
+    }
+
     public void ClearItems() => Items.Clear();
 }

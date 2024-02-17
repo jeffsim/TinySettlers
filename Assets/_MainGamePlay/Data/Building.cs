@@ -15,7 +15,7 @@ public class DistanceToBuilding
 }
 
 [Serializable]
-public class BuildingData : BaseData, ILocationProvider
+public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
 {
     public override string ToString() => Defn.FriendlyName + " (" + InstanceId + ")";
 
@@ -96,7 +96,7 @@ public class BuildingData : BaseData, ILocationProvider
     public bool HasAvailableCraftingSpot => NumAvailableCraftingSpots > 0;
 
     // TODO: Track this in building instead of recalculating
-    public int NumWorkers => Town.NumBuildingWorkers(this);
+    public int NumWorkers => Town.TownWorkerMgr.NumBuildingWorkers(this);
 
     // For easy tracking
     // public List<NeedData> ConstructionNeeds = new();
@@ -123,7 +123,7 @@ public class BuildingData : BaseData, ILocationProvider
         TileY = tileY;
         Location = new(new(TileX * TileSize, TileY * TileSize));
     }
-    
+
     public BuildingData(BuildingDefn buildingDefn, Vector3 worldLoc)
     {
         DefnId = buildingDefn.Id;
@@ -507,8 +507,8 @@ public class BuildingData : BaseData, ILocationProvider
 
         IsDestroyed = true;
 
+        OccupantMgr.EvictAllOccupants();
         foreach (var need in Needs) need.Cancel();
-
         foreach (var worker in Town.TownWorkerMgr.Workers) worker.OnBuildingDestroyed(this);
         foreach (var spot in CraftingSpots) spot.OnBuildingDestroyed();
         foreach (var spot in GatheringSpots) spot.OnBuildingDestroyed();

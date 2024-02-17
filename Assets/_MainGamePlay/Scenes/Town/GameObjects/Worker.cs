@@ -113,19 +113,23 @@ public class Worker : MonoBehaviour
             case Subtask_PickupItemFromItemSpot _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
             case Subtask_PickupItemFromGround _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
             case Subtask_ReapItem _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
-            case Subtask_SellItemInHands _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
+            case Subtask_SellItemInHands _: updateCarriedItem(itemUp, Vector3.Lerp(scaleNormal, scaleSmall, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
             case Subtask_CraftItem _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
-            case Subtask_Wait _: CarriedItem.text  = "<i>I</i>"; updateCarriedItem(itemDown, scaleNormal, Color.Lerp(Color.green, Color.white, percentDone)); break;
+            case Subtask_Wait _: CarriedItem.text = "<i>I</i>"; updateCarriedItem(itemDown, scaleNormal, Color.Lerp(Color.green, Color.white, percentDone)); break;
             default:
                 // Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);
                 break;
         }
 
         // If this worker is assigned to currently selected building then highlight
-        bool showHighlight = scene.BuildingDetails.isActiveAndEnabled &&
-                             scene.BuildingDetails.building != null &&
-                             scene.BuildingDetails.building.Data == Data.Assignment.AssignedTo;
-
+        bool showHighlight = false;
+        var selectedBuilding = scene.BuildingDetails.building;
+        if (scene.BuildingDetails.isActiveAndEnabled && selectedBuilding != null)
+        {
+            showHighlight |= selectedBuilding.Data == Data.Assignment.AssignedTo;
+            showHighlight |= selectedBuilding.Data.Defn.WorkersCanLiveHere && selectedBuilding.Data.OccupantMgr.IsOccupant(Data);
+        }
+        
         // If this worker is currently selected then highlight
         if (scene.WorkerDetails.gameObject.activeSelf && scene.WorkerDetails.worker == this)
             showHighlight = true;

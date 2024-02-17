@@ -1,5 +1,4 @@
 Add House
-    - sleeping spots    
     - energy
         + update
         + slow down movement every .25
@@ -11,13 +10,13 @@ Add House
             - else sleep on ground.  energy recovery = 1/2 of normal
     - assignment to house
         + immediately upon building assign one worker per sleeping spot
-        + add UI showing housed/unhoused worker #s
-    - when hunger reaches 100, go to house to eat IF food there?
-        + Create EatingSpot.  could be in house; could also add them to Marketplace building. etc.
-            - wherever they are, that building broadcasts a need for Food.  Need increases based on hunger/available food
-  - Houses broadcast need for Food.
 
 + Add eating/drinking
+- when hunger reaches 100, go to house to eat IF food there?
+    + Create EatingSpot.  could be in house; could also add them to Marketplace building. etc.
+        - wherever they are, that building broadcasts a need for Food.  Need increases based on hunger/available food
+  - Houses broadcast need for Food.
+
 + Add Farm
 
 * House added. All it does now is increase max # workers.  TBD: what to do with it?
@@ -27,6 +26,7 @@ Add House
     - create ActiveBuildings in TownData and use that everywhere instead of Buildings; remove checks
 
 -----------
+* Get rid of storagespot and repace with MultipleItemContainer in storagepile
 implement needs as
 	if global need for X is high and I can geenrate X if I have Y, then I hae a high need for Y.  pass the need through.
     

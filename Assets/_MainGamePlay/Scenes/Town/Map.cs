@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class Map : MonoBehaviour
@@ -11,11 +10,7 @@ public class Map : MonoBehaviour
     GameObject BuildingsFolder;
     GameObject TilesFolder;
     GameObject WorkersFolder;
-
-    public void OnKeyDown()
-    {
-        Debug.Log("Asdf");
-    }
+    public TimeOfDayMgr TimeOfDayMgr;
 
     public void Initialize(SceneWithMap scene, TownData townData)
     {
@@ -41,17 +36,16 @@ public class Map : MonoBehaviour
         foreach (var item in Town.ItemsOnGround)
             addItemOnGroundGO(item);
 
-        Town.OnWorkerCreated += addWorkerGO;
+        Town.TownWorkerMgr.OnWorkerCreated += addWorkerGO;
         Town.OnBuildingAdded += addBuildingGO;
         Town.OnItemAddedToGround += addItemOnGroundGO;
         Town.OnItemRemovedFromGround += OnItemRemovedFromGround;
-        // Town.OnItemSold += OnItemSold;
     }
 
     void OnDestroy()
     {
         if (Town == null) return;
-        Town.OnWorkerCreated -= addWorkerGO;
+        Town.TownWorkerMgr.OnWorkerCreated -= addWorkerGO;
         Town.OnBuildingAdded -= addBuildingGO;
         Town.OnItemAddedToGround -= addItemOnGroundGO;
         Town.OnItemRemovedFromGround -= OnItemRemovedFromGround;
@@ -143,11 +137,6 @@ public class Map : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Space))
             GameTime.TogglePause();
-
-        scene.Gold.text = "Gold: " + Town.Gold.ToString();
-        scene.Time.text = "Time: " + GameTime.time.ToString("0.0");
-        scene.Workers.text = "Workers: " + Town.TownWorkerMgr.Workers.Count + "/" + Town.TownWorkerMgr.NumMaxWorkers;
-        var numReservedStorageSpots = Town.Buildings.Sum(b => b.NumReservedStorageSpots);
     }
 
     internal Tile getTileAt(Vector3 position)

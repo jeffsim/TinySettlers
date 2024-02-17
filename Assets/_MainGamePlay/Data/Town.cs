@@ -12,6 +12,7 @@ public class TownData : BaseData
 {
     private TownDefn _defn;
     public TownDefn Defn => _defn = _defn != null ? _defn : GameDefns.Instance.TownDefns[DefnId];
+
     public string DefnId;
 
     public int Gold;
@@ -22,10 +23,12 @@ public class TownData : BaseData
 
     [NonSerialized] public Action<BuildingData> OnBuildingAdded;
     [NonSerialized] public Action<BuildingData> OnBuildingRemoved;
-    [NonSerialized] public Action<WorkerData> OnWorkerCreated;
 
     public TownTaskMgr TownTaskMgr;
     public TownWorkerMgr TownWorkerMgr;
+    public TownTimeMgr TimeMgr;
+
+    public int NumHomedWorkers => Buildings.Sum(building => building.OccupantMgr == null ? 0 : building.OccupantMgr.NumOccupants);
 
     // Current Map
     public BuildingData Camp;
@@ -58,8 +61,8 @@ public class TownData : BaseData
                 Tiles.Add(new TileData(x, y, tiles[y * Defn.Width + x]));
 
         Gold = 0;
-
         TownWorkerMgr = new(this);
+        TimeMgr = new();
 
         Buildings.Clear();
         otherTownNeeds.Clear();
@@ -87,7 +90,7 @@ public class TownData : BaseData
     {
         var worker = new WorkerData(building);
         TownWorkerMgr.AddWorker(worker);
-        OnWorkerCreated?.Invoke(worker);
+        FindHomesForUnhomedWorkers();
         return worker;
     }
 
@@ -113,7 +116,21 @@ public class TownData : BaseData
         building.Initialize(this);
         Buildings.Add(building);
         OnBuildingAdded?.Invoke(building);
+        FindHomesForUnhomedWorkers();
         return building;
+    }
+
+    private void FindHomesForUnhomedWorkers()
+    {
+        foreach (var worker in TownWorkerMgr.Workers)
+            if (!worker.Occupant.HasHome)
+            {
+                var availableHome = Buildings.FirstOrDefault(building => building.Defn.WorkersCanLiveHere && building.OccupantMgr.HasRoom);
+                if (availableHome == null)
+                    return; // no more homes with available space
+
+                availableHome.OccupantMgr.AddOccupant(worker);
+            }
     }
 
     public void DestroyBuilding(BuildingData building)
@@ -123,6 +140,7 @@ public class TownData : BaseData
         Buildings.Remove(building);
         building.Destroy();
         OnBuildingRemoved?.Invoke(building);
+        FindHomesForUnhomedWorkers();
     }
 
 
@@ -141,6 +159,7 @@ public class TownData : BaseData
     public void Update()
     {
         GameTime.Update();
+        TimeMgr.Update();
 
         foreach (var building in Buildings)
             building.Update();
@@ -319,13 +338,8 @@ public class TownData : BaseData
     public void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.Assignment.AssignTo(data);
 
     private WorkerData GetWorkerInBuilding(BuildingData building) => TownWorkerMgr.Workers.FirstOrDefault(worker => worker.Assignment.AssignedTo == building);
-    internal int NumBuildingWorkers(BuildingData building) => TownWorkerMgr.Workers.Count(worker => worker.Assignment.AssignedTo == building);
     internal int NumTotalItemsInStorage(ItemDefn neededItem) => Buildings.Sum(building => building.NumItemsOfTypeInStorage(neededItem));
     internal int NumTotalStorageSpots() => Buildings.Sum(building => building.NumStorageSpots);
-
-    // called when a building is requesting an available worker be assigned to it
-    // For now, assignment is done from Camp, so just check if Camp has any workers
-    internal bool WorkerIsAvailable() => NumBuildingWorkers(Camp) > 0;
 
     internal void ItemSold(ItemData item)
     {

@@ -7,6 +7,7 @@ public class ItemContainerComponent : BaseData
     public override string ToString() => $"{(Item == null ? "empty" : Item)}";
 
     public ItemData Item;
+    
     public bool IsEmpty => Item == null;
     public bool HasItem => Item != null;
     internal bool ContainsItem(ItemDefn itemDefn) => HasItem && Item.DefnId == itemDefn.Id;
