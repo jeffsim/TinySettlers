@@ -21,21 +21,21 @@ public class TimeOfDayMgr : MonoBehaviour
         var hourOfDay = Town.TimeMgr.TimeOfDay / hour;
 
         // full day = 90 to -90.  6AM to 9PM
-        float dawnStart = 5;
-        float duskEnd = 22;
+        float dawnStart = 5, dawnEnd = 7;
+        float duskStart = 20, duskEnd = 22;
         float sunAngle;
-        if (hourOfDay < dawnStart)
-            sunAngle = 90f;
-        else if (hourOfDay <= duskEnd)
-            sunAngle = Mathf.Lerp(90f, -90f, (hourOfDay - dawnStart) / (duskEnd - dawnStart));
-        else
-            sunAngle = -90f;
 
-
+        if (hourOfDay < dawnStart) sunAngle = 90f;
+        else if (hourOfDay <= duskEnd) sunAngle = Mathf.Lerp(90f, -90f, (hourOfDay - dawnStart) / (duskEnd - dawnStart));
+        else sunAngle = -90f;
         Sun.transform.localEulerAngles = new Vector3(sunAngle, 50, 0);
 
-
-        // Color ambientColor, dayColor = Color.white, nightColor = new(0.5f, 0.5f, 0.8f);
+        Color ambientColor, dayColor = Color.white, nightColor = new(0.7f, 0.7f, 1);
+        if (hourOfDay < dawnStart) ambientColor = nightColor;
+        else if (hourOfDay <= dawnEnd) ambientColor = Color.Lerp(nightColor, dayColor, (hourOfDay - dawnStart) / (dawnEnd - dawnStart));
+        else if (hourOfDay <= duskStart) ambientColor = dayColor;
+        else if (hourOfDay <= duskEnd) ambientColor = Color.Lerp(dayColor, nightColor, (hourOfDay - duskStart) / (duskEnd - duskStart));
+        else ambientColor = nightColor;
         // if (hourOfDay <= 3f * hour) // before 3AM: nightcolor
         // {
         //     sunAngle = 180f;
@@ -64,7 +64,7 @@ public class TimeOfDayMgr : MonoBehaviour
         //     ambientColor = nightColor;
         //     sunAngle = -180f;
         // }
-        // RenderSettings.ambientLight = ambientColor;
+        RenderSettings.ambientLight = ambientColor;
         // Sun.transform.localEulerAngles = new Vector3(sunAngle, 50, 0);
     }
 
