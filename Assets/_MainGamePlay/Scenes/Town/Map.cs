@@ -30,7 +30,7 @@ public class Map : MonoBehaviour
         foreach (var worker in Town.TownWorkerMgr.Workers)
             addWorkerGO(worker);
 
-        foreach (var building in Town.Buildings)
+        foreach (var building in Town.AllBuildings)
             addBuildingGO(building);
 
         foreach (var item in Town.ItemsOnGround)

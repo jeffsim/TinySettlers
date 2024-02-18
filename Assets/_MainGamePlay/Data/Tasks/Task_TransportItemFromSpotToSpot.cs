@@ -39,13 +39,36 @@ public class Task_TransportItemFromSpotToSpot : Task
     public override void OnBuildingDestroyed(BuildingData building)
     {
         base.OnBuildingDestroyed(building);
-        if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, true);
+        if (!IsRunning) return;
+
+        if (SubtaskIndex < 3 && building == SpotWithItemToPickup.Building)
+            Abandon();
+        else
+        {
+            // If building with storage spot was destroyed, find a new spot to store in
+            if (building == SpotToStoreItemIn.Building)
+            {
+                UnreserveSpot(SpotToStoreItemIn);
+                if ((SpotToStoreItemIn = FindAndReserveOptimalStorageSpot(IsWalkingToSpotToDropItemIn ? Worker.Location : SpotWithItemToPickup.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building)) == null)
+                    Abandon();
+            }
+        } 
     }
 
     public override void OnBuildingPauseToggled(BuildingData building)
     {
         base.OnBuildingPauseToggled(building);
-        if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, false);
+        if (!IsRunning) return;
+
+        if (SubtaskIndex < 3 && building == SpotWithItemToPickup.Building)
+        {
+            Abandon();
+            return;
+        }
+
+        // Check if a better spot to store in is available
+        if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotWithItemToPickup.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building)) == null)
+            Abandon();
     }
 
     public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
@@ -58,19 +81,5 @@ public class Task_TransportItemFromSpotToSpot : Task
             if (IsWalkingToSpotToDropItemIn)
                 LastMoveToTarget.SetWorldLoc(SpotToStoreItemIn.Location);
         }
-    }
-
-    private void HandleOnBuildingDestroyedOrPaused(BuildingData building, bool destroyed)
-    {
-        if (SubtaskIndex < 3 && building == SpotWithItemToPickup.Building)
-        {
-            Abandon();
-            return;
-        }
-
-        // Check if a better spot to store in is available
-        if (!destroyed || building == SpotToStoreItemIn.Building)
-            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotWithItemToPickup.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building)) == null)
-                Abandon();
     }
 }

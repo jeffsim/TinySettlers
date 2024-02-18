@@ -12,7 +12,7 @@ Add House
         + immediately upon building assign one worker per sleeping spot
 
 + Add eating/drinking
-- when hunger reaches 100, go to house to eat IF food there?
+  - when hunger reaches 100, go to house to eat IF food there?
     + Create EatingSpot.  could be in house; could also add them to Marketplace building. etc.
         - wherever they are, that building broadcasts a need for Food.  Need increases based on hunger/available food
   - Houses broadcast need for Food.

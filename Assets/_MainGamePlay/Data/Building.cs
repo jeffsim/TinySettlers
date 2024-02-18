@@ -331,7 +331,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
                 //  how many of the item are already in the Town?
                 //  do we want/need to sell the item?
                 var globalPriorityOfNeedForItem = 0f;
-                foreach (var building in Town.Buildings)
+                foreach (var building in Town.AllBuildings)
                     foreach (var otherNeed in building.Needs)
                         if (otherNeed.Type == NeedType.CraftingOrConstructionMaterial && otherNeed.NeededItem == need.NeededItem)
                             globalPriorityOfNeedForItem += otherNeed.Priority;
@@ -339,7 +339,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
                 var storageImpact = Mathf.Clamp(Town.NumTotalItemsInStorage(need.NeededItem) / 10f, 0, 2);
 
                 var priorityToSellItem = 0f;
-                foreach (var building in Town.Buildings)
+                foreach (var building in Town.AllBuildings)
                     foreach (var otherNeed in building.Needs)
                         if (otherNeed.Type == NeedType.SellItem && otherNeed.NeededItem == need.NeededItem)
                             priorityToSellItem += otherNeed.Priority;
@@ -362,7 +362,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
                 var globalNeedForItem = 0f;
 
                 // if the item-to-be-sold is highly needed by other buildings, then don't sell it
-                foreach (var building in Town.Buildings)
+                foreach (var building in Town.AllBuildings)
                 {
                     if (building == this) continue;
                     foreach (var otherNeed in building.Needs)
@@ -507,7 +507,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
 
         IsDestroyed = true;
 
-        OccupantMgr.EvictAllOccupants();
+        OccupantMgr?.EvictAllOccupants();
         foreach (var need in Needs) need.Cancel();
         foreach (var worker in Town.TownWorkerMgr.Workers) worker.OnBuildingDestroyed(this);
         foreach (var spot in CraftingSpots) spot.OnBuildingDestroyed();

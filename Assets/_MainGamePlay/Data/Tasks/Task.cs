@@ -90,7 +90,7 @@ public abstract class Task
 
     public virtual void OnSubtaskStart() { }
     public virtual void InitializeStateMachine() { }
-  
+
     public virtual Subtask GetNextSubtask()
     {
         return null;
@@ -211,23 +211,6 @@ public abstract class Task
     // ====================================================================================================================
     // Other functions
 
-    protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpotOld(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation, bool updateReservedSpots = false)
-    {
-        var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
-        if (optimalStorageSpotToDeliverItemTo == null)
-            return originalReservedSpot;
- 
-        if (optimalStorageSpotToDeliverItemTo != originalReservedSpot)
-        {
-            originalReservedSpot.Reservation.Unreserve();
-            if (updateReservedSpots) ReservedSpots.Remove(originalReservedSpot);
-            originalReservedSpot = optimalStorageSpotToDeliverItemTo;
-            originalReservedSpot.Reservation.ReserveBy(Worker);
-            if (updateReservedSpots) ReservedSpots.Add(originalReservedSpot);
-        }
-        return originalReservedSpot;
-    }
-
     protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpot(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation, bool updateMoveLoc)
     {
         // Temporarily unreserve the spot so that it can be returned if closest
@@ -235,7 +218,7 @@ public abstract class Task
         originalReservedSpot.Reservation.Unreserve();
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
         originalReservedSpot.Reservation.ReserveBy(reservedBy);
-        if (optimalStorageSpotToDeliverItemTo == null && (originalReservedSpot.Building.IsPaused || originalReservedSpot.Building.IsDestroyed))
+        if (optimalStorageSpotToDeliverItemTo == null && originalReservedSpot.Building.IsPaused)
         {
             // Couldn't find any and original spot is no longer valid
             return null;
@@ -252,27 +235,48 @@ public abstract class Task
         return originalReservedSpot;
     }
 
-    protected IItemSpotInBuilding FindAndReserveNewOptimalGatheringSpot(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation, ItemDefn itemDefn, bool isCurrentMoveTarget)
+    protected IItemSpotInBuilding FindAndReserveOptimalStorageSpot(LocationComponent closestLocation, bool isCurrentMoveTarget)
     {
-        // Temporarily unreserve the spot so that it can be returned if closest
-        var reservedBy = originalReservedSpot.Reservation.ReservedBy;
-        originalReservedSpot.Reservation.Unreserve();
-        var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableGatheringSpot(closestLocation, itemDefn, Worker);
-        originalReservedSpot.Reservation.ReserveBy(reservedBy);
-        if (optimalStorageSpotToDeliverItemTo == null && (originalReservedSpot.Building.IsPaused || originalReservedSpot.Building.IsDestroyed))
-        {
-            // Couldn't find any and original spot is no longer valid
+        var optimalSpot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
+        if (optimalSpot == null)
             return null;
-        }
-
-        if (optimalStorageSpotToDeliverItemTo != null && optimalStorageSpotToDeliverItemTo != originalReservedSpot)
-        {
-            UnreserveSpot(originalReservedSpot);
-            originalReservedSpot = optimalStorageSpotToDeliverItemTo;
-            ReserveSpot(originalReservedSpot);
-            if (isCurrentMoveTarget)
-                LastMoveToTarget.SetWorldLoc(originalReservedSpot.Location);
-        }
-        return originalReservedSpot;
+        ReserveSpot(optimalSpot);
+        if (isCurrentMoveTarget)
+            LastMoveToTarget.SetWorldLoc(optimalSpot.Location);
+        return optimalSpot;
     }
+
+    // protected IItemSpotInBuilding FindAndReserveOptimalGatheringSpot(LocationComponent closestLocation, ItemDefn itemDefn, bool isCurrentMoveTarget)
+    // {
+    //     var optimalSpot = Worker.Town.GetClosestAvailableGatheringSpot(closestLocation, itemDefn, Worker);
+    //     if (optimalSpot == null)
+    //         return null;
+    //     ReserveSpot(optimalSpot);
+    //     if (isCurrentMoveTarget)
+    //         LastMoveToTarget.SetWorldLoc(optimalSpot.Location);
+    //     return optimalSpot;
+    // }
+    // protected IItemSpotInBuilding FindAndReserveNewOptimalGatheringSpot(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation, ItemDefn itemDefn, bool isCurrentMoveTarget)
+    // {
+    //     // Temporarily unreserve the spot so that it can be returned if closest
+    //     var reservedBy = originalReservedSpot.Reservation.ReservedBy;
+    //     originalReservedSpot.Reservation.Unreserve();
+    //     var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableGatheringSpot(closestLocation, itemDefn, Worker);
+    //     originalReservedSpot.Reservation.ReserveBy(reservedBy);
+    //     if (optimalStorageSpotToDeliverItemTo == null && originalReservedSpot.Building.IsPaused)
+    //     {
+    //         // Couldn't find any and original spot is no longer valid
+    //         return null;
+    //     }
+
+    //     if (optimalStorageSpotToDeliverItemTo != null && optimalStorageSpotToDeliverItemTo != originalReservedSpot)
+    //     {
+    //         UnreserveSpot(originalReservedSpot);
+    //         originalReservedSpot = optimalStorageSpotToDeliverItemTo;
+    //         ReserveSpot(originalReservedSpot);
+    //         if (isCurrentMoveTarget)
+    //             LastMoveToTarget.SetWorldLoc(originalReservedSpot.Location);
+    //     }
+    //     return originalReservedSpot;
+    // }
 }

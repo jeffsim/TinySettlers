@@ -50,17 +50,27 @@ public class Task_GatherResource : Task
     public override void OnBuildingDestroyed(BuildingData building)
     {
         base.OnBuildingDestroyed(building);
-        if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, true);
+        if (!IsRunning) return;
+
+        if (SubtaskIndex < 4 && building == SpotToGatherFrom.Building)
+            Abandon();
+        else
+        {
+            // If building with storage spot was destroyed, find a new spot to store in
+            if (building == SpotToStoreItemIn.Building)
+            {
+                UnreserveSpot(SpotToStoreItemIn);
+                if ((SpotToStoreItemIn = FindAndReserveOptimalStorageSpot(IsWalkingToSpotToDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building)) == null)
+                    Abandon();
+            }
+        }
     }
 
     public override void OnBuildingPauseToggled(BuildingData building)
     {
         base.OnBuildingPauseToggled(building);
-        if (IsRunning) HandleOnBuildingDestroyedOrPaused(building, false);
-    }
+        if (!IsRunning) return;
 
-    private void HandleOnBuildingDestroyedOrPaused(BuildingData building, bool destroyed)
-    {
         if (SubtaskIndex < 4 && building == SpotToGatherFrom.Building)
         {
             Abandon();
@@ -68,8 +78,8 @@ public class Task_GatherResource : Task
         }
 
         // Check if a better spot to store in is available
-        if (!destroyed || building == SpotToStoreItemIn.Building)
-            if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building)) == null)
-                Abandon();
+        if ((SpotToStoreItemIn = FindAndReserveNewOptimalStorageSpot(SpotToStoreItemIn, IsWalkingToSpotToDropItemIn ? Worker.Location : SpotToGatherFrom.Location, IsWalkingToSpotToDropItemIn && building == SpotToStoreItemIn.Building)) == null)
+            Abandon();
     }
+
 }

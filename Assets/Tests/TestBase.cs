@@ -52,7 +52,7 @@ public abstract class TestBase
 
     protected BuildingData getBuildingByTestId(string testId, bool failureIsOkay = false)
     {
-        var building = Town.Buildings.Find(building => building.TestId == testId);
+        var building = Town.AllBuildings.Find(building => building.TestId == testId);
         if (building == null && !failureIsOkay)
             Assert.Fail($"{preface()} failed to get building with TestId '{testId}'");
         return building;
@@ -60,7 +60,7 @@ public abstract class TestBase
 
     protected BuildingData getBuilding(string buildingDefnId, bool failureIsOkay = false)
     {
-        foreach (var building in Town.Buildings)
+        foreach (var building in Town.AllBuildings)
             if (building.DefnId == buildingDefnId)
                 return building;
         if (!failureIsOkay)
@@ -350,15 +350,15 @@ public abstract class TestBase
     protected void fillAllTownStorageWithItem(string itemDefnId)
     {
         // Fill up all storage spots so that the worker will fail when looking for a new spot to store the item in
-        foreach (var building in Town.Buildings)
+        foreach (var building in Town.AllBuildings)
             if (building.Defn.CanStoreItems)
                 foreach (var spot in building.StorageSpots)
                     if (!spot.ItemContainer.HasItem && !spot.Reservation.IsReserved)
                         spot.ItemContainer.SetItem(new ItemData() { DefnId = itemDefnId });
     }
 
-    protected int GetNumItemsInTownStorage() => Town.Buildings.Sum(building => building.StorageSpots.Count(spot => spot.ItemContainer.HasItem));
-    protected int GetNumItemsInTownGatheringSpots() => Town.Buildings.Sum(building => building.GatheringSpots.Count(spot => spot.ItemContainer.HasItem));
+    protected int GetNumItemsInTownStorage() => Town.AllBuildings.Sum(building => building.StorageSpots.Count(spot => spot.ItemContainer.HasItem));
+    protected int GetNumItemsInTownGatheringSpots() => Town.AllBuildings.Sum(building => building.GatheringSpots.Count(spot => spot.ItemContainer.HasItem));
 
     protected void moveBuilding(BuildingData buildingToMove, int tileX, int tileY, string message = "")
     {

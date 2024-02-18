@@ -32,7 +32,7 @@ public class AllNeedsDetails : MonoBehaviour
         var town = scene.Map.Town;
         ResetEntryPool();
         List<NeedData> needs = new();
-        foreach (var building in town.Buildings)
+        foreach (var building in town.AllBuildings)
             needs.AddRange(building.Needs);
         needs.AddRange(town.otherTownNeeds);
         switch (SortBy)

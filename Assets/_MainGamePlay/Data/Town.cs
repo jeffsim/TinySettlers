@@ -28,12 +28,13 @@ public class TownData : BaseData
     public TownWorkerMgr TownWorkerMgr;
     public TownTimeMgr TimeMgr;
 
-    public int NumHomedWorkers => Buildings.Sum(building => building.OccupantMgr == null ? 0 : building.OccupantMgr.NumOccupants);
+    public int NumHomedWorkers => AllBuildings.Sum(building => building.OccupantMgr == null ? 0 : building.OccupantMgr.NumOccupants);
 
     // Current Map
     public BuildingData Camp;
     public List<TileData> Tiles = new();
-    public List<BuildingData> Buildings = new();
+    public List<BuildingData> AllBuildings = new();
+    public List<BuildingData> ActiveBuildings = new();
     public List<ItemData> ItemsOnGround = new();
     public List<NeedData> otherTownNeeds = new();
 
@@ -64,7 +65,7 @@ public class TownData : BaseData
         TownWorkerMgr = new(this);
         TimeMgr = new();
 
-        Buildings.Clear();
+        AllBuildings.Clear();
         otherTownNeeds.Clear();
         foreach (var tbDefn in Defn.Buildings)
         {
@@ -96,7 +97,7 @@ public class TownData : BaseData
 
     internal void TestMoveBuilding(int test)
     {
-        MoveBuilding(Buildings[test], 2, 1);
+        MoveBuilding(AllBuildings[test], 2, 1);
     }
 
     public BuildingData ConstructBuilding(BuildingDefn buildingDefn, int tileX, int tileY)
@@ -114,7 +115,7 @@ public class TownData : BaseData
     private BuildingData internalConstructBuilding(BuildingData building)
     {
         building.Initialize(this);
-        Buildings.Add(building);
+        AllBuildings.Add(building);
         OnBuildingAdded?.Invoke(building);
         FindHomesForUnhomedWorkers();
         return building;
@@ -125,7 +126,7 @@ public class TownData : BaseData
         foreach (var worker in TownWorkerMgr.Workers)
             if (!worker.Occupant.HasHome)
             {
-                var availableHome = Buildings.FirstOrDefault(building => building.Defn.WorkersCanLiveHere && building.OccupantMgr.HasRoom);
+                var availableHome = AllBuildings.FirstOrDefault(building => building.Defn.WorkersCanLiveHere && building.OccupantMgr.HasRoom);
                 if (availableHome == null)
                     return; // no more homes with available space
 
@@ -137,7 +138,7 @@ public class TownData : BaseData
     {
         if (!Settings.AllowFreeBuildingPlacement)
             Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
-        Buildings.Remove(building);
+        AllBuildings.Remove(building);
         building.Destroy();
         OnBuildingRemoved?.Invoke(building);
         FindHomesForUnhomedWorkers();
@@ -161,7 +162,7 @@ public class TownData : BaseData
         GameTime.Update();
         TimeMgr.Update();
 
-        foreach (var building in Buildings)
+        foreach (var building in AllBuildings)
             building.Update();
 
         // e.g. pick up items on the ground
@@ -184,7 +185,7 @@ public class TownData : BaseData
 
     internal BuildingData GetNearestResourceSource(LocationComponent loc, ItemDefn itemDefn)
     {
-        return loc.GetClosest(Buildings, building => building.ResourceCanBeGatheredFromHere(itemDefn));
+        return loc.GetClosest(AllBuildings, building => building.ResourceCanBeGatheredFromHere(itemDefn));
     }
 
     internal void AddItemToGround(ItemData item, LocationComponent loc)
@@ -219,9 +220,9 @@ public class TownData : BaseData
     {
         Debug.Assert(searchType != StorageSpotSearchType.AssignedBuildingOrPrimary || worker != null, "worker must be specified for AnyAssignedBuildingOrPrimary");
 
-        foreach (var building in Buildings)
+        foreach (var building in AllBuildings)
         {
-            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot && !building.IsPaused && !building.IsDestroyed)
+            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot && !building.IsPaused)
             {
                 var buildingMatchesSearchType = searchType switch
                 {
@@ -250,9 +251,9 @@ public class TownData : BaseData
 
         BuildingData closestBuilding = null;
         dist = float.MaxValue;
-        foreach (var building in Buildings)
+        foreach (var building in AllBuildings)
         {
-            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot && !building.IsPaused && !building.IsDestroyed)
+            if (building.Defn.CanStoreItems && building.HasAvailableStorageSpot && !building.IsPaused)
             {
                 var buildingMatchesSearchType = searchType switch
                 {
@@ -281,9 +282,9 @@ public class TownData : BaseData
     {
         BuildingData closestBuilding = null;
         dist = float.MaxValue;
-        foreach (var building in Buildings)
+        foreach (var building in AllBuildings)
         {
-            if (!building.IsPaused && !building.IsDestroyed && building.ResourceCanBeGatheredFromHere(itemDefn))
+            if (!building.IsPaused && building.ResourceCanBeGatheredFromHere(itemDefn))
             {
                 var distanceToBuilding = location.DistanceTo(building.Location);
                 if (distanceToBuilding < dist)
@@ -299,7 +300,7 @@ public class TownData : BaseData
     internal int Chart_GetNumOfItemInTown(string itemId)
     {
         int numInStorage = 0;
-        foreach (var building in Buildings)
+        foreach (var building in AllBuildings)
             numInStorage += building.NumItemsOfTypeInStorage(GameDefns.Instance.ItemDefns[itemId]);
 
         // see how many are being carried
@@ -314,7 +315,7 @@ public class TownData : BaseData
     {
         // TBD: Average, total, or max?  Total for now
         var total = 0f;
-        foreach (var building in Buildings)
+        foreach (var building in AllBuildings)
             foreach (var need in building.Needs)
                 if (need.Type == NeedType.CraftingOrConstructionMaterial && need.NeededItem.Id == itemId)
                     total += need.Priority;
@@ -324,7 +325,7 @@ public class TownData : BaseData
     internal NeedData GetHighestNeedForItem(string itemDefnId)
     {
         NeedData highestNeed = null;
-        foreach (var building in Buildings)
+        foreach (var building in AllBuildings)
             foreach (var need in building.Needs)
                 if ((need.Type == NeedType.CraftingOrConstructionMaterial || need.Type == NeedType.SellItem || need.Type == NeedType.PersistentBuildingNeed) && need.NeededItem.Id == itemDefnId)
                     if (highestNeed == null || need.Priority > highestNeed.Priority)
@@ -338,8 +339,8 @@ public class TownData : BaseData
     public void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.Assignment.AssignTo(data);
 
     private WorkerData GetWorkerInBuilding(BuildingData building) => TownWorkerMgr.Workers.FirstOrDefault(worker => worker.Assignment.AssignedTo == building);
-    internal int NumTotalItemsInStorage(ItemDefn neededItem) => Buildings.Sum(building => building.NumItemsOfTypeInStorage(neededItem));
-    internal int NumTotalStorageSpots() => Buildings.Sum(building => building.NumStorageSpots);
+    internal int NumTotalItemsInStorage(ItemDefn neededItem) => AllBuildings.Sum(building => building.NumItemsOfTypeInStorage(neededItem));
+    internal int NumTotalStorageSpots() => AllBuildings.Sum(building => building.NumStorageSpots);
 
     internal void ItemSold(ItemData item)
     {

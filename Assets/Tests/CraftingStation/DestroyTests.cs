@@ -89,8 +89,8 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         int origNumItemsInTownStorage = GetNumItemsInTownStorage() + GetNumItemsInTownGatheringSpots();
         int origNumItemsOnGround = Town.ItemsOnGround.Count;
         int origNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
-        int origNumReservedStorageSpots = Town.Buildings.Sum(b => b.StorageSpots.Count(s => s.Reservation.IsReserved));
-        int origNumReservedGatheringSpots = Town.Buildings.Sum(b => b.GatheringSpots.Count(s => s.Reservation.IsReserved));
+        int origNumReservedStorageSpots = Town.AllBuildings.Sum(b => b.StorageSpots.Count(s => s.Reservation.IsReserved));
+        int origNumReservedGatheringSpots = Town.AllBuildings.Sum(b => b.GatheringSpots.Count(s => s.Reservation.IsReserved));
 
         Town.DestroyBuilding(buildingToDestroy);
 

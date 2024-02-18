@@ -97,7 +97,7 @@ public class TownTaskMgr
                     // We didn't have a storage spot reserved; find the nearest storage spot and reserve it.  If we can't find one, then abandon (drop) the item and abort
                     spotToReserve = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worker.Location, worker);
                 }
-                else if (spotToReserve.Building.IsPaused || spotToReserve.Building.IsDestroyed)
+                else if (spotToReserve.Building.IsPaused)
                 {
                     // We had a storage spot reserved for the item, but it's in a building that is now Paused.  When a building is paused, it's storage spots are no longer valid.
                     // So, we need to find a new storage spot for the item.  If we can't find one, then abandon (drop) the item and abort
@@ -167,7 +167,7 @@ public class TownTaskMgr
 
         // Generate the list of all buildings that the item can be picked up from (ie unreserved and in storage)
         // Note: we allow taking items from buildings that need them IF the building is paused
-        var buildingsThatHaveItem = Town.Buildings.Where(building => building.HasUnreservedItemOfTypeAndDoesntNeedIt(need.NeededItem)).ToList();
+        var buildingsThatHaveItem = Town.AllBuildings.Where(building => building.HasUnreservedItemOfTypeAndDoesntNeedIt(need.NeededItem)).ToList();
         if (buildingsThatHaveItem.Count == 0) return; // if no buildings have the item then abort
 
         // =====================================================================================
@@ -330,7 +330,7 @@ public class TownTaskMgr
         // FIRST, determine if need is meetable
 
         // Generate the list of all buildings that the resource can be gathered from (and have an available gatheringspot); if none then abort
-        var buildingsThatResourceCanBeGatheredFrom = Town.Buildings.Where(building => building.ResourceCanBeGatheredFromHere(need.NeededItem) && !building.IsPaused && !building.IsDestroyed).ToList();
+        var buildingsThatResourceCanBeGatheredFrom = Town.AllBuildings.Where(building => building.ResourceCanBeGatheredFromHere(need.NeededItem) && !building.IsPaused).ToList();
         if (buildingsThatResourceCanBeGatheredFrom.Count == 0) return;
 
         // =====================================================================================
@@ -394,7 +394,7 @@ public class TownTaskMgr
     private List<NeedData> GetAllActiveNeeds()
     {
         List<NeedData> allNeeds = new();
-        foreach (var building in Town.Buildings)
+        foreach (var building in Town.AllBuildings)
             foreach (var need in building.Needs)
                 if (need.Priority > 0)
                     allNeeds.Add(need);
@@ -415,8 +415,8 @@ public class TownTaskMgr
     internal NeedData GetHighestUnmetNeedForItemInBuildingWithAvailableStorage(string itemDefnId)
     {
         NeedData highestNeed = null;
-        foreach (var building in Town.Buildings)
-            if (building.HasAvailableStorageSpot && !building.IsPaused && !building.IsDestroyed && building.NumWorkers > 0)
+        foreach (var building in Town.AllBuildings)
+            if (building.HasAvailableStorageSpot && !building.IsPaused && building.NumWorkers > 0)
                 foreach (var need in building.Needs)
                 {
                     // only fulfill itemneeds
