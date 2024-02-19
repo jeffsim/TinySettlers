@@ -11,8 +11,6 @@ public class Item : MonoBehaviour
     public GameObject Visual;
     public SceneWithMap scene;
 
-    static float ItemZ = -7.5f;
-
     public void Initialize(ItemData data, SceneWithMap scene)
     {
         this.scene = scene;

@@ -12,7 +12,7 @@ public class SelectBuildingToConstructDialog : MonoBehaviour
         List.RemoveAllChildren();
 
         // position this object over the center of the tile.  Keep in mind that the tile's WorldLoc is in 3D while this object is in the Canvas
-        transform.position = Camera.main.WorldToScreenPoint(new Vector3(tile.Data.WorldX, tile.Data.WorldY, 0));
+        transform.position = Camera.main.WorldToScreenPoint(new Vector3(tile.Data.WorldX, 0, tile.Data.WorldY));
 
         foreach (var defn in GameDefns.Instance.BuildingDefns.Values)
         {
@@ -22,22 +22,28 @@ public class SelectBuildingToConstructDialog : MonoBehaviour
         }
     }
 
+    // Only used when player clicks on background; used in AllowFreeBuildingPlacement mode
     internal void ShowAtWorldLoc(SceneWithMap scene, Vector3 screenPosition)
     {
-        gameObject.SetActive(true);
-        List.RemoveAllChildren();
-
-        // position this object over the center of the tile.  Keep in mind that the tile's WorldLoc is in 3D while this object is in the Canvas
-        transform.position = screenPosition;
-
-        foreach (var defn in GameDefns.Instance.BuildingDefns.Values)
+        if (Settings.AllowFreeBuildingPlacement)
         {
-            if (!defn.CanBeConstructed || defn.IsTestBuilding) continue;
-            var entry = Instantiate(SelectBuildingToConstructEntryPrefab, List.transform);
+            gameObject.SetActive(true);
+            List.RemoveAllChildren();
+            List.RemoveAllChildren();
 
-            //      mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
-            var worldLoc = Camera.main.ScreenToWorldPoint(screenPosition);
-            entry.InitializeForBuilding(scene, worldLoc, this, defn);
+            // position this object over the center of the tile.  Keep in mind that the tile's WorldLoc is in 3D while this object is in the Canvas
+            transform.position = Camera.main.WorldToScreenPoint(new Vector3(screenPosition.x, 0, screenPosition.z));
+
+            Debug.Log(screenPosition);
+            foreach (var defn in GameDefns.Instance.BuildingDefns.Values)
+            {
+                if (!defn.CanBeConstructed || defn.IsTestBuilding) continue;
+                var entry = Instantiate(SelectBuildingToConstructEntryPrefab, List.transform);
+
+                //      mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
+                var worldLoc = Camera.main.ScreenToWorldPoint(screenPosition);
+                entry.InitializeForBuilding(scene, worldLoc, this, defn);
+            }
         }
     }
 
