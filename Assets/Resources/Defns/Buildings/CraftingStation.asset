@@ -14,13 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: craftingStation
   BuildingColor: {r: 0.4433962, g: 0, b: 0, a: 1}
+  BuildingBottomColor: {r: 0, g: 0, b: 0, a: 0}
   FriendlyName: Crafting Station
   IsTestBuilding: 0
   BuildingClass: 2
+  VisualPrefab: {fileID: 0}
+  VisualScale: {x: 1, y: 1, z: 1}
+  VisualRotation: {x: 0, y: 0, z: 0, w: 0}
+  VisualOffset: {x: 0, y: 0, z: 0}
   AssignedWorkerColor: {r: 0.9622642, g: 0, b: 0, a: 0}
   AssignedWorkerFriendlyName: Crafter
   HasWorkers: 1
   MaxWorkers: 4
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 0.4431373, g: 0.003921569, b: 0, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
@@ -34,12 +40,10 @@ MonoBehaviour:
   CraftableItems:
   - {fileID: 11400000, guid: a806f05d763e8a744aa2323085bb94cb, type: 2}
   CraftingSpots:
-  - {x: 0, y: 3, z: 0}
+  - {x: 0, y: 2.5, z: 0}
+  - {x: 2, y: 2.5, z: 0}
   CanStoreItems: 1
   IsPrimaryStorage: 0
-  StorageAreaLocations:
-  - {x: 0, y: 0, z: 0}
-  StorageAreaSize: {x: 2, y: 2}
   StorageAreas:
   - Location: {x: 0, y: 0, z: 0}
     StorageAreaSize: {x: 2, y: 2}
@@ -52,3 +56,7 @@ MonoBehaviour:
   GatheringSpots: []
   CanSellGoods: 0
   GoodsThatCanBeSold: []
+  WorkersCanRestHere: 0
+  SleepingSpots: []
+  WorkersCanLiveHere: 0
+  MaxWorkersLivingHere: 4

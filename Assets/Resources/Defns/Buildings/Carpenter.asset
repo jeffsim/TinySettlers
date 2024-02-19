@@ -38,7 +38,7 @@ MonoBehaviour:
   CraftableItems:
   - {fileID: 11400000, guid: 06ea90791fa6045cea5d2005d2eeb22c, type: 2}
   CraftingSpots:
-  - {x: 0, y: 3, z: 0}
+  - {x: 0, y: 2.5, z: 0}
   CanStoreItems: 1
   IsPrimaryStorage: 0
   StorageAreas:

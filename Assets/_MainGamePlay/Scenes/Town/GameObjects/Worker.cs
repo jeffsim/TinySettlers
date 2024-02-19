@@ -10,7 +10,7 @@ public class Worker : MonoBehaviour
     public Item ItemVisual;
     public GameObject CarriedItem;
     public SceneWithMap scene;
-    float lineY = 3f;
+    float lineY = 2f;
     Vector3 ZFightingOffset;
 
     public void Initialize(WorkerData data, SceneWithMap scene)
@@ -53,17 +53,35 @@ public class Worker : MonoBehaviour
         transform.position = Data.Location.WorldLoc + ZFightingOffset;
 
         // CHeck if picked up/dropped item; update Item visual appropriately
-        var item = Data.AI.CurrentTask.GetTaskItem();
-        if (Data.Hands.HasItem && ItemVisual == null)
+        ItemData itemToShow = null;
+        switch (Data.AI.CurrentTask.CurSubTask)
         {
-            ItemVisual = Instantiate(item.Defn.VisualPrefab);
-            ItemVisual.transform.SetParent(CarriedItem.transform, false);
-            // ItemVisual.transform.localPosition = new Vector3(0, 0, 0);
-            // ItemVisual.transform.localScale = new Vector3(1, 1, 1);
-            // ItemVisual.transform.localRotation = Quaternion.identity;
-            ItemVisual.GetComponent<Item>().Initialize(item, scene);
+            case BaseSubtask_Moving _: itemToShow = Data.Hands.HasItem ? Data.Hands.Item : null; break;
+            case Subtask_DropItemInItemSpot _: itemToShow = Data.Hands.Item; break;
+            case Subtask_DropItemInMultipleItemSpot _: itemToShow = Data.Hands.Item; break;
+            case Subtask_PickupItemFromItemSpot _: itemToShow = Data.AI.CurrentTask.GetTaskItem(); break;
+            case Subtask_PickupItemFromGround _: itemToShow = Data.AI.CurrentTask.GetTaskItem(); break;
+            case Subtask_ReapItem _: itemToShow = Data.AI.CurrentTask.GetTaskItem(); break;
+            case Subtask_SellItemInHands _: itemToShow = Data.Hands.Item; break;
+            case Subtask_CraftItem _: itemToShow = Data.AI.CurrentTask.GetTaskItem(); break;
+            case Subtask_Wait _: itemToShow = Data.Hands.Item; break;
+
+            default:
+                // Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);
+                break;
         }
-        else if (!Data.Hands.HasItem && ItemVisual != null)
+
+        if ((itemToShow != null && ItemVisual == null) ||
+            (itemToShow != null && ItemVisual != null && ItemVisual.Data != itemToShow))
+        {
+            if (ItemVisual != null)
+                Destroy(ItemVisual.gameObject);
+
+            ItemVisual = Instantiate(itemToShow.Defn.VisualPrefab);
+            ItemVisual.transform.SetParent(CarriedItem.transform, false);
+            ItemVisual.GetComponent<Item>().Initialize(itemToShow, scene);
+        }
+        else if (itemToShow == null && ItemVisual != null)
         {
             Destroy(ItemVisual.gameObject);
             ItemVisual = null;
@@ -120,7 +138,7 @@ public class Worker : MonoBehaviour
             case Subtask_PickupItemFromGround _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), scaleNormal, Color.white); break;
             case Subtask_ReapItem _: updateCarriedItem(itemDown, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
             case Subtask_SellItemInHands _: updateCarriedItem(itemUp, Vector3.Lerp(scaleNormal, scaleSmall, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
-            case Subtask_CraftItem _: updateCarriedItem(Vector3.Lerp(itemDown, itemUp, percentDone), Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
+            case Subtask_CraftItem _: updateCarriedItem(itemUp, Vector3.Lerp(scaleSmall, scaleNormal, percentDone), Color.Lerp(Color.green, Color.white, percentDone)); break;
             case Subtask_Wait _: /*CarriedItem.text = "<i>I</i>"; */updateCarriedItem(itemDown, scaleNormal, Color.Lerp(Color.green, Color.white, percentDone)); break;
             default:
                 // Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);
