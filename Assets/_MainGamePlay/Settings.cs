@@ -12,7 +12,7 @@ public class Settings
     
     public static float TileY = -4.5f;
     public static float BuildingsY = .95f;
-    public static float ItemSpotsY = .25f;
+    public static float ItemSpotsY = .5f;
     public static float StorageAreaY = .5f;
     public static float WorkerY = 2.25f;
 }
