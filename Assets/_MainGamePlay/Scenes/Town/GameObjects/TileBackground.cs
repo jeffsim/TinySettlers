@@ -15,7 +15,6 @@ public class TileBackground : MonoBehaviour
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             tile.OnClicked();
-            Event.current.Use();
         }
     }
 }
