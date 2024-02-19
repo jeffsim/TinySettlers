@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e342e9f54c9d04f05b77eff70a36605e
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/ExampleScenes/Example13_Moving/LocalSpaceRichAI.cs
+  uploadId: 626197

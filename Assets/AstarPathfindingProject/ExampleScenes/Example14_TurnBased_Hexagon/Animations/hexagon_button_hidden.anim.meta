@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4cfd409a0af9b48e9983ca5608b62e95
+timeCreated: 1453735112
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/ExampleScenes/Example14_TurnBased_Hexagon/Animations/hexagon_button_hidden.anim
+  uploadId: 626197

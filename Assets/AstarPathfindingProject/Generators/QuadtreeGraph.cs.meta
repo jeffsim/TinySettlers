@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4931e76e5e5784200a904f4b59596556
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/Generators/QuadtreeGraph.cs
+  uploadId: 626197

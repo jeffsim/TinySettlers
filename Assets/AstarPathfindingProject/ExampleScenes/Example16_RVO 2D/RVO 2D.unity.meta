@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 05f4cef9e16814ff3908457d37cdcb33
+timeCreated: 1482931760
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/ExampleScenes/Example16_RVO 2D/RVO 2D.unity
+  uploadId: 626197

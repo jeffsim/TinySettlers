@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 0150010635e4f4daba9d68e759059fd8
+timeCreated: 1453724135
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/ExampleScenes/Example14_TurnBased_Hexagon/TurnBasedDoor.cs
+  uploadId: 626197

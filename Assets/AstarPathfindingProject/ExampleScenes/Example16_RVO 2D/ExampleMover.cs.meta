@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: d26cf94ed562448e59249505a524cf93
+timeCreated: 1482933200
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/ExampleScenes/Example16_RVO 2D/ExampleMover.cs
+  uploadId: 626197

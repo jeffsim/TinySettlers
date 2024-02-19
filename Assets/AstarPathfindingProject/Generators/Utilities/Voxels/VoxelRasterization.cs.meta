@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d0d1f28f02bb44332a1705b450727571
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/Generators/Utilities/Voxels/VoxelRasterization.cs
+  uploadId: 626197

@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 8caf3dccb5aae46daa9684e513307841
+timeCreated: 1498571379
+licenseType: Store
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/Legacy/MiscLegacy.cs
+  uploadId: 626197

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 4bdf4f8f9f4d24739b8f01d064e9ff15
+timeCreated: 1453734781
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/ExampleScenes/Example14_TurnBased_Hexagon/Animations/Red.controller
+  uploadId: 626197

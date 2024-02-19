@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 66c93f14e4d21416eb0774bf83c05bdc
+timeCreated: 1453734781
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/ExampleScenes/Example14_TurnBased_Hexagon/Animations/hexagon_button_show.anim
+  uploadId: 626197

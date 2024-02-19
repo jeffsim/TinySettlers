@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 66ea80679290d45778de562ccdf7d3cd
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/Generators/Utilities/Voxels/VoxelMesh.cs
+  uploadId: 626197

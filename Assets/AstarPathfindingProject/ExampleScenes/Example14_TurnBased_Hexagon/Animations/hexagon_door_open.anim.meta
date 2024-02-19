@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 27f485081874343ec9646d443c79af4e
+timeCreated: 1453724282
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/ExampleScenes/Example14_TurnBased_Hexagon/Animations/hexagon_door_open.anim
+  uploadId: 626197

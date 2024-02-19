@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 15c1a00768b91406da1023481bb6b04e
+timeCreated: 1454764999
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/ExampleScenes/Example15_2D/2D.unity
+  uploadId: 626197

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 57eb4c059e0b3467cac0a46a3b859a2d
+timeCreated: 1453726625
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 87744
+  packageName: A* Pathfinding Project Pro
+  packageVersion: 4.2.19
+  assetPath: Assets/AstarPathfindingProject/ExampleScenes/Example14_TurnBased_Hexagon/Materials/hexagon_green.mat
+  uploadId: 626197
