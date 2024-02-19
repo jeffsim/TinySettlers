@@ -32,7 +32,8 @@ public class BuildingDefn : BaseDefn
     public GameObject VisualPrefab;
     public Vector3 VisualScale = Vector3.one;
     public Quaternion VisualRotation;
-
+    public Vector3 VisualOffset;
+    
     public Color AssignedWorkerColor;
     public string AssignedWorkerFriendlyName;
 

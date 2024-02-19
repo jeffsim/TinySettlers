@@ -17,8 +17,7 @@ public class StoragePile : MonoBehaviour
         Data = pileData;
         this.scene = scene;
         name = "Storage " + index;
-        transform.position = pileData.Location.WorldLoc;//.GetWorldLocRelativeTo(areaData.Location, 0f);
-        // spot.OnItemRemoved += OnItemRemoved;
+        transform.position = pileData.Location.WorldLoc;
     }
 
     void OnDestroy()
@@ -39,7 +38,10 @@ public class StoragePile : MonoBehaviour
 
     void Update()
     {
-        Count.text = Data.NumItemsInPile.ToString();
+        if (Data.StorageSpots.Count > 1)
+            Count.text = Data.NumItemsInPile.ToString();
+        else
+            Count.text = Data.StorageSpots[0].ItemContainer.HasItem ? Data.StorageSpots[0].ItemContainer.Item.DefnId[0..2] : "";
         // Set color to first item, assumes all are same itemtype.  
         // TODO: render as 'pile'; e.g. render 3x3 smaller items.
         bool isAnySpotReserved = Data.StorageSpots.Any(s => s.Reservation.IsReserved);

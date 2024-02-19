@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: wood
   FriendlyName: Wood
-  Color: {r: 0.30170074, g: 0.6320754, b: 0.2236116, a: 0}
+  Color: {r: 0.3584906, g: 0.2256188, b: 0.06256675, a: 0}
   GoodType: 2
   ResourcesNeededForCrafting: []
   ItemClass: 1
   BaseSellPrice: 1
   CarryingSpeedModifier: 1
+  SecondsToGrow: 1

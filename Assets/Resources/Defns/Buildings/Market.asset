@@ -18,6 +18,10 @@ MonoBehaviour:
   FriendlyName: Market
   IsTestBuilding: 0
   BuildingClass: 2
+  VisualPrefab: {fileID: 0}
+  VisualScale: {x: 1, y: 1, z: 1}
+  VisualRotation: {x: 0, y: 0, z: 0, w: 0}
+  VisualOffset: {x: 0, y: 0, z: 0}
   AssignedWorkerColor: {r: 0.8796489, g: 1, b: 0, a: 0}
   AssignedWorkerFriendlyName: Marketer
   HasWorkers: 1
@@ -36,7 +40,7 @@ MonoBehaviour:
   CanStoreItems: 1
   IsPrimaryStorage: 0
   StorageAreas:
-  - Location: {x: 0, y: 0.5, z: 0}
+  - Location: {x: 0, y: 0, z: 0}
     StorageAreaSize: {x: 3, y: 3}
     StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 0
@@ -53,3 +57,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8299fd30f1aba4fbea13091ddf0ceeb2, type: 2}
   - {fileID: 11400000, guid: a806f05d763e8a744aa2323085bb94cb, type: 2}
   - {fileID: 11400000, guid: 06ea90791fa6045cea5d2005d2eeb22c, type: 2}
+  WorkersCanRestHere: 0
+  SleepingSpots: []
+  WorkersCanLiveHere: 0
+  MaxWorkersLivingHere: 4

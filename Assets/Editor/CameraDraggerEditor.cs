@@ -20,6 +20,7 @@ public class CameraDraggerEditor : Editor
                 return;
             } 
             gameSettingsDefn.Debug_StartingCameraPosition = script.transform.position;
+            gameSettingsDefn.Debug_StartingCameraRotation = script.transform.rotation;
             gameSettingsDefn.Debug_StartingCameraZoom = Camera.main.orthographicSize;
 
             EditorUtility.SetDirty(gameSettingsDefn);

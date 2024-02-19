@@ -19,6 +19,9 @@ MonoBehaviour:
   IsTestBuilding: 0
   BuildingClass: 1
   VisualPrefab: {fileID: 0}
+  VisualScale: {x: 1, y: 1, z: 1}
+  VisualRotation: {x: 0, y: 0, z: 0, w: 0}
+  VisualOffset: {x: 0, y: 0, z: 0}
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
   AssignedWorkerFriendlyName: Camper
   HasWorkers: 1
@@ -37,7 +40,7 @@ MonoBehaviour:
   CanStoreItems: 1
   IsPrimaryStorage: 1
   StorageAreas:
-  - Location: {x: 1, y: 0.5, z: 0}
+  - Location: {x: 1, y: 0, z: 0}
     StorageAreaSize: {x: 3, y: 3}
     StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 1
@@ -50,9 +53,9 @@ MonoBehaviour:
   GoodsThatCanBeSold: []
   WorkersCanRestHere: 1
   SleepingSpots:
-  - {x: -2.5, y: -1.75, z: 0}
-  - {x: -2.5, y: -0.25, z: 0}
-  - {x: -2.5, y: 1.25, z: 0}
-  - {x: -2.5, y: 2.75, z: 0}
+  - {x: -2.5, y: -2, z: 0}
+  - {x: -2.5, y: -0.5, z: 0}
+  - {x: -2.5, y: 1, z: 0}
+  - {x: -2.5, y: 2.5, z: 0}
   WorkersCanLiveHere: 1
   MaxWorkersLivingHere: 4

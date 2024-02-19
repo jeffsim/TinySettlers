@@ -8,7 +8,7 @@ public class StorageArea : MonoBehaviour
     {
         name = "Storage Area";
         transform.position = areaData.Location.WorldLoc; //GetWorldLocRelativeTo(building.Data.Location, -.25f);
-        Background.transform.localScale = new Vector3(1.1f * areaDefn.StorageAreaSize.x + .1f, .1f, 1.1f * areaDefn.StorageAreaSize.y + .1f);
+        Background.transform.localScale = new Vector3(1.1f * areaDefn.StorageAreaSize.x + .1f, .1f, 1.2f * areaDefn.StorageAreaSize.y + .2f);
         for (int i = 0; i < areaData.StoragePiles.Count; i++)
         {
             var item = Instantiate(prefab);

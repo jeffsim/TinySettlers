@@ -96,8 +96,8 @@ public class Worker : MonoBehaviour
             }
         }
 
-        var itemUp = new Vector3(0, .27f, 1);
-        var itemDown = new Vector3(0, .27f, 0);
+        var itemUp = new Vector3(0, .5f, 1);
+        var itemDown = new Vector3(0, .5f, 0);
         var scaleSmall = new Vector3(0, 0, 0);
         var scaleNormal = new Vector3(1, 1, 1);
         var percentDone = Data.AI.CurrentTask.CurSubTask.PercentDone;

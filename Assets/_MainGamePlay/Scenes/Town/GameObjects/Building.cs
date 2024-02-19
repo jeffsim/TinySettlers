@@ -75,6 +75,7 @@ public class Building : MonoBehaviour
         {
             var buildingVisual = Instantiate(Data.Defn.VisualPrefab);
             buildingVisual.transform.SetParent(Visual.transform, false);
+            buildingVisual.transform.localPosition = Data.Defn.VisualOffset;
             buildingVisual.transform.localScale = Data.Defn.VisualScale;
             buildingVisual.transform.localRotation = Data.Defn.VisualRotation;
         }

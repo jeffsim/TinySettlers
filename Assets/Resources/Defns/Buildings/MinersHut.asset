@@ -14,13 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: minersHut
   BuildingColor: {r: 0.42352942, g: 0.21568628, b: 0, a: 1}
+  BuildingBottomColor: {r: 0, g: 0, b: 0, a: 0}
   FriendlyName: Miners Hut
   IsTestBuilding: 0
   BuildingClass: 2
+  VisualPrefab: {fileID: 0}
+  VisualScale: {x: 1, y: 1, z: 1}
+  VisualRotation: {x: 0, y: 0, z: 0, w: 0}
+  VisualOffset: {x: 0, y: 0, z: 0}
   AssignedWorkerColor: {r: 1, g: 0.50591254, b: 0, a: 0}
   AssignedWorkerFriendlyName: Miner
   HasWorkers: 1
   MaxWorkers: 4
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 0.3018868, g: 0.12629957, b: 0, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
@@ -35,16 +41,14 @@ MonoBehaviour:
   CraftingSpots: []
   CanStoreItems: 1
   IsPrimaryStorage: 0
-  StorageAreaLocations: []
-  StorageAreaSize: {x: 3, y: 3}
   StorageAreas:
-  - Location: {x: -2.5, y: 0.9, z: 0}
+  - Location: {x: -2.5, y: 0, z: 0}
     StorageAreaSize: {x: 2, y: 5}
     StoragePileSize: {x: 1, y: 1, z: 1}
-  - Location: {x: 0, y: 0.9, z: 0}
+  - Location: {x: 0, y: 0, z: 0}
     StorageAreaSize: {x: 2, y: 5}
     StoragePileSize: {x: 1, y: 1, z: 1}
-  - Location: {x: 2.5, y: 0.9, z: 0}
+  - Location: {x: 2.5, y: 0, z: 0}
     StorageAreaSize: {x: 2, y: 5}
     StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 0
@@ -56,3 +60,7 @@ MonoBehaviour:
   GatheringSpots: []
   CanSellGoods: 0
   GoodsThatCanBeSold: []
+  WorkersCanRestHere: 0
+  SleepingSpots: []
+  WorkersCanLiveHere: 0
+  MaxWorkersLivingHere: 4

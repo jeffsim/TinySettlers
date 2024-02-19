@@ -19,7 +19,11 @@ public class Tile : MonoBehaviour
             gameObject.RemoveAllChildren();
         else
             GetComponentInChildren<Renderer>().material = data.Defn.TileColor;
+
         transform.position = data.Location.WorldLoc;
+        // Hack
+        if (Settings.UseOrthographicCamera)
+            transform.position += new Vector3(0, 0, .5f);
     }
 
     public void OnClicked()

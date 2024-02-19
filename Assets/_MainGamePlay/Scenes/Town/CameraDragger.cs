@@ -10,7 +10,16 @@ public class CameraDragger : MonoBehaviour
     {
         // This uses the GameSettingsDefn to set the camera position
         transform.position = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingCameraPosition;
-        Camera.main.orthographicSize = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingCameraZoom;
+        if (Settings.UseOrthographicCamera)
+        {
+            transform.rotation = Quaternion.Euler(60, 0, 0);
+            Camera.main.orthographicSize = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingCameraZoom;
+        }
+        else
+        {
+            transform.rotation = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingCameraRotation;
+            Camera.main.fieldOfView = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingCameraZoom;
+        }
         // The value is set using the CameraPannerEditor class and stored in the GameSettingsDefn ScriptableObject in the Resources/Defns folder
     }
 
