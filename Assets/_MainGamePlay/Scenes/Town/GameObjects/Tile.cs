@@ -23,7 +23,7 @@ public class Tile : MonoBehaviour
         transform.position = data.Location.WorldLoc;
         // Hack
         if (Settings.UseOrthographicCamera)
-            transform.position += new Vector3(0, 0, .5f);
+            transform.position += new Vector3(0, 0, .75f);
     }
 
     public void OnClicked()
