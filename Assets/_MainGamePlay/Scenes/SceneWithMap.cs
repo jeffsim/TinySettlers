@@ -187,18 +187,22 @@ public class SceneWithMap : SceneMgr
         Map = mapGO.AddComponent<Map>();
         Map.Initialize(this, town);
 
-
         FindAnyObjectByType<TimeOfDayMgr>(FindObjectsInactive.Exclude).InitializeForTown(town);
         FindAnyObjectByType<TopBar>(FindObjectsInactive.Exclude).InitializeForTown(town);
     }
 
     internal void OnTileClicked(Tile tile)
     {
-        // Debug.Log("tile clicked " + tile.Data.TileX + " " + tile.Data.TileY);
-        if (tile.Data.BuildingInTile == null)
+        if (AnyDialogIsOpen())
+            HideAllDialogs();
+        else
         {
-            // User clicked empty tile; show the 'select building to construct' dialog
-            SelectBuildingToConstruct.ShowForTile(this, tile);
+            // Debug.Log("tile clicked " + tile.Data.TileX + " " + tile.Data.TileY);
+            if (tile.Data.BuildingInTile == null)
+            {
+                // User clicked empty tile; show the 'select building to construct' dialog
+                SelectBuildingToConstruct.ShowForTile(this, tile);
+            }
         }
     }
 

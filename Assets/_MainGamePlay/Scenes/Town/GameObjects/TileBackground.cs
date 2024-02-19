@@ -9,10 +9,13 @@ public class TileBackground : MonoBehaviour
     {
         tile = transform.GetComponentInParent<Tile>();
     }
-    
+
     public void OnMouseUp()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
+        {
             tile.OnClicked();
+            Event.current.Use();
+        }
     }
 }
