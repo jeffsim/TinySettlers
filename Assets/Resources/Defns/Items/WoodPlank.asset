@@ -14,7 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: plank
   FriendlyName: Wood Plank
-  Color: {r: 0.012415428, g: 0.8773585, b: 0.83962756, a: 0}
+  Color: {r: 0.6886792, g: 0.26573455, b: 0.23064259, a: 0}
+  VisualPrefab: {fileID: 7043519063053432247, guid: d03390ec9ad364dfe93a56ab6d0b2d1a, type: 3}
   GoodType: 2
   ResourcesNeededForCrafting:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}

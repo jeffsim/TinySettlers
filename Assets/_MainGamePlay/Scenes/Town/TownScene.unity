@@ -13102,7 +13102,7 @@ MonoBehaviour:
   GatheringSpotPrefab: {fileID: 145167861813597606, guid: e1e88e46a27c640f3afcb75df2152372, type: 3}
   CraftingSpotPrefab: {fileID: 4006523581432375862, guid: 1b0f7997cefd64697a1a2427ca45ec51, type: 3}
   SleepingSpotPrefab: {fileID: 3447476926318239933, guid: 487edbf75204a43aabfacbde9773b03f, type: 3}
-  ItemOnGroundPrefab: {fileID: 7043519063053432247, guid: 3ac5bc85675874831b356ee795afd80b, type: 3}
+  ItemPrefab: {fileID: 7043519063053432247, guid: 3ac5bc85675874831b356ee795afd80b, type: 3}
   WorkerDetails: {fileID: 861838588}
   BuildingDetails: {fileID: 1954432328}
   StorageSpotDetails: {fileID: 1169664743}

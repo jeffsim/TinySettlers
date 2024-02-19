@@ -4,7 +4,7 @@ public class Subtask_PickupItemFromGround : Subtask
 {
     protected override float RunTime => 0.5f;
     [SerializeReference] ItemData Item;
-    public override ItemDefn GetTaskItem() => Item.Defn;
+    public override ItemData GetTaskItem() => Item;
 
     public Subtask_PickupItemFromGround(Task parentTask, ItemData item) : base(parentTask)
     {

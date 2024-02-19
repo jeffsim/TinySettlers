@@ -15,6 +15,7 @@ MonoBehaviour:
   Id: GardenPlot
   FriendlyName: GardenPlot
   Color: {r: 0.50980395, g: 0.30878505, b: 0.07058824, a: 0}
+  VisualPrefab: {fileID: 7043519063053432247, guid: 5d816247adbd54c148b31ee628898ee7, type: 3}
   GoodType: 2
   ResourcesNeededForCrafting:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}

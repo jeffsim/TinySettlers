@@ -18,8 +18,17 @@ public class Item : MonoBehaviour
         name = data.DefnId;
         Name.text = data.Defn.FriendlyName.Substring(0, 1);
 
-        GetComponentInChildren<Renderer>().material.color = data.Defn.Color;
+        // GetComponentInChildren<Renderer>().material.color = data.Defn.Color;
         transform.position = data.Location.WorldLoc;
+
+        if (Data.Defn.VisualPrefab != null)
+        {
+            var visual = Instantiate(Data.Defn.VisualPrefab);
+            visual.transform.SetParent(Visual.transform, false);
+            // buildingVisual.transform.localPosition = Data.Defn.VisualOffset;
+            // buildingVisual.transform.localScale = Data.Defn.VisualScale;
+            // buildingVisual.transform.localRotation = Data.Defn.VisualRotation;
+        }
     }
 
     public void OnMouseUp()

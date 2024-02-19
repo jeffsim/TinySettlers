@@ -34,7 +34,7 @@ public class GatheringSpotDetails : MonoBehaviour
             Reservation.text = "Reservation:";
             Reservation.text += "\n    By: " + reservedBy;
             Reservation.text += "\n    Task: " + reservedBy.AI.CurrentTask;
-            Reservation.text += "\n    Item: " + reservedBy.AI.CurrentTask.GetTaskItem().FriendlyName;
+            Reservation.text += "\n    Item: " + reservedBy.AI.CurrentTask.GetTaskItem().Defn.FriendlyName;
         }
         else
             Reservation.text = "Not reserved";

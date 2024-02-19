@@ -15,6 +15,7 @@ MonoBehaviour:
   Id: wood
   FriendlyName: Wood
   Color: {r: 0.3584906, g: 0.2256188, b: 0.06256675, a: 0}
+  VisualPrefab: {fileID: 7043519063053432247, guid: 517bb6b18323345c68f502c4edd91cb7, type: 3}
   GoodType: 2
   ResourcesNeededForCrafting: []
   ItemClass: 1

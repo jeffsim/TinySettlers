@@ -4,7 +4,7 @@ public class Subtask_DropItemInMultipleItemSpot : Subtask
 {
     protected override float RunTime => 0.5f;
     [SerializeField] IMultipleItemSpotInBuilding ItemsSpot;
-    public override ItemDefn GetTaskItem() => Task.Worker.Hands.Item.Defn;
+    public override ItemData GetTaskItem() => Task.Worker.Hands.Item;
 
     public Subtask_DropItemInMultipleItemSpot(Task parentTask, IMultipleItemSpotInBuilding itemSpot) : base(parentTask)
     {

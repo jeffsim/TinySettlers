@@ -46,7 +46,7 @@ public abstract class Task
 
     // == Items ================================
     public virtual bool IsCarryingItem(string itemId) => false;
-    public virtual ItemDefn GetTaskItem() => CurSubTask.GetTaskItem();
+    public virtual ItemData GetTaskItem() => CurSubTask.GetTaskItem();
 
     // == Need =================================
     // The Need that this task is meeting

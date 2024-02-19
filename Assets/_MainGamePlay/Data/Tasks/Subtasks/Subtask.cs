@@ -20,7 +20,7 @@ public abstract class Subtask
     public float PercentDone => Math.Clamp((GameTime.time - StartTime) / RunTime, 0, 1);
     public bool IsSubstateDone => PercentDone == 1;
 
-    public virtual ItemDefn GetTaskItem() => null;
+    public virtual ItemData GetTaskItem() => null;
 
     public Subtask(Task parentTask)
     {

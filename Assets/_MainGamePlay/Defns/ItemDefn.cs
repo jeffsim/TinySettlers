@@ -16,6 +16,8 @@ public class ItemDefn : BaseDefn
 {
     public string FriendlyName;
     public Color Color;
+    public Item VisualPrefab;
+
     public GoodType GoodType = GoodType.explicitGood;
     public List<ResourceNeededForCraftingOrConstruction> ResourcesNeededForCrafting;
     public ItemClass ItemClass;

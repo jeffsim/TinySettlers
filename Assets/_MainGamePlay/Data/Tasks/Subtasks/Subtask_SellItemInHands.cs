@@ -3,7 +3,7 @@ using UnityEngine;
 public class Subtask_SellItemInHands : Subtask
 {
     protected override float RunTime => 1;
-    public override ItemDefn GetTaskItem() => Task.Worker.Hands.Item.Defn;
+    public override ItemData GetTaskItem() => Task.Worker.Hands.Item;
     [SerializeField] public IItemSpotInBuilding ItemSpot;
 
     public Subtask_SellItemInHands(Task parentTask, IItemSpotInBuilding itemSpot) : base(parentTask)

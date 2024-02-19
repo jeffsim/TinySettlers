@@ -15,8 +15,10 @@ MonoBehaviour:
   Id: stone
   FriendlyName: Stone
   Color: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 0}
+  VisualPrefab: {fileID: 7043519063053432247, guid: d15c4f845e541492794a5cb4816ce719, type: 3}
   GoodType: 2
   ResourcesNeededForCrafting: []
   ItemClass: 1
   BaseSellPrice: 1
   CarryingSpeedModifier: 1
+  SecondsToGrow: 1

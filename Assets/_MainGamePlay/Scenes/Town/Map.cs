@@ -90,7 +90,7 @@ public class Map : MonoBehaviour
     private void addItemOnGroundGO(ItemData item)
     {
         if (this == null) return; // destroyed
-        var itemGO = Instantiate(scene.ItemOnGroundPrefab);
+        var itemGO = Instantiate(scene.ItemPrefab);
         itemGO.transform.SetParent(ItemsFolder.transform, false);
         itemGO.Initialize(item, scene);
     }

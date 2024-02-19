@@ -4,12 +4,12 @@ public class Subtask_WalkToMultipleItemSpot : BaseSubtask_Moving
 {
     [SerializeField] public IMultipleItemSpotInBuilding ItemsSpot;
 
-    public override ItemDefn GetTaskItem()
+    public override ItemData GetTaskItem()
     {
         if (ItemsSpot.ItemsContainer.HasItem)
-            return ItemsSpot.ItemsContainer.Items[0].Defn;
+            return ItemsSpot.ItemsContainer.Items[0];
         if (Task.Worker.Hands.HasItem)
-            return Task.Worker.Hands.Item.Defn;
+            return Task.Worker.Hands.Item;
         return null;
     }
 

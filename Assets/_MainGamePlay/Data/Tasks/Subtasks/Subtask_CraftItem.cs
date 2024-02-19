@@ -4,7 +4,7 @@ public class Subtask_CraftItem : Subtask
 {
     protected override float RunTime => 1;
     [SerializeField] IMultipleItemSpotInBuilding ItemsSpot;
-    public override ItemDefn GetTaskItem() => GameDefns.Instance.ItemDefns[CraftingItemDefnId];
+    public override ItemData GetTaskItem() => null;// GameDefns.Instance.ItemDefns[CraftingItemDefnId];
     public string CraftingItemDefnId;
 
     public Subtask_CraftItem(Task parentTask, string craftingItemDefnId, IMultipleItemSpotInBuilding itemSpot) : base(parentTask)
