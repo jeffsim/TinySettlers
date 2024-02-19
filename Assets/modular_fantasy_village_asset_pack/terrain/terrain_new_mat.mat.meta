@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: c21d15d7cc75ab24bba038d3631e8e8c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/terrain/terrain_new_mat.mat
+  uploadId: 461027

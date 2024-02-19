@@ -18,6 +18,9 @@ MonoBehaviour:
   FriendlyName: House
   IsTestBuilding: 0
   BuildingClass: 2
+  VisualPrefab: {fileID: 1999333881297860, guid: 8ec1afdb0810385448ecdcab567f20ea, type: 3}
+  VisualScale: {x: 0.7, y: 0.7, z: 0.7}
+  VisualRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
   AssignedWorkerFriendlyName: Camper
   HasWorkers: 0

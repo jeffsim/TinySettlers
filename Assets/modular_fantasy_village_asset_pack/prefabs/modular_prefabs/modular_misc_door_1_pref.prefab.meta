@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a1000c51cfe566e43a818c4f1383c0cc
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/prefabs/modular_prefabs/modular_misc_door_1_pref.prefab
+  uploadId: 461027

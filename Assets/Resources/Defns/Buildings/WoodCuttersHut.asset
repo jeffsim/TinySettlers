@@ -18,6 +18,7 @@ MonoBehaviour:
   FriendlyName: Wood Cutter
   IsTestBuilding: 0
   BuildingClass: 2
+  VisualPrefab: {fileID: 0}
   AssignedWorkerColor: {r: 0.14815043, g: 0, b: 0.2924528, a: 0}
   AssignedWorkerFriendlyName: Wood cutter
   HasWorkers: 1
@@ -38,7 +39,7 @@ MonoBehaviour:
   StorageAreas:
   - Location: {x: 0, y: 0.5, z: 0}
     StorageAreaSize: {x: 3, y: 3}
-    StoragePileSize: {x: 3, y: 3, z: 3}
+    StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 0
   CanGatherResources: 1
   GatherableResources:

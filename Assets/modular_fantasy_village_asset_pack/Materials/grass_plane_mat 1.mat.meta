@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: c1981be3721dd9f46803dd756f3d022b
+timeCreated: 1524605078
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/Materials/grass_plane_mat
+    1.mat
+  uploadId: 461027

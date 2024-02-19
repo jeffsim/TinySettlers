@@ -70,6 +70,14 @@ public class Building : MonoBehaviour
                 spot.transform.SetParent(transform, false);
                 spot.Initialize(scene, Data.SleepingSpots[i], i, this);
             }
+
+        if (Data.Defn.VisualPrefab != null)
+        {
+            var buildingVisual = Instantiate(Data.Defn.VisualPrefab);
+            buildingVisual.transform.SetParent(Visual.transform, false);
+            buildingVisual.transform.localScale = Data.Defn.VisualScale;
+            buildingVisual.transform.localRotation = Data.Defn.VisualRotation;
+        }
     }
 
     void OnDestroy()
@@ -125,7 +133,7 @@ public class Building : MonoBehaviour
             else if (dragState == DragState.Dragging)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                Plane plane = new (Vector3.up, dragStartPoint);
+                Plane plane = new(Vector3.up, dragStartPoint);
                 plane.Raycast(ray, out float distance);
                 Vector3 mouseIntersectPoint = ray.GetPoint(distance);
 

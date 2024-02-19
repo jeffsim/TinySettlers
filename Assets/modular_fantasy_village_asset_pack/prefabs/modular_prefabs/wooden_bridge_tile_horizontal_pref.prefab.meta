@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 3defefa7ecf28474e8630d13a430fe51
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/prefabs/modular_prefabs/wooden_bridge_tile_horizontal_pref.prefab
+  uploadId: 461027

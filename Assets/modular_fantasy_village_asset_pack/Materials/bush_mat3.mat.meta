@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 83a1d1d15c63c5f46b7dba64ef4360dc
+timeCreated: 1524605078
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/Materials/bush_mat3.mat
+  uploadId: 461027

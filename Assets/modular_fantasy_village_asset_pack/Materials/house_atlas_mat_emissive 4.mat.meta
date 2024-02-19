@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 1bb91349ebc15eb429a62240db70b2aa
+timeCreated: 1524605078
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/Materials/house_atlas_mat_emissive
+    4.mat
+  uploadId: 461027

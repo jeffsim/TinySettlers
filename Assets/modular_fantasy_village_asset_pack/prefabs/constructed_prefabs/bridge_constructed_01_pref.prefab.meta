@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: aab0ddb06438bad4fa6f12d1326e4d75
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/prefabs/constructed_prefabs/bridge_constructed_01_pref.prefab
+  uploadId: 461027

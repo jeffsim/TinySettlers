@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 313b58b9ef563674aa3660388efcaaec
+timeCreated: 1525036958
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/prefabs/regular_assets_prefabs/nature/tree_03_pref.prefab
+  uploadId: 461027

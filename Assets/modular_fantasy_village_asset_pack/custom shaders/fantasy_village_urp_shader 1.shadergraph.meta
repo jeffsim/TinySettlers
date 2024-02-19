@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: df0b51e1eff6606448be77a4a6652b29
+ScriptedImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 2
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+  script: {fileID: 11500000, guid: 625f186215c104763be7675aa2d941aa, type: 3}
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/custom shaders/fantasy_village_urp_shader
+    1.shadergraph
+  uploadId: 461027

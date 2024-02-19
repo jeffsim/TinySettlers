@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: 9f5978e9773c5234cac48963ddf1bbe8
+timeCreated: 1524605078
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/Materials/marketplace_doodads_mat
+    2.mat
+  uploadId: 461027

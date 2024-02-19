@@ -14,13 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: storageRoom
   BuildingColor: {r: 0.20154905, g: 0.29411766, b: 0.003921565, a: 1}
+  BuildingBottomColor: {r: 0, g: 0, b: 0, a: 0}
   FriendlyName: Storage Room
   IsTestBuilding: 0
   BuildingClass: 2
+  VisualPrefab: {fileID: 0}
   AssignedWorkerColor: {r: 0.09818679, g: 0.59607846, b: 0, a: 0}
   AssignedWorkerFriendlyName: Courier
   HasWorkers: 1
   MaxWorkers: 4
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 0.11972148, g: 0.24528301, b: 0, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
@@ -36,7 +39,7 @@ MonoBehaviour:
   StorageAreas:
   - Location: {x: 0, y: 0.5, z: 0}
     StorageAreaSize: {x: 6, y: 5}
-    StoragePileSize: {x: 3, y: 3, z: 3}
+    StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 1
   CanGatherResources: 0
   GatherableResources:
@@ -46,3 +49,7 @@ MonoBehaviour:
   GatheringSpots: []
   CanSellGoods: 0
   GoodsThatCanBeSold: []
+  WorkersCanRestHere: 0
+  SleepingSpots: []
+  WorkersCanLiveHere: 0
+  MaxWorkersLivingHere: 4

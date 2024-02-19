@@ -1,0 +1,17 @@
+fileFormatVersion: 2
+guid: 3d62e1d501b1a2f4ea93e374f7e0f8c7
+timeCreated: 1524605078
+licenseType: Store
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/Materials/pinetree_mat1_legacy.mat
+  uploadId: 461027

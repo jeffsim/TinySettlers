@@ -1,0 +1,91 @@
+v.1.1 changelog
+
+- added full URP support for all parts of the asset pack
+- terrain URP support added
+- reworked post processing for URP
+- updated custom shader with tint mask support
+- added grass sway animation URP shader
+- added several water shaders for URP
+- added flag animation shader for URP
+
+
+Modular Fantasy Village Description
+
+With this asset pack you will be able to build your very own fantasy village/castle. The package consists of many unique and modular assets.You can quickly make a cool village by using pre-made structures or you can even construct your very own buildings/castles from a huge variety of modular assets!
+
+
+Key features:
+- modular assets for unique constructions
+- high quality hand painted diffuse textures with normal map support!
+- one 4096x2048 atlas texture for almost all structures and small props.
+- one 2048x2048 marketplace props texture
+- one 1024x1024 tree texture with different color versions.
+- one 4096x4096 cliff texture
+- one 1024x1024 grass and flowers texture
+- one 2048x2048 bush texture
+- one 512x512 trunk/stump texture
+- one 2048x1024 rye texture
+- one 2048x2048 castle texture
+- Animated grass/flag shader which supports vertex animation.
+- Modified legacy unity shader for a coloured mask support.(easy to change roof colors)
+- 124 modular prefabs
+- 51 regular unique prefabs
+- 56 nature prefabs
+- 12 prefabs made of modular pieces
+- 6 unique terrain tileable textures
+- one smoke particle effect
+- day/night color profiles for post processing effects.
+- custom background gradient texture
+- LODs for most of the assets
+
+
+Some of the assets maybe quite polygon heavy but they are using one or two lod levels. The lods are optimized and look close to the high poly version meshes.
+
+
+Regular assets
+Barracks
+-LOD0: 8748 tris
+
+-LOD1: 3885 tris
+
+-LOD2: 2155 tris
+
+House_01
+-LOD0: 3408 tris
+
+-LOD1: 1296 tris
+
+-LOD2: 438 tris
+
+House_05
+-LOD0: 2188 tris
+
+-LOD1: 1130 tris
+
+-LOD2: 704 tris
+
+House_10_townhall
+-LOD0: 6566 tris
+
+-LOD1: 2634 tris
+
+-LOD2: 1754 tris
+
+Tree_01
+-LOD0: 694 tris
+
+-LOD1: 162 tris
+
+
+Constructed assets
+Castle_1
+-LOD0: 48369 tris
+
+-LOD1: 24837 tris
+
+-LOD2: 10276 tris
+
+constructed_house_04
+-LOD0: 2214 tris
+
+-LOD1: 660 tris

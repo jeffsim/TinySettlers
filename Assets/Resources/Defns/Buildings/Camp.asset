@@ -18,6 +18,7 @@ MonoBehaviour:
   FriendlyName: Camp
   IsTestBuilding: 0
   BuildingClass: 1
+  VisualPrefab: {fileID: 0}
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
   AssignedWorkerFriendlyName: Camper
   HasWorkers: 1

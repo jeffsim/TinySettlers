@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b431c9be98cdc234cb86ec25bc2b67af
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 148580
+  packageName: Modular Fantasy Village
+  packageVersion: 1.1
+  assetPath: Assets/modular_fantasy_village_asset_pack/prefabs/regular_assets_prefabs/nature/trunk_pref.prefab
+  uploadId: 461027

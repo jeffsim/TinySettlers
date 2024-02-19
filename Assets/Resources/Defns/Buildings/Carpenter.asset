@@ -18,6 +18,7 @@ MonoBehaviour:
   FriendlyName: Carpenter
   IsTestBuilding: 0
   BuildingClass: 2
+  VisualPrefab: {fileID: 0}
   AssignedWorkerColor: {r: 0.9607843, g: 0.3585595, b: 0, a: 0}
   AssignedWorkerFriendlyName: Crafter
   HasWorkers: 1
@@ -49,3 +50,7 @@ MonoBehaviour:
   GatheringSpots: []
   CanSellGoods: 0
   GoodsThatCanBeSold: []
+  WorkersCanRestHere: 0
+  SleepingSpots: []
+  WorkersCanLiveHere: 0
+  MaxWorkersLivingHere: 4

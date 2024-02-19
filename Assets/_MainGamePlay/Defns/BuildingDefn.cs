@@ -29,6 +29,10 @@ public class BuildingDefn : BaseDefn
     public bool IsTestBuilding = false;
     public BuildingClass BuildingClass = BuildingClass.Other;
 
+    public GameObject VisualPrefab;
+    public Vector3 VisualScale = Vector3.one;
+    public Quaternion VisualRotation;
+
     public Color AssignedWorkerColor;
     public string AssignedWorkerFriendlyName;
 
