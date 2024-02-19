@@ -121,7 +121,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
         DefnId = buildingDefn.Id;
         TileX = tileX;
         TileY = tileY;
-        Location = new(new(TileX * TileSize, TileY * TileSize));
+        Location = new(new(TileX * TileSize, Settings.BuildingsY, TileY * TileSize));
     }
 
     public BuildingData(BuildingDefn buildingDefn, Vector3 worldLoc)
@@ -536,7 +536,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
         TileY = tileY;
 
         LocationComponent previousWorldLoc = new(Location.WorldLoc);
-        Location.SetWorldLoc(TileX * TileSize, TileY * TileSize);
+        Location.SetWorldLoc(TileX * TileSize, Location.WorldLoc.y, TileY * TileSize);
         UpdateWorldLoc();
 
         // Update Workers that are assigned to or have Tasks which involve this building.

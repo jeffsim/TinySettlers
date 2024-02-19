@@ -322,8 +322,8 @@ public abstract class TestBase
 
     protected void forceMoveWorkerAwayFromAssignedBuilding(WorkerData worker)
     {
-        Vector2 loc = worker.Assignment.AssignedTo.Location.WorldLoc;
-        worker.Location.SetWorldLoc(loc.x + 1, loc.y);
+        Vector3 loc = worker.Assignment.AssignedTo.Location.WorldLoc;
+        worker.Location.SetWorldLoc(loc.x + 1, loc.y, loc.z);
     }
 
     protected StorageSpotData getStorageSpotInBuildingReservedByWorker(BuildingData building, WorkerData worker, string message = "")

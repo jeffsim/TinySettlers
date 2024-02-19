@@ -25,7 +25,8 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
     public WorkerData(BuildingData buildingToStartIn)
     {
         Location = Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f);
-
+        Location.WorldLoc.y = Settings.WorkerY;
+        
         Town = buildingToStartIn.Town;
         Energy.FillUp();
 

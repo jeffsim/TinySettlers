@@ -118,18 +118,18 @@ public class Building : MonoBehaviour
                     dragState = DragState.Dragging;
                     draggingGO = GameObject.Instantiate(scene.DraggedBuildingPrefab);
                     draggingGO.Initialize(Data.Defn, this);
-                    draggingGO.transform.position = transform.position + new Vector3(0, 0, 10);
+                    draggingGO.transform.position = transform.position + new Vector3(0, 10, 0);
                     dragStartPoint = transform.position;
                 }
             }
             else if (dragState == DragState.Dragging)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                Plane plane = new Plane(Vector3.forward, dragStartPoint);
+                Plane plane = new (Vector3.up, dragStartPoint);
                 plane.Raycast(ray, out float distance);
                 Vector3 mouseIntersectPoint = ray.GetPoint(distance);
 
-                draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, mouseIntersectPoint.y, 5));
+                draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, 5, mouseIntersectPoint.z));
             }
         }
     }
@@ -198,7 +198,7 @@ public class Building : MonoBehaviour
                     mousePosition.x = Mathf.Round(mousePosition.x / 2f) * 2f;
                     mousePosition.y = Mathf.Round(mousePosition.y / .5f) * .5f;
                 }
-                scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, mousePosition.y, transform.position.z));
+                scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, transform.position.z, mousePosition.y));
             }
         }
     }
@@ -207,17 +207,17 @@ public class Building : MonoBehaviour
     {
         var buildings = scene.Map.GetBuildingGOs();
 
-        // sort by z
-        buildings.Sort((a, b) => a.transform.position.z.CompareTo(b.transform.position.z));
+        // sort by y
+        buildings.Sort((a, b) => a.transform.position.y.CompareTo(b.transform.position.y));
         buildings.Remove(this);
         buildings.Insert(0, this);
         for (int i = 0; i < buildings.Count; i++)
         {
             var building = buildings[i];
-            float zPosition = i * .62f - 2.5f;
+            float yPosition = i * .62f - 2.5f;
             if (building == this && dragState == DragState.Dragging)
-                zPosition = -95;
-            building.transform.position = new(building.transform.position.x, building.transform.position.y, zPosition);
+                yPosition = -95;
+            building.transform.position = new(building.transform.position.x, yPosition, building.transform.position.z);
             building.Data.Location.WorldLoc = building.transform.position;
         }
     }
@@ -226,7 +226,7 @@ public class Building : MonoBehaviour
     {
         // Convert the mouse screen position to a world position on the same z-axis as the node
         Vector3 mouseScreenPosition = Input.mousePosition;
-        mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
+        mouseScreenPosition.y = Camera.main.WorldToScreenPoint(transform.position).y;
         return Camera.main.ScreenToWorldPoint(mouseScreenPosition);
     }
 }

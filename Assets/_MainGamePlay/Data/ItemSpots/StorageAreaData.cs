@@ -28,13 +28,13 @@ public class StorageAreaData : BaseData
     public StorageAreaData(BuildingData buildingData, StorageAreaDefn storageAreaDefn)
     {
         Building = buildingData;
-        AreaLocOffset = new(storageAreaDefn.Location.x, storageAreaDefn.Location.y);
+        AreaLocOffset = new(storageAreaDefn.Location.x, Settings.StorageAreaY, storageAreaDefn.Location.y);
         var width = storageAreaDefn.StorageAreaSize.x;
         var height = storageAreaDefn.StorageAreaSize.y;
         for (int i = 0, y = 0; y < height; y++)
             for (int x = 0; x < width; x++, i++)
             {
-                Vector3 pileLocation = new((x - (width - 1) / 2f) * 1.1f, (y - (height - 1) / 2f) * 1.1f, 0);
+                Vector3 pileLocation = new((x - (width - 1) / 2f) * 1.1f, Settings.StorageAreaY, (y - (height - 1) / 2f) * 1.1f);
                 StoragePiles.Add(new(this, storageAreaDefn, pileLocation, i));
             }
     }

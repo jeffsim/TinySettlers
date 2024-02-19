@@ -16,7 +16,7 @@ public class DraggedBuilding : MonoBehaviour
 
     public void updatePosition(Vector3 loc)
     {
-        transform.position = new (loc.x, loc.y, 1);
+        transform.position = loc;
         var validDropSpotForBuilding = building.scene.Map.IsValidDropSpotForBuilding(Input.mousePosition, building);
         validDropSpot.SetActive(validDropSpotForBuilding);
         invalidDropSpot.SetActive(!validDropSpotForBuilding);

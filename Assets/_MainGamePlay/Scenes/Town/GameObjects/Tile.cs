@@ -8,7 +8,6 @@ public class Tile : MonoBehaviour
     public GameObject Visual;
     public SceneWithMap scene;
 
-    static float TileZ = 5;
 
     public void Initialize(TileData data, SceneWithMap scene)
     {
@@ -20,7 +19,7 @@ public class Tile : MonoBehaviour
             gameObject.RemoveAllChildren();
         else
             GetComponentInChildren<Renderer>().material = data.Defn.TileColor;
-        transform.position = new Vector3(data.WorldX, data.WorldY, TileZ);
+        transform.position = data.Location.WorldLoc;
     }
 
     public void OnClicked()

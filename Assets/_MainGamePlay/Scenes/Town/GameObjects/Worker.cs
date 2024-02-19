@@ -13,15 +13,15 @@ public class Worker : MonoBehaviour
     public TextMeshPro CarriedItem;
 
     public SceneWithMap scene;
-    static float WorkerZ = -1.4f;
     RectTransform carriedItemRectTransform;
+    
     public void Initialize(WorkerData data, SceneWithMap scene)
     {
         this.scene = scene;
         Data = data;
         carriedItemRectTransform = CarriedItem.GetComponent<RectTransform>();
 
-        transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, WorkerZ);
+        transform.position = data.Location.WorldLoc;
         updateVisual();
 
         Data.Assignment.OnAssignedToChanged += OnAssignedToBuilding;
@@ -56,11 +56,10 @@ public class Worker : MonoBehaviour
         name = "Worker - " + (Data.Assignment.IsAssigned ? Data.Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + Data.InstanceId + ")" : "none");
     }
 
-    float lineZ = -1.4f;
+    float lineY = 3f;
     public void Update()
     {
-        // Data.Update();
-        transform.position = new Vector3(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, WorkerZ);
+        transform.position = Data.Location.WorldLoc;
 
         if (scene.Debug_DrawPaths)
         {
@@ -69,8 +68,8 @@ public class Worker : MonoBehaviour
                 // Draw path
                 using (Drawing.Draw.ingame.WithColor(Color.blue))
                 {
-                    Vector3 loc1 = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, lineZ);
-                    Vector3 loc2 = new(Data.AI.CurrentTask.LastMoveToTarget.WorldLoc.x, Data.AI.CurrentTask.LastMoveToTarget.WorldLoc.y, lineZ);
+                    Vector3 loc1 = new(Data.Location.WorldLoc.x, lineY, Data.Location.WorldLoc.z);
+                    Vector3 loc2 = new(Data.AI.CurrentTask.LastMoveToTarget.WorldLoc.x, lineY, Data.AI.CurrentTask.LastMoveToTarget.WorldLoc.z);
                     using (Drawing.Draw.ingame.WithLineWidth(3))
                         Drawing.Draw.ingame.Line(loc1, loc2);
                 }
@@ -85,20 +84,20 @@ public class Worker : MonoBehaviour
                     {
                         using (Drawing.Draw.ingame.WithColor(Color.red))
                         {
-                            Vector3 loc1 = new(Data.Location.WorldLoc.x, Data.Location.WorldLoc.y, lineZ);
-                            Vector3 loc2 = new(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, lineZ);
+                            Vector3 loc1 = new(Data.Location.WorldLoc.x, lineY, Data.Location.WorldLoc.z);
+                            Vector3 loc2 = new(spot.Location.WorldLoc.x, lineY, spot.Location.WorldLoc.z);
                             using (Drawing.Draw.ingame.WithLineWidth(1))
                                 Drawing.Draw.ingame.Line(loc1, loc2);
                             using (Drawing.Draw.ingame.WithLineWidth(3))
-                                Drawing.Draw.ingame.xy.Circle(new Vector3(spot.Location.WorldLoc.x, spot.Location.WorldLoc.y, lineZ), .125f);
+                                Drawing.Draw.ingame.xy.Circle(new Vector3(spot.Location.WorldLoc.x, lineY, spot.Location.WorldLoc.z), .125f);
                         }
                     }
                 }
             }
         }
 
-        var itemUp = new Vector3(0, 1f, -1);
-        var itemDown = new Vector3(0, 0f, -1);
+        var itemUp = new Vector3(0, .27f, 1);
+        var itemDown = new Vector3(0, .27f, 0);
         var scaleSmall = new Vector3(0, 0, 0);
         var scaleNormal = new Vector3(1, 1, 1);
         var percentDone = Data.AI.CurrentTask.CurSubTask.PercentDone;
@@ -129,7 +128,7 @@ public class Worker : MonoBehaviour
             showHighlight |= selectedBuilding.Data == Data.Assignment.AssignedTo;
             showHighlight |= selectedBuilding.Data.Defn.WorkersCanLiveHere && selectedBuilding.Data.OccupantMgr.IsOccupant(Data);
         }
-        
+
         // If this worker is currently selected then highlight
         if (scene.WorkerDetails.gameObject.activeSelf && scene.WorkerDetails.worker == this)
             showHighlight = true;

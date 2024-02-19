@@ -17,7 +17,7 @@ public class StoragePile : MonoBehaviour
         Data = pileData;
         this.scene = scene;
         name = "Storage " + index;
-        transform.localPosition = pileData.Location.GetWorldLocRelativeTo(areaData.Location, -.25f);
+        transform.position = pileData.Location.WorldLoc;//.GetWorldLocRelativeTo(areaData.Location, 0f);
         // spot.OnItemRemoved += OnItemRemoved;
     }
 
@@ -65,7 +65,7 @@ public class StoragePile : MonoBehaviour
                     using (Drawing.Draw.ingame.WithLineWidth(2))
                     {
                         Vector3 loc1 = new(transform.position.x, transform.position.y, -6);
-                        Vector3 loc2 = new(spot.Reservation.ReservedBy.Location.WorldLoc.x, spot.Reservation.ReservedBy.Location.WorldLoc.y, -6);
+                        Vector3 loc2 = new(spot.Reservation.ReservedBy.Location.WorldLoc.x, -6, spot.Reservation.ReservedBy.Location.WorldLoc.y);
                         Drawing.Draw.ingame.Line(loc1, loc2);
                     }
                 }

@@ -19,17 +19,12 @@ public class LocationComponent
 
     public LocationComponent() => WorldLoc = Vector3.zero;
     public LocationComponent(Vector3 worldLoc) => WorldLoc = worldLoc;
-    public LocationComponent(float localX, float localY) => WorldLoc = new(localX, localY);
-
     public void SetWorldLoc(Vector3 location) => WorldLoc = location;
-    public void SetWorldLoc(LocationComponent location)
-    {
-        WorldLoc = location.WorldLoc;
-    }
-    public void SetWorldLoc(float x, float y) => WorldLoc.Set(x, y, WorldLoc.z);
+    public void SetWorldLoc(LocationComponent location) => WorldLoc = location.WorldLoc;
     public void SetWorldLoc(float x, float y, float z) => WorldLoc.Set(x, y, z);
 
-    internal float DistanceTo(LocationComponent location) => Vector2.Distance(WorldLoc, location.WorldLoc);
+    internal float DistanceTo(LocationComponent location) => Vector2.Distance(new(WorldLoc.x, WorldLoc.z), new(location.WorldLoc.x, location.WorldLoc.z));
+
     public bool WithinDistanceOf(LocationComponent location, float closeEnough) => DistanceTo(location) <= closeEnough;
 
     public T GetClosest<T>(List<T> locsToCheck, Func<T, bool> isValidCallback = null) where T : ILocationProvider => GetClosest(locsToCheck, out _, isValidCallback);
@@ -52,15 +47,8 @@ public class LocationComponent
 
     internal void MoveTowards(LocationComponent loc1, LocationComponent loc2, float t)
     {
-        WorldLoc = Vector2.MoveTowards(loc1.WorldLoc, loc2.WorldLoc, t);
+        WorldLoc = Vector3.MoveTowards(loc1.WorldLoc, loc2.WorldLoc, t);
     }
 
-    public void UpdateWorldLoc()
-    {
-        // WorldLoc = LocalLoc;
-        // if (ParentLoc != null)
-        // WorldLoc += ParentLoc.WorldLoc;
-    }
-
-    internal Vector3 GetWorldLocRelativeTo(LocationComponent location, float dz) => new(WorldLoc.x - location.WorldLoc.x, WorldLoc.y - location.WorldLoc.y, dz);
+    internal Vector3 GetWorldLocRelativeTo(LocationComponent location, float dy) => new(WorldLoc.x - location.WorldLoc.x, dy, WorldLoc.z - location.WorldLoc.z);
 }

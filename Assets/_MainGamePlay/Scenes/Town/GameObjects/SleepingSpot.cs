@@ -19,7 +19,7 @@ public class SleepingSpot : MonoBehaviour
         this.index = index;
         this.scene = scene;
         name = "Sleeping Spot " + index;
-        transform.position = new Vector3(data.Location.WorldLoc.x, data.Location.WorldLoc.y, -.5f);
+        transform.position = data.Location.WorldLoc;
 
         // spot.OnItemRemoved += OnItemRemoved;
     }
@@ -32,7 +32,7 @@ public class SleepingSpot : MonoBehaviour
     public void OnMouseUp()
     {
         // if (!EventSystem.current.IsPointerOverGameObject())
-            // scene.OnSleepingSpotClicked(this);
+        // scene.OnSleepingSpotClicked(this);
     }
 
     private void OnItemRemoved(ItemData item)
@@ -53,7 +53,7 @@ public class SleepingSpot : MonoBehaviour
             WorkerInSpot.text = "E";
             WorkerInSpot.color = Color.white;
         }
-        
+
         // if (spot.IsEmpty)
         //     GetComponentInChildren<Renderer>().material.color = Color.black;
         // else

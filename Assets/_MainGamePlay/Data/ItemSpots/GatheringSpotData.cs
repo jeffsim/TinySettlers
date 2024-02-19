@@ -20,7 +20,7 @@ public class GatheringSpotData : BaseData, ILocationProvider, IReservationProvid
         Building = building;
         Debug.Assert(building.Defn.GatheringSpots.Count > index, "building " + building.DefnId + " missing GatheringSpotData " + index);
         var loc = building.Defn.GatheringSpots[index];
-        LocOffset = new(loc.x, loc.y);
+        LocOffset = new(loc.x, Settings.ItemSpotsY, loc.y);
 
         // hack
         if (building.Defn.ResourcesCanBeGatheredFromHere)
