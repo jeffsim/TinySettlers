@@ -22,6 +22,7 @@ public class TownData : BaseData
 
     [NonSerialized] public Action<BuildingData> OnBuildingAdded;
     [NonSerialized] public Action<BuildingData> OnBuildingRemoved;
+    [NonSerialized] public Action<BuildingData> OnBuildingMoved;
 
     public TownTaskMgr TownTaskMgr;
     public TownWorkerMgr TownWorkerMgr;
@@ -147,6 +148,7 @@ public class TownData : BaseData
     public void MoveBuilding(BuildingData building, Vector3 worldLoc)
     {
         building.MoveTo(worldLoc);
+        OnBuildingMoved?.Invoke(building);
     }
 
     public void MoveBuilding(BuildingData building, int tileX, int tileY)
@@ -154,6 +156,7 @@ public class TownData : BaseData
         Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
         building.MoveTo(tileX, tileY);
         Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
+        OnBuildingMoved?.Invoke(building);
     }
 
     public void Update()

@@ -40,11 +40,17 @@ public class Map : MonoBehaviour
         Town.TownWorkerMgr.OnWorkerCreated += addWorkerGO;
         Town.OnBuildingAdded += OnBuildingAdded;
         Town.OnBuildingRemoved += OnBuildingRemoved;
+        Town.OnBuildingMoved += OnBuildingMoved;
         Town.OnItemAddedToGround += addItemOnGroundGO;
         Town.OnItemRemovedFromGround += OnItemRemovedFromGround;
     }
 
     private void OnBuildingRemoved(BuildingData data)
+    {
+        scene.NeedsPathUpdate = true;
+    }
+
+    private void OnBuildingMoved(BuildingData data)
     {
         scene.NeedsPathUpdate = true;
     }
@@ -60,8 +66,11 @@ public class Map : MonoBehaviour
         if (Town == null) return;
         Town.TownWorkerMgr.OnWorkerCreated -= addWorkerGO;
         Town.OnBuildingAdded -= OnBuildingAdded;
+        Town.OnBuildingRemoved -= OnBuildingRemoved;
+        Town.OnBuildingMoved -= OnBuildingMoved;
         Town.OnItemAddedToGround -= addItemOnGroundGO;
         Town.OnItemRemovedFromGround -= OnItemRemovedFromGround;
+        
         // Town.OnItemSold -= OnItemSold;
     }
 

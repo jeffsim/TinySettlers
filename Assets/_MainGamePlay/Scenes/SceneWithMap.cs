@@ -194,7 +194,7 @@ public class SceneWithMap : SceneMgr
 
         NeedsPathUpdate = true;
     }
-    
+
     public void UpdatePaths()
     {
         // Pathfinder.Scan();
