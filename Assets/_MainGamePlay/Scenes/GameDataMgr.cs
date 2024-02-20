@@ -95,7 +95,7 @@ public class GameDataMgr : MonoBehaviour
             GameData.CurrentTown.lastGameTime = GameTime.time;
 
         var fileName = GetProfileFileName(GameData.ProfileName);
-        byte[] bytes = SerializationUtility.SerializeValue(GameData, Settings.UseBinarySaveFiles ? DataFormat.Binary : DataFormat.JSON);
+        byte[] bytes = SerializationUtility.SerializeValue(GameData, Settings.Current.UseBinarySaveFiles ? DataFormat.Binary : DataFormat.JSON);
         File.WriteAllBytes(fileName, bytes);
     }
 
@@ -107,7 +107,7 @@ public class GameDataMgr : MonoBehaviour
     internal void LoadProfile(string profileName)
     {
         byte[] bytes = File.ReadAllBytes(GetProfileFileName(profileName));
-        GameData = SerializationUtility.DeserializeValue<GameData>(bytes, Settings.UseBinarySaveFiles ? DataFormat.Binary : DataFormat.JSON);
+        GameData = SerializationUtility.DeserializeValue<GameData>(bytes, Settings.Current.UseBinarySaveFiles ? DataFormat.Binary : DataFormat.JSON);
 
         GameData.OnLoaded();
         PlayerPrefs.SetString("LoadLoadedProfile", profileName);

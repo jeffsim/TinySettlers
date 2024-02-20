@@ -17,7 +17,7 @@ public class CraftingSpotData : BaseData, ILocationProvider, IReservationProvide
     {
         Debug.Assert(building.Defn.CraftingSpots.Count > index, "building " + building.DefnId + " missing CraftingSpotData " + index);
         Building = building;
-        LocOffset = new(building.Defn.CraftingSpots[index].x, Settings.ItemSpotsY, building.Defn.CraftingSpots[index].y);
+        LocOffset = new(building.Defn.CraftingSpots[index].x, Settings.Current.ItemSpotsY, building.Defn.CraftingSpots[index].y);
     }
 
     public void UpdateWorldLoc()

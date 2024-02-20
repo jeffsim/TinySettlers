@@ -28,7 +28,7 @@ public class StorageAreaData : BaseData
     public StorageAreaData(BuildingData buildingData, StorageAreaDefn storageAreaDefn)
     {
         Building = buildingData;
-        AreaLocOffset = new(storageAreaDefn.Location.x, Settings.StorageAreaY, storageAreaDefn.Location.y);
+        AreaLocOffset = new(storageAreaDefn.Location.x, Settings.Current.StorageAreaY, storageAreaDefn.Location.y);
         var width = storageAreaDefn.StorageAreaSize.x;
         var height = storageAreaDefn.StorageAreaSize.y;
         for (int i = 0, y = 0; y < height; y++)

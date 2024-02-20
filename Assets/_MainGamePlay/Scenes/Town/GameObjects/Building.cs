@@ -98,7 +98,7 @@ public class Building : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (Settings.AllowFreeBuildingPlacement)
+        if (Settings.Current.AllowFreeBuildingPlacement)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -118,7 +118,7 @@ public class Building : MonoBehaviour
 
     public void OnMouseDrag()
     {
-        if (!Settings.AllowFreeBuildingPlacement)
+        if (!Settings.Current.AllowFreeBuildingPlacement)
         {
             if (dragState == DragState.PreDrag)
             {
@@ -138,14 +138,14 @@ public class Building : MonoBehaviour
                 plane.Raycast(ray, out float distance);
                 Vector3 mouseIntersectPoint = ray.GetPoint(distance);
 
-                draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, Settings.DraggedBuildingY, mouseIntersectPoint.z));
+                draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, Settings.Current.DraggedBuildingY, mouseIntersectPoint.z));
             }
         }
     }
 
     void OnMouseUp()
     {
-        if (Settings.AllowFreeBuildingPlacement)
+        if (Settings.Current.AllowFreeBuildingPlacement)
         {
             if (dragState == DragState.Dragging)
             {
@@ -187,7 +187,7 @@ public class Building : MonoBehaviour
     {
         StorageFullIndicator.SetActive(Data.Defn.CanStoreItems && Data.IsStorageFull);
         PausedIndicator.SetActive(Data.IsPaused);
-        if (Settings.AllowFreeBuildingPlacement)
+        if (Settings.Current.AllowFreeBuildingPlacement)
         {
             if (dragState == DragState.PreDrag)
             {

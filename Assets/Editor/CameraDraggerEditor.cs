@@ -19,7 +19,7 @@ public class CameraDraggerEditor : Editor
                 Debug.LogError("GameSettingsDefn with id 'default' not found in Resources/Defns/GameSettings.  Please create one");
                 return;
             }
-            if (Settings.UseOrthographicCamera)
+            if (Settings.Current.UseOrthographicCamera)
             {
                 gameSettingsDefn.Debug_StartingOrthoCameraPosition = script.transform.position;
                 gameSettingsDefn.Debug_StartingOrthoCameraRotation = script.transform.rotation;

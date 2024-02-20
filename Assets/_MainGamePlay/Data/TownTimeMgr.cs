@@ -14,7 +14,7 @@ public class TownTimeMgr
 
     public void Update()
     {
-        TimeOfDay += GameTime.deltaTime * Settings.RealTimeToGameTimeMultiplier;
+        TimeOfDay += GameTime.deltaTime * Settings.Current.RealTimeToGameTimeMultiplier;
         if (TimeOfDay >= 1)
             TimeOfDay = 0;
     }

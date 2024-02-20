@@ -175,7 +175,7 @@ public class Map : MonoBehaviour
 
     internal bool IsValidDropSpotForBuilding(Vector3 mousePosition, Building building)
     {
-        if (Settings.AllowFreeBuildingPlacement)
+        if (Settings.Current.AllowFreeBuildingPlacement)
             return true;
 
         var tile = getTileAt(Input.mousePosition);

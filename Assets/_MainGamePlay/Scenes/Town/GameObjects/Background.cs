@@ -16,7 +16,7 @@ public class Background : MonoBehaviour
         {
             if (scene.AnyDialogIsOpen())
                 scene.HideAllDialogs();
-            else if (Settings.AllowFreeBuildingPlacement)
+            else if (Settings.Current.AllowFreeBuildingPlacement)
                 scene.SelectBuildingToConstruct.ShowAtWorldLoc(scene, Input.mousePosition);
         }
     }

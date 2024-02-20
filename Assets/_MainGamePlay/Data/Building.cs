@@ -121,7 +121,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
         DefnId = buildingDefn.Id;
         TileX = tileX;
         TileY = tileY;
-        Location = new(new(TileX * TileSize, Settings.BuildingsY, TileY * TileSize));
+        Location = new(new(TileX * TileSize, Settings.Current.BuildingsY, TileY * TileSize));
     }
 
     public BuildingData(BuildingDefn buildingDefn, Vector3 worldLoc)

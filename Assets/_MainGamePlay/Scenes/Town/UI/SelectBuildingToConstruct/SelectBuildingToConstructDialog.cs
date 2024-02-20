@@ -25,7 +25,7 @@ public class SelectBuildingToConstructDialog : MonoBehaviour
     // Only used when player clicks on background; used in AllowFreeBuildingPlacement mode
     internal void ShowAtWorldLoc(SceneWithMap scene, Vector3 screenPosition)
     {
-        if (Settings.AllowFreeBuildingPlacement)
+        if (Settings.Current.AllowFreeBuildingPlacement)
         {
             gameObject.SetActive(true);
             List.RemoveAllChildren();

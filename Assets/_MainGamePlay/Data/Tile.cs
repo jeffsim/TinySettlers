@@ -23,6 +23,6 @@ public class TileData : BaseData, ILocationProvider
         TileX = x;
         TileY = y;
         DefnId = defnId;
-        Location = new LocationComponent(new Vector3(TileX * TileSize, Settings.TileY, TileY * TileSize));
+        Location = new LocationComponent(new Vector3(TileX * TileSize, Settings.Current.TileY, TileY * TileSize));
     }
 }

@@ -18,7 +18,7 @@ public class SleepingSpotData : BaseData, ILocationProvider, IReservationProvide
         Building = building;
         Debug.Assert(building.Defn.SleepingSpots.Count > index, "building " + building.DefnId + " missing SleepingSpotData " + index);
         var loc = building.Defn.SleepingSpots[index];
-        LocOffset = new(loc.x, Settings.ItemSpotsY, loc.y);
+        LocOffset = new(loc.x, Settings.Current.ItemSpotsY, loc.y);
     }
 
     public void UpdateWorldLoc()

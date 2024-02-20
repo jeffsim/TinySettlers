@@ -67,7 +67,7 @@ public class SelectBuildingToConstructEntry : MonoBehaviour
     {
         if (!scene.Map.Town.PlayerCanAffordBuilding(buildingDefn))
             return;
-        if (Settings.AllowFreeBuildingPlacement)
+        if (Settings.Current.AllowFreeBuildingPlacement)
             scene.PlayerSelectedBuildingToConstructAtWorldLoc(buildingDefn, worldLoc);
         else
             scene.PlayerSelectedBuildingToConstructInTile(buildingDefn, tile.Data);

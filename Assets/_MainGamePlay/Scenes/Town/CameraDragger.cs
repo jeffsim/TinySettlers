@@ -5,13 +5,13 @@ public class CameraDragger : MonoBehaviour
     Vector3 dragStartPos;
     bool isDragging = false;
     float zoomSensitivity = 25.0f;
-    float dollyZoomSpeed = 100.0f; // Speed for dolly zoom
+    float dollyZoomSpeed = 100.0f;
 
     void Start()
     {
         // This uses the GameSettingsDefn to set the camera position
-        Camera.main.orthographic = Settings.UseOrthographicCamera;
-        if (Settings.UseOrthographicCamera)
+        Camera.main.orthographic = Settings.Current.UseOrthographicCamera;
+        if (Settings.Current.UseOrthographicCamera)
         {
             transform.SetPositionAndRotation(GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingOrthoCameraPosition, GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingOrthoCameraRotation);
             Camera.main.orthographicSize = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingOrthoCameraZoom;
@@ -38,7 +38,7 @@ public class CameraDragger : MonoBehaviour
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
         {
-            if (Settings.UseOrthographicCamera)
+            if (Settings.Current.UseOrthographicCamera)
                 Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - scroll * zoomSensitivity, 5, 50);
             else
                 Camera.main.transform.position += Camera.main.transform.forward * scroll * dollyZoomSpeed;
@@ -51,6 +51,6 @@ public class CameraDragger : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit hitInfo))
             return hitInfo.point;
         else
-            return Camera.main.transform.position + Camera.main.transform.forward * 10f;
+            return Camera.main.transform.position + Camera.main.transform.forward * 0.01f;
     }
 }

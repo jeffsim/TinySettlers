@@ -15,7 +15,7 @@ public class Tile : MonoBehaviour
         Data = data;
         name = "Tile " + data.TileX + " " + data.TileY;
 
-        if (Settings.AllowFreeBuildingPlacement)
+        if (Settings.Current.AllowFreeBuildingPlacement)
             gameObject.RemoveAllChildren();
         else
             GetComponentInChildren<Renderer>().material = data.Defn.TileColor;

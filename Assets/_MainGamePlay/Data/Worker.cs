@@ -31,7 +31,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
         DefnId = defn.Id;
         
         Location = Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f);
-        Location.WorldLoc.y = Settings.WorkerY;
+        Location.WorldLoc.y = Settings.Current.WorkerY;
         
         Town = buildingToStartIn.Town;
         Energy.FillUp();

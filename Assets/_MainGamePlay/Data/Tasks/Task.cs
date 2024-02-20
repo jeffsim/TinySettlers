@@ -145,11 +145,11 @@ public abstract class Task
 
         // Move towards target
         Worker.Location.MoveTowards(Worker.Location, location, Worker.GetMovementSpeed() * GameTime.deltaTime);
-        Worker.Location.WorldLoc.y = Settings.WorkerY;
+        Worker.Location.WorldLoc.y = Settings.Current.WorkerY;
         if (Worker.Location.WithinDistanceOf(location, closeEnough))
         {
             Worker.Location.SetWorldLoc(location);
-            Worker.Location.WorldLoc.y = Settings.WorkerY;
+            Worker.Location.WorldLoc.y = Settings.Current.WorkerY;
             return true; // reached dest
         }
         return false; // not reached

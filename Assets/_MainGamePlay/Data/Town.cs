@@ -136,7 +136,7 @@ public class TownData : BaseData
 
     public void DestroyBuilding(BuildingData building)
     {
-        if (!Settings.AllowFreeBuildingPlacement)
+        if (!Settings.Current.AllowFreeBuildingPlacement)
             Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
         AllBuildings.Remove(building);
         building.Destroy();
