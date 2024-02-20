@@ -23,6 +23,7 @@ public class Map : MonoBehaviour
         BuildingsFolder = addFolder("Buildings");
         ItemsFolder = addFolder("Items");
         WorkersFolder = addFolder("Workers");
+        // BuildingsFolder.transform.position = new(0, -1.93f, 0);
 
         foreach (var tile in Town.Tiles)
             addTileGO(tile);

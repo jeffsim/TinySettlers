@@ -12,7 +12,6 @@ public class TownData : BaseData
 {
     private TownDefn _defn;
     public TownDefn Defn => _defn = _defn != null ? _defn : GameDefns.Instance.TownDefns[DefnId];
-
     public string DefnId;
 
     public int Gold;
@@ -89,7 +88,7 @@ public class TownData : BaseData
 
     public WorkerData CreateWorkerInBuilding(BuildingData building)
     {
-        var worker = new WorkerData(building);
+        var worker = new WorkerData(GameDefns.Instance.WorkerDefns["camper"], building);
         TownWorkerMgr.AddWorker(worker);
         FindHomesForUnhomedWorkers();
         return worker;

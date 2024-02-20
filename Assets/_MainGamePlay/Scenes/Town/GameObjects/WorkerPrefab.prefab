@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2605507010529085173
 Transform:
   m_ObjectHideFlags: 0
@@ -160,6 +160,7 @@ MonoBehaviour:
   ItemVisual: {fileID: 0}
   CarriedItem: {fileID: 7457826451267380013}
   scene: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!65 &7133522272334061376
 BoxCollider:
   m_ObjectHideFlags: 0

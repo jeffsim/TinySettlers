@@ -13,8 +13,10 @@ public class Settings
     public static bool UseOrthographicCamera = true;
     
     public static float TileY = -5.5f;
-    public static float BuildingsY = .95f;
+    public static float BuildingsY = -1f;
     public static float ItemSpotsY = .5f;
     public static float StorageAreaY = .5f;
-    public static float WorkerY = 2.25f;
+    public static float WorkerY = -0.5f;
+    public static float DraggedBuildingY = 3;
+    
 }

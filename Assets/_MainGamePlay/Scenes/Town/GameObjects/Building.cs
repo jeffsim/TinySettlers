@@ -138,7 +138,7 @@ public class Building : MonoBehaviour
                 plane.Raycast(ray, out float distance);
                 Vector3 mouseIntersectPoint = ray.GetPoint(distance);
 
-                draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, 5, mouseIntersectPoint.z));
+                draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, Settings.DraggedBuildingY, mouseIntersectPoint.z));
             }
         }
     }

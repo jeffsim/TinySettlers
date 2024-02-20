@@ -8,6 +8,10 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
 {
     public override string ToString() => Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + InstanceId + ")";// + "-" + worker.Data.UniqueId;
 
+    private WorkerDefn _defn;
+    public WorkerDefn Defn => _defn = _defn != null ? _defn : GameDefns.Instance.WorkerDefns[DefnId];
+    public string DefnId;
+
     [SerializeField] public LocationComponent Location { get; set; }
     [SerializeField] public AssignmentComponent Assignment { get; set; } = new();
     [SerializeField] public ItemContainerComponent Hands { get; set; } = new();
@@ -22,8 +26,10 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
 
     public NeedData OriginalPickupItemNeed;
 
-    public WorkerData(BuildingData buildingToStartIn)
+    public WorkerData(WorkerDefn defn, BuildingData buildingToStartIn)
     {
+        DefnId = defn.Id;
+        
         Location = Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f);
         Location.WorldLoc.y = Settings.WorkerY;
         
@@ -65,6 +71,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
         AI.Update();
         Energy.Update();
     }
+
     public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc) => AI.CurrentTask.OnBuildingMoved(building, previousLoc);
     public void OnBuildingPauseToggled(BuildingData building) => AI.CurrentTask.OnBuildingPauseToggled(building);
 

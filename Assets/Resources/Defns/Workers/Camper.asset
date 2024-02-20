@@ -15,3 +15,4 @@ MonoBehaviour:
   Id: camper
   WorkerColor: {fileID: 2100000, guid: e01379bb876054c4fac0596666c7b5f6, type: 2}
   FriendlyName: Camper
+  VisualPrefab: {fileID: 185934, guid: c5bad295ed8f6754e9bd894fae5183f7, type: 3}

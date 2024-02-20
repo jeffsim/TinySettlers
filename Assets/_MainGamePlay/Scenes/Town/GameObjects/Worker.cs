@@ -12,6 +12,7 @@ public class Worker : MonoBehaviour
     public SceneWithMap scene;
     float lineY = 2f;
     Vector3 ZFightingOffset;
+    public Animator animator;
 
     public void Initialize(WorkerData data, SceneWithMap scene)
     {
@@ -44,13 +45,29 @@ public class Worker : MonoBehaviour
 
     void updateVisual()
     {
-        GetComponentInChildren<Renderer>().material.color = Data.Assignment.AssignedTo.Defn.AssignedWorkerColor;
+        // Instantiate VisualPrefab from Defn and attach
+        Visual = Instantiate(Data.Defn.VisualPrefab);
+        Visual.transform.SetParent(transform, false);
+        animator = Visual.GetComponent<Animator>();
+        // animator.Play("Idle");
+
+        // GetComponentInChildren<Renderer>().material.color = Data.Assignment.AssignedTo.Defn.AssignedWorkerColor;
         name = "Worker - " + (Data.Assignment.IsAssigned ? Data.Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + Data.InstanceId + ")" : "none");
     }
 
     public void Update()
     {
         transform.position = Data.Location.WorldLoc + ZFightingOffset;
+
+        // Face the direction we are moving, but always along the Z plane
+        if (Data.AI.CurrentTask.IsWalkingToTarget)
+        {
+            var target = Data.AI.CurrentTask.LastMoveToTarget.WorldLoc;
+            var direction = target - Data.Location.WorldLoc;
+            direction.y = 0;
+            if (direction != Vector3.zero)
+                transform.rotation = Quaternion.LookRotation(direction);
+        }
 
         // CHeck if picked up/dropped item; update Item visual appropriately
         ItemData itemToShow = null;
@@ -122,7 +139,7 @@ public class Worker : MonoBehaviour
             }
         }
 
-        var itemUp = new Vector3(0, .1f, 0);
+        var itemUp = new Vector3(0, 2.5f, 0);
         var itemDown = new Vector3(0, -1.3f, 0);
         var scaleSmall = new Vector3(0, 0, 0);
         var scaleNormal = new Vector3(1, 1, 1);
