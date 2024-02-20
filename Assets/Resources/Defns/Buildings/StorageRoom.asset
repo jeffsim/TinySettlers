@@ -18,7 +18,7 @@ MonoBehaviour:
   FriendlyName: Storage Room
   IsTestBuilding: 0
   BuildingClass: 2
-  VisualPrefab: {fileID: 0}
+  VisualPrefab: {fileID: 1491601853736748, guid: a75a4450efe3b4a4d82acd4589d20645, type: 3}
   VisualScale: {x: 1, y: 1, z: 1}
   VisualRotation: {x: 0, y: 0, z: 0, w: 0}
   VisualOffset: {x: 0, y: 0, z: 0}

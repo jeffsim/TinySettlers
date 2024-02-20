@@ -14,13 +14,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Id: stoneCutter
   BuildingColor: {r: 0.5019608, g: 0.49517393, b: 0, a: 1}
+  BuildingBottomColor: {r: 0, g: 0, b: 0, a: 0}
   FriendlyName: Stone Cutter
   IsTestBuilding: 0
   BuildingClass: 2
+  VisualPrefab: {fileID: 1533353316949472, guid: d8fc33ffa28ce444a873432910ebc772, type: 3}
+  VisualScale: {x: 1, y: 1, z: 1}
+  VisualRotation: {x: 0, y: 0, z: 0, w: 0}
+  VisualOffset: {x: 0, y: 0, z: 0}
   AssignedWorkerColor: {r: 0.9246069, g: 1, b: 0, a: 0}
   AssignedWorkerFriendlyName: Stone Cutter
   HasWorkers: 1
   MaxWorkers: 2
+  MaxTownWorkersIncreasedWhenBuilt: 0
   EditorColor: {r: 0.6320754, g: 0.5255832, b: 0.08646317, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
@@ -40,9 +46,6 @@ MonoBehaviour:
   - {x: 3, y: 2, z: 0}
   CanStoreItems: 1
   IsPrimaryStorage: 0
-  StorageAreaLocations:
-  - {x: 0, y: 0, z: 0}
-  StorageAreaSize: {x: 3, y: 3}
   StorageAreas:
   - Location: {x: 0, y: 0, z: 0}
     StorageAreaSize: {x: 3, y: 3}
@@ -55,3 +58,7 @@ MonoBehaviour:
   GatheringSpots: []
   CanSellGoods: 0
   GoodsThatCanBeSold: []
+  WorkersCanRestHere: 0
+  SleepingSpots: []
+  WorkersCanLiveHere: 0
+  MaxWorkersLivingHere: 4

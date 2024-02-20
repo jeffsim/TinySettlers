@@ -21,7 +21,7 @@ MonoBehaviour:
   VisualPrefab: {fileID: 0}
   VisualScale: {x: 1, y: 1, z: 1}
   VisualRotation: {x: 0, y: 0, z: 0, w: 0}
-  VisualOffset: {x: 0, y: 0, z: 0}
+  VisualOffset: {x: 0, y: 0.5, z: 0}
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
   AssignedWorkerFriendlyName: Camper
   HasWorkers: 1
