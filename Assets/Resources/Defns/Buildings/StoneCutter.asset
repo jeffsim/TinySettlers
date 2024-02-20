@@ -19,9 +19,9 @@ MonoBehaviour:
   IsTestBuilding: 0
   BuildingClass: 2
   VisualPrefab: {fileID: 1533353316949472, guid: d8fc33ffa28ce444a873432910ebc772, type: 3}
-  VisualScale: {x: 1, y: 1, z: 1}
+  VisualScale: {x: 0.4, y: 0.4, z: 0.4}
   VisualRotation: {x: 0, y: 0, z: 0, w: 0}
-  VisualOffset: {x: 0, y: 0, z: 0}
+  VisualOffset: {x: -1.5, y: 0.5, z: 2.5}
   AssignedWorkerColor: {r: 0.9246069, g: 1, b: 0, a: 0}
   AssignedWorkerFriendlyName: Stone Cutter
   HasWorkers: 1

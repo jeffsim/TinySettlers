@@ -18,10 +18,10 @@ MonoBehaviour:
   FriendlyName: Crafting Station
   IsTestBuilding: 0
   BuildingClass: 2
-  VisualPrefab: {fileID: 0}
-  VisualScale: {x: 1, y: 1, z: 1}
+  VisualPrefab: {fileID: 1559070810855096, guid: 12e626b54a7370c4d8d5716900b9c6d9, type: 3}
+  VisualScale: {x: 0.4, y: 0.4, z: 0.4}
   VisualRotation: {x: 0, y: 0, z: 0, w: 0}
-  VisualOffset: {x: 0, y: 0, z: 0}
+  VisualOffset: {x: -2, y: 0.5, z: 1.5}
   AssignedWorkerColor: {r: 0.9622642, g: 0, b: 0, a: 0}
   AssignedWorkerFriendlyName: Crafter
   HasWorkers: 1

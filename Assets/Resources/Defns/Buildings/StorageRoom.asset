@@ -19,9 +19,9 @@ MonoBehaviour:
   IsTestBuilding: 0
   BuildingClass: 2
   VisualPrefab: {fileID: 1491601853736748, guid: a75a4450efe3b4a4d82acd4589d20645, type: 3}
-  VisualScale: {x: 1, y: 1, z: 1}
-  VisualRotation: {x: 0, y: 0, z: 0, w: 0}
-  VisualOffset: {x: 0, y: 0, z: 0}
+  VisualScale: {x: 0.4, y: 0.4, z: 0.4}
+  VisualRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+  VisualOffset: {x: 0, y: 0.5, z: 2.2}
   AssignedWorkerColor: {r: 0.09818679, g: 0.59607846, b: 0, a: 0}
   AssignedWorkerFriendlyName: Courier
   HasWorkers: 1

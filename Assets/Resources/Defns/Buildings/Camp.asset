@@ -18,10 +18,10 @@ MonoBehaviour:
   FriendlyName: Camp
   IsTestBuilding: 0
   BuildingClass: 1
-  VisualPrefab: {fileID: 0}
-  VisualScale: {x: 1, y: 1, z: 1}
+  VisualPrefab: {fileID: 1370610232005860, guid: 4ecaa5e367b277c48a9d45a343c4010f, type: 3}
+  VisualScale: {x: 0.25, y: 0.25, z: 0.25}
   VisualRotation: {x: 0, y: 0, z: 0, w: 0}
-  VisualOffset: {x: 0, y: 0.5, z: 0}
+  VisualOffset: {x: 0, y: 0.5, z: 2.5}
   AssignedWorkerColor: {r: 0, g: 0.45767736, b: 1, a: 0}
   AssignedWorkerFriendlyName: Camper
   HasWorkers: 1

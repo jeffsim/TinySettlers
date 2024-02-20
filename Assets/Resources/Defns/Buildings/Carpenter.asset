@@ -18,10 +18,10 @@ MonoBehaviour:
   FriendlyName: Carpenter
   IsTestBuilding: 0
   BuildingClass: 2
-  VisualPrefab: {fileID: 0}
-  VisualScale: {x: 1, y: 1, z: 1}
-  VisualRotation: {x: 0, y: 0, z: 0, w: 0}
-  VisualOffset: {x: 0, y: 0, z: 0}
+  VisualPrefab: {fileID: 1440830040950166, guid: bcf45115db6e6074faf0ca3641581534, type: 3}
+  VisualScale: {x: 0.4, y: 0.4, z: 0.4}
+  VisualRotation: {x: 0, y: 1, z: 0, w: -0.00000004371139}
+  VisualOffset: {x: 0, y: 0.5, z: 2.8}
   AssignedWorkerColor: {r: 0.9607843, g: 0.3585595, b: 0, a: 0}
   AssignedWorkerFriendlyName: Crafter
   HasWorkers: 1

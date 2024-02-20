@@ -18,10 +18,10 @@ MonoBehaviour:
   FriendlyName: Stone Mine
   IsTestBuilding: 0
   BuildingClass: 2
-  VisualPrefab: {fileID: 2402233671515968589, guid: 0b9c68ddd67ee5b9e8aeca86ac0fbc03, type: 3}
+  VisualPrefab: {fileID: 3221722316429471533, guid: 3077a9a93a121e7409e35800eb15b857, type: 3}
   VisualScale: {x: 1, y: 1, z: 1}
   VisualRotation: {x: 0, y: 0, z: 0, w: 0}
-  VisualOffset: {x: 0, y: 0, z: 0}
+  VisualOffset: {x: 5.15, y: 4.36, z: 3.61}
   AssignedWorkerColor: {r: 0, g: 0, b: 0, a: 0}
   AssignedWorkerFriendlyName: n/a
   HasWorkers: 0
