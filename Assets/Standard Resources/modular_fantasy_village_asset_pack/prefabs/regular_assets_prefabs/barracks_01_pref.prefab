@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4821936225372502}
   - component: {fileID: 33352478218308774}
   - component: {fileID: 23376767351243594}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: barracks_01_LOD_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 4181015053600204}
   - component: {fileID: 33043629914378024}
   - component: {fileID: 23608220479737108}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: barracks_01_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -182,7 +182,8 @@ GameObject:
   - component: {fileID: 33731149690381894}
   - component: {fileID: 23438703514831436}
   - component: {fileID: 205454112891354502}
-  m_Layer: 0
+  - component: {fileID: -1679236954888205865}
+  m_Layer: 8
   m_Name: barracks_01_pref
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -285,3 +286,25 @@ LODGroup:
     renderers:
     - renderer: {fileID: 23376767351243594}
   m_Enabled: 1
+--- !u!64 &-1679236954888205865
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1491601853736748}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: ae35926089f0c0a4da266e5611ff36bf, type: 3}

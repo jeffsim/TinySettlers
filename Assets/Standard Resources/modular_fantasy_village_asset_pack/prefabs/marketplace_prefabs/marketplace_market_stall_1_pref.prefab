@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4257674239961640}
   - component: {fileID: 33627753778417026}
   - component: {fileID: 23216217042447968}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_apple_pref (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,12 +25,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1057323351815162}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.27404636, y: -0.1521466, z: 0.4609346, w: 0.8302345}
   m_LocalPosition: {x: 1.8439999, y: 2.2489996, z: 3.6339874}
   m_LocalScale: {x: 0.45596874, y: 0.4559688, z: 0.45596883}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: -18.348001, y: -32.163002, z: 63.408005}
 --- !u!33 &33627753778417026
 MeshFilter:
@@ -51,11 +52,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -92,7 +96,7 @@ GameObject:
   - component: {fileID: 4265996430360482}
   - component: {fileID: 33291113856537798}
   - component: {fileID: 23048579427049316}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_market_stall_1_pref_cloth_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,12 +110,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1083169151473232}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 22
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33291113856537798
 MeshFilter:
@@ -132,11 +137,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -173,7 +181,7 @@ GameObject:
   - component: {fileID: 4837263820573904}
   - component: {fileID: 33537528567059896}
   - component: {fileID: 23529990320065888}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_table_3_pref (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,12 +195,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1109557331947756}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.49699974, y: 0, z: 2.8099976}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33537528567059896
 MeshFilter:
@@ -213,11 +222,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -254,7 +266,7 @@ GameObject:
   - component: {fileID: 4997253651358094}
   - component: {fileID: 33520130168595544}
   - component: {fileID: 23267594158869232}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_crate_2_pref (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -268,12 +280,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1125489491852104}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.26012325, y: 0.094729684, z: -0.025652755, w: 0.9605749}
   m_LocalPosition: {x: -0.73200035, y: 0.48099995, z: 1.3009949}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: -29.662, y: 12.991, z: -6.5130005}
 --- !u!33 &33520130168595544
 MeshFilter:
@@ -294,11 +307,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -335,7 +351,7 @@ GameObject:
   - component: {fileID: 4959067294993860}
   - component: {fileID: 33565407134716886}
   - component: {fileID: 23595846607386938}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_cucumber_pref (6)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -349,12 +365,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1133507184085586}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.060658086, y: 0.7975236, z: 0.060310878, w: 0.59719294}
   m_LocalPosition: {x: 0.27000046, y: 1.8249998, z: 2.9301605}
   m_LocalScale: {x: 0.63555694, y: 0.6355566, z: 0.63555706}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 18
   m_LocalEulerAnglesHint: {x: -1.3610001, y: 106.232, z: 9.72}
 --- !u!33 &33565407134716886
 MeshFilter:
@@ -375,11 +392,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -416,7 +436,7 @@ GameObject:
   - component: {fileID: 4795345652439342}
   - component: {fileID: 33384171590831440}
   - component: {fileID: 23396485030969208}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_crate_4_pref (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -430,12 +450,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1133821207663816}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.99631584, z: -0, w: 0.08575981}
   m_LocalPosition: {x: -2.7700005, y: 0, z: 3.2399902}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 170.16101, z: 0}
 --- !u!33 &33384171590831440
 MeshFilter:
@@ -456,11 +477,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -496,7 +520,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4161914998123070}
   - component: {fileID: 205890067642220750}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_market_stall_1_pref
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -510,9 +534,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1178762074211532}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -1.61, y: -7.2, z: 163.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4806102644101232}
   - {fileID: 4837263820573904}
@@ -539,7 +565,6 @@ Transform:
   - {fileID: 4265996430360482}
   - {fileID: 8853588063514537839}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!205 &205890067642220750
 LODGroup:
@@ -596,7 +621,7 @@ GameObject:
   - component: {fileID: 4285970320649844}
   - component: {fileID: 33518689016448848}
   - component: {fileID: 23181715941250824}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_crate_2_pref (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -610,12 +635,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1293291618134938}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.26060525, y: -0.07450731, z: 0.020176545, w: 0.96235466}
   m_LocalPosition: {x: 1.8600006, y: 0.48099995, z: 1.3009949}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -29.906002, y: -10.228001, z: 5.1410003}
 --- !u!33 &33518689016448848
 MeshFilter:
@@ -636,11 +662,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -677,7 +706,7 @@ GameObject:
   - component: {fileID: 4569384223331044}
   - component: {fileID: 33258691687156768}
   - component: {fileID: 23689080536722006}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_apple_pref (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -691,12 +720,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1402854663170850}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.40500966, y: 0.6707419, z: -0.004091152, w: 0.62133384}
   m_LocalPosition: {x: 1.1995144, y: 0.77279425, z: 2.2229767}
   m_LocalScale: {x: 0.41036648, y: 0.41036642, z: 0.41036645}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 20
   m_LocalEulerAnglesHint: {x: -29.855001, y: 105.232, z: -39.221}
 --- !u!33 &33258691687156768
 MeshFilter:
@@ -717,11 +747,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -758,7 +791,7 @@ GameObject:
   - component: {fileID: 4926107845819746}
   - component: {fileID: 33564612844231210}
   - component: {fileID: 23773418373823416}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_cucumber_pref (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -772,12 +805,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1424425559984388}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.029105557, y: 0.77947176, z: 0.025921222, w: 0.6252238}
   m_LocalPosition: {x: 0.25499916, y: 1.5576997, z: 2.9400787}
   m_LocalScale: {x: 0.6355565, y: 0.63555646, z: 0.6355565}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: -0.23, y: 102.524, z: 4.4610004}
 --- !u!33 &33564612844231210
 MeshFilter:
@@ -798,11 +832,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -839,7 +876,7 @@ GameObject:
   - component: {fileID: 4471947251252462}
   - component: {fileID: 33335951177990690}
   - component: {fileID: 23296317188525760}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_crate_6_pref (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -853,12 +890,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1439455775342992}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.40999985, y: 1.573, z: 3.0599976}
   m_LocalScale: {x: 0.64699, y: 0.64699, z: 0.64699}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33335951177990690
 MeshFilter:
@@ -879,11 +917,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -920,7 +961,7 @@ GameObject:
   - component: {fileID: 4809936759212086}
   - component: {fileID: 33550563789243214}
   - component: {fileID: 23040667312949026}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_crate_4_pref (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -934,12 +975,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1571665103185342}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.9742509, z: -0, w: 0.22546668}
   m_LocalPosition: {x: -3.0916796, y: 0.009999752, z: 5.054535}
   m_LocalScale: {x: 1.3629999, y: 1.363, z: 1.3629999}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 153.93901, z: 0}
 --- !u!33 &33550563789243214
 MeshFilter:
@@ -960,11 +1002,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1001,7 +1046,7 @@ GameObject:
   - component: {fileID: 4347678266838348}
   - component: {fileID: 33448735232712798}
   - component: {fileID: 23329061823154818}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_apple_pref (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1015,12 +1060,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1605540776304562}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.30034015, y: 0.08969844, z: -0.27174518, w: 0.9098927}
   m_LocalPosition: {x: 1.4899998, y: 0.77279425, z: 2.2299957}
   m_LocalScale: {x: 0.4103665, y: 0.4103666, z: 0.41036656}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 19
   m_LocalEulerAnglesHint: {x: -29.855001, y: 22.112001, z: -39.221}
 --- !u!33 &33448735232712798
 MeshFilter:
@@ -1041,11 +1087,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1082,7 +1131,7 @@ GameObject:
   - component: {fileID: 4335222197216158}
   - component: {fileID: 33755767286018602}
   - component: {fileID: 23074601676322898}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_crate_1_pref (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1096,12 +1145,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1617189679526786}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.12026266, z: -0, w: 0.9927421}
   m_LocalPosition: {x: 1.5890007, y: 1.6204, z: 3.1599884}
   m_LocalScale: {x: 0.69114, y: 0.69114, z: 0.69114}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: -13.815001, z: 0}
 --- !u!33 &33755767286018602
 MeshFilter:
@@ -1122,11 +1172,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1163,7 +1216,7 @@ GameObject:
   - component: {fileID: 4271127685279084}
   - component: {fileID: 33688115570770132}
   - component: {fileID: 23462438500478834}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_apple_pref (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1177,12 +1230,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1681634523674228}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.31344837, y: -0, z: -0, w: 0.9496053}
   m_LocalPosition: {x: 1.5259991, y: 1.7993798, z: 2.7207642}
   m_LocalScale: {x: 0.54936, y: 0.54936, z: 0.54936}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: -36.534, y: 0, z: 0}
 --- !u!33 &33688115570770132
 MeshFilter:
@@ -1203,11 +1257,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1244,7 +1301,7 @@ GameObject:
   - component: {fileID: 4994606574865226}
   - component: {fileID: 33238442559013570}
   - component: {fileID: 23115279022613730}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_cucumber_pref (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1258,12 +1315,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1687490733109736}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.027048405, y: 0.72962815, z: 0.028061137, w: 0.6827326}
   m_LocalPosition: {x: 0.48200035, y: 1.5576997, z: 2.9399872}
   m_LocalScale: {x: 0.6355567, y: 0.63555646, z: 0.6355567}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: -0.23, y: 93.79401, z: 4.4610004}
 --- !u!33 &33238442559013570
 MeshFilter:
@@ -1284,11 +1342,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1325,7 +1386,7 @@ GameObject:
   - component: {fileID: 4258279837981786}
   - component: {fileID: 33607240131905672}
   - component: {fileID: 23988908714994648}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_crate_5_pref (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1339,12 +1400,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1701164531422704}
+  serializedVersion: 2
   m_LocalRotation: {x: -0.26093763, y: -0, z: -0, w: 0.9653557}
   m_LocalPosition: {x: 0.6399994, y: 0.5080557, z: 1.2549896}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: -30.251001, y: 0, z: 0}
 --- !u!33 &33607240131905672
 MeshFilter:
@@ -1365,11 +1427,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1406,7 +1471,7 @@ GameObject:
   - component: {fileID: 4197124070807022}
   - component: {fileID: 33309336026858082}
   - component: {fileID: 23921184759432856}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_cucumber_pref (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1420,12 +1485,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1788859247685386}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.05455402, y: 0.7361626, z: 0.06588371, w: 0.6713776}
   m_LocalPosition: {x: 0.559, y: 1.6722531, z: 2.9299927}
   m_LocalScale: {x: 0.6355568, y: 0.6355566, z: 0.6355567}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: -1.3610001, y: 95.15501, z: 9.72}
 --- !u!33 &33309336026858082
 MeshFilter:
@@ -1446,11 +1512,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1487,7 +1556,7 @@ GameObject:
   - component: {fileID: 4806102644101232}
   - component: {fileID: 33716761075709264}
   - component: {fileID: 23440196820925972}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_tent_1_pref (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1501,12 +1570,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1812244624925780}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0.4699993, y: 0, z: 4.799988}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33716761075709264
 MeshFilter:
@@ -1527,11 +1597,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1568,7 +1641,7 @@ GameObject:
   - component: {fileID: 4563231258131942}
   - component: {fileID: 33192463824237816}
   - component: {fileID: 23661361565093832}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_market_stall_1_pref_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1582,12 +1655,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1836213682694248}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 21
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33192463824237816
 MeshFilter:
@@ -1608,11 +1682,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1649,7 +1726,7 @@ GameObject:
   - component: {fileID: 4358926960730944}
   - component: {fileID: 33038793323112756}
   - component: {fileID: 23565865023683242}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_cucumber_pref (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1663,12 +1740,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1889312942838970}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.048955, y: 0.6784969, z: 0.07014424, w: 0.72960615}
   m_LocalPosition: {x: 0.31699944, y: 1.6722531, z: 2.930359}
   m_LocalScale: {x: 0.6355566, y: 0.6355567, z: 0.63555646}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: -1.3610001, y: 85.727005, z: 9.72}
 --- !u!33 &33038793323112756
 MeshFilter:
@@ -1689,11 +1767,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1730,7 +1811,7 @@ GameObject:
   - component: {fileID: 4521955268293700}
   - component: {fileID: 33604373245928754}
   - component: {fileID: 23512256895689016}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_crate_3_pref (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1744,12 +1825,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1892813376366000}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.98631865, z: -0, w: 0.16485032}
   m_LocalPosition: {x: -2.6400003, y: 1.1099997, z: 3.6299896}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 161.02301, z: 0}
 --- !u!33 &33604373245928754
 MeshFilter:
@@ -1770,11 +1852,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1811,7 +1896,7 @@ GameObject:
   - component: {fileID: 4355498612981806}
   - component: {fileID: 33395151650947288}
   - component: {fileID: 23004606905965486}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_cucumber_pref (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1825,12 +1910,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1900561477390650}
+  serializedVersion: 2
   m_LocalRotation: {x: 0.026839769, y: 0.72455037, z: 0.028260749, w: 0.68811905}
   m_LocalPosition: {x: 0.65099907, y: 1.5576997, z: 2.9399872}
   m_LocalScale: {x: 0.63555694, y: 0.63555646, z: 0.6355568}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: -0.23, y: 92.94601, z: 4.4610004}
 --- !u!33 &33395151650947288
 MeshFilter:
@@ -1851,11 +1937,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1892,7 +1981,7 @@ GameObject:
   - component: {fileID: 4363479130851658}
   - component: {fileID: 33469983320276784}
   - component: {fileID: 23720289138138556}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_crate_1_pref (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1906,12 +1995,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1906853334687472}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.09508179, z: -0, w: 0.9954695}
   m_LocalPosition: {x: -0.7600002, y: 1.6204, z: 3.1599884}
   m_LocalScale: {x: 0.69114006, y: 0.69114, z: 0.69114006}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 10.912001, z: 0}
 --- !u!33 &33469983320276784
 MeshFilter:
@@ -1932,11 +2022,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
@@ -1973,7 +2066,7 @@ GameObject:
   - component: {fileID: 5851205717196595847}
   - component: {fileID: 8792621654917212592}
   - component: {fileID: 2090924212385650051}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_market_stall_1_pref_cloth_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1987,12 +2080,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 925467339564932594}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8853588063514537839}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &8792621654917212592
 MeshFilter:
@@ -2013,11 +2107,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2052,7 +2149,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8356073306759354047}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Texture Group
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2066,12 +2163,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1135274223319864131}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8853588063514537839}
-  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7207469068379362615
 GameObject:
@@ -2084,7 +2182,7 @@ GameObject:
   - component: {fileID: 8090504554208985600}
   - component: {fileID: 219387091568701854}
   - component: {fileID: 8373482808135992379}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_market_stall_1_pref_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2098,12 +2196,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7207469068379362615}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8853588063514537839}
-  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &219387091568701854
 MeshFilter:
@@ -2124,11 +2223,14 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2163,7 +2265,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8853588063514537839}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: marketplace_market_stall_1_pref_LOD_1(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2177,13 +2279,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9016520791694832391}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5851205717196595847}
   - {fileID: 8090504554208985600}
   - {fileID: 8356073306759354047}
   m_Father: {fileID: 4161914998123070}
-  m_RootOrder: 23
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

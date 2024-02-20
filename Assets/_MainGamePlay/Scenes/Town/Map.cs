@@ -38,16 +38,28 @@ public class Map : MonoBehaviour
             addItemOnGroundGO(item);
 
         Town.TownWorkerMgr.OnWorkerCreated += addWorkerGO;
-        Town.OnBuildingAdded += addBuildingGO;
+        Town.OnBuildingAdded += OnBuildingAdded;
+        Town.OnBuildingRemoved += OnBuildingRemoved;
         Town.OnItemAddedToGround += addItemOnGroundGO;
         Town.OnItemRemovedFromGround += OnItemRemovedFromGround;
+    }
+
+    private void OnBuildingRemoved(BuildingData data)
+    {
+        scene.NeedsPathUpdate = true;
+    }
+
+    private void OnBuildingAdded(BuildingData data)
+    {
+        addBuildingGO(data);
+        scene.NeedsPathUpdate = true;
     }
 
     void OnDestroy()
     {
         if (Town == null) return;
         Town.TownWorkerMgr.OnWorkerCreated -= addWorkerGO;
-        Town.OnBuildingAdded -= addBuildingGO;
+        Town.OnBuildingAdded -= OnBuildingAdded;
         Town.OnItemAddedToGround -= addItemOnGroundGO;
         Town.OnItemRemovedFromGround -= OnItemRemovedFromGround;
         // Town.OnItemSold -= OnItemSold;
@@ -136,6 +148,9 @@ public class Map : MonoBehaviour
 
     public void Update()
     {
+        if (scene.NeedsPathUpdate)
+            scene.UpdatePaths();
+
         if (Input.GetKeyUp(KeyCode.Space))
             GameTime.TogglePause();
     }

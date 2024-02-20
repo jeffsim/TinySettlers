@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4042331740459294}
   - component: {fileID: 33291456656550042}
   - component: {fileID: 23701154894789924}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_09_barn_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 33696024993799482}
   - component: {fileID: 23565786184229276}
   - component: {fileID: 205276712196238206}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_09_barn_pref
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -210,7 +210,7 @@ GameObject:
   - component: {fileID: 4067743607331672}
   - component: {fileID: 33245202195439226}
   - component: {fileID: 23369081480292264}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_09_barn_LOD_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}

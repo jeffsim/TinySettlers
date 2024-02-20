@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4278809302222952}
   - component: {fileID: 33661301098952542}
   - component: {fileID: 23878822315233046}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_02_LOD_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 4591573408533022}
   - component: {fileID: 33232274499673834}
   - component: {fileID: 23200926657614850}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_02_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -182,7 +182,7 @@ GameObject:
   - component: {fileID: 33145281196978934}
   - component: {fileID: 23497746100106686}
   - component: {fileID: 205045011871484556}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_02_pref
   m_TagString: Untagged
   m_Icon: {fileID: 0}

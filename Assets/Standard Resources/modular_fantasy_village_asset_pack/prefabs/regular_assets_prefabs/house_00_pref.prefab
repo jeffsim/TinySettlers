@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4322175959649886}
   - component: {fileID: 33235847871870042}
   - component: {fileID: 23187834931047832}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_00_LOD_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 4596321888025970}
   - component: {fileID: 198541058710546068}
   - component: {fileID: 199908191182774406}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4941,7 +4941,7 @@ GameObject:
   - component: {fileID: 4336446880510882}
   - component: {fileID: 33513726604627146}
   - component: {fileID: 23038671956391196}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_00_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5027,7 +5027,8 @@ GameObject:
   - component: {fileID: 33504577679509158}
   - component: {fileID: 23532649285591572}
   - component: {fileID: 205600587175158318}
-  m_Layer: 0
+  - component: {fileID: 8564934934915331297}
+  m_Layer: 8
   m_Name: house_00_pref
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5132,3 +5133,25 @@ LODGroup:
     renderers:
     - renderer: {fileID: 23187834931047832}
   m_Enabled: 1
+--- !u!64 &8564934934915331297
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999333881297860}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 6819326164760f247a9cd16746df1e76, type: 3}

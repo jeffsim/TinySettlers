@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 922813399638958986}
   - component: {fileID: 922813399636059048}
   - component: {fileID: 922813399637057896}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_08_windmill_LOD_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,7 +96,7 @@ GameObject:
   - component: {fileID: 4253163040269464492}
   - component: {fileID: 4253163040270234510}
   - component: {fileID: 4253163040271364430}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_08_windmill_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,7 +180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4781294695752079660}
   - component: {fileID: 4781294695752079663}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_08_windmill_blades_edited
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -268,7 +268,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4781294696462542559}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Skeleton_Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -300,7 +300,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4781294696500099103}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Skeleton_Joint (2)_end_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -331,7 +331,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4781294696643747555}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Skeleton_Joint (2)_end
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -365,7 +365,7 @@ GameObject:
   - component: {fileID: 4781294696944003598}
   - component: {fileID: 4781294696944003697}
   - component: {fileID: 4781294696944003696}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_08_windmill_edited_pref
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -450,7 +450,7 @@ GameObject:
   - component: {fileID: 4781294697264931970}
   - component: {fileID: 4781294697264931973}
   - component: {fileID: 4781294697264931972}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_08_windmill_edited
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -533,7 +533,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4781294697671203114}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Skeleton_Joint (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
