@@ -214,28 +214,39 @@ public class Building : MonoBehaviour
 
     private void putBuildingOnTopOfOthers()
     {
-        var buildings = scene.Map.GetBuildingGOs();
+        // var buildings = scene.Map.GetBuildingGOs();
 
-        // sort by y
-        buildings.Sort((a, b) => a.transform.position.y.CompareTo(b.transform.position.y));
-        buildings.Remove(this);
-        buildings.Insert(0, this);
-        for (int i = 0; i < buildings.Count; i++)
-        {
-            var building = buildings[i];
-            float yPosition = i * .62f - 2.5f;
-            if (building == this && dragState == DragState.Dragging)
-                yPosition = -95;
-            building.transform.position = new(building.transform.position.x, yPosition, building.transform.position.z);
-            building.Data.Location.WorldLoc = building.transform.position;
-        }
+        // // sort by y
+        // buildings.Sort((a, b) => a.transform.position.y.CompareTo(b.transform.position.y));
+        // buildings.Remove(this);
+        // buildings.Insert(0, this);
+        // for (int i = 0; i < buildings.Count; i++)
+        // {
+        //     var building = buildings[i];
+        //     float yPosition = i * .62f - 2.5f;
+        //     if (building == this && dragState == DragState.Dragging)
+        //         yPosition = -95;
+        //     building.transform.position = new(building.transform.position.x, yPosition, building.transform.position.z);
+        //     building.Data.Location.WorldLoc = building.transform.position;
+        // }
     }
 
     Vector3 GetMouseWorldPosition()
     {
-        // Convert the mouse screen position to a world position on the same z-axis as the node
-        Vector3 mouseScreenPosition = Input.mousePosition;
-        mouseScreenPosition.y = Camera.main.WorldToScreenPoint(transform.position).y;
-        return Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+        if (Settings.Current.UseOrthographicCamera)
+        {
+            // Convert the mouse screen position to a world position on the same z-axis as the node
+            Vector3 mouseScreenPosition = Input.mousePosition;
+            mouseScreenPosition.y = Camera.main.WorldToScreenPoint(transform.position).y;
+            return Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+        }
+        else
+        {
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hitInfo))
+                return hitInfo.point;
+            else
+                return Camera.main.transform.position + Camera.main.transform.forward * 0.01f;
+        }
     }
 }

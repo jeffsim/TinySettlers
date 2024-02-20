@@ -197,7 +197,8 @@ public class SceneWithMap : SceneMgr
 
     public void UpdatePaths()
     {
-        // Pathfinder.Scan();
+        if (AstarPath.active == null) return; // TODO: Fucking recompile
+        
         var graphToScan = AstarPath.active.data.gridGraph;
         if (graphToScan != null)
         {

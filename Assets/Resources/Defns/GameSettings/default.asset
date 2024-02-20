@@ -13,6 +13,21 @@ MonoBehaviour:
   m_Name: default
   m_EditorClassIdentifier: 
   Id: default
-  Debug_StartingCameraPosition: {x: 14.9205265, y: 15.733337, z: 3.477869}
-  Debug_StartingCameraRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
-  Debug_StartingCameraZoom: 17.25
+  UseOrthographicCamera: 1
+  Debug_StartingOrthoCameraPosition: {x: 13.518712, y: 13.500004, z: -1.1963816}
+  Debug_StartingOrthoCameraRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
+  Debug_StartingOrthoCameraZoom: 32.5
+  Debug_StartingPerspCameraPosition: {x: -27.253654, y: 54.926407, z: -31.03896}
+  Debug_StartingPerspCameraRotation: {x: 0.3535534, y: 0.3535534, z: -0.14644663, w: 0.85355335}
+  Debug_StartingPerspCameraZoom: 30
+  DefaultNumMaxWorkers: 3
+  ConstructionTimeInSeconds: 5
+  UseBinarySaveFiles: 1
+  AllowFreeBuildingPlacement: 1
+  RealTimeToGameTimeMultiplier: 0.01
+  TileY: -5.5
+  BuildingsY: -1
+  ItemSpotsY: 0.5
+  StorageAreaY: 0.5
+  WorkerY: -0.5
+  DraggedBuildingY: 3

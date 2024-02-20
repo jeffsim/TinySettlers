@@ -28,4 +28,12 @@ public class MenuSupport
         }
         EditorUtility.RevealInFinder(gameDataMgr.ProfilesFolderName);
     }
+
+    [MenuItem("TinySettlers/Show Game Settings %g")]
+    public static void ShowGameSettings()
+    {
+        var path = "Assets/Resources/Defns/GameSettings/default.asset";
+        Selection.activeObject = AssetDatabase.LoadAssetAtPath<GameSettingsDefn>(path);
+    }
+
 }
