@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4516475011372890}
   - component: {fileID: 33903291626792542}
   - component: {fileID: 23372756308398970}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_01_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 33701200477782110}
   - component: {fileID: 23166040132454142}
   - component: {fileID: 205327201246314520}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_01_pref
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -213,7 +213,7 @@ GameObject:
   - component: {fileID: 4181712612409204}
   - component: {fileID: 33222814269842406}
   - component: {fileID: 23014578157693064}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_01_LOD_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -298,7 +298,7 @@ GameObject:
   - component: {fileID: 4950535488103382}
   - component: {fileID: 198418086557448580}
   - component: {fileID: 199782233826901336}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: smoke
   m_TagString: Untagged
   m_Icon: {fileID: 0}

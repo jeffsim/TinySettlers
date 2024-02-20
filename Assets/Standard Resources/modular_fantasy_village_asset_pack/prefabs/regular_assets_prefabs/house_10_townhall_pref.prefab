@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4664635101603142}
   - component: {fileID: 33285186366071508}
   - component: {fileID: 23832674533691416}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_10_townhall_LOD_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,9 @@ GameObject:
   - component: {fileID: 33294871972132214}
   - component: {fileID: 23588258377871198}
   - component: {fileID: 205308501271647858}
-  m_Layer: 0
+  - component: {fileID: -1700959756860228443}
+  - component: {fileID: 4592200521732092371}
+  m_Layer: 8
   m_Name: house_10_townhall_pref
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -200,6 +202,50 @@ LODGroup:
     renderers:
     - renderer: {fileID: 23832674533691416}
   m_Enabled: 1
+--- !u!64 &-1700959756860228443
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1440830040950166}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300002, guid: e3431724398d9614c9aed1c2083ed2a5, type: 3}
+--- !u!64 &4592200521732092371
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1440830040950166}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300002, guid: e3431724398d9614c9aed1c2083ed2a5, type: 3}
 --- !u!1 &1750564473288776
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,7 +257,7 @@ GameObject:
   - component: {fileID: 4299336239044370}
   - component: {fileID: 33621714534972426}
   - component: {fileID: 23225339592734566}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: house_10_townhall_LOD_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}

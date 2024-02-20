@@ -5,7 +5,9 @@ using UnityEngine;
 public class SceneWithMap : SceneMgr
 {
     public Map Map;
+    public bool NeedsPathUpdate;
 
+    public AstarPath Pathfinder;
     public Tile TilePrefab;
     public Building BuildingPrefab;
     public DraggedBuilding DraggedBuildingPrefab;
@@ -189,6 +191,20 @@ public class SceneWithMap : SceneMgr
 
         FindAnyObjectByType<TimeOfDayMgr>(FindObjectsInactive.Exclude).InitializeForTown(town);
         FindAnyObjectByType<TopBar>(FindObjectsInactive.Exclude).InitializeForTown(town);
+
+        NeedsPathUpdate = true;
+    }
+
+    public void UpdatePaths()
+    {
+        // Pathfinder.Scan();
+        var graphToScan = AstarPath.active.data.gridGraph;
+        if (graphToScan != null)
+        {
+            AstarPath.active.Scan(graphToScan);
+            AstarPath.active.FlushGraphUpdates();
+            NeedsPathUpdate = false;
+        }
     }
 
     internal void OnTileClicked(Tile tile)
