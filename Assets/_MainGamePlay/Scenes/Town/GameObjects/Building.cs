@@ -131,7 +131,7 @@ public class Building : MonoBehaviour
                     dragStartPoint = transform.position;
                 }
             }
-            else if (dragState == DragState.Dragging)
+            if (dragState == DragState.Dragging)
             {
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                 Plane plane = new(Vector3.up, dragStartPoint);

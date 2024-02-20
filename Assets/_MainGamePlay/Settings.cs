@@ -10,7 +10,7 @@ public class Settings
 
     public static float RealTimeToGameTimeMultiplier = .01f;
 
-    public static bool UseOrthographicCamera = true;
+    public static bool UseOrthographicCamera = false;
     
     public static float TileY = -5.5f;
     public static float BuildingsY = -1f;
@@ -18,5 +18,4 @@ public class Settings
     public static float StorageAreaY = .5f;
     public static float WorkerY = -0.5f;
     public static float DraggedBuildingY = 3;
-    
 }

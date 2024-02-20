@@ -2,41 +2,55 @@ using UnityEngine;
 
 public class CameraDragger : MonoBehaviour
 {
-    private Vector3 dragStartPos;
-    private bool isDragging = false;
-    public float zoomSensitivity = 25.0f;
+    Vector3 dragStartPos;
+    bool isDragging = false;
+    float zoomSensitivity = 25.0f;
+    float dollyZoomSpeed = 100.0f; // Speed for dolly zoom
 
     void Start()
     {
         // This uses the GameSettingsDefn to set the camera position
-        transform.position = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingCameraPosition;
+        Camera.main.orthographic = Settings.UseOrthographicCamera;
         if (Settings.UseOrthographicCamera)
         {
-            transform.rotation = Quaternion.Euler(60, 0, 0);
-            Camera.main.orthographicSize = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingCameraZoom;
+            transform.SetPositionAndRotation(GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingOrthoCameraPosition, GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingOrthoCameraRotation);
+            Camera.main.orthographicSize = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingOrthoCameraZoom;
         }
         else
         {
-            transform.rotation = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingCameraRotation;
-            Camera.main.fieldOfView = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingCameraZoom;
+            transform.SetPositionAndRotation(GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingPerspCameraPosition, GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingPerspCameraRotation);
+            Camera.main.fieldOfView = GameDefns.Instance.GameSettingsDefns["default"].Debug_StartingPerspCameraZoom;
         }
-        // The value is set using the CameraPannerEditor class and stored in the GameSettingsDefn ScriptableObject in the Resources/Defns folder
     }
 
     void Update()
     {
         if (Input.GetMouseButtonDown(1))
         {
-            dragStartPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            dragStartPos = GetWorldPositionFromMouseClick();
             isDragging = true;
         }
         else if (Input.GetMouseButtonUp(1))
             isDragging = false;
         else if (isDragging && Input.GetMouseButton(1))
-            Camera.main.transform.position -= Camera.main.ScreenToWorldPoint(Input.mousePosition) - dragStartPos;
+            Camera.main.transform.position -= GetWorldPositionFromMouseClick() - dragStartPos;
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
-            Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - scroll * zoomSensitivity, 5, 50);
+        {
+            if (Settings.UseOrthographicCamera)
+                Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize - scroll * zoomSensitivity, 5, 50);
+            else
+                Camera.main.transform.position += Camera.main.transform.forward * scroll * dollyZoomSpeed;
+        }
+    }
+
+    Vector3 GetWorldPositionFromMouseClick()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (Physics.Raycast(ray, out RaycastHit hitInfo))
+            return hitInfo.point;
+        else
+            return Camera.main.transform.position + Camera.main.transform.forward * 10f;
     }
 }

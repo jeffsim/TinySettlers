@@ -18,11 +18,19 @@ public class CameraDraggerEditor : Editor
             {
                 Debug.LogError("GameSettingsDefn with id 'default' not found in Resources/Defns/GameSettings.  Please create one");
                 return;
-            } 
-            gameSettingsDefn.Debug_StartingCameraPosition = script.transform.position;
-            gameSettingsDefn.Debug_StartingCameraRotation = script.transform.rotation;
-            gameSettingsDefn.Debug_StartingCameraZoom = Camera.main.orthographicSize;
-
+            }
+            if (Settings.UseOrthographicCamera)
+            {
+                gameSettingsDefn.Debug_StartingOrthoCameraPosition = script.transform.position;
+                gameSettingsDefn.Debug_StartingOrthoCameraRotation = script.transform.rotation;
+                gameSettingsDefn.Debug_StartingOrthoCameraZoom = Camera.main.orthographicSize;
+            }
+            else
+            {
+                gameSettingsDefn.Debug_StartingPerspCameraPosition = script.transform.position;
+                gameSettingsDefn.Debug_StartingPerspCameraRotation = script.transform.rotation;
+                gameSettingsDefn.Debug_StartingPerspCameraZoom = Camera.main.fieldOfView;
+            }
             EditorUtility.SetDirty(gameSettingsDefn);
             Debug.Log("Camera position saved in Resources/Defns/GameSettings (default)");
         }
