@@ -21,7 +21,7 @@ MonoBehaviour:
   VisualPrefab: {fileID: 1552399696546168, guid: bad2bac538447224a89d227f7193f597, type: 3}
   VisualScale: {x: 0.4, y: 0.4, z: 0.4}
   VisualRotation: {x: 0, y: 0, z: 0, w: 0}
-  VisualOffset: {x: 0, y: 0, z: 2.7}
+  VisualOffset: {x: 0, y: 0.5, z: 3.9}
   AssignedWorkerColor: {r: 0.14815043, g: 0, b: 0.2924528, a: 0}
   AssignedWorkerFriendlyName: Wood cutter
   HasWorkers: 1
@@ -40,7 +40,7 @@ MonoBehaviour:
   CanStoreItems: 1
   IsPrimaryStorage: 0
   StorageAreas:
-  - Location: {x: 0, y: 0, z: 0}
+  - Location: {x: 0, y: -1, z: 0}
     StorageAreaSize: {x: 3, y: 3}
     StoragePileSize: {x: 1, y: 1, z: 1}
   WorkersCanFerryItems: 0

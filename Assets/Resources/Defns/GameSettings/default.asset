@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: default
   m_EditorClassIdentifier: 
   Id: default
-  UseOrthographicCamera: 1
+  UseOrthographicCamera: 0
   Debug_StartingOrthoCameraPosition: {x: 13.518712, y: 13.500004, z: -1.1963816}
   Debug_StartingOrthoCameraRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
   Debug_StartingOrthoCameraZoom: 32.5
@@ -23,7 +23,7 @@ MonoBehaviour:
   DefaultNumMaxWorkers: 3
   ConstructionTimeInSeconds: 5
   UseBinarySaveFiles: 1
-  AllowFreeBuildingPlacement: 1
+  AllowFreeBuildingPlacement: 0
   RealTimeToGameTimeMultiplier: 0.01
   TileY: -5.5
   BuildingsY: -1
