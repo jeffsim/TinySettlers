@@ -30,4 +30,4 @@ MonoBehaviour:
   ItemSpotsY: 0.5
   StorageAreaY: 0.5
   WorkerY: -0.5
-  DraggedBuildingY: 0.5
+  DraggedBuildingY: -0.75

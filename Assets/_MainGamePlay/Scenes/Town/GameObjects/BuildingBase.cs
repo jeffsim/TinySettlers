@@ -96,7 +96,7 @@ public class BuildingBase : MonoBehaviour
                     dragState = DragState.PreDrag;
                     dragStartPoint = GetMouseWorldPosition();
                     offset = transform.position - dragStartPoint;
-                    offset.z += 1;
+                    offset.z += .25f;
                 }
                 break;
 
