@@ -13,11 +13,13 @@ public class Worker : MonoBehaviour
     float lineY = 2f;
     Vector3 ZFightingOffset;
     public Animator animator;
+    public GameObject CarryAboveHeadSpot;
 
     public void Initialize(WorkerData data, SceneWithMap scene)
     {
         this.scene = scene;
         Data = data;
+        CarryAboveHeadSpot = GameObject.Find("CarryAboveHeadSpot");
 
         ZFightingOffset = scene.Map.Town.TownWorkerMgr.Workers.IndexOf(Data) * new Vector3(0, 0.001f, 0);
         transform.position = data.Location.WorldLoc;
@@ -95,7 +97,7 @@ public class Worker : MonoBehaviour
                 Destroy(ItemVisual.gameObject);
 
             ItemVisual = Instantiate(itemToShow.Defn.VisualPrefab);
-            ItemVisual.transform.SetParent(CarriedItem.transform, false);
+            ItemVisual.transform.SetParent(CarryAboveHeadSpot.transform, false);
             ItemVisual.GetComponent<Item>().Initialize(itemToShow, scene);
         }
         else if (itemToShow == null && ItemVisual != null)
@@ -139,8 +141,8 @@ public class Worker : MonoBehaviour
             }
         }
 
-        var itemUp = new Vector3(0, 2.5f, 0);
-        var itemDown = new Vector3(0, -1.3f, 0);
+        var itemUp = new Vector3(0, Settings.Current.ItemCarryY, 0);
+        var itemDown = new Vector3(0, Settings.Current.ItemDropY, 0);
         var scaleSmall = new Vector3(0, 0, 0);
         var scaleNormal = new Vector3(1, 1, 1);
         var percentDone = Data.AI.CurrentTask.CurSubTask.PercentDone;

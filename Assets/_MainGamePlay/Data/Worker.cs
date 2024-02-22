@@ -25,14 +25,13 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
     public TownData Town;
 
     public NeedData OriginalPickupItemNeed;
-
     public WorkerData(WorkerDefn defn, BuildingData buildingToStartIn)
     {
         DefnId = defn.Id;
-        
+
         Location = Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f);
         Location.WorldLoc.y = Settings.Current.WorkerY;
-        
+
         Town = buildingToStartIn.Town;
         Energy.FillUp();
 

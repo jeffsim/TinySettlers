@@ -29,4 +29,6 @@ public class GameSettingsDefn : BaseDefn
     public float StorageAreaY = .5f;
     public float WorkerY = -0.5f;
     public float DraggedBuildingY = 3;
+    public float ItemCarryY = 1.5f;
+    public float ItemDropY = -1.3f;
 }
