@@ -17,7 +17,13 @@ public class Background : MonoBehaviour
             if (scene.AnyDialogIsOpen())
                 scene.HideAllDialogs();
             else if (Settings.Current.AllowFreeBuildingPlacement)
-                scene.SelectBuildingToConstruct.ShowAtWorldLoc(scene, Input.mousePosition);
+            {
+                Vector3 mouseScreenPosition = Input.mousePosition;
+                mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
+                var loc = Camera.main.ScreenToWorldPoint(mouseScreenPosition);
+                // var loc = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                scene.SelectBuildingToConstruct.ShowAtWorldLoc(scene, loc);
+            }
         }
     }
 }

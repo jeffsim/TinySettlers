@@ -23,11 +23,11 @@ MonoBehaviour:
   DefaultNumMaxWorkers: 3
   ConstructionTimeInSeconds: 5
   UseBinarySaveFiles: 1
-  AllowFreeBuildingPlacement: 0
+  AllowFreeBuildingPlacement: 1
   RealTimeToGameTimeMultiplier: 0.01
   TileY: -5.5
   BuildingsY: -1
   ItemSpotsY: 0.5
   StorageAreaY: 0.5
   WorkerY: -0.5
-  DraggedBuildingY: 3
+  DraggedBuildingY: 0.5

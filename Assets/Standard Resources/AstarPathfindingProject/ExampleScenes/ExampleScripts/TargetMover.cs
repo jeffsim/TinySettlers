@@ -66,7 +66,7 @@ namespace Pathfinding {
 			if (positionFound && newPosition != target.position) {
 				target.position = newPosition;
 
-				if (onlyOnDoubleClick) {
+				if (onlyOnDoubleClick && ais != null) {
 					for (int i = 0; i < ais.Length; i++) {
 						if (ais[i] != null) ais[i].SearchPath();
 					}
