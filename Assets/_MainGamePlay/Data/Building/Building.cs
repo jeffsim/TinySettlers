@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public enum ConstructionState { NotStarted, UnderConstruction, FullyConstructed };
-
 public delegate void OnLocationChangedEvent();
 
 [Serializable]
@@ -41,15 +39,12 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
     public bool IsPaused;
 
     public BuildingCraftingMgr CraftingMgr;
+    public BuildingConstructionMgr ConstructionMgr;
 
     [SerializeField] public LocationComponent Location { get; set; }
     [SerializeField] public OccupantMgrComponent OccupantMgr { get; set; }
 
     [NonSerialized] public OnLocationChangedEvent OnLocationChanged;
-
-    // public ConstructionState ConstructionState;
-    // public float PercentBuilt; 
-    // public bool IsConstructed => !(Defn.CanBeConstructed) || (ConstructionState == ConstructionState.FullyConstructed);
 
     public List<NeedData> Needs = new();
 
@@ -83,9 +78,6 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
 
     // TODO: Track this in building instead of recalculating
     public int NumWorkers => Town.TownWorkerMgr.NumBuildingWorkers(this);
-
-    // For easy tracking
-    // public List<NeedData> ConstructionNeeds = new();
 
     // If this building can craft items or sell items, then ItemNeeds contains the priority of
     // how much we need each of those items.  priority is dependent on how many are in storage.
@@ -123,13 +115,14 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
         if (Defn.WorkersCanLiveHere)
             OccupantMgr = new(this);
 
+        CraftingMgr = new(this);
+        ConstructionMgr = new(this);
+
         if (Defn.ResourcesCanBeGatheredFromHere)
         {
             for (int i = 0; i < Defn.GatheringSpots.Count; i++)
                 GatheringSpots.Add(new(this, i));
         }
-
-        CraftingMgr = new(this);
 
         if (Defn.WorkersCanRestHere)
         {
@@ -148,14 +141,6 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
             foreach (var pile in area.StoragePiles)
                 StorageSpots.AddRange(pile.StorageSpots);
 
-        // Add need for construction and materials if the building needs to be constructed
-        // if (!IsConstructed)
-        // {
-        //     ConstructionNeeds.Add(new NeedData(this, NeedType.ConstructionWorker, null, Defn.NumConstructorSpots));
-        //     foreach (var resource in Defn.ResourcesNeededForConstruction)
-        //         ConstructionNeeds.Add(new NeedData(this, NeedType.CraftingOrConstructionMaterial, resource));
-        //     Needs.AddRange(ConstructionNeeds);
-        // }
 
         // Resources should generally only be gathered when there's a need for them e.g. crafting; however we also
         // want a persistent low-priority need for resource gathering so that it's done if nothing else is pending
