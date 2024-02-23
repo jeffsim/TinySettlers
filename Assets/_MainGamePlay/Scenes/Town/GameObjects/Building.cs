@@ -54,7 +54,7 @@ public class Building : MonoBehaviour
             {
                 var spot = Instantiate(scene.CraftingSpotPrefab);
                 spot.transform.SetParent(transform, false);
-                spot.Initialize(Data.CraftingSpots[i], i, this, scene);
+                spot.Initialize(Data.CraftingMgr.CraftingSpots[i], i, this, scene);
             }
 
         if (Data.Defn.WorkersCanRestHere)

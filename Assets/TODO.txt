@@ -23,7 +23,6 @@ Add House
   - Workers autoassign to house.  goes there when sleepy or hungry
 
 * Add Building.IsActive - set to false if destroyed, paused, or under construciton.
-    - create ActiveBuildings in TownData and use that everywhere instead of Buildings; remove checks
 
 -----------
 * Get rid of storagespot and repace with MultipleItemContainer in storagepile

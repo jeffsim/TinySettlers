@@ -74,7 +74,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
             fillAllTownStorageWithItem("plank");
 
         var newTask = getWorkerCurrentTaskAsType<Task_CraftItem>(worker);
-        CraftingSpotData reservedCraftingSpot = buildingWorker.CraftingSpots[0];
+        CraftingSpotData reservedCraftingSpot = buildingWorker.CraftingMgr.CraftingSpots[0];
         StorageSpotData resourceSpot1 = (StorageSpotData)newTask.ReservedSpots[0];
         StorageSpotData resourceSpot2 = (StorageSpotData)newTask.ReservedSpots[1];
         var origResource1 = resourceSpot1.ItemContainer.Item;

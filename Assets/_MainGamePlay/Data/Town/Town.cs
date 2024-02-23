@@ -34,7 +34,6 @@ public class TownData : BaseData
     public BuildingData Camp;
     public List<TileData> Tiles = new();
     public List<BuildingData> AllBuildings = new();
-    public List<BuildingData> ActiveBuildings = new();
     public List<ItemData> ItemsOnGround = new();
     public List<NeedData> otherTownNeeds = new();
 

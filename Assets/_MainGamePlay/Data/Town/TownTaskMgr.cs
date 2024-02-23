@@ -226,7 +226,7 @@ public class TownTaskMgr
 
         if (craftingBuilding.IsPaused || craftingBuilding.NumWorkers == 0) return;
 
-        var craftingSpot = craftingBuilding.GetAvailableCraftingSpot();
+        var craftingSpot = craftingBuilding.CraftingMgr.GetAvailableCraftingSpot();
         if (craftingSpot == null) return; // No crafting spot available
 
         // =====================================================================================

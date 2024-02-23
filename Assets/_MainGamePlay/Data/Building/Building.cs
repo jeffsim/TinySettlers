@@ -40,6 +40,8 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
 
     public bool IsPaused;
 
+    public BuildingCraftingMgr CraftingMgr;
+
     [SerializeField] public LocationComponent Location { get; set; }
     [SerializeField] public OccupantMgrComponent OccupantMgr { get; set; }
 
@@ -52,7 +54,6 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
     public List<NeedData> Needs = new();
 
     public List<GatheringSpotData> GatheringSpots = new();
-    public List<CraftingSpotData> CraftingSpots = new();
     public List<SleepingSpotData> SleepingSpots = new();
 
     // Storage related fields
@@ -79,21 +80,6 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
 
     // storage
     public int NumReservedStorageSpots => StorageAreas.Sum(area => area.NumReservedSpots);
-
-
-    // Crafting fields
-    public int NumReservedCraftingSpots
-    {
-        get
-        {
-            // TODO (PERF): Cache
-            int count = 0;
-            foreach (var spot in CraftingSpots) if (spot.Reservation.IsReserved) count++;
-            return count;
-        }
-    }
-    public int NumAvailableCraftingSpots => Defn.CraftingSpots.Count - NumReservedCraftingSpots;
-    public bool HasAvailableCraftingSpot => NumAvailableCraftingSpots > 0;
 
     // TODO: Track this in building instead of recalculating
     public int NumWorkers => Town.TownWorkerMgr.NumBuildingWorkers(this);
@@ -143,11 +129,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
                 GatheringSpots.Add(new(this, i));
         }
 
-        if (Defn.CanCraft)
-        {
-            for (int i = 0; i < Defn.CraftingSpots.Count; i++)
-                CraftingSpots.Add(new(this, i));
-        }
+        CraftingMgr = new(this);
 
         if (Defn.WorkersCanRestHere)
         {
@@ -188,23 +170,6 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
         {
             ClearOutStorageNeed = new NeedData(this, NeedType.ClearStorage) { NeedCoreType = NeedCoreType.Building };
             Needs.Add(ClearOutStorageNeed);
-        }
-
-        if (Defn.CanCraft)
-        {
-            // Create needs for all craftables; TBD if priorities are set assuming all are crafted, or if only some are prioritized
-            // based on AI (ala Settlers) or human selection.
-            foreach (var item in Defn.CraftableItems)
-            {
-                // Add Need for "I need to craft (if resources are in room)"
-                Needs.Add(new NeedData(this, NeedType.CraftGood, item) { NeedCoreType = NeedCoreType.Building });
-
-                // Add Need for "I need resources to craft"
-                // TODO: If two craftable items use the same resource, then we'll have two needs for that resource.  sum up counts
-                foreach (var resource in item.ResourcesNeededForCrafting)
-                    ItemNeeds.Add(new NeedData(this, NeedType.CraftingOrConstructionMaterial, resource.Item, resource.Count));
-            }
-            Needs.AddRange(ItemNeeds);
         }
 
         if (Defn.CanSellGoods)
@@ -463,11 +428,9 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
         return loc.GetClosest(GatheringSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.HasItem && spot.ItemContainer.Item.DefnId == itemDefn.Id);
     }
 
-    public CraftingSpotData ReserveCraftingSpot(WorkerData worker) => worker.ReserveFirstReservable(CraftingSpots);
     public StorageSpotData ReserveStorageSpot(WorkerData worker) => worker.ReserveFirstReservable(StorageSpots);
     public GatheringSpotData ReserveGatheringSpot(WorkerData worker) => worker.ReserveFirstReservable(GatheringSpots);
 
-    public void UnreserveCraftingSpot(WorkerData worker) => worker.UnreserveFirstReservedByWorker(CraftingSpots);
     public void UnreserveStorageSpot(WorkerData worker) => worker.UnreserveFirstReservedByWorker(StorageSpots);
     public void UnreserveGatheringSpot(WorkerData worker) => worker.UnreserveFirstReservedByWorker(GatheringSpots);
 
@@ -510,9 +473,9 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
         OccupantMgr?.EvictAllOccupants();
         foreach (var need in Needs) need.Cancel();
         foreach (var worker in Town.TownWorkerMgr.Workers) worker.OnBuildingDestroyed(this);
-        foreach (var spot in CraftingSpots) spot.OnBuildingDestroyed();
         foreach (var spot in GatheringSpots) spot.OnBuildingDestroyed();
         foreach (var area in StorageAreas) area.OnBuildingDestroyed();
+        CraftingMgr.Destroy();
     }
 
     public void MoveTo(Vector3 worldLoc)
@@ -550,9 +513,9 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
     {
         // TODO: UGH
         foreach (var area in StorageAreas) area.UpdateWorldLoc();
-        foreach (var spot in CraftingSpots) spot.UpdateWorldLoc();
         foreach (var spot in GatheringSpots) spot.UpdateWorldLoc();
         foreach (var spot in SleepingSpots) spot.UpdateWorldLoc();
+        CraftingMgr.UpdateWorldLoc();
     }
 
     public StorageSpotData GetFirstStorageSpotWithUnreservedItemToRemove()
@@ -598,14 +561,6 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
             if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
                 spots.Add(spot);
         return spots;
-    }
-
-    public CraftingSpotData GetAvailableCraftingSpot()
-    {
-        foreach (var spot in CraftingSpots)
-            if (!spot.Reservation.IsReserved)
-                return spot;
-        return null;
     }
 
     public void TogglePaused()
