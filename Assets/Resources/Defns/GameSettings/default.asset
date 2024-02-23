@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: default
   m_EditorClassIdentifier: 
   Id: default
-  UseOrthographicCamera: 0
+  UseOrthographicCamera: 1
   Debug_StartingOrthoCameraPosition: {x: 13.518712, y: 13.500004, z: -1.1963816}
   Debug_StartingOrthoCameraRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
   Debug_StartingOrthoCameraZoom: 32.5
@@ -30,6 +30,6 @@ MonoBehaviour:
   ItemSpotsY: 0.5
   StorageAreaY: 0.5
   WorkerY: -0.5
-  DraggedBuildingY: -0.75
+  DraggedBuildingY: 0.5
   ItemCarryY: 0
   ItemDropY: -1.3
