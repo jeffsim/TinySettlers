@@ -75,8 +75,8 @@ public class TownTaskMgr
             // they picked it up but haven't yet been assigned a new task to bring it anywhere.  In this case, they have already
             // reserved a storage spot for the item, but we'll first look around to see if any building needs the item.  If so, 
             // we'll assign the worker to that building.  If not, we'll deliver the item to the reserved storage spot.
-            NeedData highestNeed = GetHighestUnmetNeedForItemInBuildingWithAvailableStorage(worker.Hands.Item.DefnId);
-            IItemSpotInBuilding spotToReserve = null;
+            NeedData highestNeed = GetHighestUnmetNeedForItemInBuildingWithAvailableStorage(worker.Hands.FirstItem.DefnId);
+            IContainerInBuilding spotToReserve = null;
             if (highestNeed != null)
             {
                 // found a building that needs the item and can store it.  Swap out the storage spot reserved for the item with the building's storage spot

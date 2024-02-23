@@ -39,7 +39,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
         // Create the worker and wait until they get to the to-be-tested subtask
         var itemDefn = GameDefns.Instance.ItemDefns["wood"];
         var spotWithWood = buildingWithItem.GetClosestUnreservedStorageSpotWithItem(worker.Location, itemDefn);
-        var itemToBePickedUp = spotWithWood.ItemContainer.Item;
+        var itemToBePickedUp = spotWithWood.Container.FirstItem;
         var originalSpotWithItem = getStorageSpotInBuildingWithItem(buildingWithItem, itemToBePickedUp);
         var workerOriginalAssignedBuilding = worker.Assignable.AssignedTo;
 

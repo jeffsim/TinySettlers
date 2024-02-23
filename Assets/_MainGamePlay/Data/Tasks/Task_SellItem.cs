@@ -7,9 +7,9 @@ public class Task_SellItem : Task
     public override string ToString() => $"Sell item {GetTaskItem()}";
     public override TaskType Type => TaskType.SellItem;
 
-    [SerializeField] public IItemSpotInBuilding SpotWithItemToSell;
+    [SerializeField] public IContainerInBuilding SpotWithItemToSell;
 
-    public Task_SellItem(WorkerData worker, NeedData needData, IItemSpotInBuilding spotWithItemToSell) : base(worker, needData)
+    public Task_SellItem(WorkerData worker, NeedData needData, IContainerInBuilding spotWithItemToSell) : base(worker, needData)
     {
         SpotWithItemToSell = ReserveSpotOnStart(spotWithItemToSell);
     }

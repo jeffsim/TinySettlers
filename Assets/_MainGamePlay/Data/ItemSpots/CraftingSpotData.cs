@@ -2,15 +2,15 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class CraftingSpotData : BaseData, ILocation, IReservable, IMultipleItemSpotInBuilding
+public class CraftingSpotData : BaseData, ILocation, IReservable, IContainerInBuilding
 {
-    public override string ToString() => $"Crafting {InstanceId}: {ItemsContainer} {Reservable}";
+    public override string ToString() => $"Crafting {InstanceId}: {Container} {Reservable}";
 
     [SerializeField] public BuildingData Building { get; set; }
 
     [SerializeField] public Location Location { get; set; } = new();
     [SerializeField] public Reservable Reservable { get; set; }
-    [SerializeField] public MultipleContainable ItemsContainer { get; set; } = new();
+    [SerializeField] public Container Container { get; set; } = new();
     public Vector3 LocOffset;
 
     public CraftingSpotData(BuildingData building, int index)
@@ -29,8 +29,8 @@ public class CraftingSpotData : BaseData, ILocation, IReservable, IMultipleItemS
     internal void OnBuildingDestroyed()
     {
         // drop crafting resources onto the ground
-        foreach (var item in ItemsContainer.Items)
+        foreach (var item in Container.Items)
             Building.Town.AddItemToGround(item, Location);
-        ItemsContainer.ClearItems();
+        Container.ClearItems();
     }
 }

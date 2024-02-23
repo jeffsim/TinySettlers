@@ -11,7 +11,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
 
         waitUntilTask(worker, TaskType.GatherResource);
         var task = worker.AI.CurrentTask as Task_GatherResource;
-        var item = task.SpotToGatherFrom.ItemContainer.Item;
+        var item = task.SpotToGatherFrom.Container.FirstItem;
         var storageSpot = task.SpotToStoreItemIn;
         waitUntilTaskDone(worker);
         

@@ -2,9 +2,9 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class GatheringSpotData : BaseData, ILocation, IReservable, IItemSpotInBuilding
+public class GatheringSpotData : BaseData, ILocation, IReservable, IContainerInBuilding
 {
-    public override string ToString() => $"Gathering {InstanceId}: {ItemContainer} {Reservable}";
+    public override string ToString() => $"Gathering {InstanceId}: {Container} {Reservable}";
     [SerializeField] public BuildingData Building { get; set; }
 
     public string ItemGrownInSpotDefnId;
@@ -12,7 +12,7 @@ public class GatheringSpotData : BaseData, ILocation, IReservable, IItemSpotInBu
 
     [SerializeField] public Location Location { get; set; } = new();
     [SerializeField] public Reservable Reservable { get; set; }
-    [SerializeField] public SingleContainable ItemContainer { get; set; } = new();
+    [SerializeField] public Container Container { get; set; } = new();
     public Vector3 LocOffset;
 
     public GatheringSpotData(BuildingData building, int index)
@@ -36,7 +36,7 @@ public class GatheringSpotData : BaseData, ILocation, IReservable, IItemSpotInBu
     public void Update()
     {
         // If there's already an item in the spot then we can't further grow until it's reaped
-        if (ItemContainer.Item != null) return;
+        if (Container.HasItem) return;
         Debug.Assert(ItemGrownInSpotDefnId != null, "ItemGrownInSpotDefnId is null");
 
         // Grow the item in spot; when fully grown, create an item so that it needs to be reaped
@@ -45,13 +45,13 @@ public class GatheringSpotData : BaseData, ILocation, IReservable, IItemSpotInBu
         if (PercentGrown >= 1)
         {
             PercentGrown = 0;
-            ItemContainer.SetItem(new ItemData() { DefnId = itemDefn.Id });
+            Container.AddItem(new ItemData() { DefnId = itemDefn.Id });
         }
     }
 
     internal void OnBuildingDestroyed()
     {
-        if (!ItemContainer.IsEmpty)
-            Building.Town.AddItemToGround(ItemContainer.ClearItem(), Location);
+        if (!Container.IsEmpty)
+            Building.Town.AddItemToGround(Container.ClearItems(), Location);
     }
 }

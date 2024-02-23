@@ -10,7 +10,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         var storage = StorageRoom;
         var worker = getAssignedWorker(storage);
         var originalStorageSpot = WoodcuttersHut.GetStorageSpotWithUnreservedItem(GameDefns.Instance.ItemDefns["plank"]);
-        var itemToStore = originalStorageSpot.ItemContainer.Item;
+        var itemToStore = originalStorageSpot.Container.FirstItem;
 
         waitUntilTask(worker, TaskType.TransportItemFromSpotToSpot);
         

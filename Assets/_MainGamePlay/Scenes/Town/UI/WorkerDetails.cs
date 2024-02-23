@@ -29,7 +29,7 @@ public class WorkerDetails : MonoBehaviour
         Energy.text = $"Energy: {worker.Data.Exhaustible.EnergyLevel*100:F1}%";
         Task.text = $"Task: {worker.Data.AI.CurrentTask}\n{worker.Data.AI.CurrentTask.CurSubTask}";
         if (worker.Data.Hands.HasItem)
-            Items.text = "In hand: " + worker.Data.Hands.Item + "\n";
+            Items.text = "In hand: " + worker.Data.Hands.FirstItem + "\n";
         else
             Items.text = "empty handed";
     }

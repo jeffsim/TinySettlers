@@ -2,15 +2,15 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class StorageSpotData : BaseData, ILocation, IReservable, IItemSpotInBuilding
+public class StorageSpotData : BaseData, ILocation, IReservable, IContainerInBuilding
 {
-    public override string ToString() => $"Storage {InstanceId}: {ItemContainer} {Reservable}";
+    public override string ToString() => $"Storage {InstanceId}: {Container} {Reservable}";
     public int IndexInStoragePile;
 
     [SerializeField] public BuildingData Building { get; set; }
     [SerializeField] public Location Location { get; set; } = new();
     [SerializeField] public Reservable Reservable { get; set; }
-    [SerializeField] public SingleContainable ItemContainer { get; set; } = new();
+    [SerializeField] public Container Container { get; set; } = new();
 
     public StorageSpotData(StoragePileData pile, int pileIndex)
     {
@@ -21,7 +21,7 @@ public class StorageSpotData : BaseData, ILocation, IReservable, IItemSpotInBuil
 
     internal void OnBuildingDestroyed()
     {
-        if (!ItemContainer.IsEmpty)
-            Building.Town.AddItemToGround(ItemContainer.ClearItem(), Location);
+        if (!Container.IsEmpty)
+            Building.Town.AddItemToGround(Container.ClearItems(), Location);
     }
 }

@@ -1,7 +1,6 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class SleepingSpot : MonoBehaviour
 {
@@ -53,37 +52,5 @@ public class SleepingSpot : MonoBehaviour
             WorkerInSpot.text = "E";
             WorkerInSpot.color = Color.white;
         }
-
-        // if (spot.IsEmpty)
-        //     GetComponentInChildren<Renderer>().material.color = Color.black;
-        // else
-        // {
-        //     GetComponentInChildren<Renderer>().material.color = spot.ItemInStorage.Defn.Color;
-        //     name = "Storage " + index + " - " + spot.ItemInStorage.Defn.FriendlyName;
-        // }
-
-        // ReservedIndicator.SetActive(Data.Reservation.IsReserved);
-
-        // // highlight this spot if this Sleeping spot is reserved by the currently selected worker
-        // bool showHighlight = false;
-        // if (scene.WorkerDetails.gameObject.activeSelf && scene.WorkerDetails.worker != null && scene.WorkerDetails.worker.Data.AI.CurrentTask.HasReservedSpot(Data))
-        //     showHighlight = true;
-        // Highlight.SetActive(showHighlight);
-
-        // var scaleSmall = new Vector3(0, 0, 0);
-        // var scaleNormal = new Vector3(1, 1, 1);
-        // var ItemInSpotRectTransform = ItemInSpot.GetComponent<RectTransform>();
-        // if (Data.ItemContainer.Item != null)
-        // {
-        //     ItemInSpot.text = Data.ItemContainer.Item.Defn.Id.Substring(0, 2);
-        //     ItemInSpot.color = Color.green;
-        //     ItemInSpotRectTransform.localScale = scaleNormal;
-        // }
-        // else if (Data.ItemGrownInSpotDefnId != null)
-        // {
-        //     ItemInSpot.text = Data.ItemGrownInSpotDefnId.Substring(0, 2);
-        //     ItemInSpot.color = Color.Lerp(Color.red, Color.green, Data.PercentGrown);
-        //     ItemInSpotRectTransform.localScale = Vector3.Lerp(scaleSmall, scaleNormal, Data.PercentGrown);
-        // }
     }
 }

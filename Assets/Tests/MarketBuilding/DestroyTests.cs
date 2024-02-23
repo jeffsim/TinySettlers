@@ -40,7 +40,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
 
         var itemDefn = GameDefns.Instance.ItemDefns["wood"];
         var spotWithWood = buildingWithItem.GetClosestUnreservedStorageSpotWithItem(worker.Location, itemDefn);
-        var itemToBePickedUp = spotWithWood.ItemContainer.Item;
+        var itemToBePickedUp = spotWithWood.Container.FirstItem;
         var originalSpotWithItem = getStorageSpotInBuildingWithItem(buildingWithItem, itemToBePickedUp);
         var destroyedBuildingWithItemInIt = buildingWithItem == buildingToDestroy;
         var destroyedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToDestroy;

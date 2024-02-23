@@ -9,12 +9,12 @@ public partial class MarketTests : MovePauseDestroyTestBase
         LoadTestTown("market_MovePauseDestroy");
 
         var worker = Town.CreateWorkerInBuilding(Market);
-        Market.StorageSpots[0].ItemContainer.Item = CreateItem("wood");
+        Market.StorageSpots[0].Container.AddItem(CreateItem("wood"));
 
         var origGold = Town.Gold;
 
         waitUntilTask(worker, TaskType.SellItem);
-        var item = (worker.AI.CurrentTask as Task_SellItem).SpotWithItemToSell.ItemContainer.Item;
+        var item = (worker.AI.CurrentTask as Task_SellItem).SpotWithItemToSell.Container.FirstItem;
         waitUntilTaskDone(worker);
 
         verify_spotIsUnreserved( Market.StorageSpots[0]);

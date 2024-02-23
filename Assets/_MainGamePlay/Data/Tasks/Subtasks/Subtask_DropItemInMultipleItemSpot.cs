@@ -3,10 +3,10 @@ using UnityEngine;
 public class Subtask_DropItemInMultipleItemSpot : Subtask
 {
     protected override float RunTime => 0.5f;
-    [SerializeField] IMultipleItemSpotInBuilding ItemsSpot;
-    public override ItemData GetTaskItem() => Task.Worker.Hands.Item;
+    [SerializeField] IContainerInBuilding ItemsSpot;
+    public override ItemData GetTaskItem() => Task.Worker.Hands.FirstItem;
 
-    public Subtask_DropItemInMultipleItemSpot(Task parentTask, IMultipleItemSpotInBuilding itemSpot) : base(parentTask)
+    public Subtask_DropItemInMultipleItemSpot(Task parentTask, IContainerInBuilding itemSpot) : base(parentTask)
     {
         ItemsSpot = itemSpot;
         UpdateWorkerLocWhenBuildingMoves(ItemsSpot.Building);

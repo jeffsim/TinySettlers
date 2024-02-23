@@ -7,8 +7,8 @@ public class Task_TransportItemFromSpotToSpot : Task
     public override string ToString() => $"Pickup item from {SpotWithItemToPickup}";
     public override TaskType Type => TaskType.TransportItemFromSpotToSpot;
 
-    [SerializeField] public IItemSpotInBuilding SpotWithItemToPickup;
-    [SerializeField] public IItemSpotInBuilding SpotToStoreItemIn;
+    [SerializeField] public IContainerInBuilding SpotWithItemToPickup;
+    [SerializeField] public IContainerInBuilding SpotToStoreItemIn;
 
     bool IsWalkingToSpotWithItem => SubtaskIndex == 0;
     bool IsPickingUpItemInSpot => SubtaskIndex == 1;
@@ -16,7 +16,7 @@ public class Task_TransportItemFromSpotToSpot : Task
     bool IsDroppingItemInSpot => SubtaskIndex == 4;
     bool IsWalking => SubtaskIndex == 0 || SubtaskIndex == 3;
 
-    public Task_TransportItemFromSpotToSpot(WorkerData worker, NeedData needData, IItemSpotInBuilding spotWithItemToPickup, IItemSpotInBuilding reservedSpotToStoreItemIn) :
+    public Task_TransportItemFromSpotToSpot(WorkerData worker, NeedData needData, IContainerInBuilding spotWithItemToPickup, IContainerInBuilding reservedSpotToStoreItemIn) :
         base(worker, needData)
     {
         SpotWithItemToPickup = ReserveSpotOnStart(spotWithItemToPickup);

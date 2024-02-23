@@ -57,7 +57,7 @@ public class Task_CraftItem : Task
         int craftingSubtaskIndex = numResourcesForCrafting * 5;
         if (SubtaskIndex < craftingSubtaskIndex)
         {
-            var spotWithResource = (IItemSpotInBuilding)CraftingResourceSpots[SubtaskIndex / 5];
+            var spotWithResource = (IContainerInBuilding)CraftingResourceSpots[SubtaskIndex / 5];
             switch (SubtaskIndex % 5)
             {
                 case 0: return new Subtask_WalkToItemSpot(this, spotWithResource);
@@ -84,7 +84,7 @@ public class Task_CraftItem : Task
         base.AllSubtasksComplete();
     }
 
-    IItemSpotInBuilding ReserveCraftingResourceStorageSpotForItemOnStart(ItemDefn itemDefn, Location location)
+    IContainerInBuilding ReserveCraftingResourceStorageSpotForItemOnStart(ItemDefn itemDefn, Location location)
     {
         var spot = Worker.Assignable.AssignedTo.GetClosestUnreservedStorageSpotWithItemIgnoreList(location, itemDefn, CraftingResourceSpots);
         Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.Assignable.AssignedTo.DefnId);

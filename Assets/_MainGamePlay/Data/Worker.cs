@@ -13,19 +13,19 @@ public class WorkerData : BaseData, ILocation, IAssignable, IOccupier, IExhausti
     public string DefnId;
 
     [SerializeField] public Location Location { get; set; }
-    [SerializeField] public SingleContainable Hands { get; set; }
+    [SerializeField] public Container Hands { get; set; }
     [SerializeField] public AIComponent AI { get; set; }
     [SerializeField] public Assignable Assignable { get; set; }
     [SerializeField] public Occupier Occupier { get; set; }
     [SerializeField] public Exhaustible Exhaustible { get; set; }
 
-    internal void DropItemOnGround() => Town.AddItemToGround(Hands.ClearItem(), Location);
+    internal void DropItemOnGround() => Town.AddItemToGround(Hands.ClearItems(), Location);
 
     public float EnergyLevel;
     public TownData Town;
 
     public NeedData OriginalPickupItemNeed;
-    
+
     public WorkerData(WorkerDefn defn, BuildingData buildingToStartIn)
     {
         DefnId = defn.Id;
@@ -81,26 +81,17 @@ public class WorkerData : BaseData, ILocation, IAssignable, IOccupier, IExhausti
         // todo: can be modified via e.g. research, town upgrades, ...
         var distanceMovedPerSecond = 5f;
         if (Hands.HasItem)
-            distanceMovedPerSecond *= Hands.Item.Defn.CarryingSpeedModifier;
+            distanceMovedPerSecond *= Hands.FirstItem.Defn.CarryingSpeedModifier;
         return distanceMovedPerSecond;
     }
 
-    internal void DropItemInHandInSpot(IItemSpotInBuilding spot)
+    internal void DropItemInHandInSpot(IContainerInBuilding spot)
     {
         Debug.Assert(Hands.HasItem, "No ItemInHand");
 
         // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
-        spot.ItemContainer.SetItem(Hands.ClearItem());
+        spot.Container.AddItem(Hands.ClearItems());
         // spot.Reservation.Unreserve();
-    }
-
-    internal void DropItemInHandInSpot(IMultipleItemSpotInBuilding spot)
-    {
-        Debug.Assert(Hands.HasItem, "No ItemInHand");
-
-        // This intentionally does not unreserve the reserved storagespot; caller is responsible for doing that
-        spot.ItemsContainer.AddItem(Hands.ClearItem());
-        //      spot.Reservation.Unreserve();
     }
 
     // TODO: Rather than tie following to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when

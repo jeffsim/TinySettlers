@@ -89,15 +89,15 @@ public class Worker : MonoBehaviour
         ItemData itemToShow = null;
         switch (Data.AI.CurrentTask.CurSubTask)
         {
-            case BaseSubtask_Moving _: itemToShow = Data.Hands.HasItem ? Data.Hands.Item : null; break;
-            case Subtask_DropItemInItemSpot _: itemToShow = Data.Hands.Item; break;
-            case Subtask_DropItemInMultipleItemSpot _: itemToShow = Data.Hands.Item; break;
+            case BaseSubtask_Moving _: itemToShow = Data.Hands.HasItem ? Data.Hands.FirstItem : null; break;
+            case Subtask_DropItemInItemSpot _: itemToShow = Data.Hands.FirstItem; break;
+            case Subtask_DropItemInMultipleItemSpot _: itemToShow = Data.Hands.FirstItem; break;
             case Subtask_PickupItemFromItemSpot _: itemToShow = Data.AI.CurrentTask.GetTaskItem(); break;
             case Subtask_PickupItemFromGround _: itemToShow = Data.AI.CurrentTask.GetTaskItem(); break;
             case Subtask_ReapItem _: itemToShow = Data.AI.CurrentTask.GetTaskItem(); break;
-            case Subtask_SellItemInHands _: itemToShow = Data.Hands.Item; break;
+            case Subtask_SellItemInHands _: itemToShow = Data.Hands.FirstItem; break;
             case Subtask_CraftItem _: itemToShow = Data.AI.CurrentTask.GetTaskItem(); break;
-            case Subtask_Wait _: itemToShow = Data.Hands.Item; break;
+            case Subtask_Wait _: itemToShow = Data.Hands.FirstItem; break;
 
             default:
                 // Debug.Assert(false, "Unhandled subtask " + Data.AI.CurrentTask.CurSubTask);

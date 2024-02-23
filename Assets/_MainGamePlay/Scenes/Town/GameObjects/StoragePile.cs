@@ -41,16 +41,16 @@ public class StoragePile : MonoBehaviour
         if (Data.StorageSpots.Count > 1)
             Count.text = Data.NumItemsInPile.ToString();
         else
-            Count.text = Data.StorageSpots[0].ItemContainer.HasItem ? Data.StorageSpots[0].ItemContainer.Item.DefnId[0..2] : "";
+            Count.text = Data.StorageSpots[0].Container.HasItem ? Data.StorageSpots[0].Container.FirstItem.DefnId[0..2] : "";
         // Set color to first item, assumes all are same itemtype.  
         // TODO: render as 'pile'; e.g. render 3x3 smaller items.
         bool isAnySpotReserved = Data.StorageSpots.Any(s => s.Reservable.IsReserved);
         if (Data.NumItemsInPile > 0)
         {
-            var firstSpotWithItem = Data.StorageSpots.FirstOrDefault(s => s.ItemContainer.HasItem);
+            var firstSpotWithItem = Data.StorageSpots.FirstOrDefault(s => s.Container.HasItem);
             Debug.Assert(firstSpotWithItem != null);
-            GetComponentInChildren<Renderer>().material.color = firstSpotWithItem.ItemContainer.Item.Defn.Color;
-            name = "Storage " + Data.IndexInStorageArea + " - " + firstSpotWithItem.ItemContainer.Item.Defn.FriendlyName;
+            GetComponentInChildren<Renderer>().material.color = firstSpotWithItem.Container.FirstItem.Defn.Color;
+            name = "Storage " + Data.IndexInStorageArea + " - " + firstSpotWithItem.Container.FirstItem.Defn.FriendlyName;
         }
         else
             GetComponentInChildren<Renderer>().material.color = Color.black;

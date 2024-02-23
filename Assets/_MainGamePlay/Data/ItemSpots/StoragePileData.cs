@@ -15,9 +15,9 @@ public class StoragePileData : BaseData
     public List<StorageSpotData> StorageSpots = new();
     public bool HasAvailableSpot => NumAvailableSpots > 0;
     public int NumStorageSpots => StorageSpots.Count;
-    public int NumAvailableSpots => StorageSpots.Count(spot => spot.ItemContainer.IsEmpty && !spot.Reservable.IsReserved);
+    public int NumAvailableSpots => StorageSpots.Count(spot => spot.Container.IsEmpty && !spot.Reservable.IsReserved);
     public int NumReservedSpots => StorageSpots.Count(spot => spot.Reservable.IsReserved);
-    public int NumItemsInPile => StorageSpots.Count(spot => spot.ItemContainer.HasItem);
+    public int NumItemsInPile => StorageSpots.Count(spot => spot.Container.HasItem);
 
     public Vector3 PileLocOffset;
     [SerializeReference] StorageAreaData Area;
@@ -41,10 +41,10 @@ public class StoragePileData : BaseData
             spot.Location.SetWorldLoc(Area.Location.WorldLoc + PileLocOffset);
     }
 
-    public int NumItemsInStorage() => StorageSpots.Count(spot => spot.ItemContainer.HasItem);
-    public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StorageSpots.Count(spot => spot.ItemContainer.ContainsItem(itemDefn));
-    public int NumUnreservedItemsInStorage() => StorageSpots.Count(spot => !spot.Reservable.IsReserved && !spot.ItemContainer.IsEmpty);
-    public int NumUnreservedItemsOfTypeInStorage(ItemDefn itemDefn) => StorageSpots.Count(spot => !spot.Reservable.IsReserved && spot.ItemContainer.ContainsItem(itemDefn));
+    public int NumItemsInStorage() => StorageSpots.Count(spot => spot.Container.HasItem);
+    public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StorageSpots.Count(spot => spot.Container.ContainsItem(itemDefn));
+    public int NumUnreservedItemsInStorage() => StorageSpots.Count(spot => !spot.Reservable.IsReserved && !spot.Container.IsEmpty);
+    public int NumUnreservedItemsOfTypeInStorage(ItemDefn itemDefn) => StorageSpots.Count(spot => !spot.Reservable.IsReserved && spot.Container.ContainsItem(itemDefn));
 
     internal void OnBuildingDestroyed()
     {
@@ -55,11 +55,11 @@ public class StoragePileData : BaseData
     internal void Debug_RemoveAllItemsFromStorage()
     {
         foreach (var spot in StorageSpots)
-            if (!spot.ItemContainer.IsEmpty)
+            if (!spot.Container.IsEmpty)
             {
                 if (spot.Reservable.IsReserved)
                     spot.Reservable.ReservedBy.AI.CurrentTask.Abandon();
-                spot.ItemContainer.ClearItem();
+                spot.Container.ClearItems();
             }
     }
 }

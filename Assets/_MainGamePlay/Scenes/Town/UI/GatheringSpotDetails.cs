@@ -43,7 +43,7 @@ public class GatheringSpotDetails : MonoBehaviour
         foreach (var resource in spot.Data.Building.Defn.ResourcesThatCanBeGatheredFromHere)
             str += "\n    " + resource.Id;
 
-        if (spot.Data.ItemContainer.Item != null)
+        if (spot.Data.Container.FirstItem != null)
             str += " (grown)";
         else if (spot.Data.ItemGrownInSpotDefnId != null)
             str += " (" + (spot.Data.PercentGrown * 100).ToString("0.0")  + "% grown)";

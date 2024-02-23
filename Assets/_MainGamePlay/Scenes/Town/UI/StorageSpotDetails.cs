@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -31,26 +30,10 @@ public class StorageSpotDetails : MonoBehaviour
         Item.text = "";
         foreach (var spot in pile.Data.StorageSpots)
         {
-            if (spot.ItemContainer.HasItem)
-                Item.text += spot.InstanceId + " item: " + spot.ItemContainer.Item.DefnId + "\n";
+            if (spot.Container.HasItem)
+                Item.text += spot.InstanceId + " item: " + spot.Container.FirstItem.DefnId + "\n";
             if (spot.Reservable.IsReserved)
                 Item.text += spot.InstanceId + " reserved by: " + spot.Reservable.ReservedBy + "\n";
         }
-        // var str = "Item:\n";
-        // if (pile.Data.ItemContainer.Item != null)
-        //     str += pile.Data.ItemContainer.Item.DefnId;
-        // else
-        //     str += "empty";
-        // Item.text = str + "\n";
-
-        // if (pile.Data.Reservation.IsReserved)
-        // {
-        //     Reservation.text = "Reserved";
-        //     Reservation.text += "\n    By: " + pile.Data.Reservation.ReservedBy;
-        //     Reservation.text += "\n    Task: " + pile.Data.Reservation.ReservedBy.CurrentTask;
-        //     Reservation.text += "\n    Item: " + pile.Data.Reservation.ReservedBy.CurrentTask.GetTaskItem()?.FriendlyName;
-        // }
-        // else
-        //     Reservation.text = "Not reserved";
     }
 }

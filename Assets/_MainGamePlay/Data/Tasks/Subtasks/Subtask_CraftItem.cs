@@ -3,12 +3,12 @@ using UnityEngine;
 public class Subtask_CraftItem : Subtask
 {
     protected override float RunTime => 1;
-    [SerializeField] IMultipleItemSpotInBuilding ItemsSpot;
+    [SerializeField] IContainerInBuilding ItemsSpot;
     public override ItemData GetTaskItem() => CraftedItem;// GameDefns.Instance.ItemDefns[CraftingItemDefnId];
     public string CraftingItemDefnId;
     public ItemData CraftedItem;
 
-    public Subtask_CraftItem(Task parentTask, string craftingItemDefnId, IMultipleItemSpotInBuilding itemSpot) : base(parentTask)
+    public Subtask_CraftItem(Task parentTask, string craftingItemDefnId, IContainerInBuilding itemSpot) : base(parentTask)
     {
         ItemsSpot = itemSpot;
         CraftingItemDefnId = craftingItemDefnId;
@@ -18,9 +18,9 @@ public class Subtask_CraftItem : Subtask
 
     public override void SubtaskComplete()
     {
-        Task.Worker.Hands.SetItem(CraftedItem);
+        Task.Worker.Hands.AddItem(CraftedItem);
 
         // Consume the resources in the CraftingSpot
-        ItemsSpot.ItemsContainer.ClearItems();
+        ItemsSpot.Container.ClearItems();
     }
 }

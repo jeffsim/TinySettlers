@@ -213,7 +213,7 @@ public abstract class Task
     // ====================================================================================================================
     // Other functions
 
-    protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpot(IItemSpotInBuilding originalReservedSpot, Location closestLocation, bool updateMoveLoc)
+    protected IContainerInBuilding FindAndReserveNewOptimalStorageSpot(IContainerInBuilding originalReservedSpot, Location closestLocation, bool updateMoveLoc)
     {
         // Temporarily unreserve the spot so that it can be returned if closest
         var reservedBy = originalReservedSpot.Reservable.ReservedBy;
@@ -237,7 +237,7 @@ public abstract class Task
         return originalReservedSpot;
     }
 
-    protected IItemSpotInBuilding FindAndReserveOptimalStorageSpot(Location closestLocation, bool isCurrentMoveTarget)
+    protected IContainerInBuilding FindAndReserveOptimalStorageSpot(Location closestLocation, bool isCurrentMoveTarget)
     {
         var optimalSpot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
         if (optimalSpot == null)

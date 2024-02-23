@@ -5,12 +5,12 @@ public class Task_DeliverItemInHandToStorageSpot : Task
 {
     public override string ToString() => "Deliver item in hand to storage spot";
     public override TaskType Type => TaskType.DeliverItemInHandToStorageSpot;
-    public IItemSpotInBuilding SpotToStoreItemIn;
+    public IContainerInBuilding SpotToStoreItemIn;
 
     public bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 0;
     bool IsDroppingItemInSpot => SubtaskIndex == 1;
 
-    public Task_DeliverItemInHandToStorageSpot(WorkerData worker, NeedData need, IItemSpotInBuilding itemSpot) : base(worker, need)
+    public Task_DeliverItemInHandToStorageSpot(WorkerData worker, NeedData need, IContainerInBuilding itemSpot) : base(worker, need)
     {
         SpotToStoreItemIn = ReserveSpotOnStart(itemSpot);
     }

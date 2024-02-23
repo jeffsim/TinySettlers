@@ -80,7 +80,7 @@ public class TownData : BaseData
 
             foreach (var item in tbDefn.StartingItemsInBuilding)
                 for (int i = 0; i < item.Count; i++)
-                    building.GetEmptyStorageSpot().ItemContainer.SetItem(new ItemData() { DefnId = item.Item.Id });
+                    building.GetEmptyStorageSpot().Container.AddItem(new ItemData() { DefnId = item.Item.Id });
         }
         TownTaskMgr = new(this);
     }

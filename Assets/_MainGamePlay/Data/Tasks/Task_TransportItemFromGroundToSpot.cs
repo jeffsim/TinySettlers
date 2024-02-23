@@ -8,13 +8,13 @@ public class Task_TransportItemFromGroundToSpot : Task
     public override TaskType Type => TaskType.PickupItemFromGround;
 
     [SerializeField] public ItemData ItemToPickup;
-    [SerializeField] public IItemSpotInBuilding SpotToStoreItemIn;
+    [SerializeField] public IContainerInBuilding SpotToStoreItemIn;
 
     public bool IsWalkingToItemOnGround => SubtaskIndex == 0;
     public bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 2;
     bool IsDroppingItemInSpot => SubtaskIndex == 4;
 
-    public Task_TransportItemFromGroundToSpot(WorkerData worker, NeedData needData, IItemSpotInBuilding reservedSpotToStoreItemIn) : base(worker, needData)
+    public Task_TransportItemFromGroundToSpot(WorkerData worker, NeedData needData, IContainerInBuilding reservedSpotToStoreItemIn) : base(worker, needData)
     {
         ItemToPickup = Need.AbandonedItemToPickup;
         SpotToStoreItemIn = ReserveSpotOnStart(reservedSpotToStoreItemIn);

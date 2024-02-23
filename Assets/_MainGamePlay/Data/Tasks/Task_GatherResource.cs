@@ -7,14 +7,14 @@ public class Task_GatherResource : Task
     public override string ToString() => $"Gather resource from {SpotToGatherFrom}";
     public override TaskType Type => TaskType.GatherResource;
 
-    [SerializeField] public IItemSpotInBuilding SpotToGatherFrom;
-    [SerializeField] public IItemSpotInBuilding SpotToStoreItemIn;
+    [SerializeField] public IContainerInBuilding SpotToGatherFrom;
+    [SerializeField] public IContainerInBuilding SpotToStoreItemIn;
 
     public bool IsWalkingToSpotToGatherFrom => SubtaskIndex == 0;
     public bool IsWalkingToSpotToDropItemIn => SubtaskIndex == 4;
     public bool IsDroppingItemInSpot => SubtaskIndex == 5;
 
-    public Task_GatherResource(WorkerData worker, NeedData needData, IItemSpotInBuilding spotToGatherFrom, IItemSpotInBuilding spotToStoreItemIn) :
+    public Task_GatherResource(WorkerData worker, NeedData needData, IContainerInBuilding spotToGatherFrom, IContainerInBuilding spotToStoreItemIn) :
         base(worker, needData)
     {
         SpotToGatherFrom = ReserveSpotOnStart(spotToGatherFrom);

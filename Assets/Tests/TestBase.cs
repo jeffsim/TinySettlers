@@ -159,7 +159,7 @@ public abstract class TestBase
         Assert.AreEqual(item1, item2, $"{preface(message)} Items not equal - {item1} vs {item2}");
     }
 
-    public void verify_SpotsAreEqual(IItemSpotInBuilding spot1, IItemSpotInBuilding spot2, string message = "")
+    public void verify_SpotsAreEqual(IContainerInBuilding spot1, IContainerInBuilding spot2, string message = "")
     {
         Assert.AreEqual(spot1, spot2, $"{preface(message)} Spots not equal - {spot1} vs {spot2}");
     }
@@ -240,7 +240,7 @@ public abstract class TestBase
     {
         Assert.NotNull(worker);
         if (worker.Hands.HasItem)
-            Assert.AreEqual(itemDefnId, worker.Hands.Item.DefnId, $"{preface(message)} Expected item in hand to be '{itemDefnId}', but is '{worker.Hands.Item}'");
+            Assert.AreEqual(itemDefnId, worker.Hands.FirstItem.DefnId, $"{preface(message)} Expected item in hand to be '{itemDefnId}', but is '{worker.Hands.FirstItem}'");
         else
             Assert.AreEqual(itemDefnId, null, $"{preface(message)} Expected item in hand to be null, but is '{itemDefnId}'");
     }
@@ -250,12 +250,12 @@ public abstract class TestBase
     {
         Assert.NotNull(worker);
         if (worker.Hands.HasItem)
-            Assert.AreEqual(item, worker.Hands.Item, $"{preface(message)} Expected item in hand to be '{item}', but is '{worker.Hands.Item}'");
+            Assert.AreEqual(item, worker.Hands.FirstItem, $"{preface(message)} Expected item in hand to be '{item}', but is '{worker.Hands.FirstItem}'");
         else
             Assert.AreEqual(item, null, $"{preface(message)} Expected item in hand to be null, but is '{item}'");
     }
 
-    protected void verify_spotReservedByWorker(IItemSpotInBuilding spot, WorkerData worker, string message = "")
+    protected void verify_spotReservedByWorker(IContainerInBuilding spot, WorkerData worker, string message = "")
     {
         Assert.IsNotNull(spot, $"{preface(message)} null spot");
         Assert.IsNotNull(spot.Building, $"{preface(message)} null spot.Building");
@@ -268,7 +268,7 @@ public abstract class TestBase
         Assert.IsNull(spot.Reservable.ReservedBy, $"{preface(message)} Expected spot to be unreserved, but it is reserved by {spot.Reservable.ReservedBy}");
     }
 
-    protected void verify_spotIsReserved(IItemSpotInBuilding spot, string message = "")
+    protected void verify_spotIsReserved(IContainerInBuilding spot, string message = "")
     {
         Assert.IsNotNull(spot, $"{preface(message)} null spot");
         Assert.IsNotNull(spot.Reservable.ReservedBy, $"{preface(message)} Expected spot to be reserved, but it is not");
@@ -282,38 +282,38 @@ public abstract class TestBase
 
     protected void verify_ItemInStorageSpot(StorageSpotData spot, ItemData expectedItem, string message = "")
     {
-        var actualItem = spot.ItemContainer.Item;
+        var actualItem = spot.Container.FirstItem;
         Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected item in storage spot to be '{expectedItem}', but is '{actualItem}'");
     }
 
     protected void verify_ItemIsInCraftingSpot(CraftingSpotData spot, ItemData expectedItem, string message = "")
     {
-        var items = spot.ItemsContainer.Items;
+        var items = spot.Container.Items;
         if (expectedItem == null)
             Assert.AreEqual(0, items.Count, $"{preface(message)} Expected no items in crafting spot, but found {items.Count} items");
         else
             Assert.IsTrue(items.Contains(expectedItem), $"{preface(message)} Expected item in crafting spot to be '{expectedItem}', but is not in the list of items in the crafting spot");
     }
 
-    protected void verify_ItemCountInCraftingSpot(IMultipleItemSpotInBuilding spot, int expectedCount, string message = "")
+    protected void verify_ItemCountInCraftingSpot(IContainerInBuilding spot, int expectedCount, string message = "")
     {
-        var actualCount = spot.ItemsContainer.Items.Count;
+        var actualCount = spot.Container.Items.Count;
         Assert.AreEqual(expectedCount, actualCount, $"{preface(message)} Expected {expectedCount} item(s) in crafting spot [{spot}], but it actually has {actualCount}");
     }
 
     protected void verify_ItemTypeInSpot(StorageSpotData spot, ItemDefn expectedItemType, string message = "")
     {
         Assert.NotNull(spot, $"{preface(message)} spot is null");
-        var actualItem = spot.ItemContainer.Item;
+        var actualItem = spot.Container.FirstItem;
         Assert.NotNull(actualItem, $"{preface(message)} actualItem is null");
         Assert.AreEqual(expectedItemType, actualItem.Defn, $"{preface(message)} Expected item in storage spot to be '{expectedItemType}', but is '{actualItem.Defn}'");
     }
 
-    protected void verify_ItemInSpot(IItemSpotInBuilding spot, ItemData expectedItem, string message = "")
+    protected void verify_ItemInSpot(IContainerInBuilding spot, ItemData expectedItem, string message = "")
     {
         Assert.NotNull(spot, $"{preface(message)} spot is null");
-        Assert.NotNull(spot.ItemContainer, $"{preface(message)} spot.ItemContainer is null");
-        var actualItem = spot.ItemContainer.Item;
+        Assert.NotNull(spot.Container, $"{preface(message)} spot.Container is null");
+        var actualItem = spot.Container.FirstItem;
         if (expectedItem == null)
             Assert.AreEqual(expectedItem, actualItem, $"{preface(message)} Expected spot to be empty, but it contains '{actualItem}'");
         else
@@ -337,14 +337,14 @@ public abstract class TestBase
     {
         Assert.NotNull(building, $"{preface()} building is null");
         Assert.NotNull(item, $"{preface()} item is null");
-        return building.StorageSpots.Find(spot => spot.ItemContainer.Item == item);
+        return building.StorageSpots.Find(spot => spot.Container.FirstItem == item);
     }
 
     protected GatheringSpotData getGatheringSpotInBuildingWithItem(BuildingData building, ItemData item)
     {
         Assert.NotNull(building, $"{preface()} building is null");
         Assert.NotNull(item, $"{preface()} item is null");
-        return building.GatheringSpots.Find(spot => spot.ItemContainer.Item == item);
+        return building.GatheringSpots.Find(spot => spot.Container.FirstItem == item);
     }
 
     protected void fillAllTownStorageWithItem(string itemDefnId)
@@ -353,12 +353,12 @@ public abstract class TestBase
         foreach (var building in Town.AllBuildings)
             if (building.Defn.CanStoreItems)
                 foreach (var spot in building.StorageSpots)
-                    if (!spot.ItemContainer.HasItem && !spot.Reservable.IsReserved)
-                        spot.ItemContainer.SetItem(new ItemData() { DefnId = itemDefnId });
+                    if (!spot.Container.HasItem && !spot.Reservable.IsReserved)
+                        spot.Container.AddItem(new ItemData() { DefnId = itemDefnId });
     }
 
-    protected int GetNumItemsInTownStorage() => Town.AllBuildings.Sum(building => building.StorageSpots.Count(spot => spot.ItemContainer.HasItem));
-    protected int GetNumItemsInTownGatheringSpots() => Town.AllBuildings.Sum(building => building.GatheringSpots.Count(spot => spot.ItemContainer.HasItem));
+    protected int GetNumItemsInTownStorage() => Town.AllBuildings.Sum(building => building.StorageSpots.Count(spot => spot.Container.HasItem));
+    protected int GetNumItemsInTownGatheringSpots() => Town.AllBuildings.Sum(building => building.GatheringSpots.Count(spot => spot.Container.HasItem));
 
     protected void moveBuilding(BuildingData buildingToMove, int tileX, int tileY, string message = "")
     {

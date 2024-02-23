@@ -55,12 +55,12 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         // if (workerSubtask == 0) Debug.Log(TestName);
 
         // Grow trees so that woodcutter can gather wood
-        Forest.GatheringSpots[0].ItemContainer.SetItem(new ItemData() { DefnId = "wood" });
+        Forest.GatheringSpots[0].Container.AddItem(new ItemData() { DefnId = "wood" });
 
         // Create the worker and wait until they get to the to-be-tested subtask
         var worker = createWorkerInBuilding(buildingWorker);
         var spotWithWood = buildingWithItem.GetClosestUnreservedGatheringSpotWithItemToReap(worker.Location);
-        var itemToBePickedUp = spotWithWood.ItemContainer.Item;
+        var itemToBePickedUp = spotWithWood.Container.FirstItem;
         var originalSpotWithItem = getGatheringSpotInBuildingWithItem(buildingWithItem, itemToBePickedUp);
         var pausedBuildingWithItemInIt = buildingWithItem == buildingToPause;
         var pausedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToPause;

@@ -3,8 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+public interface IContainerInBuilding : IReservable
+{
+    Container Container { get; }
+    Location Location { get; set; }
+    BuildingData Building { get; set; }
+}
+
+public interface IContainable
+{
+}
+
 [Serializable]
-public class MultipleContainable : BaseData
+public class Container : BaseData
 {
     public override string ToString() => Items.Count == 0 ? "empty" : "{" + string.Join(", ", Items.Select(item => item)) + "}";
 
@@ -12,6 +23,12 @@ public class MultipleContainable : BaseData
 
     public bool IsEmpty => Items.Count == 0;
     public bool HasItem => Items.Count > 0;
+    public ItemData FirstItem => HasItem ? Items[0] : null;
+
+    internal bool ContainsItem(ItemDefn itemDefn)
+    {
+        return Items.Any(item => item.Defn.Id == itemDefn.Id);
+    }
 
     public void AddItem(ItemData item)
     {
@@ -27,5 +44,10 @@ public class MultipleContainable : BaseData
         Items.Remove(item);
     }
 
-    public void ClearItems() => Items.Clear();
+    public ItemData ClearItems()
+    {
+        var firstItem = FirstItem;
+        Items.Clear();
+        return firstItem;
+    }
 }

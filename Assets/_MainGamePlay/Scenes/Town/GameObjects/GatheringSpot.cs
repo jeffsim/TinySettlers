@@ -60,9 +60,9 @@ public class GatheringSpot : MonoBehaviour
         var scaleSmall = new Vector3(0, 0, 0);
         var scaleNormal = new Vector3(1, 1, 1);
         var ItemInSpotRectTransform = ItemInSpot.GetComponent<RectTransform>();
-        if (Data.ItemContainer.Item != null)
+        if (Data.Container.FirstItem != null)
         {
-            ItemInSpot.text = Data.ItemContainer.Item.Defn.Id.Substring(0, 2);
+            ItemInSpot.text = Data.Container.FirstItem.Defn.Id.Substring(0, 2);
             ItemInSpot.color = Color.green;
             ItemInSpotRectTransform.localScale = scaleNormal;
         }

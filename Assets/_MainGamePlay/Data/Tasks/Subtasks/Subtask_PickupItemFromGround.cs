@@ -14,6 +14,6 @@ public class Subtask_PickupItemFromGround : Subtask
     public override void SubtaskComplete()
     {
         Task.Worker.Town.RemoveItemFromGround(Item);
-        Task.Worker.Hands.SetItem(Item);
+        Task.Worker.Hands.AddItem(Item);
     }
 }

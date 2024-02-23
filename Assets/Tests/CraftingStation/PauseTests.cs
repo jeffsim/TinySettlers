@@ -73,8 +73,8 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         CraftingSpotData reservedCraftingSpot = buildingWorker.CraftingMgr.CraftingSpots[0];
         StorageSpotData resourceSpot1 = (StorageSpotData)newTask.ReservedSpots[0];
         StorageSpotData resourceSpot2 = (StorageSpotData)newTask.ReservedSpots[1];
-        var origResource1 = resourceSpot1.ItemContainer.Item;
-        var origResource2 = resourceSpot2.ItemContainer.Item;
+        var origResource1 = resourceSpot1.Container.FirstItem;
+        var origResource2 = resourceSpot2.Container.FirstItem;
 
         if (workerSubtask > 0)
             waitUntilTaskAndSubtaskIndex(worker, TaskType.Task_CraftItem, workerSubtask);

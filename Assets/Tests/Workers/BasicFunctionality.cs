@@ -24,7 +24,7 @@ public partial class WorkerTests : TestBase
             // At this point, the worker is assigned to the Camp and is walking to the woodcutter to pick up the wood in its storage
             // and deliver it to store in the storeroom
             var originalTask = getWorkerCurrentTaskAsType<Task_TransportItemFromSpotToSpot>(worker);
-            var item = originalTask.SpotWithItemToPickup.ItemContainer.Item;
+            var item = originalTask.SpotWithItemToPickup.Container.FirstItem;
             var origSpotToStoreItemIn = originalTask.SpotToStoreItemIn;
             var origSpotWithItemToPickup = originalTask.SpotWithItemToPickup;
             verify_BuildingsAreEqual(origSpotToStoreItemIn.Building, StorageRoom);
@@ -62,7 +62,7 @@ public partial class WorkerTests : TestBase
 
             verify_ItemInHand(worker, hasPickedupItem ? item : null);
 
-            IItemSpotInBuilding newSpotToStoreItemIn;
+            IContainerInBuilding newSpotToStoreItemIn;
             if (hasPickedupItem)
             {
                 var newTask = getWorkerCurrentTaskAsType<Task_DeliverItemInHandToStorageSpot>(worker, $"{preface("", 1)} Worker should be carrying item to storage spot");
@@ -73,7 +73,7 @@ public partial class WorkerTests : TestBase
             else
             {
                 var newTask = getWorkerCurrentTaskAsType<Task_TransportItemFromSpotToSpot>(worker, $"{preface("", 1)} Worker should be transporting again");
-                var item2 = newTask.SpotWithItemToPickup.ItemContainer.Item;
+                var item2 = newTask.SpotWithItemToPickup.Container.FirstItem;
                 newSpotToStoreItemIn = newTask.SpotToStoreItemIn;
                 var newSpotWithItemToPickup = newTask.SpotWithItemToPickup;
                 verify_ItemsAreEqual(item, item2);
