@@ -31,5 +31,5 @@ MonoBehaviour:
   StorageAreaY: 0.5
   WorkerY: -0.5
   DraggedBuildingY: -0.75
-  ItemCarryY: 1.5
+  ItemCarryY: 0
   ItemDropY: -1.3
