@@ -27,7 +27,7 @@ namespace Drawing.Examples {
 				int z = index % 100;
 
 				// Draw a solid box and a wire box
-				// Use Perlin noise to generate a procedural height map
+				// Use Perlin noise to generate a procedural heightmap
 				var noise = Mathf.PerlinNoise(x * 0.05f + offset.x, z * 0.05f + offset.y);
 				Bounds bounds = new Bounds(new float3(x, 0, z), new float3(1, 14 * noise, 1));
 

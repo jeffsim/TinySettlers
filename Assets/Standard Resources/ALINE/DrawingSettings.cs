@@ -34,6 +34,14 @@ namespace Drawing {
 			/// <summary>Additional opacity multiplier of text when behind or inside other objects</summary>
 
 			public float textOpacityBehindObjects = 0.9f;
+
+			/// <summary>
+			/// Resolution of curves, as a fraction of the default.
+			///
+			/// The resolution of curves is dynamic based on the distance to the camera.
+			/// This setting will make the curves higher or lower resolution by a factor from the default.
+			/// </summary>
+			public float curveResolution = 1.0f;
 		}
 
 		[SerializeField]

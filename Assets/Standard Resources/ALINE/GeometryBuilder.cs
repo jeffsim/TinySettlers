@@ -45,6 +45,7 @@ namespace Drawing {
 						   pixels = 1,
 						   automaticJoins = false,
 					   },
+					   lineWidthMultiplier = DrawingManager.lineWidthMultiplier,
 					   currentColor = (Color32)Color.white,
 					   cameraPosition = cameraInfo.cameraPosition,
 					   cameraRotation = cameraInfo.cameraRotation,
@@ -52,6 +53,7 @@ namespace Drawing {
 					   cameraIsOrthographic = cameraInfo.cameraIsOrthographic,
 					   characterInfo = (SDFCharacter*)gizmos.fontData.characters.GetUnsafeReadOnlyPtr(),
 					   characterInfoLength = gizmos.fontData.characters.Length,
+					   maxPixelError = GeometryBuilderJob.MaxCirclePixelError / math.max(0.1f, gizmos.settingsRef.curveResolution),
 			}.Schedule(dependency);
 		}
 
@@ -178,11 +180,13 @@ namespace Drawing {
 		public Color32 currentColor;
 		public float4x4 currentMatrix;
 		public LineWidthData currentLineWidthData;
+		public float lineWidthMultiplier;
 		float3 minBounds;
 		float3 maxBounds;
 		public float3 cameraPosition;
 		public quaternion cameraRotation;
 		public float2 cameraDepthToPixelSize;
+		public float maxPixelError;
 		public bool cameraIsOrthographic;
 
 		[System.Runtime.InteropServices.StructLayout(System.Runtime.InteropServices.LayoutKind.Sequential)]
@@ -539,7 +543,7 @@ namespace Drawing {
 			// If the circle has a zero normal then just ignore it
 			if (math.all(circle.normal == 0)) return;
 
-			var steps = CircleSteps(circle.center, circle.radius, MaxCirclePixelError, ref currentMatrix, cameraDepthToPixelSize, cameraPosition);
+			var steps = CircleSteps(circle.center, circle.radius, maxPixelError, ref currentMatrix, cameraDepthToPixelSize, cameraPosition);
 
 			circle.normal = math.normalize(circle.normal);
 			float3 tangent1;
@@ -641,7 +645,7 @@ namespace Drawing {
 					new float4(0, 0, circle.radius, 0),
 					new float4(circle.center, 1)
 					));
-				var steps = CircleSteps(float3.zero, 1.0f, MaxCirclePixelError, ref m, cameraDepthToPixelSize, cameraPosition);
+				var steps = CircleSteps(float3.zero, 1.0f, maxPixelError, ref m, cameraDepthToPixelSize, cameraPosition);
 				var lineWidth = currentLineWidthData.pixels;
 				if (lineWidth < 0) return;
 
@@ -699,7 +703,7 @@ namespace Drawing {
 		}
 
 		void AddDisc (CircleXZData circle) {
-			var steps = CircleSteps(circle.center, circle.radius, MaxCirclePixelError, ref currentMatrix, cameraDepthToPixelSize, cameraPosition);
+			var steps = CircleSteps(circle.center, circle.radius, maxPixelError, ref currentMatrix, cameraDepthToPixelSize, cameraPosition);
 
 			circle.endAngle = math.clamp(circle.endAngle, circle.startAngle - Mathf.PI * 2, circle.startAngle + Mathf.PI * 2);
 
@@ -978,6 +982,7 @@ namespace Drawing {
 				lineWidthStack[lineWidthStackSize] = currentLineWidthData;
 				lineWidthStackSize++;
 				currentLineWidthData = reader.ReadNext<LineWidthData>();
+				currentLineWidthData.pixels *= lineWidthMultiplier;
 				break;
 			case Command.PopLineWidth:
 #if ENABLE_UNITY_COLLECTIONS_CHECKS
@@ -1103,6 +1108,8 @@ namespace Drawing {
 				buffers->textTriangles.Reset();
 				buffers->capturedState.Reset();
 			}
+
+			currentLineWidthData.pixels *= lineWidthMultiplier;
 
 			minBounds = new float3(float.PositiveInfinity, float.PositiveInfinity, float.PositiveInfinity);
 			maxBounds = new float3(float.NegativeInfinity, float.NegativeInfinity, float.NegativeInfinity);

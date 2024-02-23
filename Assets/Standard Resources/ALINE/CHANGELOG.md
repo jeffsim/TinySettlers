@@ -1,3 +1,17 @@
+## 1.7.4 (2024-02-13)
+    - Fixed compatibility with HDRP render pipeline.
+    - Improved performance when there are many cameras rendered during the same frame.
+
+## 1.7.3 (2024-02-07)
+    - Improved performance when there are lots of components inheriting from \reflink{MonoBehaviourGizmos}, but they do not actually override the DrawGizmos method.
+    - Fixed compatibility with Universal Render Pipeline package version 15 and 16 (regression in 1.7.2).
+
+## 1.7.2 (2024-02-06)
+    - Improved performance of \reflink{Draw.WireCylinder} and \reflink{Draw.WireCapsule}.
+    - Fixed a memory leak that could happen if you used a lot of custom command builders.
+    - Added an option to the project settings to increase or decrease the resolution of circles.
+    - Improved compatibility with Universal Render Pipeline package version 17.
+
 ## 1.7.1 (2023-11-14)
     - Removed "com.unity.jobs" as a dependency, since it has been replaced by the collections package.
     - Added support for rendering gizmos while the scene view is in wireframe mode. This is supported in Unity 2023.1 and up.
@@ -95,7 +109,7 @@
     - Breaking changes
         - The minimum supported Unity version is now 2020.3.
     - The URP 2D renderer now has support for all features required by ALINE. So the warning about it not being supported has been removed.
-    - Fixed windows newlines (\n\r) would show up as a newline and a question mark instead of just a newline.
+    - Fixed windows newlines (\\n\\r) would show up as a newline and a question mark instead of just a newline.
     - Fixed compilation errors when using the Unity.Collections package between version 0.8 and 0.11.
     - Improved performance in some edge cases.
     - Fixed \reflink{Draw.SolidMesh} with a non-white color could affect the color of unrelated rendered lines. Thanks Chris for finding and reporting the bug.

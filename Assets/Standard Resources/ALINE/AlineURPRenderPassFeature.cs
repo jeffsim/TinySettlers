@@ -1,6 +1,9 @@
 #if MODULE_RENDER_PIPELINES_UNIVERSAL
 using UnityEngine;
 using UnityEngine.Rendering;
+#if MODULE_RENDER_PIPELINES_UNIVERSAL_17_0_0_OR_NEWER
+using UnityEngine.Rendering.RenderGraphModule;
+#endif
 using UnityEngine.Rendering.Universal;
 
 namespace Drawing {
@@ -9,12 +12,53 @@ namespace Drawing {
 		/// <summary>Custom Universal Render Pipeline Render Pass for ALINE</summary>
 		public class AlineURPRenderPass : ScriptableRenderPass {
 			/// <summary>This method is called before executing the render pass</summary>
+#if MODULE_RENDER_PIPELINES_UNIVERSAL_17_0_0_OR_NEWER
+			[System.Obsolete]
+#endif
 			public override void Configure (CommandBuffer cmd, RenderTextureDescriptor cameraTextureDescriptor) {
 			}
 
+#if MODULE_RENDER_PIPELINES_UNIVERSAL_17_0_0_OR_NEWER
+			[System.Obsolete]
+#endif
 			public override void Execute (ScriptableRenderContext context, ref RenderingData renderingData) {
 				DrawingManager.instance.ExecuteCustomRenderPass(context, renderingData.cameraData.camera);
 			}
+
+			public AlineURPRenderPass() : base() {
+				profilingSampler = new ProfilingSampler("ALINE");
+			}
+
+#if MODULE_RENDER_PIPELINES_UNIVERSAL_17_0_0_OR_NEWER
+			private class PassData {
+				public Camera camera;
+			}
+
+			public override void RecordRenderGraph (RenderGraph renderGraph, ContextContainer frameData) {
+				var cameraData = frameData.Get<UniversalCameraData>();
+				var resourceData = frameData.Get<UniversalResourceData>();
+
+				using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass<PassData>("ALINE", out PassData passData, profilingSampler)) {
+					bool allowDisablingWireframe = false;
+
+					if (Application.isEditor && (cameraData.cameraType & (CameraType.SceneView | CameraType.Preview)) != 0) {
+						// We need this to be able to disable wireframe rendering in the scene view
+						builder.AllowGlobalStateModification(true);
+						allowDisablingWireframe = true;
+					}
+
+					builder.SetRenderAttachment(resourceData.activeColorTexture, 0);
+					builder.SetRenderAttachmentDepth(resourceData.activeDepthTexture);
+					passData.camera = cameraData.camera;
+
+					builder.SetRenderFunc<PassData>(
+						(PassData data, RasterGraphContext context) => {
+						DrawingManager.instance.ExecuteCustomRenderGraphPass(new DrawingData.CommandBufferWrapper { cmd2 = context.cmd, allowDisablingWireframe = allowDisablingWireframe }, data.camera);
+					}
+						);
+				}
+			}
+#endif
 
 			public override void FrameCleanup (CommandBuffer cmd) {
 			}

@@ -233,6 +233,25 @@ namespace Drawing {
 					textTriangles.Dispose();
 					capturedState.Dispose();
 				}
+
+				static void DisposeIfLarge (ref UnsafeAppendBuffer ls) {
+					if (ls.Length*3 < ls.Capacity && ls.Capacity > 1024) {
+						var alloc = ls.Allocator;
+						ls.Dispose();
+						ls = new UnsafeAppendBuffer(0, 4, alloc);
+					}
+				}
+
+				public void DisposeIfLarge () {
+					DisposeIfLarge(ref splitterOutput);
+					DisposeIfLarge(ref vertices);
+					DisposeIfLarge(ref triangles);
+					DisposeIfLarge(ref solidVertices);
+					DisposeIfLarge(ref solidTriangles);
+					DisposeIfLarge(ref textVertices);
+					DisposeIfLarge(ref textTriangles);
+					DisposeIfLarge(ref capturedState);
+				}
 			}
 
 			public unsafe UnsafeAppendBuffer* splitterOutputPtr => & ((MeshBuffers*)temporaryMeshBuffers.GetUnsafePtr())->splitterOutput;
@@ -402,6 +421,9 @@ namespace Drawing {
 				type = Type.Invalid;
 				splitterJob.Complete();
 				buildJob.Complete();
+				var bufs = this.temporaryMeshBuffers[0];
+				bufs.DisposeIfLarge();
+				this.temporaryMeshBuffers[0] = bufs;
 			}
 
 			public void Dispose () {
@@ -534,7 +556,11 @@ namespace Drawing {
 
 				if (meshes == null) meshes = new List<SubmittedMesh>();
 				if (!commandBuffers.IsCreated) {
+#if UNITY_2022_3_OR_NEWER
+					commandBuffers = new NativeArray<UnsafeAppendBuffer>(JobsUtility.ThreadIndexCount, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+#else
 					commandBuffers = new NativeArray<UnsafeAppendBuffer>(JobsUtility.MaxJobThreadCount, Allocator.Persistent, NativeArrayOptions.UninitializedMemory);
+#endif
 					for (int i = 0; i < commandBuffers.Length; i++) commandBuffers[i] = new UnsafeAppendBuffer(0, 4, Allocator.Persistent);
 				}
 
@@ -706,6 +732,24 @@ namespace Drawing {
 		internal struct BuilderDataContainer : IDisposable {
 			BuilderData[] data;
 
+			public int memoryUsage {
+				get {
+					int sum = 0;
+					if (data != null) {
+						for (int i = 0; i < data.Length; i++) {
+							var cmds = data[i].commandBuffers;
+							for (int j = 0; j < cmds.Length; j++) {
+								sum += cmds[j].Capacity;
+							}
+							unsafe {
+								sum += data[i].commandBuffers.Length * sizeof(UnsafeAppendBuffer);
+							}
+						}
+					}
+					return sum;
+				}
+			}
+
 
 			public BuilderData.BitPackedMeta Reserve (bool isBuiltInCommandBuilder) {
 				if (data == null) data = new BuilderData[1];
@@ -772,6 +816,31 @@ namespace Drawing {
 			Dictionary<ulong, List<int> > hash2index;
 			Stack<int> freeSlots;
 			Stack<List<int> > freeLists;
+
+			public int memoryUsage {
+				get {
+					int sum = 0;
+					if (data != null) {
+						for (int i = 0; i < data.Length; i++) {
+							var bufs = data[i].temporaryMeshBuffers;
+							for (int j = 0; j < bufs.Length; j++) {
+								var psum = 0;
+								psum += bufs[j].textVertices.Capacity;
+								psum += bufs[j].textTriangles.Capacity;
+								psum += bufs[j].solidVertices.Capacity;
+								psum += bufs[j].solidTriangles.Capacity;
+								psum += bufs[j].vertices.Capacity;
+								psum += bufs[j].triangles.Capacity;
+								psum += bufs[j].capturedState.Capacity;
+								psum += bufs[j].splitterOutput.Capacity;
+								sum += psum;
+								UnityEngine.Debug.Log(i + ":" + j + " " + psum);
+							}
+						}
+					}
+					return sum;
+				}
+			}
 
 			public int Reserve (ProcessedBuilderData.Type type, BuilderData.Meta meta) {
 				if (data == null) {
@@ -1152,13 +1221,24 @@ namespace Drawing {
 
 		public DrawingSettings settingsAsset;
 
+		public DrawingSettings.Settings settingsRef {
+			get {
+				if (settingsAsset == null) {
+					settingsAsset = DrawingSettings.GetSettingsAsset();
+					if (settingsAsset == null) {
+						throw new System.InvalidOperationException("ALINE settings could not be found");
+					}
+				}
+				return settingsAsset.settings;
+			}
+		}
+
 		public int version { get; private set; } = 1;
 		int lastTickVersion;
 		int lastTickVersion2;
 		HashSet<int> persistentRedrawScopes = new HashSet<int>();
 #if ALINE_TRACK_REDRAW_SCOPE_LEAKS
 		Dictionary<int, String> persistentRedrawScopeInfos = new Dictionary<int, String>();
-		Dictionary<int, int> persistentRedrawScopeLastValidVersion = new Dictionary<int, int>();
 #endif
 		internal System.Runtime.InteropServices.GCHandle gizmosHandle;
 
@@ -1269,7 +1349,6 @@ namespace Drawing {
 #if ALINE_TRACK_REDRAW_SCOPE_LEAKS && UNITY_EDITOR
 				LeakTracking.Begin();
 				persistentRedrawScopeInfos[scope.id] = new System.Diagnostics.StackTrace().ToString();
-				persistentRedrawScopeLastValidVersion[scope.id] = sceneModeVersion;
 				LeakTracking.End();
 #endif
 			}
@@ -1357,6 +1436,8 @@ namespace Drawing {
 		// Temporary block, cached to avoid allocations
 		MaterialPropertyBlock customMaterialProperties = new MaterialPropertyBlock();
 
+		int totalMemoryUsage => this.data.memoryUsage + this.processedData.memoryUsage;
+
 		void LoadMaterials () {
 			// Make sure the material references are correct
 
@@ -1386,17 +1467,48 @@ namespace Drawing {
 			return (int)math.ceil(math.log2(x));
 		}
 
+		/// <summary>
+		/// Wrapper for different kinds of commands buffers.
+		///
+		/// Annoyingly, they all use a CommandBuffer in the end, but the universal render pipeline wraps it in a RasterCommandBuffer,
+		/// and it's not possible to get the underlaying CommandBuffer.
+		/// </summary>
+		public struct CommandBufferWrapper {
+			public CommandBuffer cmd;
+#if MODULE_RENDER_PIPELINES_UNIVERSAL_17_0_0_OR_NEWER
+			public bool allowDisablingWireframe;
+			public RasterCommandBuffer cmd2;
+#endif
+
+#if UNITY_2023_1_OR_NEWER
+			public void SetWireframe (bool enable) {
+				if (cmd != null) {
+					cmd.SetWireframe(enable);
+				}
+#if MODULE_RENDER_PIPELINES_UNIVERSAL_17_0_0_OR_NEWER
+				else if (cmd2 != null) {
+					if (allowDisablingWireframe) cmd2.SetWireframe(enable);
+				}
+#endif
+			}
+#endif
+
+			public void DrawMesh (Mesh mesh, Matrix4x4 matrix, Material material, int submeshIndex, int shaderPass, MaterialPropertyBlock properties) {
+				if (cmd != null) {
+					cmd.DrawMesh(mesh, matrix, material, submeshIndex, shaderPass, properties);
+				}
+#if MODULE_RENDER_PIPELINES_UNIVERSAL_17_0_0_OR_NEWER
+				else if (cmd2 != null) {
+					cmd2.DrawMesh(mesh, matrix, material, submeshIndex, shaderPass, properties);
+				}
+#endif
+			}
+		}
+
 		/// <summary>Call after all <see cref="Draw"/> commands for the frame have been done to draw everything.</summary>
 		/// <param name="allowCameraDefault">Indicates if built-in command builders and custom ones without a custom CommandBuilder.cameraTargets should render to this camera.</param>
-		public void Render (Camera cam, bool allowGizmos, CommandBuffer commandBuffer, bool allowCameraDefault) {
+		public void Render (Camera cam, bool allowGizmos, CommandBufferWrapper commandBuffer, bool allowCameraDefault) {
 			LoadMaterials();
-
-			if (settingsAsset == null) {
-				settingsAsset = DrawingSettings.GetSettingsAsset();
-				if (settingsAsset == null) {
-					throw new System.InvalidOperationException("ALINE settings could not be found");
-				}
-			}
 
 			// Warn if the materials could not be found
 			if (surfaceMaterial == null || lineMaterial == null) {
@@ -1442,6 +1554,8 @@ namespace Drawing {
 			// rendering many frames when outside of play mode.
 			cameraRenderingRange.start = Mathf.Max(cameraRenderingRange.start, lastTickVersion2 + 1);
 
+			var settings = settingsRef;
+
 #if UNITY_2023_1_OR_NEWER
 			bool skipDueToWireframe = false;
 			commandBuffer.SetWireframe(false);
@@ -1469,7 +1583,6 @@ namespace Drawing {
 
 				int colorID = Shader.PropertyToID("_Color");
 				int colorFadeID = Shader.PropertyToID("_FadeColor");
-				var settings = settingsAsset.settings;
 				var solidBaseColor = new Color(1, 1, 1, settings.solidOpacity);
 				var solidFadeColor = new Color(1, 1, 1, settings.solidOpacityBehindObjects);
 				var lineBaseColor = new Color(1, 1, 1, settings.lineOpacity);

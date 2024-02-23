@@ -305,7 +305,7 @@ namespace Drawing {
 					target.data.Release(uniqueID);
 				}
 			} finally {
-				gizmos.Free();
+				if (gizmos.IsAllocated) gizmos.Free();
 				this = default;
 			}
 		}
@@ -1261,31 +1261,42 @@ namespace Drawing {
 		/// <param name="height">The length of the cylinder, as measured along it's main axis.</param>
 		/// <param name="radius">The radius of the cylinder.</param>
 		public void WireCylinder (float3 position, float3 up, float height, float radius) {
-			var tangent = math.cross(up, new float3(1, 1, 1));
-
-			if (math.all(tangent == float3.zero)) tangent = math.cross(up, new float3(-1, 1, 1));
-
-			tangent = math.normalizesafe(tangent);
 			up = math.normalizesafe(up);
-			var rotation = math.quaternion(math.float3x3(math.cross(up, tangent), up, tangent));
+			if (math.all(up == 0) || math.any(math.isnan(up)) || math.isnan(height) || math.isnan(radius)) return;
 
-			// If we get a NaN here then either
-			// * one of the input parameters contained nans (bad)
-			// * up is zero, or very close to zero
-			//
-			// In any case, we cannot draw anything.
-			if (!math.any(math.isnan(rotation.value))) {
-				PushMatrix(float4x4.TRS(position, rotation, new float3(radius, height, radius)));
-				CircleXZInternal(float3.zero, 1);
-				if (height > 0) {
-					CircleXZInternal(new float3(0, 1, 0), 1);
-					Line(new float3(1, 0, 0), new float3(1, 1, 0));
-					Line(new float3(-1, 0, 0), new float3(-1, 1, 0));
-					Line(new float3(0, 0, 1), new float3(0, 1, 1));
-					Line(new float3(0, 0, -1), new float3(0, 1, -1));
-				}
-				PopMatrix();
+			OrthonormalBasis(up, out var basis1, out var basis2);
+
+			PushMatrix(new float4x4(
+				new float4(basis1 * radius, 0),
+				new float4(up * height, 0),
+				new float4(basis2 * radius, 0),
+				new float4(position, 1)
+				));
+
+			CircleXZInternal(float3.zero, 1);
+			if (height > 0) {
+				CircleXZInternal(new float3(0, 1, 0), 1);
+				Line(new float3(1, 0, 0), new float3(1, 1, 0));
+				Line(new float3(-1, 0, 0), new float3(-1, 1, 0));
+				Line(new float3(0, 0, 1), new float3(0, 1, 1));
+				Line(new float3(0, 0, -1), new float3(0, 1, -1));
 			}
+			PopMatrix();
+		}
+
+		/// <summary>
+		/// Constructs an orthonormal basis from a single normal vector.
+		///
+		/// This is similar to math.orthonormal_basis, but it tries harder to be continuous in its input.
+		/// In contrast, math.orthonormal_basis has a tendency to jump around even with small changes to the normal.
+		///
+		/// It's not as fast as math.orthonormal_basis, though.
+		/// </summary>
+		static void OrthonormalBasis (float3 normal, out float3 basis1, out float3 basis2) {
+			basis1 = math.cross(normal, new float3(1, 1, 1));
+			if (math.all(basis1 == 0)) basis1 = math.cross(normal, new float3(-1, 1, 1));
+			basis1 = math.normalizesafe(basis1);
+			basis2 = math.cross(normal, basis1);
 		}
 
 		/// <summary>
@@ -1335,51 +1346,43 @@ namespace Drawing {
 		/// <param name="radius">The radius of the capsule.</param>
 		public void WireCapsule (float3 position, float3 direction, float length, float radius) {
 			direction = math.normalizesafe(direction);
+			if (math.all(direction == 0) || math.any(math.isnan(direction)) || math.isnan(length) || math.isnan(radius)) return;
 
 			if (radius <= 0) {
 				Line(position, position + direction * length);
 			} else {
-				var tangent = math.cross(direction, new float3(1, 1, 1));
-
-				if (math.all(tangent == float3.zero)) tangent = math.cross(direction, new float3(-1, 1, 1));
-
 				length = math.max(length, radius*2);
+				OrthonormalBasis(direction, out var basis1, out var basis2);
 
-				tangent = math.normalizesafe(tangent);
-				// TODO: We just convert the rotation to a matrix again. Construct a 4x4 matrix directly instead.
-				var rotation = math.quaternion(math.float3x3(tangent, direction, math.cross(tangent, direction)));
-
-				// If we get a NaN here then either
-				// * one of the input parameters contained nans (bad)
-				// * direction is zero, or very close to zero
-				//
-				// In any case, we cannot draw anything.
-				if (!math.any(math.isnan(rotation.value))) {
-					PushMatrix(float4x4.TRS(position, rotation, 1));
-					CircleXZInternal(new float3(0, radius, 0), radius);
+				PushMatrix(new float4x4(
+					new float4(basis1, 0),
+					new float4(direction, 0),
+					new float4(basis2, 0),
+					new float4(position, 1)
+					));
+				CircleXZInternal(new float3(0, radius, 0), radius);
+				PushMatrix(XZtoXYPlaneMatrix);
+				CircleXZInternal(new float3(0, 0, radius), radius, Mathf.PI, 2 * Mathf.PI);
+				PopMatrix();
+				PushMatrix(XZtoYZPlaneMatrix);
+				CircleXZInternal(new float3(radius, 0, 0), radius, Mathf.PI*0.5f, Mathf.PI*1.5f);
+				PopMatrix();
+				if (length > 0) {
+					var upperY = length - radius;
+					var lowerY = radius;
+					CircleXZInternal(new float3(0, upperY, 0), radius);
 					PushMatrix(XZtoXYPlaneMatrix);
-					CircleXZInternal(new float3(0, 0, radius), radius, Mathf.PI, 2 * Mathf.PI);
+					CircleXZInternal(new float3(0, 0, upperY), radius, 0, Mathf.PI);
 					PopMatrix();
 					PushMatrix(XZtoYZPlaneMatrix);
-					CircleXZInternal(new float3(radius, 0, 0), radius, Mathf.PI*0.5f, Mathf.PI*1.5f);
+					CircleXZInternal(new float3(upperY, 0, 0), radius, -Mathf.PI*0.5f, Mathf.PI*0.5f);
 					PopMatrix();
-					if (length > 0) {
-						var upperY = length - radius;
-						var lowerY = radius;
-						CircleXZInternal(new float3(0, upperY, 0), radius);
-						PushMatrix(XZtoXYPlaneMatrix);
-						CircleXZInternal(new float3(0, 0, upperY), radius, 0, Mathf.PI);
-						PopMatrix();
-						PushMatrix(XZtoYZPlaneMatrix);
-						CircleXZInternal(new float3(upperY, 0, 0), radius, -Mathf.PI*0.5f, Mathf.PI*0.5f);
-						PopMatrix();
-						Line(new float3(radius, lowerY, 0), new float3(radius, upperY, 0));
-						Line(new float3(-radius, lowerY, 0), new float3(-radius, upperY, 0));
-						Line(new float3(0, lowerY, radius), new float3(0, upperY, radius));
-						Line(new float3(0, lowerY, -radius), new float3(0, upperY, -radius));
-					}
-					PopMatrix();
+					Line(new float3(radius, lowerY, 0), new float3(radius, upperY, 0));
+					Line(new float3(-radius, lowerY, 0), new float3(-radius, upperY, 0));
+					Line(new float3(0, lowerY, radius), new float3(0, upperY, radius));
+					Line(new float3(0, lowerY, -radius), new float3(0, upperY, -radius));
 				}
+				PopMatrix();
 			}
 		}
 
@@ -1803,7 +1806,11 @@ namespace Drawing {
 
 			[BurstCompile]
 			public static unsafe void WireMesh (float3* verts, int* indices, int vertexCount, int indexCount, ref CommandBuilder draw) {
-				var seenEdges = new NativeParallelHashMap<int2, bool>(indexCount, Allocator.Temp);
+				// Ignore warning about NativeHashMap being obsolete in early versions of the collections package.
+				// It works just fine, and in later versions the NativeHashMap is not obsolete.
+				#pragma warning disable 618
+				var seenEdges = new NativeHashMap<int2, bool>(indexCount, Allocator.Temp);
+				#pragma warning restore 618
 				for (int i = 0; i < indexCount; i += 3) {
 					var a = indices[i];
 					var b = indices[i+1];

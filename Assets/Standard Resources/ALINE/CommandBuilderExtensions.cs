@@ -152,32 +152,28 @@ namespace Drawing {
 		/// <summary>\copydocref{WireCylinder(float3,float3,float,float)}</summary>
 		/// <param name="color">Color of the object</param>
 		public void WireCylinder (float3 position, float3 up, float height, float radius, Color color) {
-			PushColor(color);
-			var tangent = math.cross(up, new float3(1, 1, 1));
-
-			if (math.all(tangent == float3.zero)) tangent = math.cross(up, new float3(-1, 1, 1));
-
-			tangent = math.normalizesafe(tangent);
 			up = math.normalizesafe(up);
-			var rotation = math.quaternion(math.float3x3(math.cross(up, tangent), up, tangent));
+			if (math.all(up == 0) || math.any(math.isnan(up)) || math.isnan(height) || math.isnan(radius)) return;
+			PushColor(color);
 
-			// If we get a NaN here then either
-			// * one of the input parameters contained nans (bad)
-			// * up is zero, or very close to zero
-			//
-			// In any case, we cannot draw anything.
-			if (!math.any(math.isnan(rotation.value))) {
-				PushMatrix(float4x4.TRS(position, rotation, new float3(radius, height, radius)));
-				CircleXZInternal(float3.zero, 1);
-				if (height > 0) {
-					CircleXZInternal(new float3(0, 1, 0), 1);
-					Line(new float3(1, 0, 0), new float3(1, 1, 0));
-					Line(new float3(-1, 0, 0), new float3(-1, 1, 0));
-					Line(new float3(0, 0, 1), new float3(0, 1, 1));
-					Line(new float3(0, 0, -1), new float3(0, 1, -1));
-				}
-				PopMatrix();
+			OrthonormalBasis(up, out var basis1, out var basis2);
+
+			PushMatrix(new float4x4(
+				new float4(basis1 * radius, 0),
+				new float4(up * height, 0),
+				new float4(basis2 * radius, 0),
+				new float4(position, 1)
+				));
+
+			CircleXZInternal(float3.zero, 1);
+			if (height > 0) {
+				CircleXZInternal(new float3(0, 1, 0), 1);
+				Line(new float3(1, 0, 0), new float3(1, 1, 0));
+				Line(new float3(-1, 0, 0), new float3(-1, 1, 0));
+				Line(new float3(0, 0, 1), new float3(0, 1, 1));
+				Line(new float3(0, 0, -1), new float3(0, 1, -1));
 			}
+			PopMatrix();
 			PopColor();
 		}
 		/// <summary>\copydocref{WireCapsule(float3,float3,float)}</summary>
@@ -201,53 +197,45 @@ namespace Drawing {
 		/// <summary>\copydocref{WireCapsule(float3,float3,float,float)}</summary>
 		/// <param name="color">Color of the object</param>
 		public void WireCapsule (float3 position, float3 direction, float length, float radius, Color color) {
-			PushColor(color);
 			direction = math.normalizesafe(direction);
+			if (math.all(direction == 0) || math.any(math.isnan(direction)) || math.isnan(length) || math.isnan(radius)) return;
+			PushColor(color);
 
 			if (radius <= 0) {
 				Line(position, position + direction * length);
 			} else {
-				var tangent = math.cross(direction, new float3(1, 1, 1));
-
-				if (math.all(tangent == float3.zero)) tangent = math.cross(direction, new float3(-1, 1, 1));
-
 				length = math.max(length, radius*2);
+				OrthonormalBasis(direction, out var basis1, out var basis2);
 
-				tangent = math.normalizesafe(tangent);
-				// TODO: We just convert the rotation to a matrix again. Construct a 4x4 matrix directly instead.
-				var rotation = math.quaternion(math.float3x3(tangent, direction, math.cross(tangent, direction)));
-
-				// If we get a NaN here then either
-				// * one of the input parameters contained nans (bad)
-				// * direction is zero, or very close to zero
-				//
-				// In any case, we cannot draw anything.
-				if (!math.any(math.isnan(rotation.value))) {
-					PushMatrix(float4x4.TRS(position, rotation, 1));
-					CircleXZInternal(new float3(0, radius, 0), radius);
+				PushMatrix(new float4x4(
+					new float4(basis1, 0),
+					new float4(direction, 0),
+					new float4(basis2, 0),
+					new float4(position, 1)
+					));
+				CircleXZInternal(new float3(0, radius, 0), radius);
+				PushMatrix(XZtoXYPlaneMatrix);
+				CircleXZInternal(new float3(0, 0, radius), radius, Mathf.PI, 2 * Mathf.PI);
+				PopMatrix();
+				PushMatrix(XZtoYZPlaneMatrix);
+				CircleXZInternal(new float3(radius, 0, 0), radius, Mathf.PI*0.5f, Mathf.PI*1.5f);
+				PopMatrix();
+				if (length > 0) {
+					var upperY = length - radius;
+					var lowerY = radius;
+					CircleXZInternal(new float3(0, upperY, 0), radius);
 					PushMatrix(XZtoXYPlaneMatrix);
-					CircleXZInternal(new float3(0, 0, radius), radius, Mathf.PI, 2 * Mathf.PI);
+					CircleXZInternal(new float3(0, 0, upperY), radius, 0, Mathf.PI);
 					PopMatrix();
 					PushMatrix(XZtoYZPlaneMatrix);
-					CircleXZInternal(new float3(radius, 0, 0), radius, Mathf.PI*0.5f, Mathf.PI*1.5f);
+					CircleXZInternal(new float3(upperY, 0, 0), radius, -Mathf.PI*0.5f, Mathf.PI*0.5f);
 					PopMatrix();
-					if (length > 0) {
-						var upperY = length - radius;
-						var lowerY = radius;
-						CircleXZInternal(new float3(0, upperY, 0), radius);
-						PushMatrix(XZtoXYPlaneMatrix);
-						CircleXZInternal(new float3(0, 0, upperY), radius, 0, Mathf.PI);
-						PopMatrix();
-						PushMatrix(XZtoYZPlaneMatrix);
-						CircleXZInternal(new float3(upperY, 0, 0), radius, -Mathf.PI*0.5f, Mathf.PI*0.5f);
-						PopMatrix();
-						Line(new float3(radius, lowerY, 0), new float3(radius, upperY, 0));
-						Line(new float3(-radius, lowerY, 0), new float3(-radius, upperY, 0));
-						Line(new float3(0, lowerY, radius), new float3(0, upperY, radius));
-						Line(new float3(0, lowerY, -radius), new float3(0, upperY, -radius));
-					}
-					PopMatrix();
+					Line(new float3(radius, lowerY, 0), new float3(radius, upperY, 0));
+					Line(new float3(-radius, lowerY, 0), new float3(-radius, upperY, 0));
+					Line(new float3(0, lowerY, radius), new float3(0, upperY, radius));
+					Line(new float3(0, lowerY, -radius), new float3(0, upperY, -radius));
 				}
+				PopMatrix();
 			}
 			PopColor();
 		}
@@ -456,7 +444,6 @@ namespace Drawing {
 			}
 			PopColor();
 		}
-
 		/// <summary>\copydocref{CatmullRom(List&lt;Vector3&gt;)}</summary>
 		/// <param name="color">Color of the object</param>
 		public void CatmullRom (List<Vector3> points, Color color) {

@@ -37,7 +37,6 @@ namespace Drawing {
 		public ScopeLineWidth WithLineWidth (float pixels, bool automaticJoins = true) {
 			return draw.WithLineWidth(pixels, automaticJoins);
 		}
-
 		/// <summary>\copydocref{CommandBuilder.InLocalSpace(Transform)}</summary>
 		[BurstDiscard]
 		public ScopeMatrix InLocalSpace (Transform transform) {
@@ -214,12 +213,10 @@ namespace Drawing {
 		public void Bezier (float3 p0, float3 p1, float3 p2, float3 p3) {
 			draw.Bezier(p0, p1, p2, p3);
 		}
-
 		/// <summary>\copydocref{CommandBuilder.Bezier(float3,float3,float3,float3)}</summary>
 		public void Bezier (float2 p0, float2 p1, float2 p2, float2 p3) {
 			Bezier(xy ? new float3(p0, 0) : new float3(p0.x, 0, p0.y), xy ? new float3(p1, 0) : new float3(p1.x, 0, p1.y), xy ? new float3(p2, 0) : new float3(p2.x, 0, p2.y), xy ? new float3(p3, 0) : new float3(p3.x, 0, p3.y));
 		}
-
 		/// <summary>\copydocref{CommandBuilder.CatmullRom(List&lt;Vector3&gt;)}</summary>
 		public void CatmullRom (List<Vector3> points) {
 			draw.CatmullRom(points);
@@ -559,12 +556,10 @@ namespace Drawing {
 		public void Bezier (float3 p0, float3 p1, float3 p2, float3 p3, Color color) {
 			draw.Bezier(p0, p1, p2, p3, color);
 		}
-
 		/// <summary>\copydocref{Bezier(float2,float2,float2,float2)}</summary>
 		public void Bezier (float2 p0, float2 p1, float2 p2, float2 p3, Color color) {
 			Bezier(xy ? new float3(p0, 0) : new float3(p0.x, 0, p0.y), xy ? new float3(p1, 0) : new float3(p1.x, 0, p1.y), xy ? new float3(p2, 0) : new float3(p2.x, 0, p2.y), xy ? new float3(p3, 0) : new float3(p3.x, 0, p3.y), color);
 		}
-
 		/// <summary>\copydocref{CatmullRom(List&lt;Vector3&gt;)}</summary>
 		public void CatmullRom (List<Vector3> points, Color color) {
 			draw.CatmullRom(points, color);

@@ -137,11 +137,12 @@ namespace Drawing {
 	public class DrawingManager : MonoBehaviour {
 		public DrawingData gizmos;
 		static List<IDrawGizmos> gizmoDrawers = new List<IDrawGizmos>();
-		static HashSet<System.Type> gizmoDrawerTypes = new HashSet<System.Type>();
+		static Dictionary<System.Type, bool> gizmoDrawerTypes = new Dictionary<System.Type, bool>();
 		static DrawingManager _instance;
 		bool framePassed;
 		int lastFrameCount = int.MinValue;
 		float lastFrameTime = -float.NegativeInfinity;
+		int lastFilterFrame;
 #if UNITY_EDITOR
 		bool builtGizmos;
 #endif
@@ -162,6 +163,18 @@ namespace Drawing {
 		/// </summary>
 		public static bool allowRenderToRenderTextures = false;
 		public static bool drawToAllCameras = false;
+
+		/// <summary>
+		/// Multiply all line widths by this value.
+		/// This can be used to make lines thicker or thinner.
+		///
+		/// This is primarily useful when generating screenshots, and you want to render at a higher resolution before scaling down the image.
+		///
+		/// It is only read when a camera is being rendered. So it cannot be used to change line thickness on a per-item basis.
+		/// Use <see cref="Draw.WithLineWidth"/> for that.
+		/// </summary>
+		public static float lineWidthMultiplier = 1.0f;
+
 		CommandBuffer commandBuffer;
 
 		[System.NonSerialized]
@@ -288,13 +301,21 @@ namespace Drawing {
 			// Callback when rendering with the built-in render pipeline
 			Camera.onPostRender += PostRender;
 			// Callback when rendering with a scriptable render pipeline
+#if UNITY_2023_3_OR_NEWER
+			UnityEngine.Rendering.RenderPipelineManager.beginContextRendering += BeginContextRendering;
+#else
 			UnityEngine.Rendering.RenderPipelineManager.beginFrameRendering += BeginFrameRendering;
+#endif
 			UnityEngine.Rendering.RenderPipelineManager.beginCameraRendering += BeginCameraRendering;
 			UnityEngine.Rendering.RenderPipelineManager.endCameraRendering += EndCameraRendering;
 #if UNITY_EDITOR
 			EditorApplication.update += OnEditorUpdate;
 			EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
 #endif
+		}
+
+		void BeginContextRendering (ScriptableRenderContext context, List<Camera> cameras) {
+			RefreshRenderPipelineMode();
 		}
 
 		void BeginFrameRendering (ScriptableRenderContext context, Camera[] cameras) {
@@ -319,8 +340,14 @@ namespace Drawing {
 		void OnDisable () {
 			if (!actuallyEnabled) return;
 			actuallyEnabled = false;
+			commandBuffer.Dispose();
+			commandBuffer = null;
 			Camera.onPostRender -= PostRender;
+#if UNITY_2023_3_OR_NEWER
+			UnityEngine.Rendering.RenderPipelineManager.beginContextRendering -= BeginContextRendering;
+#else
 			UnityEngine.Rendering.RenderPipelineManager.beginFrameRendering -= BeginFrameRendering;
+#endif
 			UnityEngine.Rendering.RenderPipelineManager.beginCameraRendering -= BeginCameraRendering;
 			UnityEngine.Rendering.RenderPipelineManager.endCameraRendering -= EndCameraRendering;
 #if UNITY_EDITOR
@@ -396,16 +423,31 @@ namespace Drawing {
 				Draw.builder = gizmos.GetBuiltInBuilder(false);
 				Draw.ingame_builder = gizmos.GetBuiltInBuilder(true);
 				lastFrameTime = Time.realtimeSinceStartup;
+				RemoveDestroyedGizmoDrawers();
+			}
+
+			// Avoid potential memory leak if gizmos are not being drawn
+			if (lastFilterFrame - Time.frameCount > 5) {
+				lastFilterFrame = Time.frameCount;
+				RemoveDestroyedGizmoDrawers();
 			}
 		}
 
 		internal void ExecuteCustomRenderPass (ScriptableRenderContext context, Camera camera) {
 			MarkerALINE.Begin();
 			commandBuffer.Clear();
-			SubmitFrame(camera, commandBuffer, true);
+			SubmitFrame(camera, new DrawingData.CommandBufferWrapper { cmd = commandBuffer }, true);
 			context.ExecuteCommandBuffer(commandBuffer);
 			MarkerALINE.End();
 		}
+
+#if MODULE_RENDER_PIPELINES_UNIVERSAL
+		internal void ExecuteCustomRenderGraphPass (DrawingData.CommandBufferWrapper cmd, Camera camera) {
+			MarkerALINE.Begin();
+			SubmitFrame(camera, cmd, true);
+			MarkerALINE.End();
+		}
+#endif
 
 		private void EndCameraRendering (ScriptableRenderContext context, Camera camera) {
 			if (detectedRenderPipeline == DetectedRenderPipeline.BuiltInOrCustom) {
@@ -422,7 +464,7 @@ namespace Drawing {
 		void PostRender (Camera camera) {
 			// This method is only called when using Unity's built-in render pipeline
 			commandBuffer.Clear();
-			SubmitFrame(camera, commandBuffer, false);
+			SubmitFrame(camera, new DrawingData.CommandBufferWrapper { cmd = commandBuffer }, false);
 			MarkerCommandBuffer.Begin();
 			Graphics.ExecuteCommandBuffer(commandBuffer);
 			MarkerCommandBuffer.End();
@@ -458,7 +500,7 @@ namespace Drawing {
 			MarkerFrameTick.End();
 		}
 
-		internal void SubmitFrame (Camera camera, CommandBuffer cmd, bool usingRenderPipeline) {
+		internal void SubmitFrame (Camera camera, DrawingData.CommandBufferWrapper cmd, bool usingRenderPipeline) {
 #if UNITY_EDITOR
 			bool isSceneViewCamera = SceneView.currentDrawingSceneView != null && SceneView.currentDrawingSceneView.camera == camera;
 #else
@@ -517,10 +559,10 @@ namespace Drawing {
 #if UNITY_2022_1_OR_NEWER
 			// In Unity 2022.1 we can use a new utility class which is more robust.
 			foreach (var tp in gizmoDrawerTypes) {
-				if (GizmoUtility.TryGetGizmoInfo(tp, out var gizmoInfo)) {
-					typeToGizmosEnabled[tp] = gizmoInfo.gizmoEnabled;
+				if (GizmoUtility.TryGetGizmoInfo(tp.Key, out var gizmoInfo)) {
+					typeToGizmosEnabled[tp.Key] = gizmoInfo.gizmoEnabled;
 				} else {
-					typeToGizmosEnabled[tp] = true;
+					typeToGizmosEnabled[tp.Key] = true;
 				}
 			}
 #else
@@ -537,11 +579,11 @@ namespace Drawing {
 				}
 				foreach (var tp in gizmoDrawerTypes) {
 					// Check if there were no enabled objects of that type at all
-					if (!typeToGizmosEnabled.ContainsKey(tp)) typeToGizmosEnabled[tp] = false;
+					if (!typeToGizmosEnabled.ContainsKey(tp.Key)) typeToGizmosEnabled[tp.Key] = false;
 				}
 			} else {
 				foreach (var tp in gizmoDrawerTypes) {
-					typeToGizmosEnabled[tp] = true;
+					typeToGizmosEnabled[tp.Key] = true;
 				}
 			}
 #endif
@@ -626,14 +668,14 @@ namespace Drawing {
 
 		/// <summary>Submit a camera for rendering.</summary>
 		/// <param name="allowCameraDefault">Indicates if built-in command builders and custom ones without a custom CommandBuilder.cameraTargets should render to this camera.</param>
-		void Submit (Camera camera, CommandBuffer cmd, bool usingRenderPipeline, bool allowCameraDefault) {
-			// This must always be done to avoid a potential memory leak if gizmos are never drawn
-			RemoveDestroyedGizmoDrawers();
+		void Submit (Camera camera, DrawingData.CommandBufferWrapper cmd, bool usingRenderPipeline, bool allowCameraDefault) {
 #if UNITY_EDITOR
 			bool drawGizmos = Handles.ShouldRenderGizmos() || drawToAllCameras;
 			// Only build gizmos if a camera actually needs them.
 			// This is only done for the first camera that needs them each frame.
 			if (drawGizmos && !builtGizmos && allowCameraDefault) {
+				RemoveDestroyedGizmoDrawers();
+				lastFilterFrame = Time.frameCount;
 				builtGizmos = true;
 				DrawGizmos(usingRenderPipeline);
 			}
@@ -655,10 +697,26 @@ namespace Drawing {
 		/// The DrawGizmos method on the object will be called every frame until it is destroyed (assuming there are cameras with gizmos enabled).
 		/// </summary>
 		public static void Register (IDrawGizmos item) {
-			// TODO: Use reflection to figure out if this type actually overrides the DrawGizmos method
-			// If it does not then we can skip adding it to the list.
+			var tp = item.GetType();
+
+			// Use reflection to figure out if the DrawGizmos method has not been overriden from the MonoBehaviourGizmos class.
+			// If it hasn't, then we know that this type will never draw gizmos and we can skip it.
+			// This improves performance by not having to keep track of objects and check if they are active and enabled every frame.
+			bool mayDrawGizmos;
+			if (gizmoDrawerTypes.TryGetValue(tp, out mayDrawGizmos)) {
+			} else {
+				var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic;
+				// Check for a public method first, and then an explicit interface implementation.
+				var m = tp.GetMethod("DrawGizmos", flags) ?? tp.GetMethod("Pathfinding.Drawing.IDrawGizmos.DrawGizmos", flags) ?? tp.GetMethod("Drawing.IDrawGizmos.DrawGizmos", flags);
+				if (m == null) {
+					throw new System.Exception("Could not find the DrawGizmos method in type " + tp.Name);
+				}
+				mayDrawGizmos = m.DeclaringType != typeof(MonoBehaviourGizmos);
+				gizmoDrawerTypes[tp] = mayDrawGizmos;
+			}
+			if (!mayDrawGizmos) return;
+
 			gizmoDrawers.Add(item);
-			gizmoDrawerTypes.Add(item.GetType());
 		}
 
 		/// <summary>

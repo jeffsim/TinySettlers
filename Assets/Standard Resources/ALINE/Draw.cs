@@ -820,7 +820,6 @@ namespace Drawing {
 #endif
 		}
 
-
 		/// <summary>
 		/// \copydocref{Drawing::CommandBuilder::CatmullRom(List&lt;Vector3&gt;)}
 		/// Warning: This method cannot be used inside of Burst jobs. See job-system (view in online documentation for working links) instead.
@@ -1987,7 +1986,6 @@ namespace Drawing {
 			builder.Bezier(p0, p1, p2, p3, color);
 #endif
 		}
-
 
 		/// <summary>
 		/// \copydocref{Drawing::CommandBuilder::CatmullRom(List&lt;Vector3&gt;,Color)}
