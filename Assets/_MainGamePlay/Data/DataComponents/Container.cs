@@ -10,10 +10,6 @@ public interface IContainerInBuilding : IReservable
     BuildingData Building { get; set; }
 }
 
-public interface IContainable
-{
-}
-
 [Serializable]
 public class Container : BaseData
 {
