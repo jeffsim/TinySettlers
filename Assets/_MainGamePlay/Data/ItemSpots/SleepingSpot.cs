@@ -2,14 +2,14 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class SleepingSpotData : BaseData, ILocationProvider, IReservationProvider
+public class SleepingSpotData : BaseData, ILocation, IReservable
 {
-    public override string ToString() => $"Sleeping {InstanceId}: {Reservation}";
+    public override string ToString() => $"Sleeping {InstanceId}: {Reservable}";
     public int IndexInStoragePile;
 
     [SerializeField] public BuildingData Building { get; set; }
-    [SerializeField] public LocationComponent Location { get; set; } = new();
-    [SerializeField] public ReservationComponent Reservation { get; set; } = new();
+    [SerializeField] public Location Location { get; set; } = new();
+    [SerializeField] public Reservable Reservable { get; set; }
 
     public Vector3 LocOffset;
 
@@ -19,6 +19,7 @@ public class SleepingSpotData : BaseData, ILocationProvider, IReservationProvide
         Debug.Assert(building.Defn.SleepingSpots.Count > index, "building " + building.DefnId + " missing SleepingSpotData " + index);
         var loc = building.Defn.SleepingSpots[index];
         LocOffset = new(loc.x, Settings.Current.ItemSpotsY, loc.y);
+        Reservable = new(this);
     }
 
     public void UpdateWorldLoc()

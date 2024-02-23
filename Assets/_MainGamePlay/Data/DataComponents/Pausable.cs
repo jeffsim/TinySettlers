@@ -3,16 +3,16 @@ using UnityEngine;
 
 public interface IPausable
 {
-    PausableComponent Pausable { get; }
+    Pausable Pausable { get; }
+    public void OnPauseToggled();
 }
 
 [Serializable]
-public class PausableComponent : BaseData
+public class Pausable : BaseData
 {
-    public override string ToString() => $"Pausable {IsPaused}";
+    public override string ToString() => $"Pausable: {IsPaused}";
 
     public bool CanBePaused;
-
     public bool IsPaused;
 
     // These CANNOT be subscribed to by other Data classes as they are not serialized. They can
@@ -21,13 +21,12 @@ public class PausableComponent : BaseData
     // scriptableobjects/monobehaviours)
     [NonSerialized] public Action OnPauseToggled;
 
-    [SerializeField] BuildingData damnit;
+    [SerializeField] IPausable Owner;
 
-    public PausableComponent(PausableDefn defn, BuildingData fuckinHACK)
+    public Pausable(PausableDefn defn, IPausable owner)
     {
         CanBePaused = defn.CanBePaused;
-        
-        damnit = fuckinHACK;
+        Owner = owner;
     }
 
     public void TogglePaused()
@@ -35,7 +34,8 @@ public class PausableComponent : BaseData
         IsPaused = !IsPaused;
         OnPauseToggled?.Invoke();
 
-        damnit.OnPauseToggled();
+        // ffs
+        Owner.OnPauseToggled();
     }
 
     public void Pause() { if (!IsPaused) TogglePaused(); }

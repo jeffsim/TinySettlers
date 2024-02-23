@@ -65,7 +65,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         var pausedBuildingWithItemInIt = buildingWithItem == buildingToPause;
         var pausedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToPause;
         var pausedBuildingOfWorker = buildingWorker == buildingToPause;
-        var workerOriginalAssignedBuilding = worker.Assignment.AssignedTo;
+        var workerOriginalAssignedBuilding = worker.Assignable.AssignedTo;
 
         waitUntilTaskAndSubtaskIndex(worker, TaskType.GatherResource, workerSubtask > 5 ? workerSubtask - 2 : workerSubtask);
 

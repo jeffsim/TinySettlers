@@ -41,7 +41,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
         var spotWithWood = buildingWithItem.GetClosestUnreservedStorageSpotWithItem(worker.Location, itemDefn);
         var itemToBePickedUp = spotWithWood.ItemContainer.Item;
         var originalSpotWithItem = getStorageSpotInBuildingWithItem(buildingWithItem, itemToBePickedUp);
-        var workerOriginalAssignedBuilding = worker.Assignment.AssignedTo;
+        var workerOriginalAssignedBuilding = worker.Assignable.AssignedTo;
 
         switch (workerSubtask)
         {

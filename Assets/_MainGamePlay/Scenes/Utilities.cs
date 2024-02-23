@@ -55,10 +55,10 @@ public static class Utilities
         return worldLoc + (Vector3)circle;
     }
 
-    public static LocationComponent LocationWithinDistance(LocationComponent location, float maxDistance)
+    public static Location LocationWithinDistance(Location location, float maxDistance)
     {
         var circle = UnityEngine.Random.insideUnitCircle * maxDistance;
-        return new LocationComponent(location.WorldLoc + new Vector3(circle.x, 0, circle.y));
+        return new Location(location.WorldLoc + new Vector3(circle.x, 0, circle.y));
     }
 
     internal static string getNeedsDebugString(List<NeedData> needs, bool includeBuildingId)

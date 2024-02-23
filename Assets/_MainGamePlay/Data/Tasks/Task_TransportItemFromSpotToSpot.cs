@@ -71,7 +71,7 @@ public class Task_TransportItemFromSpotToSpot : Task
             Abandon();
     }
 
-    public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
+    public override void OnBuildingMoved(BuildingData building, Location previousLoc)
     {
         base.OnBuildingMoved(building, previousLoc);
 

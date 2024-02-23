@@ -33,8 +33,8 @@ public class StorageSpotDetails : MonoBehaviour
         {
             if (spot.ItemContainer.HasItem)
                 Item.text += spot.InstanceId + " item: " + spot.ItemContainer.Item.DefnId + "\n";
-            if (spot.Reservation.IsReserved)
-                Item.text += spot.InstanceId + " reserved by: " + spot.Reservation.ReservedBy + "\n";
+            if (spot.Reservable.IsReserved)
+                Item.text += spot.InstanceId + " reserved by: " + spot.Reservable.ReservedBy + "\n";
         }
         // var str = "Item:\n";
         // if (pile.Data.ItemContainer.Item != null)

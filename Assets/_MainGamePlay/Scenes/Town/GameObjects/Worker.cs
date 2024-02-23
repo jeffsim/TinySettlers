@@ -24,13 +24,13 @@ public class Worker : MonoBehaviour
         transform.position = data.Location.WorldLoc;
         updateVisual();
 
-        Data.Assignment.OnAssignedToChanged += OnAssignedToBuilding;
+        Data.Assignable.OnAssignedToChanged += OnAssignedToBuilding;
     }
 
     void OnDestroy()
     {
         if (Data != null)
-            Data.Assignment.OnAssignedToChanged -= OnAssignedToBuilding;
+            Data.Assignable.OnAssignedToChanged -= OnAssignedToBuilding;
     }
 
     public void OnMouseUp()
@@ -55,7 +55,7 @@ public class Worker : MonoBehaviour
         CarryAboveHeadSpot = Visual.transform.GetComponentInChildren<CarrySpot>().gameObject;
 
         // GetComponentInChildren<Renderer>().material.color = Data.Assignment.AssignedTo.Defn.AssignedWorkerColor;
-        name = "Worker - " + (Data.Assignment.IsAssigned ? Data.Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + Data.InstanceId + ")" : "none");
+        name = "Worker - " + (Data.Assignable.IsAssigned ? Data.Assignable.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + Data.InstanceId + ")" : "none");
     }
 
     bool startedPlayingWalkAnim;
@@ -183,7 +183,7 @@ public class Worker : MonoBehaviour
         var selectedBuilding = scene.BuildingDetails.building;
         if (scene.BuildingDetails.isActiveAndEnabled && selectedBuilding != null)
         {
-            showHighlight |= selectedBuilding.Data == Data.Assignment.AssignedTo;
+            showHighlight |= selectedBuilding.Data == Data.Assignable.AssignedTo;
             showHighlight |= selectedBuilding.Data.Defn.Occupiable.WorkersCanLiveHere && selectedBuilding.Data.Occupiable.IsOccupant(Data);
         }
 

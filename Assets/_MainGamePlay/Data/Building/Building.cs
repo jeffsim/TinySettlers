@@ -6,7 +6,7 @@ using UnityEngine;
 public delegate void OnLocationChangedEvent();
 
 [Serializable]
-public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstructable
+public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IPausable
 {
     public override string ToString() => Defn.FriendlyName + " (" + InstanceId + ")";
 
@@ -34,10 +34,10 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
     public List<NeedData> ConstructionNeeds = new();
 
     // Data Components
-    [SerializeField] public ConstructableComponent Constructable { get; set; }
-    [SerializeField] public LocationComponent Location { get; set; }
-    [SerializeField] public OccupiableComponent Occupiable { get; set; }
-    [SerializeField] public PausableComponent Pausable { get; set; }
+    [SerializeField] public Constructable Constructable { get; set; }
+    [SerializeField] public Location Location { get; set; }
+    [SerializeField] public Occupiable Occupiable { get; set; }
+    [SerializeField] public Pausable Pausable { get; set; }
 
     [NonSerialized] public OnLocationChangedEvent OnLocationChanged;
 
@@ -64,7 +64,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
         {
             // TODO (PERF): Cache
             int count = 0;
-            foreach (var spot in GatheringSpots) if (spot.Reservation.IsReserved) count++;
+            foreach (var spot in GatheringSpots) if (spot.Reservable.IsReserved) count++;
             return count;
         }
     }
@@ -110,10 +110,14 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
     {
         Town = town;
 
-        Occupiable = new(Defn.Occupiable);
+        Occupiable = new(Defn.Occupiable, this);
         Pausable = new(Defn.Pausable, this);
-        if (Defn.CanCraft) CraftingMgr = new(this);
-        if (Defn.CanBeConstructed) Constructable = new();
+        Constructable = new(Defn.Constructable, this);
+
+        if (Defn.CanCraft)
+        {
+            CraftingMgr = new(this);
+        }
 
         if (Defn.ResourcesCanBeGatheredFromHere)
         {
@@ -200,14 +204,14 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
     public StorageSpotData GetStorageSpotWithUnreservedItemOfType(ItemDefn itemDefn, ItemClass itemClass = ItemClass.Unset)
     {
         foreach (var spot in StorageSpots)
-            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)// && spot.ItemInStorage.Defn.ItemClass == itemClass)
+            if (!spot.Reservable.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)// && spot.ItemInStorage.Defn.ItemClass == itemClass)
                 return spot;
 
         return null;
     }
 
     public bool NeedsItemForSelf(ItemDefn itemDefn) => ItemNeeds.Find(need => need.NeededItem == itemDefn) != null;
-    public bool HasUnreservedItemOfTypeAndDoesntNeedIt(ItemDefn itemDefn) => StorageSpots.Any(spot => !spot.Reservation.IsReserved && spot.ItemContainer.ContainsItem(itemDefn) && !NeedsItemForSelf(itemDefn));
+    public bool HasUnreservedItemOfTypeAndDoesntNeedIt(ItemDefn itemDefn) => StorageSpots.Any(spot => !spot.Reservable.IsReserved && spot.ItemContainer.ContainsItem(itemDefn) && !NeedsItemForSelf(itemDefn));
 
     /**
         returns true if this building supports gathering the required resource AND there's
@@ -380,42 +384,42 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
     public int NumItemsInStorage => StorageAreas.Sum(area => area.NumItemsInStorage);
     public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StorageAreas.Sum(area => area.NumItemsOfTypeInStorage(itemDefn));
 
-    public StorageSpotData GetEmptyStorageSpot() => StorageSpots.First(spot => spot.ItemContainer.IsEmpty && !spot.Reservation.IsReserved);
+    public StorageSpotData GetEmptyStorageSpot() => StorageSpots.First(spot => spot.ItemContainer.IsEmpty && !spot.Reservable.IsReserved);
 
-    public StorageSpotData GetClosestEmptyStorageSpot(LocationComponent loc) => GetClosestEmptyStorageSpot(loc, out float _);
-    public StorageSpotData GetClosestEmptyStorageSpot(LocationComponent loc, out float dist)
+    public StorageSpotData GetClosestEmptyStorageSpot(Location loc) => GetClosestEmptyStorageSpot(loc, out float _);
+    public StorageSpotData GetClosestEmptyStorageSpot(Location loc, out float dist)
     {
-        return loc.GetClosest(StorageSpots, out dist, spot => spot.ItemContainer.IsEmpty && !spot.Reservation.IsReserved);
+        return loc.GetClosest(StorageSpots, out dist, spot => spot.ItemContainer.IsEmpty && !spot.Reservable.IsReserved);
     }
 
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItem(LocationComponent loc, ItemDefn itemDefn) => GetClosestUnreservedStorageSpotWithItem(loc, itemDefn, out float _);
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItem(LocationComponent loc, ItemDefn itemDefn, out float distance)
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItem(Location loc, ItemDefn itemDefn) => GetClosestUnreservedStorageSpotWithItem(loc, itemDefn, out float _);
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItem(Location loc, ItemDefn itemDefn, out float distance)
     {
-        return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.ContainsItem(itemDefn));
+        return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservable.IsReserved && spot.ItemContainer.ContainsItem(itemDefn));
     }
 
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItemIgnoreList(LocationComponent loc, ItemDefn itemDefn, List<StorageSpotData> ignore) => GetClosestUnreservedStorageSpotWithItemIgnoreList(loc, itemDefn, ignore, out float _);
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItemIgnoreList(LocationComponent loc, ItemDefn itemDefn, List<StorageSpotData> ignore, out float distance)
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItemIgnoreList(Location loc, ItemDefn itemDefn, List<StorageSpotData> ignore) => GetClosestUnreservedStorageSpotWithItemIgnoreList(loc, itemDefn, ignore, out float _);
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItemIgnoreList(Location loc, ItemDefn itemDefn, List<StorageSpotData> ignore, out float distance)
     {
-        return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.ContainsItem(itemDefn) && !ignore.Contains(spot));
+        return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservable.IsReserved && spot.ItemContainer.ContainsItem(itemDefn) && !ignore.Contains(spot));
     }
 
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(LocationComponent loc) => GetClosestUnreservedStorageSpotWithItemToReapOrSell(loc, out float _);
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(LocationComponent loc, out float distance)
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(Location loc) => GetClosestUnreservedStorageSpotWithItemToReapOrSell(loc, out float _);
+    public StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(Location loc, out float distance)
     {
-        return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.HasItem);
+        return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservable.IsReserved && spot.ItemContainer.HasItem);
     }
 
-    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent loc) => GetClosestUnreservedGatheringSpotWithItemToReap(loc, out float _);
-    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent loc, out float distance)
+    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(Location loc) => GetClosestUnreservedGatheringSpotWithItemToReap(loc, out float _);
+    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(Location loc, out float distance)
     {
-        return loc.GetClosest(GatheringSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.HasItem);
+        return loc.GetClosest(GatheringSpots, out distance, spot => !spot.Reservable.IsReserved && spot.ItemContainer.HasItem);
     }
 
-    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent loc, ItemDefn itemDefn) => GetClosestUnreservedGatheringSpotWithItemToReap(loc, itemDefn, out float _);
-    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(LocationComponent loc, ItemDefn itemDefn, out float distance)
+    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(Location loc, ItemDefn itemDefn) => GetClosestUnreservedGatheringSpotWithItemToReap(loc, itemDefn, out float _);
+    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(Location loc, ItemDefn itemDefn, out float distance)
     {
-        return loc.GetClosest(GatheringSpots, out distance, spot => !spot.Reservation.IsReserved && spot.ItemContainer.HasItem && spot.ItemContainer.Item.DefnId == itemDefn.Id);
+        return loc.GetClosest(GatheringSpots, out distance, spot => !spot.Reservable.IsReserved && spot.ItemContainer.HasItem && spot.ItemContainer.Item.DefnId == itemDefn.Id);
     }
 
     public StorageSpotData ReserveStorageSpot(WorkerData worker) => worker.ReserveFirstReservable(StorageSpots);
@@ -424,17 +428,17 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
     public void UnreserveStorageSpot(WorkerData worker) => worker.UnreserveFirstReservedByWorker(StorageSpots);
     public void UnreserveGatheringSpot(WorkerData worker) => worker.UnreserveFirstReservedByWorker(GatheringSpots);
 
-    public GatheringSpotData ReserveClosestGatheringSpot(WorkerData worker, LocationComponent loc)
+    public GatheringSpotData ReserveClosestGatheringSpot(WorkerData worker, Location loc)
     {
         var spot = loc.GetClosest(GatheringSpots);
-        spot?.Reservation.ReserveBy(worker);
+        spot?.Reservable.ReserveBy(worker);
         return spot;
     }
 
     public ItemData GetUnreservedItemInStorage(ItemDefn item)
     {
         foreach (var spot in StorageSpots)
-            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == item.Id)
+            if (!spot.Reservable.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == item.Id)
                 return spot.ItemContainer.Item;
         return null;
     }
@@ -442,7 +446,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
     public StorageSpotData GetStorageSpotWithUnreservedItem(ItemDefn item)
     {
         foreach (var spot in StorageSpots)
-            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == item.Id)
+            if (!spot.Reservable.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == item.Id)
                 return spot;
         return null;
     }
@@ -470,7 +474,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
 
     public void MoveTo(Vector3 worldLoc)
     {
-        LocationComponent previousWorldLoc = new(Location.WorldLoc);
+        Location previousWorldLoc = new(Location.WorldLoc);
         Location.SetWorldLoc(worldLoc);
         UpdateWorldLoc();
 
@@ -488,7 +492,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
         TileX = tileX;
         TileY = tileY;
 
-        LocationComponent previousWorldLoc = new(Location.WorldLoc);
+        Location previousWorldLoc = new(Location.WorldLoc);
         Location.SetWorldLoc(TileX * TileSize, Location.WorldLoc.y, TileY * TileSize);
         UpdateWorldLoc();
 
@@ -511,7 +515,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
     public StorageSpotData GetFirstStorageSpotWithUnreservedItemToRemove()
     {
         foreach (var spot in StorageSpots)
-            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
+            if (!spot.Reservable.IsReserved && spot.ItemContainer.Item != null)
             {
                 // Allow returning resources that we need for crafting or selling if we're paused or have no workers assigned
                 var allowRemovingNeededItems = IsPaused || NumWorkers == 0;
@@ -522,12 +526,12 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
         return null;
     }
 
-    public StorageSpotData GetClosestStorageSpotWithUnreservedItemToRemove(LocationComponent location)
+    public StorageSpotData GetClosestStorageSpotWithUnreservedItemToRemove(Location location)
     {
         StorageSpotData closestSpot = null;
         float closestDist = float.MaxValue;
         foreach (var spot in StorageSpots)
-            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null)
+            if (!spot.Reservable.IsReserved && spot.ItemContainer.Item != null)
             {
                 // Allow returning resources that we need for crafting or selling if we're paused or have no workers assigned
                 var allowRemovingNeededItems = IsPaused || NumWorkers == 0;
@@ -548,12 +552,12 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
     {
         var spots = new List<StorageSpotData>();
         foreach (var spot in StorageSpots)
-            if (!spot.Reservation.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
+            if (!spot.Reservable.IsReserved && spot.ItemContainer.Item != null && spot.ItemContainer.Item.DefnId == itemDefn.Id)
                 spots.Add(spot);
         return spots;
     }
 
-    internal void OnPauseToggled()
+    public void OnPauseToggled()
     {
         foreach (var worker in Town.TownWorkerMgr.Workers)
             worker.OnBuildingPauseToggled(this);

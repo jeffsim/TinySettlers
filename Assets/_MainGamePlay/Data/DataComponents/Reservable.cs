@@ -1,18 +1,24 @@
 using System;
 using UnityEngine;
 
-public interface IReservationProvider
+public interface IReservable
 {
-    ReservationComponent Reservation { get; }
+    Reservable Reservable { get; }
 }
 
 [Serializable]
-public class ReservationComponent : BaseData
+public class Reservable : BaseData
 {
-    public override string ToString() => IsReserved ? "Reserved by " + ReservedBy : "Not reserved";
+    public override string ToString() => $"Reservable: {(IsReserved ? "Reserved by " + ReservedBy : "Not reserved")}";
 
     public WorkerData ReservedBy;
     public bool IsReserved => ReservedBy != null;
+    [SerializeField] IReservable Owner;
+
+    public Reservable(IReservable owner)
+    {
+        Owner = owner;
+    }
 
     public void Unreserve()
     {

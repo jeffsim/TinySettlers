@@ -28,6 +28,6 @@ public class CraftingSpot : MonoBehaviour
     void Update()
     {
         Debug.Assert(Data != null, "null spot");
-        ReservedIndicator.SetActive(Data.Reservation.IsReserved);
+        ReservedIndicator.SetActive(Data.Reservable.IsReserved);
     }
 }

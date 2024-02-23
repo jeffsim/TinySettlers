@@ -37,12 +37,12 @@ public abstract class Task
 
     // == Movement and Location ================
     public virtual bool IsWalkingToTarget => CurSubTask.IsWalkingToTarget;
-    public LocationComponent LastMoveToTarget = new();
+    public Location LastMoveToTarget = new();
 
     // == Reservable Spots =====================
-    [SerializeField] protected List<IReservationProvider> SpotsToReserveOnStart = new();
-    [SerializeField] public List<IReservationProvider> ReservedSpots = new();
-    public bool HasReservedSpot(IReservationProvider spot) => ReservedSpots.Contains(spot);
+    [SerializeField] protected List<IReservable> SpotsToReserveOnStart = new();
+    [SerializeField] public List<IReservable> ReservedSpots = new();
+    public bool HasReservedSpot(IReservable spot) => ReservedSpots.Contains(spot);
 
     // == Items ================================
     public virtual bool IsCarryingItem(string itemId) => false;
@@ -101,7 +101,7 @@ public abstract class Task
     public virtual void Update()
     {
         Debug.Assert(IsRunning, "Updating nonrunning task (state = " + TaskState + ")");
-        Debug.Assert(Worker.Assignment.IsAssigned, "Failed to cancel task when assigned building cleared");
+        Debug.Assert(Worker.Assignable.IsAssigned, "Failed to cancel task when assigned building cleared");
         CurSubTask?.Update();
     }
 
@@ -109,26 +109,26 @@ public abstract class Task
     // ====================================================================================================================
     // Spot reservations
 
-    public T ReserveSpotOnStart<T>(T spot) where T : IReservationProvider
+    public T ReserveSpotOnStart<T>(T spot) where T : IReservable
     {
         Debug.Assert(!ReservedSpots.Contains(spot), $"Task is trying to reserve {spot} on Start but it's already reserved");
         SpotsToReserveOnStart.Add(spot);
         return spot;
     }
 
-    protected IReservationProvider ReserveSpot(IReservationProvider spot)
+    protected IReservable ReserveSpot(IReservable spot)
     {
         Debug.Assert(spot != null, "Trying to reserve a null spot");
-        spot.Reservation.ReserveBy(Worker);
+        spot.Reservable.ReserveBy(Worker);
 
         Debug.Assert(!ReservedSpots.Contains(spot), $"Task is trying to reserve {spot} but it's already reserved by {Worker}");
         ReservedSpots.Add(spot);
         return spot;
     }
 
-    public void UnreserveSpot(IReservationProvider spot)
+    public void UnreserveSpot(IReservable spot)
     {
-        spot.Reservation.Unreserve();
+        spot.Reservable.Unreserve();
 
         Debug.Assert(ReservedSpots.Contains(spot), $"Task is trying to unreserve {spot} but it isn't reserved by {Worker}");
         ReservedSpots.Remove(spot);
@@ -138,7 +138,7 @@ public abstract class Task
     // ====================================================================================================================
     // Worker movement
 
-    public bool MoveTowards(LocationComponent location, float closeEnough = .1f)
+    public bool MoveTowards(Location location, float closeEnough = .1f)
     {
         // Track last movement target so that it can be (a) updated if buildings move and (b) rendered
         LastMoveToTarget.SetWorldLoc(location);
@@ -163,7 +163,7 @@ public abstract class Task
     public virtual void Abandon() => finishTask(TaskState.Abandoned);
     void finishTask(TaskState newState)
     {
-        ReservedSpots.ForEach(spot => spot.Reservation.Unreserve());
+        ReservedSpots.ForEach(spot => spot.Reservable.Unreserve());
         TaskState = newState;
         Worker.AI.StartIdling();
     }
@@ -173,7 +173,7 @@ public abstract class Task
 
     public virtual void OnBuildingPauseToggled(BuildingData building)
     {
-        if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingPaused && Worker.Assignment.AssignedTo == building)
+        if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingPaused && Worker.Assignable.AssignedTo == building)
             Abandon();
         else
             CurSubTask.OnAnyBuildingPauseToggled(building);
@@ -181,15 +181,15 @@ public abstract class Task
 
     public virtual void OnBuildingDestroyed(BuildingData building)
     {
-        if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingDestroyed && Worker.Assignment.AssignedTo == building)
+        if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingDestroyed && Worker.Assignable.AssignedTo == building)
             Abandon();
         else
             CurSubTask.OnAnyBuildingDestroyed(building);
     }
 
-    public virtual void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
+    public virtual void OnBuildingMoved(BuildingData building, Location previousLoc)
     {
-        if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingMoved && Worker.Assignment.AssignedTo == building)
+        if (CurSubTask.AutomaticallyAbandonIfAssignedBuildingMoved && Worker.Assignable.AssignedTo == building)
         {
             Abandon();
             return;
@@ -213,13 +213,13 @@ public abstract class Task
     // ====================================================================================================================
     // Other functions
 
-    protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpot(IItemSpotInBuilding originalReservedSpot, LocationComponent closestLocation, bool updateMoveLoc)
+    protected IItemSpotInBuilding FindAndReserveNewOptimalStorageSpot(IItemSpotInBuilding originalReservedSpot, Location closestLocation, bool updateMoveLoc)
     {
         // Temporarily unreserve the spot so that it can be returned if closest
-        var reservedBy = originalReservedSpot.Reservation.ReservedBy;
-        originalReservedSpot.Reservation.Unreserve();
+        var reservedBy = originalReservedSpot.Reservable.ReservedBy;
+        originalReservedSpot.Reservable.Unreserve();
         var optimalStorageSpotToDeliverItemTo = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
-        originalReservedSpot.Reservation.ReserveBy(reservedBy);
+        originalReservedSpot.Reservable.ReserveBy(reservedBy);
         if (optimalStorageSpotToDeliverItemTo == null && originalReservedSpot.Building.IsPaused)
         {
             // Couldn't find any and original spot is no longer valid
@@ -237,7 +237,7 @@ public abstract class Task
         return originalReservedSpot;
     }
 
-    protected IItemSpotInBuilding FindAndReserveOptimalStorageSpot(LocationComponent closestLocation, bool isCurrentMoveTarget)
+    protected IItemSpotInBuilding FindAndReserveOptimalStorageSpot(Location closestLocation, bool isCurrentMoveTarget)
     {
         var optimalSpot = Worker.Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, closestLocation, Worker);
         if (optimalSpot == null)

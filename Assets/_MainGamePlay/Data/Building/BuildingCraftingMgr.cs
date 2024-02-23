@@ -12,7 +12,7 @@ public class BuildingCraftingMgr
         {
             // TODO (PERF): Cache
             int count = 0;
-            foreach (var spot in CraftingSpots) if (spot.Reservation.IsReserved) count++;
+            foreach (var spot in CraftingSpots) if (spot.Reservable.IsReserved) count++;
             return count;
         }
     }
@@ -57,7 +57,7 @@ public class BuildingCraftingMgr
     public CraftingSpotData GetAvailableCraftingSpot()
     {
         foreach (var spot in CraftingSpots)
-            if (!spot.Reservation.IsReserved)
+            if (!spot.Reservable.IsReserved)
                 return spot;
         return null;
     }

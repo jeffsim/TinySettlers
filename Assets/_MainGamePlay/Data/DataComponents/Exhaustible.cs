@@ -1,15 +1,15 @@
 using System;
 using UnityEngine;
 
-public interface IEnergyProvider
+public interface IExhaustible
 {
-    EnergyComponent Energy { get; }
+    Exhaustible Exhaustible { get; }
 }
 
 [Serializable]
-public class EnergyComponent : BaseData
+public class Exhaustible : BaseData
 {
-    public override string ToString() => $"Energy: {EnergyLevel}";
+    public override string ToString() => $"Energizable: {EnergyLevel}";
 
     // 0-1
     public float EnergyLevel;
@@ -21,6 +21,14 @@ public class EnergyComponent : BaseData
 
     [NonSerialized] public Action OnEnergyFullyRestored;
     [NonSerialized] public Action OnEnergyExhausted;
+
+    [SerializeField] IExhaustible Owner;
+
+    public Exhaustible(IExhaustible owner)
+    {
+        Owner = owner;
+        FillUp();
+    }
 
     public void Update()
     {

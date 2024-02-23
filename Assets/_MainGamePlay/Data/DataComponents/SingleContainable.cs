@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class ItemContainerComponent : BaseData
+public class SingleContainable : BaseData
 {
     public override string ToString() => $"{(Item == null ? "empty" : Item)}";
 

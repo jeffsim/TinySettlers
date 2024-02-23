@@ -34,6 +34,11 @@ public class PausableDefn
     public bool CanBePaused;
 }
 
+[Serializable]
+public class ConstructableDefn
+{
+}
+
 [CreateAssetMenu(fileName = "BuildingDefn")]
 public class BuildingDefn : BaseDefn
 {
@@ -105,4 +110,5 @@ public class BuildingDefn : BaseDefn
 
     public PausableDefn Pausable;
     public OccupiableDefn Occupiable;
+    public ConstructableDefn Constructable;
 }

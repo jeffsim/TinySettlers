@@ -2,17 +2,17 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class GatheringSpotData : BaseData, ILocationProvider, IReservationProvider, IItemSpotInBuilding
+public class GatheringSpotData : BaseData, ILocation, IReservable, IItemSpotInBuilding
 {
-    public override string ToString() => $"Gathering {InstanceId}: {ItemContainer} {Reservation}";
+    public override string ToString() => $"Gathering {InstanceId}: {ItemContainer} {Reservable}";
     [SerializeField] public BuildingData Building { get; set; }
 
     public string ItemGrownInSpotDefnId;
     public float PercentGrown;
 
-    [SerializeField] public LocationComponent Location { get; set; } = new();
-    [SerializeField] public ReservationComponent Reservation { get; set; } = new();
-    [SerializeField] public ItemContainerComponent ItemContainer { get; set; } = new();
+    [SerializeField] public Location Location { get; set; } = new();
+    [SerializeField] public Reservable Reservable { get; set; }
+    [SerializeField] public SingleContainable ItemContainer { get; set; } = new();
     public Vector3 LocOffset;
 
     public GatheringSpotData(BuildingData building, int index)
@@ -21,6 +21,7 @@ public class GatheringSpotData : BaseData, ILocationProvider, IReservationProvid
         Debug.Assert(building.Defn.GatheringSpots.Count > index, "building " + building.DefnId + " missing GatheringSpotData " + index);
         var loc = building.Defn.GatheringSpots[index];
         LocOffset = new(loc.x, Settings.Current.ItemSpotsY, loc.y);
+        Reservable = new(this);
 
         // hack
         if (building.Defn.ResourcesCanBeGatheredFromHere)

@@ -67,7 +67,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         var destroyedBuildingWithItemInIt = buildingWithItem == buildingToDestroy;
         var destroyedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToDestroy;
         var destroyedBuildingOfWorker = buildingWorker == buildingToDestroy;
-        var workerOriginalAssignedBuilding = worker.Assignment.AssignedTo;
+        var workerOriginalAssignedBuilding = worker.Assignable.AssignedTo;
 
         waitUntilTaskAndSubtaskIndex(worker, TaskType.GatherResource, workerSubtask > 5 ? workerSubtask - 2 : workerSubtask);
 
@@ -80,8 +80,8 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         int origNumItemsInTownStorage = GetNumItemsInTownStorage() + GetNumItemsInTownGatheringSpots();
         int origNumItemsOnGround = Town.ItemsOnGround.Count;
         int origNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
-        int origNumReservedStorageSpots = Town.AllBuildings.Sum(b => b.StorageSpots.Count(s => s.Reservation.IsReserved));
-        int origNumReservedGatheringSpots = Town.AllBuildings.Sum(b => b.GatheringSpots.Count(s => s.Reservation.IsReserved));
+        int origNumReservedStorageSpots = Town.AllBuildings.Sum(b => b.StorageSpots.Count(s => s.Reservable.IsReserved));
+        int origNumReservedGatheringSpots = Town.AllBuildings.Sum(b => b.GatheringSpots.Count(s => s.Reservable.IsReserved));
 
         Town.DestroyBuilding(buildingToDestroy);
 
@@ -144,8 +144,8 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
             int newNumItemsInTownStorage = GetNumItemsInTownStorage() + GetNumItemsInTownGatheringSpots();
             int newNumItemsOnGround = Town.ItemsOnGround.Count;
             int newNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
-            int newNumReservedStorageSpots = Town.AllBuildings.Sum(b => b.StorageSpots.Count(s => s.Reservation.IsReserved));
-            int newNumReservedGatheringSpots = Town.AllBuildings.Sum(b => b.GatheringSpots.Count(s => s.Reservation.IsReserved));
+            int newNumReservedStorageSpots = Town.AllBuildings.Sum(b => b.StorageSpots.Count(s => s.Reservable.IsReserved));
+            int newNumReservedGatheringSpots = Town.AllBuildings.Sum(b => b.GatheringSpots.Count(s => s.Reservable.IsReserved));
 
             verify_AssignedBuilding(worker, destroyedBuildingOfWorker ? Camp : workerOriginalAssignedBuilding);
             Assert.AreEqual(origNumItemsInTownStorage + origNumItemsOnGround + origNumItemsInWorkersHands, newNumItemsInTownStorage + newNumItemsOnGround + newNumItemsInWorkersHands, $"{preface("", 1)} Number of items in town (in storage+onground) should not have changed");

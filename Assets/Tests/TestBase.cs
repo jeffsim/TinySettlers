@@ -75,7 +75,7 @@ public abstract class TestBase
     protected WorkerData getAssignedWorker(string assignedBuildingId, int num = 0)
     {
         foreach (var worker in Town.TownWorkerMgr.Workers)
-            if (worker.Assignment.AssignedTo.DefnId == assignedBuildingId)
+            if (worker.Assignable.AssignedTo.DefnId == assignedBuildingId)
                 if (--num == -1)
                     return worker;
         Assert.Fail($"{preface()} failed to get worker {num} in building {assignedBuildingId}");
@@ -143,7 +143,7 @@ public abstract class TestBase
         Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, $"{preface(message)} Locs not equal - {v1} vs {v2}");
     }
 
-    public void verify_LocsAreEqual(LocationComponent loc1, LocationComponent loc2, string message = "", float acceptableDelta = 0.01f)
+    public void verify_LocsAreEqual(Location loc1, Location loc2, string message = "", float acceptableDelta = 0.01f)
     {
         float dx = Math.Abs(loc2.WorldLoc.x - loc1.WorldLoc.x), dy = Math.Abs(loc2.WorldLoc.y - loc1.WorldLoc.y);
         Assert.IsTrue(dx < acceptableDelta && dy < acceptableDelta, $"{preface(message)} Locs not equal - {loc1} vs {loc2}");
@@ -233,7 +233,7 @@ public abstract class TestBase
     {
         Assert.NotNull(worker, $"{preface(message)} Expected worker {worker} to be assigned to {building}, but worker is null");
         Assert.NotNull(building, $"{preface(message)} Expected worker {worker} to be assigned to {building}, but building is null");
-        Assert.AreEqual(worker.Assignment.AssignedTo, building, $"{preface(message)} Expected worker {worker} to be assigned to {building}, but worker is assigned to '{worker.Assignment.AssignedTo}'");
+        Assert.AreEqual(worker.Assignable.AssignedTo, building, $"{preface(message)} Expected worker {worker} to be assigned to {building}, but worker is assigned to '{worker.Assignable.AssignedTo}'");
     }
 
     protected void verify_ItemDefnInHand(WorkerData worker, string itemDefnId, string message = "")
@@ -262,16 +262,16 @@ public abstract class TestBase
         Assert.AreEqual(spot, getStorageSpotInBuildingReservedByWorker(spot.Building, worker), $"{preface(message)} Expected spot to still be reserved by worker, but it is not");
     }
 
-    protected void verify_spotIsUnreserved(IReservationProvider spot, string message = "")
+    protected void verify_spotIsUnreserved(IReservable spot, string message = "")
     {
         Assert.IsNotNull(spot, $"{preface(message)} null spot");
-        Assert.IsNull(spot.Reservation.ReservedBy, $"{preface(message)} Expected spot to be unreserved, but it is reserved by {spot.Reservation.ReservedBy}");
+        Assert.IsNull(spot.Reservable.ReservedBy, $"{preface(message)} Expected spot to be unreserved, but it is reserved by {spot.Reservable.ReservedBy}");
     }
 
     protected void verify_spotIsReserved(IItemSpotInBuilding spot, string message = "")
     {
         Assert.IsNotNull(spot, $"{preface(message)} null spot");
-        Assert.IsNotNull(spot.Reservation.ReservedBy, $"{preface(message)} Expected spot to be reserved, but it is not");
+        Assert.IsNotNull(spot.Reservable.ReservedBy, $"{preface(message)} Expected spot to be reserved, but it is not");
     }
 
     protected void verify_ItemsOnGround(int expectedNumber, string message = "")
@@ -322,7 +322,7 @@ public abstract class TestBase
 
     protected void forceMoveWorkerAwayFromAssignedBuilding(WorkerData worker)
     {
-        Vector3 loc = worker.Assignment.AssignedTo.Location.WorldLoc;
+        Vector3 loc = worker.Assignable.AssignedTo.Location.WorldLoc;
         worker.Location.SetWorldLoc(loc.x + 1, loc.y, loc.z);
     }
 
@@ -330,7 +330,7 @@ public abstract class TestBase
     {
         Assert.NotNull(building, $"{preface(message)} building is null");
         Assert.NotNull(worker, $"{preface(message)} worker is null");
-        return building.StorageSpots.Find(spot => spot.Reservation.ReservedBy == worker);
+        return building.StorageSpots.Find(spot => spot.Reservable.ReservedBy == worker);
     }
 
     protected StorageSpotData getStorageSpotInBuildingWithItem(BuildingData building, ItemData item)
@@ -353,7 +353,7 @@ public abstract class TestBase
         foreach (var building in Town.AllBuildings)
             if (building.Defn.CanStoreItems)
                 foreach (var spot in building.StorageSpots)
-                    if (!spot.ItemContainer.HasItem && !spot.Reservation.IsReserved)
+                    if (!spot.ItemContainer.HasItem && !spot.Reservable.IsReserved)
                         spot.ItemContainer.SetItem(new ItemData() { DefnId = itemDefnId });
     }
 

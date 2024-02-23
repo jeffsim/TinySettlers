@@ -49,7 +49,7 @@ public class GatheringSpot : MonoBehaviour
         //     GetComponentInChildren<Renderer>().material.color = spot.ItemInStorage.Defn.Color;
         //     name = "Storage " + index + " - " + spot.ItemInStorage.Defn.FriendlyName;
         // }
-        ReservedIndicator.SetActive(Data.Reservation.IsReserved);
+        ReservedIndicator.SetActive(Data.Reservable.IsReserved);
 
         // highlight this spot if this gathering spot is reserved by the currently selected worker
         bool showHighlight = false;

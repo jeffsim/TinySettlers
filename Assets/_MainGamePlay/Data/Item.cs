@@ -10,5 +10,5 @@ public class ItemData : BaseData
     public ItemDefn Defn => _defn = _defn != null ? _defn : GameDefns.Instance.ItemDefns[DefnId];
    
     public string DefnId;
-    public LocationComponent Location = new();
+    public Location Location = new();
 }

@@ -44,7 +44,7 @@ public class Task_TransportItemFromGroundToSpot : Task
         Worker.OriginalPickupItemNeed = Need;
     }
 
-    public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
+    public override void OnBuildingMoved(BuildingData building, Location previousLoc)
     {
         base.OnBuildingMoved(building, previousLoc);
 

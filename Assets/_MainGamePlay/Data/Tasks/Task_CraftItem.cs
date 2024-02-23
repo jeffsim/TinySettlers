@@ -80,14 +80,14 @@ public class Task_CraftItem : Task
     {
         // if explicit item then already dropped in storage spot; if implicit then create now
         if (itemBeingCrafted.GoodType == GoodType.implicitGood)
-            Worker.Assignment.AssignedTo.Town.Gold += itemBeingCrafted.BaseSellPrice;
+            Worker.Assignable.AssignedTo.Town.Gold += itemBeingCrafted.BaseSellPrice;
         base.AllSubtasksComplete();
     }
 
-    IItemSpotInBuilding ReserveCraftingResourceStorageSpotForItemOnStart(ItemDefn itemDefn, LocationComponent location)
+    IItemSpotInBuilding ReserveCraftingResourceStorageSpotForItemOnStart(ItemDefn itemDefn, Location location)
     {
-        var spot = Worker.Assignment.AssignedTo.GetClosestUnreservedStorageSpotWithItemIgnoreList(location, itemDefn, CraftingResourceSpots);
-        Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.Assignment.AssignedTo.DefnId);
+        var spot = Worker.Assignable.AssignedTo.GetClosestUnreservedStorageSpotWithItemIgnoreList(location, itemDefn, CraftingResourceSpots);
+        Debug.Assert(spot != null, "Failed to find spot with unreserved item " + itemDefn.Id + " in " + Worker.Assignable.AssignedTo.DefnId);
         ReserveSpotOnStart(spot);
         CraftingResourceSpots.Add(spot);
         return spot;

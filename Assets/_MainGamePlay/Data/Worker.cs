@@ -4,20 +4,20 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOccupantProvider
+public class WorkerData : BaseData, ILocation, IAssignable, IOccupier, IExhaustible
 {
-    public override string ToString() => Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + InstanceId + ")";// + "-" + worker.Data.UniqueId;
+    public override string ToString() => Assignable.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + InstanceId + ")";// + "-" + worker.Data.UniqueId;
 
     private WorkerDefn _defn;
     public WorkerDefn Defn => _defn = _defn != null ? _defn : GameDefns.Instance.WorkerDefns[DefnId];
     public string DefnId;
 
-    [SerializeField] public LocationComponent Location { get; set; }
-    [SerializeField] public AssignmentComponent Assignment { get; set; } = new();
-    [SerializeField] public ItemContainerComponent Hands { get; set; } = new();
+    [SerializeField] public Location Location { get; set; }
+    [SerializeField] public SingleContainable Hands { get; set; }
     [SerializeField] public AIComponent AI { get; set; }
-    [SerializeField] public EnergyComponent Energy { get; set; } = new();
-    [SerializeField] public OccupantComponent Occupant { get; set; } = new();
+    [SerializeField] public Assignable Assignable { get; set; }
+    [SerializeField] public Occupier Occupier { get; set; }
+    [SerializeField] public Exhaustible Exhaustible { get; set; }
 
     internal void DropItemOnGround() => Town.AddItemToGround(Hands.ClearItem(), Location);
 
@@ -25,6 +25,7 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
     public TownData Town;
 
     public NeedData OriginalPickupItemNeed;
+    
     public WorkerData(WorkerDefn defn, BuildingData buildingToStartIn)
     {
         DefnId = defn.Id;
@@ -32,20 +33,21 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
         Location = Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f);
         Location.WorldLoc.y = Settings.Current.WorkerY;
 
-        Town = buildingToStartIn.Town;
-        Energy.FillUp();
+        Occupier = new(this);
+        Assignable = new(this);
+        Exhaustible = new(this);
+        Hands = new();
 
-        Assignment.AssignTo(buildingToStartIn);
-        initializeCallbacks();
+        Town = buildingToStartIn.Town;
+
+        Assignable.AssignTo(buildingToStartIn);
 
         AI = new(this);
     }
 
-    public void OnLoaded() => initializeCallbacks();
-
-    void initializeCallbacks()
+    public void OnAssignedToChanged()
     {
-        Assignment.OnAssignedToChanged += () => AI.CurrentTask.Abandon();  // TODO: I *think* this doesn't need to be cleaned up on destroy (?)
+        AI?.CurrentTask.Abandon();
     }
 
     internal void OnNeedBeingMetCancelled()
@@ -60,18 +62,18 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
         AI.CurrentTask.OnBuildingDestroyed(building);
 
         // If we are assigned to the destroyed building, then assign ourselves to the Camp instead
-        if (Assignment.AssignedTo == building)
-            Assignment.AssignTo(Town.Camp);
+        if (Assignable.AssignedTo == building)
+            Assignable.AssignTo(Town.Camp);
     }
 
     // pass throughs to current task
     public void Update()
     {
         AI.Update();
-        Energy.Update();
+        Exhaustible.Update();
     }
 
-    public void OnBuildingMoved(BuildingData building, LocationComponent previousLoc) => AI.CurrentTask.OnBuildingMoved(building, previousLoc);
+    public void OnBuildingMoved(BuildingData building, Location previousLoc) => AI.CurrentTask.OnBuildingMoved(building, previousLoc);
     public void OnBuildingPauseToggled(BuildingData building) => AI.CurrentTask.OnBuildingPauseToggled(building);
 
     internal float GetMovementSpeed()
@@ -103,31 +105,31 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
 
     // TODO: Rather than tie following to AssignedBuilding, make it an attribute of the Worker which is assigned as bitflag; bitflag is set when
     // worker is assigned to building and/or by worker's defn
-    internal bool CanCleanupStorage() => Assignment.AssignedTo.Defn.WorkersCanFerryItems;
-    internal bool CanPickupAbandonedItems() => Assignment.AssignedTo.Defn.WorkersCanFerryItems;
-    internal bool CanGoGetItemsBuildingsWant() => Assignment.AssignedTo.Defn.WorkersCanFerryItems;
-    internal bool CanCraftItems() => Assignment.AssignedTo.Defn.CanCraft;
-    internal bool CanSellItems() => Assignment.AssignedTo.Defn.CanSellGoods;
-    internal bool CanGatherResource(ItemDefn neededItem) => Assignment.AssignedTo.Defn.CanGatherResources && Assignment.AssignedTo.Defn.GatherableResources.Contains(neededItem);
+    internal bool CanCleanupStorage() => Assignable.AssignedTo.Defn.WorkersCanFerryItems;
+    internal bool CanPickupAbandonedItems() => Assignable.AssignedTo.Defn.WorkersCanFerryItems;
+    internal bool CanGoGetItemsBuildingsWant() => Assignable.AssignedTo.Defn.WorkersCanFerryItems;
+    internal bool CanCraftItems() => Assignable.AssignedTo.Defn.CanCraft;
+    internal bool CanSellItems() => Assignable.AssignedTo.Defn.CanSellGoods;
+    internal bool CanGatherResource(ItemDefn neededItem) => Assignable.AssignedTo.Defn.CanGatherResources && Assignable.AssignedTo.Defn.GatherableResources.Contains(neededItem);
 
-    public void UnreserveFirstReservedByWorker<T>(List<T> reservablesToCheck) where T : IReservationProvider
+    public void UnreserveFirstReservedByWorker<T>(List<T> reservablesToCheck) where T : IReservable
     {
-        var firstReservedByWorker = reservablesToCheck.FirstOrDefault(reservable => reservable.Reservation.ReservedBy == this);
+        var firstReservedByWorker = reservablesToCheck.FirstOrDefault(reservable => reservable.Reservable.ReservedBy == this);
         if (firstReservedByWorker != null)
         {
-            firstReservedByWorker.Reservation.Unreserve();
+            firstReservedByWorker.Reservable.Unreserve();
             return;
         }
 
         Debug.Assert(false, "Unreserving spot which isn't reserved by Worker");
     }
 
-    public T ReserveFirstReservable<T>(List<T> reservablesToCheck) where T : IReservationProvider
+    public T ReserveFirstReservable<T>(List<T> reservablesToCheck) where T : IReservable
     {
-        var firstReservable = reservablesToCheck.First(reservable => !reservable.Reservation.IsReserved);
+        var firstReservable = reservablesToCheck.First(reservable => !reservable.Reservable.IsReserved);
         if (firstReservable != null)
         {
-            firstReservable.Reservation.ReserveBy(this);
+            firstReservable.Reservable.ReserveBy(this);
             return firstReservable;
         }
 
@@ -137,6 +139,6 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
 
     public void OnDestroyed()
     {
-        Assignment.OnDestroyed();
+        Assignable.OnDestroyed();
     }
 }

@@ -2,14 +2,14 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class TileData : BaseData, ILocationProvider
+public class TileData : BaseData, ILocation
 {
     private TileDefn _defn;
     public TileDefn Defn => _defn = _defn != null ? _defn : GameDefns.Instance.TileDefns[DefnId];
     public string DefnId;
     public int TileX;
     public int TileY;
-    [SerializeField] public LocationComponent Location { get; set; }
+    [SerializeField] public Location Location { get; set; }
 
     static float TileSize = 10;
     public float WorldX => Location.WorldLoc.x;
@@ -23,6 +23,6 @@ public class TileData : BaseData, ILocationProvider
         TileX = x;
         TileY = y;
         DefnId = defnId;
-        Location = new LocationComponent(new Vector3(TileX * TileSize, Settings.Current.TileY, TileY * TileSize));
+        Location = new Location(new Vector3(TileX * TileSize, Settings.Current.TileY, TileY * TileSize));
     }
 }

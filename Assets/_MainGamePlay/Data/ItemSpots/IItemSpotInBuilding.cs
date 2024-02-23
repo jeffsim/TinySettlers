@@ -1,13 +1,13 @@
-public interface IItemSpotInBuilding : IReservationProvider
+public interface IItemSpotInBuilding : IReservable
 {
-    ItemContainerComponent ItemContainer { get; }
-    LocationComponent Location { get; set; }
+    SingleContainable ItemContainer { get; }
+    Location Location { get; set; }
     BuildingData Building { get; set; }
 }
 
-public interface IMultipleItemSpotInBuilding : IReservationProvider
+public interface IMultipleItemSpotInBuilding : IReservable
 {
-    MultipleItemContainerComponent ItemsContainer { get; }
-    LocationComponent Location { get; set; }
+    MultipleContainable ItemsContainer { get; }
+    Location Location { get; set; }
     BuildingData Building { get; set; }
 }

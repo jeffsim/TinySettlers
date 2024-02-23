@@ -2,20 +2,21 @@ using System;
 using UnityEngine;
 
 [Serializable]
-public class StorageSpotData : BaseData, ILocationProvider, IReservationProvider, IItemSpotInBuilding
+public class StorageSpotData : BaseData, ILocation, IReservable, IItemSpotInBuilding
 {
-    public override string ToString() => $"Storage {InstanceId}: {ItemContainer} {Reservation}";
+    public override string ToString() => $"Storage {InstanceId}: {ItemContainer} {Reservable}";
     public int IndexInStoragePile;
 
     [SerializeField] public BuildingData Building { get; set; }
-    [SerializeField] public LocationComponent Location { get; set; } = new();
-    [SerializeField] public ReservationComponent Reservation { get; set; } = new();
-    [SerializeField] public ItemContainerComponent ItemContainer { get; set; } = new();
+    [SerializeField] public Location Location { get; set; } = new();
+    [SerializeField] public Reservable Reservable { get; set; }
+    [SerializeField] public SingleContainable ItemContainer { get; set; } = new();
 
     public StorageSpotData(StoragePileData pile, int pileIndex)
     {
         IndexInStoragePile = pileIndex;
         Building = pile.Building;
+        Reservable = new(this);
     }
 
     internal void OnBuildingDestroyed()

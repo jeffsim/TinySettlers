@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 [Serializable]
-public class MultipleItemContainerComponent : BaseData
+public class MultipleContainable : BaseData
 {
     public override string ToString() => Items.Count == 0 ? "empty" : "{" + string.Join(", ", Items.Select(item => item)) + "}";
 

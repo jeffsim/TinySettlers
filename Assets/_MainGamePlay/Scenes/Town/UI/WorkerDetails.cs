@@ -26,7 +26,7 @@ public class WorkerDetails : MonoBehaviour
     void Update()
     {
         if (worker == null) return;
-        Energy.text = $"Energy: {worker.Data.Energy.EnergyLevel*100:F1}%";
+        Energy.text = $"Energy: {worker.Data.Exhaustible.EnergyLevel*100:F1}%";
         Task.text = $"Task: {worker.Data.AI.CurrentTask}\n{worker.Data.AI.CurrentTask.CurSubTask}";
         if (worker.Data.Hands.HasItem)
             Items.text = "In hand: " + worker.Data.Hands.Item + "\n";

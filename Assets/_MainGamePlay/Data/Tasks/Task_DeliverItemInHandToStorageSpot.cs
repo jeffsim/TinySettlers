@@ -25,7 +25,7 @@ public class Task_DeliverItemInHandToStorageSpot : Task
         };
     }
 
-    public override void OnBuildingMoved(BuildingData building, LocationComponent previousLoc)
+    public override void OnBuildingMoved(BuildingData building, Location previousLoc)
     {
         base.OnBuildingMoved(building, previousLoc);
 

@@ -1,20 +1,28 @@
 using System;
 using UnityEngine;
 
-public interface IAssignmentProvider
+public interface IAssignable
 {
-    AssignmentComponent Assignment { get; }
+    Assignable Assignable { get; }
+    public void OnAssignedToChanged();
 }
-public delegate void OnAssignedToChangedEvent();
 
 [Serializable]
-public class AssignmentComponent : BaseData
+public class Assignable : BaseData
 {
-    public override string ToString() => $"Assigned to: {AssignedTo}";
+    public override string ToString() => $"Assignable: {AssignedTo}";
 
     public BuildingData AssignedTo;
     public bool IsAssigned => AssignedTo != null;
-    [NonSerialized] public OnAssignedToChangedEvent OnAssignedToChanged;
+
+    [NonSerialized] public Action OnAssignedToChanged;
+
+    [SerializeField] IAssignable Owner;
+
+    public Assignable(IAssignable owner)
+    {
+        Owner = owner;
+    }
 
     internal void AssignTo(BuildingData building)
     {
@@ -22,6 +30,7 @@ public class AssignmentComponent : BaseData
         Debug.Assert(AssignedTo != building, "Reassigning to same building");
         AssignedTo = building;
         OnAssignedToChanged?.Invoke();
+        Owner.OnAssignedToChanged();
     }
 
     internal void UnassignFrom()
@@ -29,6 +38,7 @@ public class AssignmentComponent : BaseData
         Debug.Assert(AssignedTo != null, "Unassigning from null building");
         AssignedTo = null;
         OnAssignedToChanged?.Invoke();
+        Owner.OnAssignedToChanged();
     }
 
     public void OnDestroyed()

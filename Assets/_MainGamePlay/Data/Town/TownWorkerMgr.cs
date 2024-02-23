@@ -10,7 +10,7 @@ public class TownWorkerMgr
     public List<WorkerData> Workers = new();
     public int NumMaxWorkers;
     internal List<WorkerData> GetIdleWorkers() => new(Town.TownWorkerMgr.Workers.FindAll(w => w.AI.IsIdle)); 
-    internal int NumBuildingWorkers(BuildingData building) => Workers.Count(worker => worker.Assignment.AssignedTo == building);
+    internal int NumBuildingWorkers(BuildingData building) => Workers.Count(worker => worker.Assignable.AssignedTo == building);
     [NonSerialized] public Action<WorkerData> OnWorkerCreated;
 
     public TownWorkerMgr(TownData town)
@@ -19,11 +19,6 @@ public class TownWorkerMgr
         NumMaxWorkers = 0; // Camp will add some
         town.OnBuildingAdded += OnBuildingAdded;
         town.OnBuildingRemoved += OnBuildingRemoved;
-    }
-
-    public void OnLoaded()
-    {
-        foreach (var worker in Workers) worker.OnLoaded();
     }
 
     public void Update()

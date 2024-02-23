@@ -47,7 +47,6 @@ public class TownData : BaseData
     public void OnLoaded()
     {
         GameTime.time = lastGameTime;
-        TownWorkerMgr.OnLoaded();
     }
 
     public void InitializeOnFirstEnter()
@@ -123,7 +122,7 @@ public class TownData : BaseData
     private void FindHomesForUnhomedWorkers()
     {
         foreach (var worker in TownWorkerMgr.Workers)
-            if (!worker.Occupant.HasHome)
+            if (!worker.Occupier.HasHome)
             {
                 var availableHome = AllBuildings.FirstOrDefault(building => building.Defn.Occupiable.WorkersCanLiveHere && building.Occupiable.HasRoom);
                 if (availableHome == null)
@@ -184,12 +183,12 @@ public class TownData : BaseData
         }
     }
 
-    internal BuildingData GetNearestResourceSource(LocationComponent loc, ItemDefn itemDefn)
+    internal BuildingData GetNearestResourceSource(Location loc, ItemDefn itemDefn)
     {
         return loc.GetClosest(AllBuildings, building => building.ResourceCanBeGatheredFromHere(itemDefn));
     }
 
-    internal void AddItemToGround(ItemData item, LocationComponent loc)
+    internal void AddItemToGround(ItemData item, Location loc)
     {
         ItemsOnGround.Add(item);
         item.Location.SetWorldLoc(loc);
@@ -229,7 +228,7 @@ public class TownData : BaseData
                 {
                     StorageSpotSearchType.Any => true,
                     StorageSpotSearchType.Primary => building.Defn.IsPrimaryStorage,
-                    StorageSpotSearchType.AssignedBuildingOrPrimary => building.Defn.IsPrimaryStorage || building == worker.Assignment.AssignedTo,
+                    StorageSpotSearchType.AssignedBuildingOrPrimary => building.Defn.IsPrimaryStorage || building == worker.Assignable.AssignedTo,
                     _ => throw new Exception("unhandled search type " + searchType),
                 };
 
@@ -244,8 +243,8 @@ public class TownData : BaseData
         return null;
     }
 
-    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, LocationComponent location, WorkerData worker = null) => GetClosestAvailableStorageSpot(searchType, location, worker, out float _);
-    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, LocationComponent location, WorkerData worker, out float dist)
+    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Location location, WorkerData worker = null) => GetClosestAvailableStorageSpot(searchType, location, worker, out float _);
+    public StorageSpotData GetClosestAvailableStorageSpot(StorageSpotSearchType searchType, Location location, WorkerData worker, out float dist)
     {
         if (searchType == StorageSpotSearchType.AssignedBuildingOrPrimary)
             Debug.Assert(worker != null, "worker must be specified for AnyAssignedBuildingOrPrimary");
@@ -260,7 +259,7 @@ public class TownData : BaseData
                 {
                     StorageSpotSearchType.Any => true,
                     StorageSpotSearchType.Primary => building.Defn.IsPrimaryStorage,
-                    StorageSpotSearchType.AssignedBuildingOrPrimary => building.Defn.IsPrimaryStorage || building == worker.Assignment.AssignedTo,
+                    StorageSpotSearchType.AssignedBuildingOrPrimary => building.Defn.IsPrimaryStorage || building == worker.Assignable.AssignedTo,
                     _ => throw new Exception("unhandled search type " + searchType),
                 };
 
@@ -278,8 +277,8 @@ public class TownData : BaseData
         return closestBuilding?.GetClosestEmptyStorageSpot(location, out dist);
     }
 
-    public GatheringSpotData GetClosestAvailableGatheringSpot(LocationComponent location, ItemDefn itemDefn, WorkerData worker = null) => GetClosestAvailableGatheringSpot(location, itemDefn, worker, out float _);
-    public GatheringSpotData GetClosestAvailableGatheringSpot(LocationComponent location, ItemDefn itemDefn, WorkerData worker, out float dist)
+    public GatheringSpotData GetClosestAvailableGatheringSpot(Location location, ItemDefn itemDefn, WorkerData worker = null) => GetClosestAvailableGatheringSpot(location, itemDefn, worker, out float _);
+    public GatheringSpotData GetClosestAvailableGatheringSpot(Location location, ItemDefn itemDefn, WorkerData worker, out float dist)
     {
         BuildingData closestBuilding = null;
         dist = float.MaxValue;
@@ -336,10 +335,10 @@ public class TownData : BaseData
 
     // ====================================================================================================
     // Assign/Unassign worker from building
-    public void UnassignWorkerFromBuilding(BuildingData data) => GetWorkerInBuilding(data)?.Assignment.AssignTo(Camp);
-    public void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.Assignment.AssignTo(data);
+    public void UnassignWorkerFromBuilding(BuildingData data) => GetWorkerInBuilding(data)?.Assignable.AssignTo(Camp);
+    public void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.Assignable.AssignTo(data);
 
-    private WorkerData GetWorkerInBuilding(BuildingData building) => TownWorkerMgr.Workers.FirstOrDefault(worker => worker.Assignment.AssignedTo == building);
+    private WorkerData GetWorkerInBuilding(BuildingData building) => TownWorkerMgr.Workers.FirstOrDefault(worker => worker.Assignable.AssignedTo == building);
     internal int NumTotalItemsInStorage(ItemDefn neededItem) => AllBuildings.Sum(building => building.NumItemsOfTypeInStorage(neededItem));
     internal int NumTotalStorageSpots() => AllBuildings.Sum(building => building.NumStorageSpots);
 

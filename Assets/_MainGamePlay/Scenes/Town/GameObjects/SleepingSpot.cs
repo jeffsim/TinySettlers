@@ -42,10 +42,10 @@ public class SleepingSpot : MonoBehaviour
 
     void Update()
     {
-        ReservedIndicator.SetActive(Data.Reservation.IsReserved);
-        if (Data.Reservation.IsReserved)
+        ReservedIndicator.SetActive(Data.Reservable.IsReserved);
+        if (Data.Reservable.IsReserved)
         {
-            WorkerInSpot.text = Data.Reservation.ReservedBy.ToString();
+            WorkerInSpot.text = Data.Reservable.ReservedBy.ToString();
             WorkerInSpot.color = Color.blue;
         }
         else

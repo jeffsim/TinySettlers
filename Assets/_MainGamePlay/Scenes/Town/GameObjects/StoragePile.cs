@@ -44,7 +44,7 @@ public class StoragePile : MonoBehaviour
             Count.text = Data.StorageSpots[0].ItemContainer.HasItem ? Data.StorageSpots[0].ItemContainer.Item.DefnId[0..2] : "";
         // Set color to first item, assumes all are same itemtype.  
         // TODO: render as 'pile'; e.g. render 3x3 smaller items.
-        bool isAnySpotReserved = Data.StorageSpots.Any(s => s.Reservation.IsReserved);
+        bool isAnySpotReserved = Data.StorageSpots.Any(s => s.Reservable.IsReserved);
         if (Data.NumItemsInPile > 0)
         {
             var firstSpotWithItem = Data.StorageSpots.FirstOrDefault(s => s.ItemContainer.HasItem);
@@ -61,13 +61,13 @@ public class StoragePile : MonoBehaviour
         foreach (var spot in Data.StorageSpots)
             if (scene.StorageSpotDetails.gameObject.activeSelf && scene.StorageSpotDetails.pile.Data.StorageSpots.Contains(spot))
             {
-                if (spot.Reservation.IsReserved)
+                if (spot.Reservable.IsReserved)
                 {
                     using (Drawing.Draw.ingame.WithColor(Color.red))
                     using (Drawing.Draw.ingame.WithLineWidth(2))
                     {
                         Vector3 loc1 = new(transform.position.x, transform.position.y, -6);
-                        Vector3 loc2 = new(spot.Reservation.ReservedBy.Location.WorldLoc.x, -6, spot.Reservation.ReservedBy.Location.WorldLoc.y);
+                        Vector3 loc2 = new(spot.Reservable.ReservedBy.Location.WorldLoc.x, -6, spot.Reservable.ReservedBy.Location.WorldLoc.y);
                         Drawing.Draw.ingame.Line(loc1, loc2);
                     }
                 }

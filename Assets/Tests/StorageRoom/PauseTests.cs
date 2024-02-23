@@ -54,7 +54,7 @@ public partial class StorageRoomTests : MovePauseDestroyTestBase
         var pausedBuildingWithItemInIt = buildingWithItem == buildingToPause;
         var pausedBuildingItemWillBeStoredIn = buildingToStoreItemIn == buildingToPause;
         var pausedBuildingOfWorker = buildingWorker == buildingToPause;
-        var workerOriginalAssignedBuilding = worker.Assignment.AssignedTo;
+        var workerOriginalAssignedBuilding = worker.Assignable.AssignedTo;
 
         waitUntilTaskAndSubtaskIndex(worker, TaskType.TransportItemFromSpotToSpot, workerSubtask > 4 ? workerSubtask - 2 : workerSubtask);
 

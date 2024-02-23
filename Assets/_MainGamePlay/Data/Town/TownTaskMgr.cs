@@ -81,7 +81,7 @@ public class TownTaskMgr
             {
                 // found a building that needs the item and can store it.  Swap out the storage spot reserved for the item with the building's storage spot
                 // unreserve the original storage spot
-                spotToReserve?.Reservation.Unreserve();
+                spotToReserve?.Reservable.Unreserve();
 
                 // Get the nearest storage spot in the building that needs the item and reserve it for this worker to carry the item-in-hand to.
                 spotToReserve = highestNeed.BuildingWithNeed.GetClosestEmptyStorageSpot(worker.Location);
@@ -101,7 +101,7 @@ public class TownTaskMgr
                 {
                     // We had a storage spot reserved for the item, but it's in a building that is now Paused.  When a building is paused, it's storage spots are no longer valid.
                     // So, we need to find a new storage spot for the item.  If we can't find one, then abandon (drop) the item and abort
-                    spotToReserve.Reservation.Unreserve();
+                    spotToReserve.Reservable.Unreserve();
                     spotToReserve = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worker.Location, worker);
                 }
                 else
@@ -109,7 +109,7 @@ public class TownTaskMgr
                     // The Worker has a storage spot reserved for the item they're holding and it's still valid, so we'll use it. Nothing to do here
                     // Unreserve it since the Task_DeliverItemInHandToStorageSpot task will reserve it.  Note that we're gauranteed to do this task
                     // however if we didn't, then this unreserve would cause issues.  So, warning to future self.
-                    spotToReserve.Reservation.Unreserve();
+                    spotToReserve.Reservable.Unreserve();
                 }
 
                 if (spotToReserve == null)
@@ -140,8 +140,8 @@ public class TownTaskMgr
         float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
         foreach (var worker in idleWorkers)
         {
-            if (worker.Assignment.AssignedTo != need.BuildingWithNeed) continue; // worker must be assigned to the building that sells the item
-            if (worker.Assignment.AssignedTo.IsPaused) continue;
+            if (worker.Assignable.AssignedTo != need.BuildingWithNeed) continue; // worker must be assigned to the building that sells the item
+            if (worker.Assignable.AssignedTo.IsPaused) continue;
             if (!worker.CanSellItems()) continue;
 
             var closestSpotWithItemToWorker = need.BuildingWithNeed.GetClosestUnreservedStorageSpotWithItemToReapOrSell(worker.Location, out float distanceToGatheringSpot);
@@ -176,7 +176,7 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
-            if (worker.Assignment.AssignedTo.IsPaused) continue;
+            if (worker.Assignable.AssignedTo.IsPaused) continue;
             if (!worker.CanGoGetItemsBuildingsWant()) continue;
 
             // Determine which 'building with item' the idle worker can optimally gather from
@@ -234,8 +234,8 @@ public class TownTaskMgr
         float highestPrioritySoFar = HighestPriorityTask.Task == null ? 0 : HighestPriorityTask.Priority;
         foreach (var worker in idleWorkers)
         {
-            if (worker.Assignment.AssignedTo != craftingBuilding) continue; // worker must be assigned to the building that crafts the item
-            if (worker.Assignment.AssignedTo.IsPaused) continue;
+            if (worker.Assignable.AssignedTo != craftingBuilding) continue; // worker must be assigned to the building that crafts the item
+            if (worker.Assignable.AssignedTo.IsPaused) continue;
             if (!worker.CanCraftItems()) continue;
 
             float priorityOfMeetingNeedWithThisWorker = need.Priority + getDistanceImpactOnPriority(worker.Location, craftingSpot.Location);
@@ -260,7 +260,7 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
-            if (worker.Assignment.AssignedTo.IsPaused) continue;
+            if (worker.Assignable.AssignedTo.IsPaused) continue;
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
             if (!worker.CanPickupAbandonedItems()) continue;
 
@@ -296,14 +296,14 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
-            if (worker.Assignment.AssignedTo.IsPaused) continue;
+            if (worker.Assignable.AssignedTo.IsPaused) continue;
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
             spotWithItem = need.BuildingWithNeed.GetClosestStorageSpotWithUnreservedItemToRemove(worker.Location);
 
             // If worker can't cleanup items then skip
             // Allow workers that are in a non-primary building that needs cleanup to cleanup items in that building IFF that building is full
             var workerCanCleanUpStorage = worker.CanCleanupStorage();
-            var nonPrimaryBuildingWorkerWantsToCleanupOwnBuilding = worker.Assignment.AssignedTo == need.BuildingWithNeed && !worker.Assignment.AssignedTo.HasAvailableStorageSpot;
+            var nonPrimaryBuildingWorkerWantsToCleanupOwnBuilding = worker.Assignable.AssignedTo == need.BuildingWithNeed && !worker.Assignable.AssignedTo.HasAvailableStorageSpot;
             if (!workerCanCleanUpStorage && !nonPrimaryBuildingWorkerWantsToCleanupOwnBuilding) continue;
 
             float distanceToSpotWithItemToCleanup = worker.Location.DistanceTo(need.BuildingWithNeed.Location); // TODO: Ideally would be "storage spot" not "building"
@@ -339,7 +339,7 @@ public class TownTaskMgr
         foreach (var worker in idleWorkers)
         {
             if (worker.Hands.HasItem) continue;                    // if worker is already carrying something then skip
-            if (worker.Assignment.AssignedTo.IsPaused) continue;
+            if (worker.Assignable.AssignedTo.IsPaused) continue;
             if (!worker.CanGatherResource(need.NeededItem)) continue;   // If worker can't gather [resource] then skip
             if (!Town.HasAvailablePrimaryOrAssignedStorageSpot(worker)) continue;
 
@@ -378,7 +378,7 @@ public class TownTaskMgr
     }
 
     // float getDistanceImpactOnPriority(Vector3 loc1, Vector3 loc2) => getDistanceImpactOnPriority(Vector3.Distance(loc1, loc2));
-    float getDistanceImpactOnPriority(LocationComponent loc1, LocationComponent loc2) => getDistanceImpactOnPriority(loc1.DistanceTo(loc2));
+    float getDistanceImpactOnPriority(Location loc1, Location loc2) => getDistanceImpactOnPriority(loc1.DistanceTo(loc2));
 
     private float getDistanceImpactOnPriority(float distance)
     {
@@ -408,7 +408,7 @@ public class TownTaskMgr
     {
         var optimalStorageSpotToDeliverItemTo = Town.GetClosestAvailableStorageSpot(StorageSpotSearchType.AssignedBuildingOrPrimary, worker.Location, worker);
         if (optimalStorageSpotToDeliverItemTo != null)
-            optimalStorageSpotToDeliverItemTo.Reservation.ReserveBy(worker);
+            optimalStorageSpotToDeliverItemTo.Reservable.ReserveBy(worker);
         return optimalStorageSpotToDeliverItemTo;
     }
 

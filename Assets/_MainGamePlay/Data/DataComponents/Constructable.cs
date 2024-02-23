@@ -3,15 +3,15 @@ using UnityEngine;
 
 public interface IConstructable
 {
-    ConstructableComponent Constructable { get; }
+    Constructable Constructable { get; }
 }
 
 public enum ConstructionState { NotConstructed, UnderConstruction, FullyConstructed }
 
 [Serializable]
-public class ConstructableComponent : BaseData
+public class Constructable : BaseData
 {
-    public override string ToString() => $"Construction: {PercentConstructed}";
+    public override string ToString() => $"Constructable: {PercentConstructed}";
 
     public ConstructionState ConstructionState;
     public float PercentConstructed;
@@ -21,6 +21,13 @@ public class ConstructableComponent : BaseData
 
     [NonSerialized] public Action OnConstructionStarted;
     [NonSerialized] public Action OnConstructionCompleted;
+
+    [SerializeField] IConstructable Owner;
+
+    public Constructable(ConstructableDefn defn, IConstructable owner)
+    {
+        Owner = owner;
+    }
 
     internal void StartConstruction()
     {

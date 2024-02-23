@@ -11,12 +11,12 @@ public class StoragePileData : BaseData
     public BuildingData Building;
     public int IndexInStorageArea;
 
-    public LocationComponent Location = new();
+    public Location Location = new();
     public List<StorageSpotData> StorageSpots = new();
     public bool HasAvailableSpot => NumAvailableSpots > 0;
     public int NumStorageSpots => StorageSpots.Count;
-    public int NumAvailableSpots => StorageSpots.Count(spot => spot.ItemContainer.IsEmpty && !spot.Reservation.IsReserved);
-    public int NumReservedSpots => StorageSpots.Count(spot => spot.Reservation.IsReserved);
+    public int NumAvailableSpots => StorageSpots.Count(spot => spot.ItemContainer.IsEmpty && !spot.Reservable.IsReserved);
+    public int NumReservedSpots => StorageSpots.Count(spot => spot.Reservable.IsReserved);
     public int NumItemsInPile => StorageSpots.Count(spot => spot.ItemContainer.HasItem);
 
     public Vector3 PileLocOffset;
@@ -43,8 +43,8 @@ public class StoragePileData : BaseData
 
     public int NumItemsInStorage() => StorageSpots.Count(spot => spot.ItemContainer.HasItem);
     public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StorageSpots.Count(spot => spot.ItemContainer.ContainsItem(itemDefn));
-    public int NumUnreservedItemsInStorage() => StorageSpots.Count(spot => !spot.Reservation.IsReserved && !spot.ItemContainer.IsEmpty);
-    public int NumUnreservedItemsOfTypeInStorage(ItemDefn itemDefn) => StorageSpots.Count(spot => !spot.Reservation.IsReserved && spot.ItemContainer.ContainsItem(itemDefn));
+    public int NumUnreservedItemsInStorage() => StorageSpots.Count(spot => !spot.Reservable.IsReserved && !spot.ItemContainer.IsEmpty);
+    public int NumUnreservedItemsOfTypeInStorage(ItemDefn itemDefn) => StorageSpots.Count(spot => !spot.Reservable.IsReserved && spot.ItemContainer.ContainsItem(itemDefn));
 
     internal void OnBuildingDestroyed()
     {
@@ -57,8 +57,8 @@ public class StoragePileData : BaseData
         foreach (var spot in StorageSpots)
             if (!spot.ItemContainer.IsEmpty)
             {
-                if (spot.Reservation.IsReserved)
-                    spot.Reservation.ReservedBy.AI.CurrentTask.Abandon();
+                if (spot.Reservable.IsReserved)
+                    spot.Reservable.ReservedBy.AI.CurrentTask.Abandon();
                 spot.ItemContainer.ClearItem();
             }
     }

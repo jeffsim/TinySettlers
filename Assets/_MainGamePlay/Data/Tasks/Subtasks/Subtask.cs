@@ -27,7 +27,7 @@ public abstract class Subtask
         Task = parentTask;
     }
 
-    public virtual void OnAnyBuildingMoved(BuildingData movedBuilding, LocationComponent previousLoc)
+    public virtual void OnAnyBuildingMoved(BuildingData movedBuilding, Location previousLoc)
     {
     }
 

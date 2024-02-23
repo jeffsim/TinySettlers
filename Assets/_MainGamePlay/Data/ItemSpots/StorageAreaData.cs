@@ -8,7 +8,7 @@ public class StorageAreaData : BaseData
 {
     public override string ToString() => Location + "{" + string.Join(", ", StoragePiles.Select(pile => pile)) + "}";
 
-    public LocationComponent Location = new();
+    public Location Location = new();
     public List<StoragePileData> StoragePiles = new();
 
     public BuildingData Building;
