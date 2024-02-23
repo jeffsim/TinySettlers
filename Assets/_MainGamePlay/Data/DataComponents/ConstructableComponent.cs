@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public interface IConstructableProvider
+public interface IConstructable
 {
     ConstructableComponent Constructable { get; }
 }

@@ -28,6 +28,12 @@ public class OccupiableDefn
     public int MaxWorkersLivingHere = 4;
 }
 
+[Serializable]
+public class PausableDefn
+{
+    public bool CanBePaused;
+}
+
 [CreateAssetMenu(fileName = "BuildingDefn")]
 public class BuildingDefn : BaseDefn
 {
@@ -57,7 +63,6 @@ public class BuildingDefn : BaseDefn
 
     public bool PlayerCanMove = true;
     public bool PlayerCanDestroy = true;
-    public bool PlayerCanPause = true;
 
     public bool CanBeConstructed;
     [ShowIf("CanBeConstructed")]
@@ -98,5 +103,6 @@ public class BuildingDefn : BaseDefn
     [ShowIf("WorkersCanRestHere")]
     public List<Vector3> SleepingSpots;
 
+    public PausableDefn Pausable;
     public OccupiableDefn Occupiable;
 }

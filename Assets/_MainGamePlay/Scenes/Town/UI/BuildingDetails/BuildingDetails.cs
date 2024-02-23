@@ -27,7 +27,7 @@ public class BuildingDetails : MonoBehaviour
         Name.text = building.Data.Defn.FriendlyName + " (" + building.Data.InstanceId + ")";
 
         DestroyButton.interactable = building.Data.Defn.PlayerCanDestroy;
-        TogglePauseButton.interactable = building.Data.Defn.PlayerCanPause;
+        TogglePauseButton.interactable = building.Data.Pausable.CanBePaused;
         EmptyStorageButton.interactable = building.Data.Defn.CanStoreItems;
         AssignWorkerButton.interactable = building.Data.Defn.HasWorkers;
         UnassignWorkerButton.interactable = building.Data.Defn.HasWorkers;

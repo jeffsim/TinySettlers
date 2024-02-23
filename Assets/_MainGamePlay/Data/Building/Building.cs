@@ -6,14 +6,7 @@ using UnityEngine;
 public delegate void OnLocationChangedEvent();
 
 [Serializable]
-public class DistanceToBuilding
-{
-    public float Distance;
-    public BuildingData Building;
-}
-
-[Serializable]
-public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstructableProvider
+public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstructable
 {
     public override string ToString() => Defn.FriendlyName + " (" + InstanceId + ")";
 
@@ -118,9 +111,9 @@ public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstruct
         Town = town;
 
         Occupiable = new(Defn.Occupiable);
+        Pausable = new(Defn.Pausable, this);
         if (Defn.CanCraft) CraftingMgr = new(this);
         if (Defn.CanBeConstructed) Constructable = new();
-        if (Defn.PlayerCanPause) Pausable = new(this);
 
         if (Defn.ResourcesCanBeGatheredFromHere)
         {

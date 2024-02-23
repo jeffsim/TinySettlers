@@ -11,6 +11,8 @@ public class PausableComponent : BaseData
 {
     public override string ToString() => $"Pausable {IsPaused}";
 
+    public bool CanBePaused;
+
     public bool IsPaused;
 
     // These CANNOT be subscribed to by other Data classes as they are not serialized. They can
@@ -21,9 +23,11 @@ public class PausableComponent : BaseData
 
     [SerializeField] BuildingData damnit;
 
-    public PausableComponent(BuildingData buildingData)
+    public PausableComponent(PausableDefn defn, BuildingData fuckinHACK)
     {
-        damnit = buildingData;
+        CanBePaused = defn.CanBePaused;
+        
+        damnit = fuckinHACK;
     }
 
     public void TogglePaused()

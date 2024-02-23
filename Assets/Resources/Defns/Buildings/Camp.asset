@@ -30,7 +30,6 @@ MonoBehaviour:
   EditorColor: {r: 0, g: 0.099416494, b: 1, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 0
-  PlayerCanPause: 0
   CanBeConstructed: 0
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
@@ -57,5 +56,8 @@ MonoBehaviour:
   - {x: -2.5, y: -0.5, z: 0}
   - {x: -2.5, y: 1, z: 0}
   - {x: -2.5, y: 2.5, z: 0}
-  WorkersCanLiveHere: 1
-  MaxWorkersLivingHere: 4
+  Pausable:
+    CanBePaused: 0
+  Occupiable:
+    WorkersCanLiveHere: 1
+    MaxWorkersLivingHere: 4

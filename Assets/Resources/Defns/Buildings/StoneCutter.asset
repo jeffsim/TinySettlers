@@ -30,7 +30,6 @@ MonoBehaviour:
   EditorColor: {r: 0.6320754, g: 0.5255832, b: 0.08646317, a: 1}
   PlayerCanMove: 1
   PlayerCanDestroy: 1
-  PlayerCanPause: 1
   CanBeConstructed: 1
   ResourcesNeededForConstruction:
   - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
@@ -60,5 +59,8 @@ MonoBehaviour:
   GoodsThatCanBeSold: []
   WorkersCanRestHere: 0
   SleepingSpots: []
-  WorkersCanLiveHere: 0
-  MaxWorkersLivingHere: 4
+  Pausable:
+    CanBePaused: 1
+  Occupiable:
+    WorkersCanLiveHere: 0
+    MaxWorkersLivingHere: 4
