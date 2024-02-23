@@ -15,7 +15,7 @@ MonoBehaviour:
   Id: stoneWood
   FriendlyName: StoneBlock+WoodPlank
   Color: {r: 0.38679248, g: 0.24265754, b: 0.24265754, a: 0}
-  VisualPrefab: {fileID: 6453809769396635797, guid: 6dfb4db98883147568c605cc9626e082, type: 3}
+  VisualPrefab: {fileID: 7043519063053432247, guid: 517bb6b18323345c68f502c4edd91cb7, type: 3}
   GoodType: 2
   ResourcesNeededForCrafting:
   - Item: {fileID: 11400000, guid: 8299fd30f1aba4fbea13091ddf0ceeb2, type: 2}

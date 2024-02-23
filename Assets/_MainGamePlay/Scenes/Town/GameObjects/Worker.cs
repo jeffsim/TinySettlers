@@ -10,7 +10,7 @@ public class Worker : MonoBehaviour
     public Item ItemVisual;
     public GameObject CarriedItem;
     public SceneWithMap scene;
-    float lineY = 2f;
+    float lineY = 0f;
     Vector3 ZFightingOffset;
     public Animator animator;
     public GameObject CarryAboveHeadSpot;
@@ -19,8 +19,7 @@ public class Worker : MonoBehaviour
     {
         this.scene = scene;
         Data = data;
-        CarryAboveHeadSpot = GameObject.Find("CarryAboveHeadSpot");
-
+        Debug.Assert(CarryAboveHeadSpot != null, "CarryAboveHeadSpot not found " + Data);
         ZFightingOffset = scene.Map.Town.TownWorkerMgr.Workers.IndexOf(Data) * new Vector3(0, 0.001f, 0);
         transform.position = data.Location.WorldLoc;
         updateVisual();
@@ -51,11 +50,15 @@ public class Worker : MonoBehaviour
         Visual = Instantiate(Data.Defn.VisualPrefab);
         Visual.transform.SetParent(transform, false);
         animator = Visual.GetComponent<Animator>();
-        // animator.Play("Idle");
+        animator.Play("idle_01");
+        // Find CarryAboveHeadSpot
+        CarryAboveHeadSpot = Visual.transform.GetComponentInChildren<CarrySpot>().gameObject;
 
         // GetComponentInChildren<Renderer>().material.color = Data.Assignment.AssignedTo.Defn.AssignedWorkerColor;
         name = "Worker - " + (Data.Assignment.IsAssigned ? Data.Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + Data.InstanceId + ")" : "none");
     }
+
+    bool startedPlayingWalkAnim;
 
     public void Update()
     {
@@ -64,11 +67,22 @@ public class Worker : MonoBehaviour
         // Face the direction we are moving, but always along the Z plane
         if (Data.AI.CurrentTask.IsWalkingToTarget)
         {
+            if (!startedPlayingWalkAnim)
+            {
+                animator.Play("run 0");
+                startedPlayingWalkAnim = true;
+            }
+
             var target = Data.AI.CurrentTask.LastMoveToTarget.WorldLoc;
             var direction = target - Data.Location.WorldLoc;
             direction.y = 0;
             if (direction != Vector3.zero)
                 transform.rotation = Quaternion.LookRotation(direction);
+        }
+        else if (startedPlayingWalkAnim)
+        {
+            animator.Play("idle_01");
+            startedPlayingWalkAnim = false;
         }
 
         // CHeck if picked up/dropped item; update Item visual appropriately

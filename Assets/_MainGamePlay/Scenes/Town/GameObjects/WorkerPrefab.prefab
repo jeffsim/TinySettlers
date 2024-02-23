@@ -61,6 +61,7 @@ MeshRenderer:
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -161,6 +162,7 @@ MonoBehaviour:
   CarriedItem: {fileID: 7457826451267380013}
   scene: {fileID: 0}
   animator: {fileID: 0}
+  CarryAboveHeadSpot: {fileID: 7457826451267380013}
 --- !u!65 &7133522272334061376
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -243,6 +245,7 @@ MeshRenderer:
   m_RayTraceProcedural: 0
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
