@@ -23,71 +23,8 @@ public class BuildingBase : MonoBehaviour
         Building = building;
     }
 
-    void OnMouseDown()
-    {
-        if (!Settings.Current.AllowFreeBuildingPlacement)
-        {
-            dragState = DragState.PreDrag;
-            dragStartPoint = Input.mousePosition;
-        }
-    }
-
-    public void OnMouseDrag()
-    {
-        if (!Settings.Current.AllowFreeBuildingPlacement)
-        {
-            if (dragState == DragState.PreDrag)
-            {
-                if (Vector3.Distance(dragStartPoint, Input.mousePosition) > 10)
-                {
-                    dragState = DragState.Dragging;
-                    draggingGO = Instantiate(scene.DraggedBuildingPrefab);
-                    draggingGO.Initialize(Data.Defn, Building);
-                    draggingGO.transform.position = transform.position + new Vector3(0, 10, 0);
-                    dragStartPoint = transform.position;
-                }
-            }
-            if (dragState == DragState.Dragging)
-            {
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                Plane plane = new(Vector3.up, dragStartPoint);
-                plane.Raycast(ray, out float distance);
-                Vector3 mouseIntersectPoint = ray.GetPoint(distance);
-
-                draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, Settings.Current.DraggedBuildingY, mouseIntersectPoint.z));
-            }
-        }
-    }
-
-    void OnMouseUp()
-    {
-        if (!Settings.Current.AllowFreeBuildingPlacement)
-        {
-            if (dragState != DragState.Dragging)
-            {
-                if (!EventSystem.current.IsPointerOverGameObject())
-                    scene.OnBuildingClicked(Building);
-            }
-            else
-            {
-                if (dragState == DragState.Dragging)
-                    Destroy(draggingGO.gameObject);
-                dragState = DragState.NotDragging;
-
-                var validDropSpotForBuilding = scene.Map.IsValidDropSpotForBuilding(Input.mousePosition, Building);
-                if (validDropSpotForBuilding)
-                {
-                    var tile = scene.Map.getTileAt(Input.mousePosition);
-                    scene.Map.Town.MoveBuilding(Data, tile.Data.TileX, tile.Data.TileY);
-                }
-            }
-        }
-    }
-
     void Update()
     {
-        if (!Settings.Current.AllowFreeBuildingPlacement)
-            return;
         switch (dragState)
         {
             case DragState.NotDragging:
@@ -96,7 +33,8 @@ public class BuildingBase : MonoBehaviour
                     dragState = DragState.PreDrag;
                     dragStartPoint = GetMouseWorldPosition();
                     offset = transform.position - dragStartPoint;
-                    offset.z += .25f;
+                    if (Settings.Current.AllowFreeBuildingPlacement)
+                        offset.z += .25f;
                 }
                 break;
 
@@ -108,7 +46,15 @@ public class BuildingBase : MonoBehaviour
                         scene.OnBuildingClicked(Building);
                 }
                 else if (Vector3.Distance(dragStartPoint, GetMouseWorldPosition()) > .25f)
+                {
                     dragState = DragState.Dragging;
+                    if (!Settings.Current.AllowFreeBuildingPlacement)
+                    {
+                        draggingGO = Instantiate(scene.DraggedBuildingPrefab);
+                        draggingGO.Initialize(Data.Defn, Building);
+                        dragStartPoint = transform.position;
+                    }
+                }
                 break;
 
             case DragState.Dragging:
@@ -116,19 +62,40 @@ public class BuildingBase : MonoBehaviour
                 {
                     scene.Map.Town.MoveBuilding(Data, new(Data.Location.WorldLoc.x, Settings.Current.BuildingsY, Data.Location.WorldLoc.z));
                     dragState = DragState.NotDragging;
+                    if (!Settings.Current.AllowFreeBuildingPlacement)
+                    {
+                        Destroy(draggingGO.gameObject);
+                        var validDropSpotForBuilding = scene.Map.IsValidDropSpotForBuilding(Input.mousePosition, Building);
+                        if (validDropSpotForBuilding)
+                        {
+                            var tile = scene.Map.getTileAt(Input.mousePosition);
+                            scene.Map.Town.MoveBuilding(Data, tile.Data.TileX, tile.Data.TileY);
+                        }
+                    }
                 }
                 else
                 {
-                    Vector3 mousePosition = GetMouseWorldPosition() + offset;
-                    if (Input.GetKey(KeyCode.LeftShift))
+                    if (Settings.Current.AllowFreeBuildingPlacement)
                     {
-                        mousePosition.x = Mathf.Round(mousePosition.x / 2f) * 2f;
-                        mousePosition.z = Mathf.Round(mousePosition.z / 2f) * 2f;
+                        Vector3 mousePosition = GetMouseWorldPosition() + offset;
+                        if (Input.GetKey(KeyCode.LeftShift))
+                        {
+                            mousePosition.x = Mathf.Round(mousePosition.x / 2f) * 2f;
+                            mousePosition.z = Mathf.Round(mousePosition.z / 2f) * 2f;
+                        }
+                        scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, Settings.Current.DraggedBuildingY, mousePosition.z));
                     }
-                    scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, Settings.Current.DraggedBuildingY, mousePosition.z));
+                    else
+                    {
+                        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                        Plane plane = new(Vector3.up, dragStartPoint);
+                        plane.Raycast(ray, out float distance);
+                        Vector3 mouseIntersectPoint = ray.GetPoint(distance) + offset;
+                        draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, Settings.Current.DraggedBuildingY, mouseIntersectPoint.z));
+                    }
                 }
                 break;
-        } 
+        }
     }
 
     bool IsMouseOverThis()
