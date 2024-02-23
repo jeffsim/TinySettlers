@@ -63,7 +63,7 @@ public partial class MarketTests : MovePauseDestroyTestBase
         int origNumItemsOnGround = Town.ItemsOnGround.Count;
         int origNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
 
-        buildingToPause.TogglePaused();
+        buildingToPause.Pausable.TogglePaused();
 
         // If the worker is holding the item to sell it, then we need to wait one Town turn so that the worker can decide to carry the item they're holding to the Camp.
         if (workerSubtask >= 2)

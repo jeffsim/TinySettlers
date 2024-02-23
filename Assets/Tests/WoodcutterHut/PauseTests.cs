@@ -79,7 +79,7 @@ public partial class WoodcutterHutTests : MovePauseDestroyTestBase
         int origNumItemsOnGround = Town.ItemsOnGround.Count;
         int origNumItemsInWorkersHands = worker.Hands.HasItem ? 1 : 0;
 
-        buildingToPause.TogglePaused();
+        buildingToPause.Pausable.TogglePaused();
 
         // If the worker is returning with the item in hand or task was abandoned, then we need to wait one Town turn so that the worker can decide to carry the item they're holding to the Camp.
         if (workerSubtask >= 2 || originalTask.IsAbandoned)

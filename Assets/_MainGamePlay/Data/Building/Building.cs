@@ -13,7 +13,7 @@ public class DistanceToBuilding
 }
 
 [Serializable]
-public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
+public class BuildingData : BaseData, ILocationProvider, IOccupiable, IConstructableProvider
 {
     public override string ToString() => Defn.FriendlyName + " (" + InstanceId + ")";
 
@@ -36,15 +36,20 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
 
     static float TileSize = 10;
 
-    public bool IsPaused;
-
     public BuildingCraftingMgr CraftingMgr;
-    public BuildingConstructionMgr ConstructionMgr;
 
+    public List<NeedData> ConstructionNeeds = new();
+
+    // Data Components
+    [SerializeField] public ConstructableComponent Constructable { get; set; }
     [SerializeField] public LocationComponent Location { get; set; }
-    [SerializeField] public OccupantMgrComponent OccupantMgr { get; set; }
+    [SerializeField] public OccupiableComponent Occupiable { get; set; }
+    [SerializeField] public PausableComponent Pausable { get; set; }
 
     [NonSerialized] public OnLocationChangedEvent OnLocationChanged;
+
+    // Accessors
+    public bool IsPaused => Pausable.IsPaused;
 
     public List<NeedData> Needs = new();
 
@@ -112,11 +117,10 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
     {
         Town = town;
 
-        if (Defn.WorkersCanLiveHere)
-            OccupantMgr = new(this);
-
-        CraftingMgr = new(this);
-        ConstructionMgr = new(this);
+        Occupiable = new(Defn.Occupiable);
+        if (Defn.CanCraft) CraftingMgr = new(this);
+        if (Defn.CanBeConstructed) Constructable = new();
+        if (Defn.PlayerCanPause) Pausable = new(this);
 
         if (Defn.ResourcesCanBeGatheredFromHere)
         {
@@ -140,7 +144,6 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
         foreach (var area in StorageAreas)
             foreach (var pile in area.StoragePiles)
                 StorageSpots.AddRange(pile.StorageSpots);
-
 
         // Resources should generally only be gathered when there's a need for them e.g. crafting; however we also
         // want a persistent low-priority need for resource gathering so that it's done if nothing else is pending
@@ -169,6 +172,15 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
                 ItemNeeds.Add(needForItemToSell);
             }
             Needs.AddRange(ItemNeeds);
+        }
+
+        // Add need for construction and materials if the building needs to be constructed
+        if (Defn.CanBeConstructed && !Constructable.IsConstructed)
+        {
+            // ConstructionNeeds.Add(new NeedData(this, NeedType.ConstructionWorker, null, Defn.NumConstructorSpots));
+            // foreach (var resource in Defn.ResourcesNeededForConstruction)
+            //     ConstructionNeeds.Add(new NeedData(this, NeedType.CraftingOrConstructionMaterial, resource));
+            // Needs.AddRange(ConstructionNeeds);
         }
         UpdateWorldLoc();
     }
@@ -455,12 +467,12 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
 
         IsDestroyed = true;
 
-        OccupantMgr?.EvictAllOccupants();
+        Occupiable?.EvictAllOccupants();
         foreach (var need in Needs) need.Cancel();
         foreach (var worker in Town.TownWorkerMgr.Workers) worker.OnBuildingDestroyed(this);
         foreach (var spot in GatheringSpots) spot.OnBuildingDestroyed();
         foreach (var area in StorageAreas) area.OnBuildingDestroyed();
-        CraftingMgr.Destroy();
+        CraftingMgr?.Destroy();
     }
 
     public void MoveTo(Vector3 worldLoc)
@@ -500,7 +512,7 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
         foreach (var area in StorageAreas) area.UpdateWorldLoc();
         foreach (var spot in GatheringSpots) spot.UpdateWorldLoc();
         foreach (var spot in SleepingSpots) spot.UpdateWorldLoc();
-        CraftingMgr.UpdateWorldLoc();
+        CraftingMgr?.UpdateWorldLoc();
     }
 
     public StorageSpotData GetFirstStorageSpotWithUnreservedItemToRemove()
@@ -548,10 +560,8 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
         return spots;
     }
 
-    public void TogglePaused()
+    internal void OnPauseToggled()
     {
-        Debug.Assert(Defn.PlayerCanPause, "Toggling paused on building that can't be paused");
-        IsPaused = !IsPaused;
         foreach (var worker in Town.TownWorkerMgr.Workers)
             worker.OnBuildingPauseToggled(this);
     }

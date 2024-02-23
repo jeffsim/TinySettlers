@@ -20,6 +20,14 @@ public class StorageAreaDefn
     public Vector3Int StoragePileSize = new(3, 3, 3);
 }
 
+[Serializable]
+public class OccupiableDefn
+{
+    public bool WorkersCanLiveHere;
+    [ShowIf("WorkersCanLiveHere")]
+    public int MaxWorkersLivingHere = 4;
+}
+
 [CreateAssetMenu(fileName = "BuildingDefn")]
 public class BuildingDefn : BaseDefn
 {
@@ -33,14 +41,14 @@ public class BuildingDefn : BaseDefn
     public Vector3 VisualScale = Vector3.one;
     public Quaternion VisualRotation;
     public Vector3 VisualOffset;
-    
+
     public Color AssignedWorkerColor;
     public string AssignedWorkerFriendlyName;
 
     public bool HasWorkers = true;
     [ShowIf("HasWorkers")]
     public int MaxWorkers = 4;
-    
+
     // e.g. Camp and House: building it grants additional max workers to the Town
     public int MaxTownWorkersIncreasedWhenBuilt = 0;
 
@@ -89,8 +97,6 @@ public class BuildingDefn : BaseDefn
     public bool WorkersCanRestHere;
     [ShowIf("WorkersCanRestHere")]
     public List<Vector3> SleepingSpots;
-    
-    public bool WorkersCanLiveHere;
-    [ShowIf("WorkersCanLiveHere")]
-    public int MaxWorkersLivingHere = 4;
+
+    public OccupiableDefn Occupiable;
 }

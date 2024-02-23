@@ -38,13 +38,13 @@ public class TownWorkerMgr
 
     private void OnBuildingRemoved(BuildingData building)
     {
-        if (building.Defn.WorkersCanLiveHere)
+        if (building.Defn.Occupiable.WorkersCanLiveHere)
             NumMaxWorkers -= building.Defn.MaxTownWorkersIncreasedWhenBuilt;
     }
 
     private void OnBuildingAdded(BuildingData building)
     {
-        if (building.Defn.WorkersCanLiveHere)
+        if (building.Defn.Occupiable.WorkersCanLiveHere)
             NumMaxWorkers += building.Defn.MaxTownWorkersIncreasedWhenBuilt;
     }
 

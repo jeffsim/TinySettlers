@@ -28,7 +28,7 @@ public class TownData : BaseData
     public TownWorkerMgr TownWorkerMgr;
     public TownTimeMgr TimeMgr;
 
-    public int NumHomedWorkers => AllBuildings.Sum(building => building.OccupantMgr == null ? 0 : building.OccupantMgr.NumOccupants);
+    public int NumHomedWorkers => AllBuildings.Sum(building => building.Occupiable == null ? 0 : building.Occupiable.NumOccupants);
 
     // Current Map
     public BuildingData Camp;
@@ -125,11 +125,11 @@ public class TownData : BaseData
         foreach (var worker in TownWorkerMgr.Workers)
             if (!worker.Occupant.HasHome)
             {
-                var availableHome = AllBuildings.FirstOrDefault(building => building.Defn.WorkersCanLiveHere && building.OccupantMgr.HasRoom);
+                var availableHome = AllBuildings.FirstOrDefault(building => building.Defn.Occupiable.WorkersCanLiveHere && building.Occupiable.HasRoom);
                 if (availableHome == null)
                     return; // no more homes with available space
 
-                availableHome.OccupantMgr.AddOccupant(worker);
+                availableHome.Occupiable.AddOccupant(worker);
             }
     }
 

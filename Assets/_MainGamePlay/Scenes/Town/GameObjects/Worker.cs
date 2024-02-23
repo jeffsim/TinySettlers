@@ -184,7 +184,7 @@ public class Worker : MonoBehaviour
         if (scene.BuildingDetails.isActiveAndEnabled && selectedBuilding != null)
         {
             showHighlight |= selectedBuilding.Data == Data.Assignment.AssignedTo;
-            showHighlight |= selectedBuilding.Data.Defn.WorkersCanLiveHere && selectedBuilding.Data.OccupantMgr.IsOccupant(Data);
+            showHighlight |= selectedBuilding.Data.Defn.Occupiable.WorkersCanLiveHere && selectedBuilding.Data.Occupiable.IsOccupant(Data);
         }
 
         // If this worker is currently selected then highlight

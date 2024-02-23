@@ -42,7 +42,7 @@ public class BuildingDetails : MonoBehaviour
 
     public void OnBuildingPauseToggleClicked()
     {
-        building.Data.TogglePaused();
+        building.Data.Pausable.TogglePaused();
     }
 
     public void Hide()
@@ -59,8 +59,8 @@ public class BuildingDetails : MonoBehaviour
         var buildingDefn = buildingData.Defn;
         var townWorkerMgr = scene.Map.Town.TownWorkerMgr;
 
-        if (buildingData.OccupantMgr != null)
-            Name.text = buildingDefn.FriendlyName + " (" + buildingData.InstanceId + ") (w:" + buildingData.OccupantMgr.NumOccupants + "/" + buildingData.OccupantMgr.MaxOccupants + ")";
+        if (buildingData.Occupiable != null)
+            Name.text = buildingDefn.FriendlyName + " (" + buildingData.InstanceId + ") (w:" + buildingData.Occupiable.NumOccupants + "/" + buildingData.Occupiable.MaxOccupants + ")";
 
         // todo: store reference (or at least count) of workers in building
         // don't assign/unassign from camp, or if building can't have workers

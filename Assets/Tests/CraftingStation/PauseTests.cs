@@ -79,7 +79,7 @@ public partial class CraftingStationTests : MovePauseDestroyTestBase
         if (workerSubtask > 0)
             waitUntilTaskAndSubtaskIndex(worker, TaskType.Task_CraftItem, workerSubtask);
 
-        buildingToPause.TogglePaused();
+        buildingToPause.Pausable.TogglePaused();
 
         // If the worker is returning with the item in hand, then we need to wait one Town turn so that the worker can decide to carry the item they're holding to the Camp.
         if (workerSubtask >= 2)

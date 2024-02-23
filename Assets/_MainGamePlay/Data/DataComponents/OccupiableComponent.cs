@@ -2,28 +2,26 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IOccupantMgrProvider
+public interface IOccupiable
 {
-    OccupantMgrComponent OccupantMgr { get; }
+    OccupiableComponent Occupiable { get; }
 }
 
 [Serializable]
-public class OccupantMgrComponent : BaseData
+public class OccupiableComponent : BaseData
 {
     public override string ToString() => "OccupantMgr " + InstanceId;
 
     public List<IOccupantProvider> Occupants = new();
     public int MaxOccupants;
-    public BuildingData Building;
     public int NumOccupants => Occupants.Count;
     public bool HasRoom => NumOccupants < MaxOccupants;
     public bool IsFull => NumOccupants == MaxOccupants;
     public bool IsOccupant(IOccupantProvider occupant) => Occupants.Contains(occupant);
 
-    public OccupantMgrComponent(BuildingData buildingData)
+    public OccupiableComponent(OccupiableDefn defn)
     {
-        Building = buildingData;
-        MaxOccupants = buildingData.Defn.MaxWorkersLivingHere;
+        MaxOccupants = defn.MaxWorkersLivingHere;
     }
 
     public void AddOccupant(IOccupantProvider occupant)
@@ -43,7 +41,7 @@ public class OccupantMgrComponent : BaseData
     internal void EvictAllOccupants()
     {
         foreach (var worker in Occupants)
-            worker.Occupant.OnNolongerAnOccupant();
+            worker.Occupant.OnEvicted();
         Occupants.Clear();
     }
 }

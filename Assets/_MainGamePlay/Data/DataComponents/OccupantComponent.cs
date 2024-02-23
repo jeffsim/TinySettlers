@@ -11,7 +11,7 @@ public class OccupantComponent : BaseData
 {
     public override string ToString() => "Occupant " + InstanceId;
 
-    public OccupantMgrComponent Home;
+    public OccupiableComponent Home;
     public bool HasHome => Home != null;
     public bool IsHomeless => Home == null;
 
@@ -19,13 +19,13 @@ public class OccupantComponent : BaseData
     {
     }
 
-    public void OnBecameOccupant(OccupantMgrComponent home)
+    public void OnBecameOccupant(OccupiableComponent home)
     {
         Debug.Assert(Home == null, "Assigning home to already-homed " + this);
         Home = home;
     }
 
-    internal void OnNolongerAnOccupant()
+    internal void OnEvicted()
     {
         Home = null;
     }
