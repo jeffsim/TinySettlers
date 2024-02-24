@@ -19,16 +19,13 @@ public class WorkerData : BaseData, ILocation, IAssignable, IOccupier, IExhausti
     [SerializeField] public Occupier Occupier { get; set; }
     [SerializeField] public Exhaustible Exhaustible { get; set; }
 
-    internal void DropItemOnGround() => Town.AddItemToGround(Hands.ClearItems(), Location);
-
-    public float EnergyLevel;
     public TownData Town;
-
     public NeedData OriginalPickupItemNeed;
 
     public WorkerData(WorkerDefn defn, BuildingData buildingToStartIn)
     {
         DefnId = defn.Id;
+        Town = buildingToStartIn.Town;
 
         Location = Utilities.LocationWithinDistance(buildingToStartIn.Location, 1f);
         Location.WorldLoc.y = Settings.Current.WorkerY;
@@ -37,11 +34,7 @@ public class WorkerData : BaseData, ILocation, IAssignable, IOccupier, IExhausti
         Assignable = new(this);
         Exhaustible = new(this);
         Hands = new();
-
-        Town = buildingToStartIn.Town;
-
         Assignable.AssignTo(buildingToStartIn);
-
         AI = new(this);
     }
 
@@ -131,5 +124,10 @@ public class WorkerData : BaseData, ILocation, IAssignable, IOccupier, IExhausti
     public void OnDestroyed()
     {
         Assignable.OnDestroyed();
+    }
+
+    internal void DropItemOnGround()
+    {
+        Town.AddItemToGround(Hands.ClearItems(), Location);
     }
 }

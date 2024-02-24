@@ -195,12 +195,6 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
         return -1;
     }
 
-    // public ItemData GetUnreservedItemOfType(ItemDefn itemDefn, ItemClass itemClass = ItemClass.Unset)
-    // {
-    //     var spot = GetStorageSpotWithUnreservedItemOfType(itemDefn, itemClass);
-    //     return spot == null ? null : spot.ItemInStorage;
-    // }
-
     public StorageSpotData GetStorageSpotWithUnreservedItemOfType(ItemDefn itemDefn, ItemClass itemClass = ItemClass.Unset)
     {
         foreach (var spot in StorageSpots)
