@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4354063827490d343a5f2e52c055456b
+timeCreated: 1549848453
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Vegetation/TB_Env_Flower_C.prefab
+  uploadId: 561868

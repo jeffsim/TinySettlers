@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 1344a6416a54e5b4493a3446e9ed5afc
+timeCreated: 1520544690
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Bld_Pirate_Fort_01_Snow.prefab
+  uploadId: 620934

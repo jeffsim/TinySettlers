@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: d1f3f3aca116eea4da738ff4ff033a3a
+timeCreated: 1520463745
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Tiles/Cube/SM_Tile_Cube_Mountain_04.prefab
+  uploadId: 620934

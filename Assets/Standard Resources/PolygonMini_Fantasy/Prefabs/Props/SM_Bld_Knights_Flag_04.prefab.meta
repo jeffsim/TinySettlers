@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 1b7e257c84a45994da5972eb95fec7ac
+timeCreated: 1520463512
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Props/SM_Bld_Knights_Flag_04.prefab
+  uploadId: 620934

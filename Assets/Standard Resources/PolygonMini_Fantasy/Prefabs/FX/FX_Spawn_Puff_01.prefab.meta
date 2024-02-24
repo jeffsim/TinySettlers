@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 59b2149974e169c4ea4387e7322c9c91
+timeCreated: 1520470585
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/FX/FX_Spawn_Puff_01.prefab
+  uploadId: 620934

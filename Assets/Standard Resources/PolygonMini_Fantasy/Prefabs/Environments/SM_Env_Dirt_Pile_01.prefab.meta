@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f8cfc51ecd0ce91469bc8d4ef638cc2c
+timeCreated: 1520468759
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Environments/SM_Env_Dirt_Pile_01.prefab
+  uploadId: 620934

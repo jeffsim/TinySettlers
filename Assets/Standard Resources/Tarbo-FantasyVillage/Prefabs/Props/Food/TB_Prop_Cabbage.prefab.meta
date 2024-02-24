@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: c4231b7529e894f49b2c9df4ec10aaa8
+timeCreated: 1549850999
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Food/TB_Prop_Cabbage.prefab
+  uploadId: 561868

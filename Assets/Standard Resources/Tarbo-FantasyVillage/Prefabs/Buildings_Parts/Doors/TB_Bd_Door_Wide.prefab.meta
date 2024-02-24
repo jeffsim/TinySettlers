@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: d08537490072b2d479fac2c388f35e3e
+timeCreated: 1549848143
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Buildings_Parts/Doors/TB_Bd_Door_Wide.prefab
+  uploadId: 561868

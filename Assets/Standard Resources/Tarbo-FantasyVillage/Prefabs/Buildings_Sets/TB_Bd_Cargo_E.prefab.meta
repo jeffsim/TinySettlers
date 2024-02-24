@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f03ccde9dd7dba94f922c0584a89b929
+timeCreated: 1549867100
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Buildings_Sets/TB_Bd_Cargo_E.prefab
+  uploadId: 561868

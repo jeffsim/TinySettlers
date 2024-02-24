@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f99d588cdf114ed4a86f695c74201618
+timeCreated: 1520391288
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/UI/SM_UI_Cube_Selection_01.prefab
+  uploadId: 620934

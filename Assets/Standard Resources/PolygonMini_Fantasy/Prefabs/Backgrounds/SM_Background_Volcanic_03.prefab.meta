@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 50406716efe41a44783841e503ed011f
+timeCreated: 1520391268
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Backgrounds/SM_Background_Volcanic_03.prefab
+  uploadId: 620934

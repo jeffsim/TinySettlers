@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 1b950665778aa0b43a2727f1bff609cb
+timeCreated: 1549851786
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Food/TB_Prop_Shrimp.prefab
+  uploadId: 561868

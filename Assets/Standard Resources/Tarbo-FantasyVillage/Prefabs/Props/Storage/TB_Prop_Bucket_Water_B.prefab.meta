@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e1ee1327da8389a4cbeb30003154bfa5
+timeCreated: 1549850975
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Storage/TB_Prop_Bucket_Water_B.prefab
+  uploadId: 561868

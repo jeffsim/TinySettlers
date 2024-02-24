@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 18f0a20f416c50c45af61f1e03fb57bd
+timeCreated: 1520390341
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Materials/PolygonMinis_Fantasy_05.mat
+  uploadId: 620934

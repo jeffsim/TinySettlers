@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: ad237d67c29320845be31ecbfb02ad1a
+timeCreated: 1520457829
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Environments/SM_Env_Generic_Tree_09.prefab
+  uploadId: 620934

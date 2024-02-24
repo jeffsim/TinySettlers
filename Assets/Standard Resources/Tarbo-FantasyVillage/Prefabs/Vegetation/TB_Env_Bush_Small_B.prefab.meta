@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 34494487fed79af4093666b5fd8ff972
+timeCreated: 1549848439
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Vegetation/TB_Env_Bush_Small_B.prefab
+  uploadId: 561868

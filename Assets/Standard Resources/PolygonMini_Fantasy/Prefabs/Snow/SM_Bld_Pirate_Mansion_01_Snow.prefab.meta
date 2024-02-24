@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 78b48f46351f5de4996234da6c387753
+timeCreated: 1520544696
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Bld_Pirate_Mansion_01_Snow.prefab
+  uploadId: 620934

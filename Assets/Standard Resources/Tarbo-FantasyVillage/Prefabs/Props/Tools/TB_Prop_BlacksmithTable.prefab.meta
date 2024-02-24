@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: c54766a33bf66c14f9639176f527671e
+timeCreated: 1549850807
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Tools/TB_Prop_BlacksmithTable.prefab
+  uploadId: 561868

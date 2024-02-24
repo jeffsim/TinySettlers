@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a015c1b64a716cb42be427042d1da5f4
+timeCreated: 1520544695
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Env_Generic_Cliffs_02_Snow.prefab
+  uploadId: 620934

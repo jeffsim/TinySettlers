@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4ceacdbab4e22ff448f544de8f44d97d
+timeCreated: 1520391269
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Props/SM_Prop_Viking_Fence_01.prefab
+  uploadId: 620934

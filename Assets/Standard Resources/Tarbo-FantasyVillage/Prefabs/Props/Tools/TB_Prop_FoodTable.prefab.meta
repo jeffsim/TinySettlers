@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: be3446c3b9955fd4d86e5e21f121df93
+timeCreated: 1549851449
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Tools/TB_Prop_FoodTable.prefab
+  uploadId: 561868

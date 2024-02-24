@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 36dfcc6799bf1d445b8a9a6800dbad0c
+timeCreated: 1549851531
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Food/TB_Prop_Lemon_B.prefab
+  uploadId: 561868

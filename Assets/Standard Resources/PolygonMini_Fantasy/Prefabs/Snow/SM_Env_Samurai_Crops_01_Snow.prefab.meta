@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 42dda09b91aaf584a84afdf9d81b9461
+timeCreated: 1520544704
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Env_Samurai_Crops_01_Snow.prefab
+  uploadId: 620934

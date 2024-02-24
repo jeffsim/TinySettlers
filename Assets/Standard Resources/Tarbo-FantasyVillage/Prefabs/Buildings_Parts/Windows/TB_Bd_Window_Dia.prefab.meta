@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: ff43a71416bbe1a419e6b624a11d0230
+timeCreated: 1549847493
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Buildings_Parts/Windows/TB_Bd_Window_Dia.prefab
+  uploadId: 561868

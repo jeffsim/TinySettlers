@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: d2da57ba50b29104ca027b53086793bb
+timeCreated: 1549847372
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Buildings_Parts/Chimneys/TB_Bd_Chimney_A.prefab
+  uploadId: 561868

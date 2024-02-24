@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3259b5df3c7346d4f97364e648cbc29d
+timeCreated: 1549848465
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Vegetation/TB_Env_Grass_Med_D.prefab
+  uploadId: 561868

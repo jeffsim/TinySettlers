@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: c7ffd50f32456bd4f95fe4a9383de087
+timeCreated: 1520468227
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Environments/SM_Env_Generic_Cliffs_05.prefab
+  uploadId: 620934

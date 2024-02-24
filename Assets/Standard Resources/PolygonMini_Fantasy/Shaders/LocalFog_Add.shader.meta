@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: ea6bb6f56491c3542b706792ee8c4295
+timeCreated: 1520397927
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Shaders/LocalFog_Add.shader
+  uploadId: 620934

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: ad921bbd99eb2144dab835d5da127ce0
+timeCreated: 1549847404
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Buildings_Parts/Fences/TB_Bd_FencePart.prefab
+  uploadId: 561868

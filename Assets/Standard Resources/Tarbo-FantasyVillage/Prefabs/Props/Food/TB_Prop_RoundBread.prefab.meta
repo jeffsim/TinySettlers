@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 28cb1a9bfced8bc4ebd14d66c64d0bdb
+timeCreated: 1549851696
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Food/TB_Prop_RoundBread.prefab
+  uploadId: 561868

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 53ac1ec4d7892a840bc4e95dfee85894
+timeCreated: 1520457760
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/UI/SM_UI_Coin_01.prefab
+  uploadId: 620934

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 8ebdf7c7396188342a6ad51d7e32f86a
+timeCreated: 1520202710
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Scenes/Demo_Hex_LevelSelect.unity
+  uploadId: 620934

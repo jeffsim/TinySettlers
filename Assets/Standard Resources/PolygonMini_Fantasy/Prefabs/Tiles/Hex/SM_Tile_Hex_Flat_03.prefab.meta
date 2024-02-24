@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 378e4d44d4a27e346a0efb62541a2d33
+timeCreated: 1520463749
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Tiles/Hex/SM_Tile_Hex_Flat_03.prefab
+  uploadId: 620934

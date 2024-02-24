@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 7cc6dadddfe282841b072df337651f67
+timeCreated: 1520391271
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Props/SM_Prop_Western_Town_Arch_01.prefab
+  uploadId: 620934

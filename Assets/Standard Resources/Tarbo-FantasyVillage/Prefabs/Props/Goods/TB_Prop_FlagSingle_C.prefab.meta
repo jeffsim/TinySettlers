@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: b716a9fdaa9daad4487fe0fade3d37f8
+timeCreated: 1549851408
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Goods/TB_Prop_FlagSingle_C.prefab
+  uploadId: 561868

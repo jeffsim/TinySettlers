@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e2b1fc16959e3334992191c680ff42bf
+timeCreated: 1520391282
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Buildings/SM_Bld_Viking_House_03.prefab
+  uploadId: 620934

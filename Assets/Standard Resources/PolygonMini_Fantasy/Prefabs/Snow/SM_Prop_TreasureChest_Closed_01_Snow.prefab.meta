@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3ae06b8c1692da542a6b63e53563ffaf
+timeCreated: 1520544711
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Prop_TreasureChest_Closed_01_Snow.prefab
+  uploadId: 620934

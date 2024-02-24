@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 8c5a7fe7a2341f24188a252fd3da54f8
+timeCreated: 1520391305
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Environments/SM_Env_Pirate_SkullRock_01.prefab
+  uploadId: 620934

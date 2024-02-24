@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 5989870c2ff9fc146a86688b2f026ba3
+timeCreated: 1549850638
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Trees/TB_Env_Trunk_Long_D.prefab
+  uploadId: 561868

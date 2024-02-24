@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6a4cb0ca3ea62bf4bb95c6ee252992b9
+timeCreated: 1520460552
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/UI/SM_UI_Number_06.prefab
+  uploadId: 620934

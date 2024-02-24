@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 9c129aca4c9d75647a1b024cd179b066
+timeCreated: 1520544690
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Bld_Knights_Castle_06_Snow.prefab
+  uploadId: 620934

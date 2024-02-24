@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6a51125b0d4dcaa4c9bb5e0871774461
+timeCreated: 1520457839
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Environments/SM_Env_Generic_Cloud_07.prefab
+  uploadId: 620934

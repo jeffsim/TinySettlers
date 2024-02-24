@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 566ee34388738d540acc820778503fef
+timeCreated: 1520391278
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Buildings/SM_Bld_Knights_Castle_Flag_01.prefab
+  uploadId: 620934

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 84c63329a245b164fb604b218bfef6fb
+timeCreated: 1549847408
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Buildings_Parts/etc/TB_Bd_Fishing.prefab
+  uploadId: 561868

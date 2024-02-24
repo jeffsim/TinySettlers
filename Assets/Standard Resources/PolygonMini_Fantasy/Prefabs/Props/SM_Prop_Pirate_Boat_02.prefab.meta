@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 1a4f81944fe5c64478815b9b3985fe47
+timeCreated: 1520391302
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Props/SM_Prop_Pirate_Boat_02.prefab
+  uploadId: 620934

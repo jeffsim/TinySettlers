@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 11672df8c38631e4fbf39c736e2a51d1
+timeCreated: 1549850952
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Goods/TB_Prop_BreadBasket.prefab
+  uploadId: 561868

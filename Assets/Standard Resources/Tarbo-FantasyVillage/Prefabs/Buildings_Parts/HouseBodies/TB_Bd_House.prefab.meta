@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a647de920cbd4d640b648dcd94e72e5c
+timeCreated: 1549847410
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Buildings_Parts/HouseBodies/TB_Bd_House.prefab
+  uploadId: 561868

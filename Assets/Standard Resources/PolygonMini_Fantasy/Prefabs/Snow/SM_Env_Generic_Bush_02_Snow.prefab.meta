@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3328677bdef181b48b83c2ccd55a0df3
+timeCreated: 1520544694
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Env_Generic_Bush_02_Snow.prefab
+  uploadId: 620934

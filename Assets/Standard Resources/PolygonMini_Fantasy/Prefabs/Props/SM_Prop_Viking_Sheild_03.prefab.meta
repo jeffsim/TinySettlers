@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4ea45303087e112489c4be5ed131f853
+timeCreated: 1520391270
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Props/SM_Prop_Viking_Sheild_03.prefab
+  uploadId: 620934

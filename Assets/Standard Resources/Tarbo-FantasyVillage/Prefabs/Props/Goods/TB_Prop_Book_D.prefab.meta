@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: d63570db099566643b97d17f1ab28a44
+timeCreated: 1549850842
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Goods/TB_Prop_Book_D.prefab
+  uploadId: 561868

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: bd54e832fe475e046921cbc99c1d04c2
+timeCreated: 1549850607
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Grounds/TB_Env_Tile_Grass_B.prefab
+  uploadId: 561868

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e3c4c403564da1e46953ebc26617410e
+timeCreated: 1520391304
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Buildings/SM_Bld_Knights_House_04.prefab
+  uploadId: 620934

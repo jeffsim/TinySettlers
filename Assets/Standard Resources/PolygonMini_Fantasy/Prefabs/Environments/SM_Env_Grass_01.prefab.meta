@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 922382aacbe5e3547a83f0d53e5a850c
+timeCreated: 1520463727
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Environments/SM_Env_Grass_01.prefab
+  uploadId: 620934

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 31b314cfa6a049342980909f577591b5
+timeCreated: 1549850608
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Grounds/TB_Env_Tile_Water_A.prefab
+  uploadId: 561868

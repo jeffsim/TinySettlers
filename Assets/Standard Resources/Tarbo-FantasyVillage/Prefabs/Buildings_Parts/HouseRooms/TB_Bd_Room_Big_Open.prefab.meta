@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f0611a96e00695a46b8c2755b0b52cb4
+timeCreated: 1549847433
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Buildings_Parts/HouseRooms/TB_Bd_Room_Big_Open.prefab
+  uploadId: 561868

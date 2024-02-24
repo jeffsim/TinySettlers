@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: eb3a0fe9630349740bc139a2fcc7d0d4
+timeCreated: 1520544709
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Prop_Pirates_Ladder_01_Snow.prefab
+  uploadId: 620934

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 408e202e773b37948916d6e41e749a9a
+timeCreated: 1549851801
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Outside/TB_Prop_Stand_Small.prefab
+  uploadId: 561868

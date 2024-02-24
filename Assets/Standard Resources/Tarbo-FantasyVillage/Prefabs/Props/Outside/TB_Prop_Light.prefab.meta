@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: bf4654d66e9739940b100286cb96ea7a
+timeCreated: 1549851536
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Outside/TB_Prop_Light.prefab
+  uploadId: 561868

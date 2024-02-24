@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6c5c124a9f38fac49889c95a606a9899
+timeCreated: 1549851812
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Tools/TB_Prop_TrunkAxe.prefab
+  uploadId: 561868

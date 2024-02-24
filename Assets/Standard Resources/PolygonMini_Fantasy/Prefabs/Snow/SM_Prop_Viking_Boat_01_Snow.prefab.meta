@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 911b1a2fc5ba6ae498fa207731030f3e
+timeCreated: 1520544712
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Prop_Viking_Boat_01_Snow.prefab
+  uploadId: 620934

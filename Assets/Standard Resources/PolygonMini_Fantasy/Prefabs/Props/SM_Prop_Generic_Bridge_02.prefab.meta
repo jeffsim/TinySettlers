@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 44a7a37c88a45ae4f929530064e3a024
+timeCreated: 1520391301
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Props/SM_Prop_Generic_Bridge_02.prefab
+  uploadId: 620934

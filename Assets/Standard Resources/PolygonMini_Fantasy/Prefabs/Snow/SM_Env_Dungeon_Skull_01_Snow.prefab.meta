@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3521a4906ebfcdc48a9357871846c162
+timeCreated: 1520544701
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Env_Dungeon_Skull_01_Snow.prefab
+  uploadId: 620934

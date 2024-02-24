@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: bb20753c457375e41ab47e7469ddfe73
+timeCreated: 1549851309
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Storage/TB_Prop_Chest_Sq_Small_C.prefab
+  uploadId: 561868

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 9fee772d692843d45b24c1147fa08c41
+timeCreated: 1520544700
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Bld_Pirate_Shack_02_Snow.prefab
+  uploadId: 620934

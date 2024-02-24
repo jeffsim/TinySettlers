@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: c86e07f375afd0944b834982f1be1c60
+timeCreated: 1520389997
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Shaders/LocalFog_Overlay.shader
+  uploadId: 620934

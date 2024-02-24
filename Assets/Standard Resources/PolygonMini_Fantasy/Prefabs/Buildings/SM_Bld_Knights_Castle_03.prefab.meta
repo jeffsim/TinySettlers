@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 23d78b7620193fb4bbdcaff1855824ad
+timeCreated: 1520391280
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Buildings/SM_Bld_Knights_Castle_03.prefab
+  uploadId: 620934

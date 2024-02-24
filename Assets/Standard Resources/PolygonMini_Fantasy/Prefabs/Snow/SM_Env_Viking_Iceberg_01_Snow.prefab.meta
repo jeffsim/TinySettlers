@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: f37e617fcf6540d49aba46fdd0538b7a
+timeCreated: 1520544705
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Env_Viking_Iceberg_01_Snow.prefab
+  uploadId: 620934

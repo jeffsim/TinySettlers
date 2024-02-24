@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 229d8dd550694d24fb404332b13a1f68
+timeCreated: 1520462892
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/FX/FX_Smoke_01.prefab
+  uploadId: 620934

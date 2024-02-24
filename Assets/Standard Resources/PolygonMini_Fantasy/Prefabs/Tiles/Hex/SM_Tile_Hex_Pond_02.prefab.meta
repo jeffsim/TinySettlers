@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4a92a041cf3c3b14980ac361de019f3f
+timeCreated: 1520391286
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Tiles/Hex/SM_Tile_Hex_Pond_02.prefab
+  uploadId: 620934

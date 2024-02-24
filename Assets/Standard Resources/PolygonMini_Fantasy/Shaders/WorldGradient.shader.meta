@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 17a6bdb2d7a748643a8b77cdd55d81d3
+timeCreated: 1520295151
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Shaders/WorldGradient.shader
+  uploadId: 620934

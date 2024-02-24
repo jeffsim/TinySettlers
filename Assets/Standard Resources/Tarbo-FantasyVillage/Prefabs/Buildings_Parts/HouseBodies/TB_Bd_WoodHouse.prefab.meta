@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 403ef6e25f0741742b06c600100b3e36
+timeCreated: 1549847523
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Buildings_Parts/HouseBodies/TB_Bd_WoodHouse.prefab
+  uploadId: 561868

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 0b4c812145b32534fa0e1971a923e6a4
+timeCreated: 1520391267
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Buildings/SM_Bld_Samurai_House_01.prefab
+  uploadId: 620934

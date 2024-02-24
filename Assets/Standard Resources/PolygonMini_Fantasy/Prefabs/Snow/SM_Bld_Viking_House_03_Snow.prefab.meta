@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 909c4bd49fb36494589cf76af2f6d908
+timeCreated: 1520544692
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Bld_Viking_House_03_Snow.prefab
+  uploadId: 620934

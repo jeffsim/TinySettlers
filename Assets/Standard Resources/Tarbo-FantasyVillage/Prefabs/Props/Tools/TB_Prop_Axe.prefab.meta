@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: df83098f7c10e47419da826791b2b434
+timeCreated: 1549850755
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Tools/TB_Prop_Axe.prefab
+  uploadId: 561868

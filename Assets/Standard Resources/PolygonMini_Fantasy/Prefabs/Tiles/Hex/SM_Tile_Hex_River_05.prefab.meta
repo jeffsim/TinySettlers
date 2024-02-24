@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 973018b16acfa3f4b804ee6863a8441e
+timeCreated: 1520391287
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Tiles/Hex/SM_Tile_Hex_River_05.prefab
+  uploadId: 620934

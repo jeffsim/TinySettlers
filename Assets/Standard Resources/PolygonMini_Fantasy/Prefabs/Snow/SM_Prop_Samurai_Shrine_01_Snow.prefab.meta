@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: af5bd4233ca0c6f4ab716b50737f95a1
+timeCreated: 1520544709
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Prop_Samurai_Shrine_01_Snow.prefab
+  uploadId: 620934

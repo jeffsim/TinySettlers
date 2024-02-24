@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 8a314d34025c3334fb014d161b0bef9b
+timeCreated: 1549851650
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Tools/TB_Prop_MailBox.prefab
+  uploadId: 561868

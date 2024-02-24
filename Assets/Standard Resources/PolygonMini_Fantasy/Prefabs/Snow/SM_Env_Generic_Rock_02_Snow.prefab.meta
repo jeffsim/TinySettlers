@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 94b8eeb4521fd3740861f5246b6d7e25
+timeCreated: 1520544698
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Env_Generic_Rock_02_Snow.prefab
+  uploadId: 620934

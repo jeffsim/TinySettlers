@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 9f7af5c1776bd044b8ac6e9de87a47ad
+timeCreated: 1549851628
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Lumbers/TB_Prop_LumberPile_Med_C.prefab
+  uploadId: 561868

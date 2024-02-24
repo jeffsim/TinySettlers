@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 5f23b8c2d62881b4b948403e1ea1085f
+timeCreated: 1520544702
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Env_Generic_Tree_010_Snow.prefab
+  uploadId: 620934

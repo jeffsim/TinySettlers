@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 97ca41873fa4f8744acf96fc13f2e253
+timeCreated: 1549848524
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Grounds/TB_Env_Mound_Small_C.prefab
+  uploadId: 561868

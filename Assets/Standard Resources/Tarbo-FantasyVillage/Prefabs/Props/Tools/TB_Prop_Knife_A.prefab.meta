@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 52df9c89f077e1e4f8a4baac151fd990
+timeCreated: 1549851502
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Props/Tools/TB_Prop_Knife_A.prefab
+  uploadId: 561868

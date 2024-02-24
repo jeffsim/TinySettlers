@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4a7ed95378760a44aae5c1a2d9a49566
+timeCreated: 1520391269
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Props/SM_Prop_TreasureChest_Open_01.prefab
+  uploadId: 620934

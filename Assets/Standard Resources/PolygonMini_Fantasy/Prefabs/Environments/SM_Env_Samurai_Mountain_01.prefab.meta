@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: e4612ab6f804fb742a0b5598bcd8543b
+timeCreated: 1520391280
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Environments/SM_Env_Samurai_Mountain_01.prefab
+  uploadId: 620934

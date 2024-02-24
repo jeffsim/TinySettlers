@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 15981766919886f48a566a00ce6236b4
+timeCreated: 1520544688
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Snow/SM_Bld_Adventure_Hut_01_Snow.prefab
+  uploadId: 620934

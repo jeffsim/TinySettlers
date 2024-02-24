@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 3ca9482c47d65564cb121d76df44406e
+timeCreated: 1549848625
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/RocksStones/TB_Env_Rock5_E.prefab
+  uploadId: 561868

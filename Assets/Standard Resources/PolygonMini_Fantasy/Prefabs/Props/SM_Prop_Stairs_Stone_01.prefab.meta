@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 2f84ba709bce90549b8fd9a6d32ab593
+timeCreated: 1520391303
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Props/SM_Prop_Stairs_Stone_01.prefab
+  uploadId: 620934

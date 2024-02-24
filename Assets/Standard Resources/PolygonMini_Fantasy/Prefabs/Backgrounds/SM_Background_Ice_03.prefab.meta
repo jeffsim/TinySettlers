@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 50667b79fb99861458412861d026f9e1
+timeCreated: 1520391282
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Backgrounds/SM_Background_Ice_03.prefab
+  uploadId: 620934

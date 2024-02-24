@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: e93005dd0d647c7418a5b1594a5162d2
+timeCreated: 1520469932
+licenseType: Store
+DefaultImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Scenes/Demo_Cube_FloatingPort.unity
+  uploadId: 620934

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a1fef02556c2ca048a0b50b02f72f802
+timeCreated: 1520391277
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Tiles/Cube/SM_Tile_Cube_Water_01.prefab
+  uploadId: 620934

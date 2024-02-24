@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 51403a42ac7d6c44db061e324cd59897
+timeCreated: 1520390010
+licenseType: Store
+ShaderImporter:
+  defaultTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Shaders/LocalFog_Multiply.shader
+  uploadId: 620934

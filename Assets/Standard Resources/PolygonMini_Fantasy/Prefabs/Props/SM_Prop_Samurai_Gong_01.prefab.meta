@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 6aba6d29b998a2746955e868e916cff8
+timeCreated: 1520391303
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Props/SM_Prop_Samurai_Gong_01.prefab
+  uploadId: 620934

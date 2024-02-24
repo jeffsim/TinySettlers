@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: eb33f9d73a8386b4a91e6e43a2f3727f
+timeCreated: 1520391268
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 96800
+  packageName: POLYGON MINI - Fantasy Pack
+  packageVersion: 1.3
+  assetPath: Assets/PolygonMini_Fantasy/Prefabs/Environments/SM_Env_Dungeon_Mushroom_02.prefab
+  uploadId: 620934

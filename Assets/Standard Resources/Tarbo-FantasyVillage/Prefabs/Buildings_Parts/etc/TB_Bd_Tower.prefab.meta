@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: c7e90baf7b5bb6041885f52646020e7e
+timeCreated: 1549847482
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 140303
+  packageName: Fantasy Village Pack - Low Poly 3D Art
+  packageVersion: 1.3.3
+  assetPath: Assets/Tarbo-FantasyVillage/Prefabs/Buildings_Parts/etc/TB_Bd_Tower.prefab
+  uploadId: 561868
