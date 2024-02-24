@@ -38,6 +38,13 @@ public static class Utilities
     }
 #endif
 
+    public static (int q, int r) ConvertToHexCoordinate(int x, int y)
+    {
+        int q = x - (y - (y & 1)) / 2;
+        int r = y;
+        return (q, r);
+    }
+
     public static string ConvertToTimeString(float value)
     {
         if (value < 0 || value > 1)

@@ -17,7 +17,7 @@ public class Town_BuildingDefn
     public string TestId;
     public int TileX;
     public int TileY;
-
+    public int PositionInStack = 0;
     public List<Town_BuildingStartingItemDefn> StartingItemsInBuilding;
     public int NumWorkersStartAtBuilding;
 }

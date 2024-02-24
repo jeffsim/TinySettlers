@@ -8,6 +8,17 @@ public delegate void OnItemAddedToGroundEvent(ItemData item);
 public enum StorageSpotSearchType { Any, Primary, AssignedBuildingOrPrimary }
 
 [Serializable]
+public class TileStack
+{
+    public List<TileData> Tiles = new();
+
+    internal void AddTile(TileData tileData)
+    {
+        Tiles.Add(tileData);
+    }
+}
+
+[Serializable]
 public class TownData : BaseData
 {
     private TownDefn _defn;
@@ -33,6 +44,7 @@ public class TownData : BaseData
     // Current Map
     public BuildingData Camp;
     public List<TileData> Tiles = new();
+    public List<TileStack> TileStacks;
     public List<BuildingData> AllBuildings = new();
     public List<ItemData> ItemsOnGround = new();
     public List<NeedData> otherTownNeeds = new();
@@ -55,9 +67,26 @@ public class TownData : BaseData
         Tiles.Clear();
         string[] tiles = Defn.Tiles.Split(",");
         Debug.Assert(tiles.Length == Defn.Width * Defn.Height, "wrong num tiles");
-        for (int y = 0; y < Defn.Height; y++)
-            for (int x = 0; x < Defn.Width; x++)
-                Tiles.Add(new TileData(x, y, tiles[y * Defn.Width + x]));
+
+        if (false && Settings.Current.HexTiles)
+        {
+            TileStacks = new();
+            for (int y = 0; y < Defn.Height; y++)
+                for (int x = 0; x < Defn.Width; x++)
+                {
+                    var stack = new TileStack();
+                    var (q, r) = Utilities.ConvertToHexCoordinate(x, y);
+                    stack.AddTile(new TileData(q, r, tiles[y * Defn.Width + x]));
+                    TileStacks.Add(stack);
+                }
+
+        }
+        else
+        {
+            for (int y = 0; y < Defn.Height; y++)
+                for (int x = 0; x < Defn.Width; x++)
+                    Tiles.Add(new TileData(x, y, tiles[y * Defn.Width + x]));
+        }
 
         Gold = 0;
         TownWorkerMgr = new(this);

@@ -5,6 +5,11 @@ public class GameSettingsDefn : BaseDefn
 {
     public bool UseOrthographicCamera = false;
 
+    // Testing purposes: don't snap to tiles
+    public bool AllowFreeBuildingPlacement = false;
+
+    public bool HexTiles = false;
+
     public Vector3 Debug_StartingOrthoCameraPosition = new(-8.8f, 12.5f, -8f);
     public Quaternion Debug_StartingOrthoCameraRotation = Quaternion.Euler(60, 0, 0);
     public float Debug_StartingOrthoCameraZoom = 30;
@@ -17,9 +22,6 @@ public class GameSettingsDefn : BaseDefn
     public int DefaultNumMaxWorkers = 3;
     public float ConstructionTimeInSeconds = 5;
     public bool UseBinarySaveFiles = true;
-
-    // Testing purposes: don't snap to tiles
-    public bool AllowFreeBuildingPlacement = false;
 
     public float RealTimeToGameTimeMultiplier = .01f;
 
