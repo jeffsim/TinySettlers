@@ -76,13 +76,13 @@ public class Map : MonoBehaviour
             Drawing.Draw.ingame.Line(mouseWorldPos, hexTile);
     }
 
-
     Vector3 GetCenterOfHexTileClosestToWorldPos(Vector3 worldPos)
     {
         var hexTile = Utilities.ConvertWorldPosToHexTile(worldPos);
         var worldPosAtHexCenter = Utilities.ConvertHexTileToWorldPos(hexTile);
         return worldPosAtHexCenter;
     }
+
     private GameObject addSphere(Vector3 pos, float scale, Color color)
     {
         var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
