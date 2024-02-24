@@ -44,6 +44,8 @@ public static class Utilities
         int r = y;
         return (q, r);
     }
+    public static (int q, int r) ConvertToHexCoordinate(float x, float y) => ConvertToHexCoordinate((int)x, (int)y);
+    public static (int q, int r) ConvertToHexCoordinate(Vector2Int pos) => ConvertToHexCoordinate(pos.x, pos.y);
 
     public static string ConvertToTimeString(float value)
     {

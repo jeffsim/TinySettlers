@@ -15,24 +15,32 @@ public partial class TownDefnEditor : OdinEditor
         var text = "(" + hexTile.x + "," + hexTile.y + ")";
 
         // Draw where the building would drop
-        drawBuildingWithLabelAt(ConvertHexTileToScreenPos(hexTile.x, hexTile.y), draggingBuilding, text);
+        var screenPos = ConvertHexTileToScreenPos(hexTile.x, hexTile.y);
 
-        // drag dragged building at mouse position
+        // Offset screenPos.y by -5 for every other building that is also in hexTile
+        int positionInStack = 0;
+        foreach (var building in TownDefn.Buildings)
+            if (building != draggingBuilding && building.TileX == hexTile.x && building.TileY == hexTile.y)
+                positionInStack++;
+        screenPos.y -= 5 * positionInStack;
+
+        drawBuildingWithLabelAt(screenPos, draggingBuilding, text);
+
+        // draw dragged building at mouse position
         drawBuildingWithLabelAt(dragMousePosition - dragOffset - TileSizeVector / 2, draggingBuilding, text);
     }
 
-    private Vector2Int ConvertScreenPosToHexTile(Vector2 screenPos)
+    private Vector2Int ConvertRectPosToHexTile(Vector2 rectPos)
     {
-        float tileWidth = TileSize * 1.5f;
-        int hexTileX = Mathf.FloorToInt(screenPos.x / tileWidth);
-        int hexTileY = Mathf.FloorToInt(screenPos.y / TileSize) * 2;
-        // if (screenPos.x % tileWidth > TileSize / 2)
-        if (screenPos.x > hexTileX * tileWidth + tileWidth / 2)
+        float tilePlacementWidth = TileSize * 1.5f;
+        int hexTileX = (int)(rectPos.x / tilePlacementWidth);
+        int hexTileY = (int)(rectPos.y / TileSize) * 2;
+        if (rectPos.x > hexTileX * tilePlacementWidth + tilePlacementWidth / 2)
             hexTileY++;
-        return new(hexTileX, hexTileY);
+        return new Vector2Int(hexTileX, hexTileY);
     }
 
-    private Vector2 ConvertMousePosToGridPos()
+    private Vector2 ConvertMousePosToRectPos()
     {
         Vector2 screenPos = Event.current.mousePosition - GridRect.position;
         screenPos.y = GridRect.height - screenPos.y;
@@ -41,7 +49,7 @@ public partial class TownDefnEditor : OdinEditor
 
     private Vector2Int ConvertMousePosToHexTile()
     {
-        return ConvertScreenPosToHexTile(ConvertMousePosToGridPos());
+        return ConvertRectPosToHexTile(ConvertMousePosToRectPos());
     }
 
     private Vector2 ConvertHexTileToScreenPos(int hexTileX, int hexTileY, int positionInStack = 0)
@@ -62,7 +70,11 @@ public partial class TownDefnEditor : OdinEditor
         var shadowStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.black } };
         var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.yellow } };
 
-        foreach (var buildingDefn in TownDefn.Buildings)
+        // Render buildings bottom to top to maintain Z
+        var buildings = TownDefn.Buildings.ToArray();
+        Array.Sort(buildings, (a, b) => b.TileY.CompareTo(a.TileY));
+
+        foreach (var buildingDefn in buildings)
         {
             if (!buildingDefn.IsEnabled || buildingDefn.Building == null) continue;
 
