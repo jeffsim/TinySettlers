@@ -68,12 +68,12 @@ public partial class TownDefnEditor : OdinEditor
             Repaint();
         }
 
-        if (Event.current.type == EventType.Repaint)
-        {
-            var gridPos = ConvertMousePosToGridPos();
-            Debug.Log(gridPos + ", " + gridPos / 64f + ", " + (gridPos + new Vector2(32, 32)) / 64f);
-            Repaint();
-        }
+        // if (Event.current.type == EventType.Repaint)
+        // {
+        //     var gridPos = ConvertMousePosToGridPos();
+        //     Debug.Log(gridPos + ", " + gridPos / 64f + ", " + (gridPos + new Vector2(32, 32)) / 64f);
+        //     Repaint();
+        // }
 
         ForceUpdatePositionsInStack();
     }
