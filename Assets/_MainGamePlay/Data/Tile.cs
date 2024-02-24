@@ -11,7 +11,7 @@ public class TileData : BaseData, ILocation
     public int TileY;
     [SerializeField] public Location Location { get; set; }
 
-    static float TileSize = 10;
+    public static float TileSize = 10;
     public float WorldX => Location.WorldLoc.x;
     public float WorldY => Location.WorldLoc.z;
 

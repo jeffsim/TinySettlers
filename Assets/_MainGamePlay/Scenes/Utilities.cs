@@ -44,6 +44,34 @@ public static class Utilities
         int r = y;
         return (q, r);
     }
+
+    public static Vector2Int ConvertWorldPosToHexTile(Vector3 worldPos)
+    {
+        float tilePlacementWidth = TileData.TileSize * 1.5f;
+        int hexTileX = (int)(worldPos.x / tilePlacementWidth);
+        int hexTileY = (int)(worldPos.z / TileData.TileSize) * 2;
+        if (worldPos.x > hexTileX * tilePlacementWidth + tilePlacementWidth / 2)
+            hexTileY++;
+        return new Vector2Int(hexTileX, hexTileY);
+    }
+
+    public static Vector3 ConvertHexTileToWorldPos(Vector2Int hexTile)
+    {
+        float worldX, worldZ;
+        worldX = hexTile.x * TileData.TileSize * 1.5f;
+        if (Mathf.Abs(hexTile.y) % 2 == 1)
+            worldX += TileData.TileSize * 3 / 4f;
+        worldZ = hexTile.y / 2f * TileData.TileSize;// - 5 * positionInStack;
+        return new(worldX, 0, worldZ);
+    }
+
+    public static Vector3 GetCenterOfHexTileClosestToWorldPos(Vector3 worldPos)
+    {
+        var hexTile = ConvertWorldPosToHexTile(worldPos);
+        var worldPosAtHexCenter = ConvertHexTileToWorldPos(hexTile);
+        return worldPosAtHexCenter;
+    }
+
     public static (int q, int r) ConvertToHexCoordinate(float x, float y) => ConvertToHexCoordinate((int)x, (int)y);
     public static (int q, int r) ConvertToHexCoordinate(Vector2Int pos) => ConvertToHexCoordinate(pos.x, pos.y);
 

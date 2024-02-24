@@ -1,3 +1,4 @@
+using System;
 using Sirenix.OdinInspector.Editor;
 using Sirenix.Utilities;
 using UnityEditor;
@@ -68,13 +69,23 @@ public partial class TownDefnEditor : OdinEditor
             Repaint();
         }
 
-        // if (Event.current.type == EventType.Repaint)
-        // {
-        //     var gridPos = ConvertMousePosToGridPos();
-        //     Debug.Log(gridPos + ", " + gridPos / 64f + ", " + (gridPos + new Vector2(32, 32)) / 64f);
-        //     Repaint();
-        // }
+        if (Event.current.type == EventType.Repaint)
+        {
+            // var screenPos = ConvertMousePosToRectPos();
+            // var tilePos = new Vector2Int((int)(screenPos.x / TileSize), (int)(screenPos.y / TileSize));
+            // var hex = GridToHex(tilePos);
+            // Debug.Log(tilePos.x + ", " + tilePos.y + " : " + hex.x + ", " + hex.y);
+            // Repaint();
+        }
 
         ForceUpdatePositionsInStack();
     }
+
+    Vector2Int GridToHex(Vector2Int gridPos)
+    {
+        float x = 3 / 2 * gridPos.x;
+        float y = Mathf.Sqrt(3f) * (gridPos.y + 0.5f * (gridPos.x & 1));
+        return new Vector2Int((int)x, (int)y);
+    }
+
 }

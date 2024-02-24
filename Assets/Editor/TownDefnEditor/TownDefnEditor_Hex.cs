@@ -5,6 +5,8 @@ using UnityEngine;
 
 public partial class TownDefnEditor : OdinEditor
 {
+    // NOTE: Using odd-r Hex coordinate system.  See: https://www.redblobgames.com/grids/hexagons/
+
     private void showDraggingBuilding_HexTiles()
     {
         if (!GridRect.Contains(Event.current.mousePosition))
@@ -28,6 +30,30 @@ public partial class TownDefnEditor : OdinEditor
 
         // draw dragged building at mouse position
         drawBuildingWithLabelAt(dragMousePosition - dragOffset - TileSizeVector / 2, draggingBuilding, text);
+    }
+
+    public struct HexCoord
+    {
+        public int q, r;
+    }
+
+    public struct OddQ
+    {
+        public int col, row;
+    }
+
+    Vector2Int axial_to_oddr(HexCoord hex)
+    {
+        var col = hex.q + (hex.r - (hex.r & 1)) / 2;
+        var row = hex.r;
+        return new(col, row);
+    }
+
+    HexCoord oddr_to_axial(OddQ oddr)
+    {
+        var q = oddr.col - (oddr.row - (oddr.row & 1)) / 2;
+        var r = oddr.row;
+        return new HexCoord { q = q, r = r };
     }
 
     private Vector2Int ConvertRectPosToHexTile(Vector2 rectPos)

@@ -24,6 +24,7 @@ public class Location
     public void SetWorldLoc(float x, float y, float z) => WorldLoc.Set(x, y, z);
 
     internal float DistanceTo(Location location) => Vector2.Distance(new(WorldLoc.x, WorldLoc.z), new(location.WorldLoc.x, location.WorldLoc.z));
+    internal float DistanceTo(Vector3 worldLoc) => Vector2.Distance(new(WorldLoc.x, WorldLoc.z), new(worldLoc.x, worldLoc.z));
 
     public bool WithinDistanceOf(Location location, float closeEnough) => DistanceTo(location) <= closeEnough;
 

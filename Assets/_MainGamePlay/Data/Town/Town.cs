@@ -65,24 +65,24 @@ public class TownData : BaseData
     {
         lastGameTime = GameTime.time = 0;
         Tiles.Clear();
-        string[] tiles = Defn.Tiles.Split(",");
-        Debug.Assert(tiles.Length == Defn.Width * Defn.Height, "wrong num tiles");
 
-        if (false && Settings.Current.HexTiles)
+        if (Settings.Current.HexTiles)
         {
-            TileStacks = new();
-            for (int y = 0; y < Defn.Height; y++)
-                for (int x = 0; x < Defn.Width; x++)
-                {
-                    var stack = new TileStack();
-                    var (q, r) = Utilities.ConvertToHexCoordinate(x, y);
-                    stack.AddTile(new TileData(q, r, tiles[y * Defn.Width + x]));
-                    TileStacks.Add(stack);
-                }
-
+            // TileStacks = new();
+            // for (int y = 0; y < Defn.Height; y++)
+            //     for (int x = 0; x < Defn.Width; x++)
+            //     {
+            //         var stack = new TileStack();
+            //         var (q, r) = Utilities.ConvertToHexCoordinate(x, y);
+            //         stack.AddTile(new TileData(q, r, tiles[y * Defn.Width + x]));
+            //         TileStacks.Add(stack);
+            //     }
         }
         else
         {
+            string[] tiles = Defn.Tiles.Split(",");
+            Debug.Assert(tiles.Length == Defn.Width * Defn.Height, "wrong num tiles");
+
             for (int y = 0; y < Defn.Height; y++)
                 for (int x = 0; x < Defn.Width; x++)
                     Tiles.Add(new TileData(x, y, tiles[y * Defn.Width + x]));
@@ -98,7 +98,14 @@ public class TownData : BaseData
         {
             if (!tbDefn.IsEnabled) continue;
 
-            var building = ConstructBuilding(tbDefn.Building, tbDefn.TileX, tbDefn.TileY);
+            BuildingData building;
+            if (Settings.Current.HexTiles)
+            {
+                var worldPos = Utilities.ConvertHexTileToWorldPos(new Vector2Int(tbDefn.TileX, tbDefn.TileY));
+                building = ConstructBuilding(tbDefn.Building, worldPos);
+            }
+            else
+                building = ConstructBuilding(tbDefn.Building, tbDefn.TileX, tbDefn.TileY);
             if (building.Defn.BuildingClass == BuildingClass.Camp)
                 Camp = building;
 #if UNITY_INCLUDE_TESTS
@@ -120,11 +127,6 @@ public class TownData : BaseData
         TownWorkerMgr.AddWorker(worker);
         FindHomesForUnhomedWorkers();
         return worker;
-    }
-
-    internal void TestMoveBuilding(int test)
-    {
-        MoveBuilding(AllBuildings[test], 2, 1);
     }
 
     public BuildingData ConstructBuilding(BuildingDefn buildingDefn, int tileX, int tileY)
@@ -174,6 +176,9 @@ public class TownData : BaseData
 
     public void MoveBuilding(BuildingData building, Vector3 worldLoc)
     {
+        if (building.Location.DistanceTo(worldLoc) < 0.0001f)
+            return;
+
         building.MoveTo(worldLoc);
         OnBuildingMoved?.Invoke(building);
     }

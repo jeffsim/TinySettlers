@@ -80,10 +80,11 @@ public class BuildingBase : MonoBehaviour
     {
         if (Settings.Current.HexTiles)
         {
-            Vector3 mousePosition = GetMouseWorldPosition() + offset;
-            var (q, r) = Utilities.ConvertToHexCoordinate((int)mousePosition.x, (int)mousePosition.z);
-            //  var buildingInTile = scene.Map.Town.Tiles[r * scene.Map.Town.TileWidth + q].Building;
-            scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, Settings.Current.DraggedBuildingY, mousePosition.z));
+            Vector3 mouseWorldPos = GetMouseWorldPosition() + offset;
+            mouseWorldPos.y = 0;
+            // Debug.Log(mouseWorldPos);
+            var hexTile = Utilities.GetCenterOfHexTileClosestToWorldPos(mouseWorldPos);
+            scene.Map.Town.MoveBuilding(Data, hexTile);
         }
         else if (Settings.Current.AllowFreeBuildingPlacement)
         {
@@ -104,7 +105,6 @@ public class BuildingBase : MonoBehaviour
             draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, Settings.Current.DraggedBuildingY, mouseIntersectPoint.z));
         }
     }
-
     private void StopDragging()
     {
         scene.Map.Town.MoveBuilding(Data, new(Data.Location.WorldLoc.x, Settings.Current.BuildingsY, Data.Location.WorldLoc.z));

@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: default
   m_EditorClassIdentifier: 
   Id: default
-  UseOrthographicCamera: 1
+  UseOrthographicCamera: 0
   AllowFreeBuildingPlacement: 1
   HexTiles: 1
-  Debug_StartingOrthoCameraPosition: {x: 13.518712, y: 13.500004, z: -1.1963816}
+  Debug_StartingOrthoCameraPosition: {x: 23.499235, y: 32.31, z: -9.370026}
   Debug_StartingOrthoCameraRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
-  Debug_StartingOrthoCameraZoom: 32.5
+  Debug_StartingOrthoCameraZoom: 19.625
   Debug_StartingPerspCameraPosition: {x: -27.253654, y: 54.926407, z: -31.03896}
   Debug_StartingPerspCameraRotation: {x: 0.3535534, y: 0.3535534, z: -0.14644663, w: 0.85355335}
   Debug_StartingPerspCameraZoom: 30
