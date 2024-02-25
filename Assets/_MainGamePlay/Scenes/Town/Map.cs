@@ -9,7 +9,6 @@ public class Map : MonoBehaviour
     SceneWithMap scene;
     GameObject ItemsFolder;
     GameObject BuildingsFolder;
-    GameObject TilesFolder;
     GameObject WorkersFolder;
     GameObject DebugFolder;
     public TimeOfDayMgr TimeOfDayMgr;
@@ -21,14 +20,10 @@ public class Map : MonoBehaviour
         gameObject.RemoveAllChildren();
 
         // Set up folders for hierarchy cleanliness
-        TilesFolder = addFolder("Tiles");
         BuildingsFolder = addFolder("Buildings");
         ItemsFolder = addFolder("Items");
         WorkersFolder = addFolder("Workers");
         // BuildingsFolder.transform.position = new(0, -1.93f, 0);
-
-        foreach (var tile in Town.Tiles)
-            addTileGO(tile);
 
         foreach (var worker in Town.TownWorkerMgr.Workers)
             addWorkerGO(worker);
@@ -101,7 +96,7 @@ public class Map : MonoBehaviour
     //     var hexTile = Utilities.ConvertWorldPosToHexTile(worldPos);
     //     var hexTileCenterWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile);
     //     // Debug.Log("C: " + hexTileCenterWorldPos);
-    //     var p0to1 = (worldPos - hexTileCenterWorldPos) / TileData.TileSize + Vector3.one / 2f;
+    //     var p0to1 = (worldPos - hexTileCenterWorldPos) / Utilities.TileSize + Vector3.one / 2f;
     //     var isInFrontQuarter = p0to1.x < .25f;
     //     var isInTopHalf = p0to1.z > .5f;
 
@@ -176,14 +171,6 @@ public class Map : MonoBehaviour
         Town.OnItemRemovedFromGround -= OnItemRemovedFromGround;
 
         // Town.OnItemSold -= OnItemSold;
-    }
-
-    private void addTileGO(TileData tile)
-    {
-        if (this == null) return; // destroyed
-        var tileGO = Instantiate(scene.TilePrefab);
-        tileGO.transform.SetParent(TilesFolder.transform, false);
-        tileGO.Initialize(tile, scene);
     }
 
     private void addWorkerGO(WorkerData worker)
@@ -269,26 +256,5 @@ public class Map : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Space))
             GameTime.TogglePause();
-    }
-
-    internal Tile getTileAt(Vector3 position)
-    {
-        Ray ray = Camera.main.ScreenPointToRay(position);
-        if (Physics.Raycast(ray, out RaycastHit hit, 500, LayerMask.GetMask("Tile")))
-            return hit.collider.transform.parent.GetComponentInParent<Tile>();
-
-        return null;
-    }
-
-    internal bool IsValidDropSpotForBuilding(Vector3 mousePosition, Building building)
-    {
-        if (Settings.Current.AllowFreeBuildingPlacement)
-            return true;
-
-        var tile = getTileAt(Input.mousePosition);
-        if (tile == null) return false;
-        if (!tile.Data.Defn.PlayerCanBuildOn) return false;
-        if (tile.Data.BuildingInTile != null && tile.Data.BuildingInTile != building.Data) return false;
-        return true;
     }
 }

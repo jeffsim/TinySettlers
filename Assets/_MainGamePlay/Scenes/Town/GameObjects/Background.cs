@@ -23,7 +23,7 @@ public class Background : MonoBehaviour
         {
             if (scene.AnyDialogIsOpen())
                 scene.HideAllDialogs();
-            else if (Settings.Current.AllowFreeBuildingPlacement)
+            else
             {
                 if (Vector2.Distance(dragStart, Input.mousePosition) > 10)
                     return;

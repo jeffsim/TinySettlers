@@ -38,16 +38,18 @@ public static class Utilities
     }
 #endif
 
+    public static float TileSize = 10;
+
     public static Vector3 ConvertHexTileToWorldPos(Vector2Int hexTile, int positionInStack = 0)
     {
-        float worldX = hexTile.x * TileData.TileSize * 3 / 4f;
-        float worldZ = (hexTile.y + (hexTile.x & 1) / 2f) * TileData.TileSize - 5 * positionInStack;
+        float worldX = hexTile.x * TileSize * 3 / 4f;
+        float worldZ = (hexTile.y + (hexTile.x & 1) / 2f) * TileSize - 5 * positionInStack;
         return new(worldX, 0, worldZ);
     }
 
     public static Vector2Int ConvertWorldPosToHexTile(Vector3 worldPos)
     {
-        var tileSize = TileData.TileSize;
+        var tileSize = TileSize;
         Vector3 offsetWP = worldPos + Vector3.one * tileSize / 2;
         float hexTileX = offsetWP.x / (tileSize * .75f);
         float hexTileY = offsetWP.z / tileSize - ((int)hexTileX & 1) * 0.5f;

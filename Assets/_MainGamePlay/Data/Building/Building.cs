@@ -113,13 +113,7 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
         DefnId = buildingDefn.Id;
         TileX = tileX;
         TileY = tileY;
-        Location = new(new(TileX * TileSize, Settings.Current.BuildingsY, TileY * TileSize));
-    }
-
-    public BuildingData(BuildingDefn buildingDefn, Vector3 worldLoc)
-    {
-        DefnId = buildingDefn.Id;
-        Location = new(worldLoc);
+        Location = new(Utilities.ConvertHexTileToWorldPos(new Vector2Int(tileX, tileY)));
     }
 
     public void Initialize(TownData town)
@@ -488,28 +482,20 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
         CraftingMgr?.Destroy();
     }
 
-    public void MoveTo(Vector3 worldLoc)
-    {
-        Location previousWorldLoc = new(Location.WorldLoc);
-        Location.SetWorldLoc(worldLoc);
-        UpdateWorldLoc();
-
-        // Update Workers that are assigned to or have Tasks which involve this building.
-        foreach (var worker in Town.TownWorkerMgr.Workers)
-            worker.OnBuildingMoved(this, previousWorldLoc);
-
-        OnLocationChanged?.Invoke();
-    }
-
-    public void MoveTo(int tileX, int tileY)
+    public void MoveTo(Vector2Int hexTile)
     {
         Debug.Assert(!IsDestroyed, "destroying building twice");
 
-        TileX = tileX;
-        TileY = tileY;
+        TileX = hexTile.x;
+        TileY = hexTile.y;
+        var hexTileWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile);
+
+        // place at top of stack
+        var countMinusThis = Town.GetTileStackForHexTile(new Vector2Int(TileX, TileY)).Buildings.Count - 1;
+        hexTileWorldPos.y = countMinusThis * 1.77f;
 
         Location previousWorldLoc = new(Location.WorldLoc);
-        Location.SetWorldLoc(TileX * TileSize, Location.WorldLoc.y, TileY * TileSize);
+        Location.SetWorldLoc(hexTileWorldPos);
         UpdateWorldLoc();
 
         // Update Workers that are assigned to or have Tasks which involve this building.

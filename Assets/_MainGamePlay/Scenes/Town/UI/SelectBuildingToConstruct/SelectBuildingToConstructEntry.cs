@@ -11,7 +11,6 @@ public class SelectBuildingToConstructEntry : MonoBehaviour
 
     [NonSerialized] BuildingDefn buildingDefn;
     [NonSerialized] SceneWithMap scene;
-    [NonSerialized] Tile tile;
     Vector3 worldLoc;
     Button button;
 
@@ -26,17 +25,6 @@ public class SelectBuildingToConstructEntry : MonoBehaviour
         this.buildingDefn = buildingDefn;
         this.scene = scene;
         this.worldLoc = worldLoc;
-
-        Name.text = buildingDefn.FriendlyName;
-        gameObject.SetActive(true);
-    }
-
-    internal void InitializeForBuilding(SceneWithMap scene, Tile tile, SelectBuildingToConstructDialog dialog, BuildingDefn buildingDefn)
-    {
-        this.dialog = dialog;
-        this.buildingDefn = buildingDefn;
-        this.scene = scene;
-        this.tile = tile;
 
         Name.text = buildingDefn.FriendlyName;
         gameObject.SetActive(true);
@@ -67,9 +55,7 @@ public class SelectBuildingToConstructEntry : MonoBehaviour
     {
         if (!scene.Map.Town.PlayerCanAffordBuilding(buildingDefn))
             return;
-        if (Settings.Current.AllowFreeBuildingPlacement)
-            scene.PlayerSelectedBuildingToConstructAtWorldLoc(buildingDefn, worldLoc);
-        else
-            scene.PlayerSelectedBuildingToConstructInTile(buildingDefn, tile.Data);
+        var hexTile = Utilities.ConvertWorldPosToHexTile(worldLoc);
+        scene.PlayerSelectedBuildingToConstructInTile(buildingDefn, hexTile);
     }
 }

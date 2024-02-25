@@ -10,11 +10,20 @@ public enum StorageSpotSearchType { Any, Primary, AssignedBuildingOrPrimary }
 [Serializable]
 public class TileStack
 {
-    public List<TileData> Tiles = new();
+    public List<BuildingData> Buildings = new();
 
-    internal void AddTile(TileData tileData)
+    public Vector2Int HexTile;
+
+    internal void AddBuilding(BuildingData building)
     {
-        Tiles.Add(tileData);
+        Buildings.Add(building);
+        Debug.Log($"Added {building} to TileStack {HexTile}. Buildings now in stack: {Buildings.Count}");
+    }
+
+    public void RemoveBuilding(BuildingData building)
+    {
+        Buildings.Remove(building);
+        Debug.Log($"Removed {building} from TileStack {HexTile}. Buildings left: {Buildings.Count}");
     }
 }
 
@@ -43,7 +52,6 @@ public class TownData : BaseData
 
     // Current Map
     public BuildingData Camp;
-    public List<TileData> Tiles = new();
     public List<TileStack> TileStacks;
     public List<BuildingData> AllBuildings = new();
     public List<ItemData> ItemsOnGround = new();
@@ -64,29 +72,11 @@ public class TownData : BaseData
     public void InitializeOnFirstEnter()
     {
         lastGameTime = GameTime.time = 0;
-        Tiles.Clear();
 
-        if (Settings.Current.HexTiles)
-        {
-            // TileStacks = new();
-            // for (int y = 0; y < Defn.Height; y++)
-            //     for (int x = 0; x < Defn.Width; x++)
-            //     {
-            //         var stack = new TileStack();
-            //         var (q, r) = Utilities.ConvertToHexCoordinate(x, y);
-            //         stack.AddTile(new TileData(q, r, tiles[y * Defn.Width + x]));
-            //         TileStacks.Add(stack);
-            //     }
-        }
-        else
-        {
-            string[] tiles = Defn.Tiles.Split(",");
-            Debug.Assert(tiles.Length == Defn.Width * Defn.Height, "wrong num tiles");
-
-            for (int y = 0; y < Defn.Height; y++)
-                for (int x = 0; x < Defn.Width; x++)
-                    Tiles.Add(new TileData(x, y, tiles[y * Defn.Width + x]));
-        }
+        TileStacks = new();
+        for (int y = 0; y < Defn.Height; y++)
+            for (int x = 0; x < Defn.Width; x++)
+                TileStacks.Add(new TileStack() { HexTile = new Vector2Int(x, y) });
 
         Gold = 0;
         TownWorkerMgr = new(this);
@@ -99,13 +89,7 @@ public class TownData : BaseData
             if (!tbDefn.IsEnabled) continue;
 
             BuildingData building;
-            if (Settings.Current.HexTiles)
-            {
-                var worldPos = Utilities.ConvertHexTileToWorldPos(new Vector2Int(tbDefn.TileX, tbDefn.TileY));
-                building = ConstructBuilding(tbDefn.Building, worldPos);
-            }
-            else
-                building = ConstructBuilding(tbDefn.Building, tbDefn.TileX, tbDefn.TileY);
+            building = ConstructBuilding(tbDefn.Building, tbDefn.TileX, tbDefn.TileY);
             if (building.Defn.BuildingClass == BuildingClass.Camp)
                 Camp = building;
 #if UNITY_INCLUDE_TESTS
@@ -132,23 +116,17 @@ public class TownData : BaseData
     public BuildingData ConstructBuilding(BuildingDefn buildingDefn, int tileX, int tileY)
     {
         var building = new BuildingData(buildingDefn, tileX, tileY);
-        Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
-        return internalConstructBuilding(building);
-    }
+        GetTileStackForHexTile(tileX, tileY).AddBuilding(building);
 
-    public BuildingData ConstructBuilding(BuildingDefn buildingDefn, Vector3 worldLoc)
-    {
-        return internalConstructBuilding(new BuildingData(buildingDefn, worldLoc));
-    }
-
-    private BuildingData internalConstructBuilding(BuildingData building)
-    {
         building.Initialize(this);
         AllBuildings.Add(building);
         OnBuildingAdded?.Invoke(building);
         FindHomesForUnhomedWorkers();
         return building;
     }
+
+    public TileStack GetTileStackForHexTile(Vector2Int hexTile) => TileStacks[hexTile.y * Defn.Width + hexTile.x];
+    public TileStack GetTileStackForHexTile(int tileX, int tileY) => TileStacks[tileY * Defn.Width + tileX];
 
     private void FindHomesForUnhomedWorkers()
     {
@@ -165,29 +143,20 @@ public class TownData : BaseData
 
     public void DestroyBuilding(BuildingData building)
     {
-        if (!Settings.Current.AllowFreeBuildingPlacement)
-            Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
+        GetTileStackForHexTile(building.TileX, building.TileY).RemoveBuilding(building);
         AllBuildings.Remove(building);
         building.Destroy();
         OnBuildingRemoved?.Invoke(building);
         FindHomesForUnhomedWorkers();
     }
 
-
-    public void MoveBuilding(BuildingData building, Vector3 worldLoc)
+    public void MoveBuilding(BuildingData building, Vector2Int hexTile)
     {
-        if (building.Location.DistanceTo(worldLoc) < 0.0001f)
+        if (hexTile.x == building.TileX && hexTile.y == building.TileY)
             return;
-
-        building.MoveTo(worldLoc);
-        OnBuildingMoved?.Invoke(building);
-    }
-
-    public void MoveBuilding(BuildingData building, int tileX, int tileY)
-    {
-        Tiles[building.TileY * Defn.Width + building.TileX].BuildingInTile = null;
-        building.MoveTo(tileX, tileY);
-        Tiles[tileY * Defn.Width + tileX].BuildingInTile = building;
+        GetTileStackForHexTile(new Vector2Int(building.TileX, building.TileY)).RemoveBuilding(building);
+        GetTileStackForHexTile(hexTile).AddBuilding(building);
+        building.MoveTo(hexTile);
         OnBuildingMoved?.Invoke(building);
     }
 
@@ -405,5 +374,15 @@ public class TownData : BaseData
                 return false;
         }
         return true;
+    }
+
+    internal int NumBuildingsInHexTileNotCountingBuilding(BuildingData data, Vector2Int hexTile)
+    {
+        var tileStack = GetTileStackForHexTile(hexTile.x, hexTile.y);
+        int count = 0;
+        foreach (var building in tileStack.Buildings)
+            if (building != data)
+                count++;
+        return count;
     }
 }

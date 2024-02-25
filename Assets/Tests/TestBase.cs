@@ -30,7 +30,6 @@ public abstract class TestBase
             GameDefns.Instance = go.AddComponent<GameDefns>();
             GameDefns.Instance.Test_ForceAwake();
         }
-        GameDefns.Instance.GameSettingsDefns["default"].HexTiles = false;
         UniqueIdGenerator.Instance = new UniqueIdGenerator();
 
         townDefn = GameDefns.Instance.TownDefns[townDefnName];
@@ -363,8 +362,7 @@ public abstract class TestBase
 
     protected void moveBuilding(BuildingData buildingToMove, int tileX, int tileY, string message = "")
     {
-        Assert.IsNull(Town.Tiles[tileY * Town.Defn.Width + tileX].BuildingInTile, $"{preface(message)} Tile {tileX}, {tileY} is already occupied by a building");
-        Town.MoveBuilding(buildingToMove, tileX, tileY);
+        Town.MoveBuilding(buildingToMove, new Vector2Int(tileX, tileY));
     }
     protected ItemData CreateItem(string itemDefnId) => new() { DefnId = itemDefnId };
 

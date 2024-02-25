@@ -8,9 +8,7 @@ public class SceneWithMap : SceneMgr
     public bool NeedsPathUpdate;
 
     public AstarPath Pathfinder;
-    public Tile TilePrefab;
     public Building BuildingPrefab;
-    public DraggedBuilding DraggedBuildingPrefab;
     public Worker WorkerPrefab;
 
     public StorageArea BuildingStorageAreaPrefab;
@@ -208,34 +206,9 @@ public class SceneWithMap : SceneMgr
         }
     }
 
-    internal void OnTileClicked(Tile tile)
+    internal void PlayerSelectedBuildingToConstructInTile(BuildingDefn buildingDefn, Vector2Int tile)
     {
-        if (AnyDialogIsOpen())
-            HideAllDialogs();
-        else
-        {
-            // Debug.Log("tile clicked " + tile.Data.TileX + " " + tile.Data.TileY);
-            if (tile.Data.BuildingInTile == null)
-            {
-                // User clicked empty tile; show the 'select building to construct' dialog
-                SelectBuildingToConstruct.ShowForTile(this, tile);
-            }
-        }
-    }
-
-    internal void PlayerSelectedBuildingToConstructInTile(BuildingDefn buildingDefn, TileData tile)
-    {
-        var building = Map.Town.ConstructBuilding(buildingDefn, tile.TileX, tile.TileY);
-
-        // Autoassign one worker to the newly constructed building
-        if (buildingDefn.HasWorkers)
-            Map.Town.AssignWorkerToBuilding(building);
-        SelectBuildingToConstruct.Hide();
-    }
-
-    internal void PlayerSelectedBuildingToConstructAtWorldLoc(BuildingDefn buildingDefn, Vector3 worldLoc)
-    {
-        var building = Map.Town.ConstructBuilding(buildingDefn, worldLoc);
+        var building = Map.Town.ConstructBuilding(buildingDefn, tile.x, tile.y);
 
         // Autoassign one worker to the newly constructed building
         if (buildingDefn.HasWorkers)

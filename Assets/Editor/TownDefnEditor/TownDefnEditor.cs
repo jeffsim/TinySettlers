@@ -14,7 +14,6 @@ public partial class TownDefnEditor : OdinEditor
     const float TileSize = 64;
 
     Vector2 TileSizeVector;
-    bool UseHexTiles;
     Rect GridRect;
 
     // Dragging
@@ -33,7 +32,6 @@ public partial class TownDefnEditor : OdinEditor
 
         myGameDefns = new GameDefnsMgr();
         myGameDefns.RefreshDefns();
-        UseHexTiles = myGameDefns.GameSettingsDefns["default"].HexTiles;
 
         // render map
         GUILayout.Space(6);
@@ -44,26 +42,17 @@ public partial class TownDefnEditor : OdinEditor
         var borderRect = GridRect.Expand(2, 2);
         GUI.Box(borderRect, "");
         if (Event.current.type == EventType.Repaint)
-            if (UseHexTiles)
-                renderMap_HexTiles();
-            else
-                renderMap_GridTiles();
+            renderMap_HexTiles();
 
         GUILayout.EndHorizontal();
 
         // handle drag
-        if (UseHexTiles)
-            HandleMouseInput_HexTiles();
-        else
-            HandleMouseInput_GridTiles();
+        HandleMouseInput_HexTiles();
 
         // Show dragged building (if any)
         if (Event.current.type == EventType.Repaint && isDragging)
         {
-            if (UseHexTiles)
-                showDraggingBuilding_HexTiles();
-            else
-                showDraggingBuilding_GridTiles();
+            showDraggingBuilding_HexTiles();
             Repaint();
         }
 

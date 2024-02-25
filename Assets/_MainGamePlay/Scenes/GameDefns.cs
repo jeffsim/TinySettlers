@@ -10,7 +10,6 @@ public class GameDefnsMgr
 {
     [SerializeReference] public Dictionary<string, BuildingDefn> BuildingDefns = new Dictionary<string, BuildingDefn>();
     [SerializeReference] public Dictionary<string, ItemDefn> ItemDefns = new Dictionary<string, ItemDefn>();
-    [SerializeReference] public Dictionary<string, TileDefn> TileDefns = new Dictionary<string, TileDefn>();
     [SerializeReference] public Dictionary<string, TownDefn> TownDefns = new Dictionary<string, TownDefn>();
     [SerializeReference] public Dictionary<string, WorkerDefn> WorkerDefns = new Dictionary<string, WorkerDefn>();
     [SerializeReference] public Dictionary<string, WorldDefn> WorldDefns = new Dictionary<string, WorldDefn>();
@@ -22,7 +21,6 @@ public class GameDefnsMgr
         // TODO (PERF, LATER): This makes my development life easier, but when I get closer to prod, these should be stored 
         // persistently in the GameDefns prefab so that I don't have to do this on every scene load
         loadDefns("Buildings", BuildingDefns);
-        loadDefns("Tiles", TileDefns);
         loadDefns("Items", ItemDefns);
         loadDefns("Towns", TownDefns);
         loadDefns("Workers", WorkerDefns);
@@ -52,7 +50,6 @@ public class GameDefns : SerializedMonoBehaviour
     private GameDefnsMgr GameDefnsMgr;
     public Dictionary<string, BuildingDefn> BuildingDefns => GameDefnsMgr.BuildingDefns;
     public Dictionary<string, ItemDefn> ItemDefns => GameDefnsMgr.ItemDefns;
-    public Dictionary<string, TileDefn> TileDefns => GameDefnsMgr.TileDefns;
     public Dictionary<string, TownDefn> TownDefns => GameDefnsMgr.TownDefns;
     public Dictionary<string, WorkerDefn> WorkerDefns => GameDefnsMgr.WorkerDefns;
     public Dictionary<string, WorldDefn> WorldDefns => GameDefnsMgr.WorldDefns;

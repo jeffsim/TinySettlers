@@ -11,7 +11,6 @@ public class BuildingBase : MonoBehaviour
     [NonSerialized] public BuildingData Data;
 
     // Dragging properties
-    DraggedBuilding draggingGO;
     enum DragState { NotDragging, PreDrag, Dragging };
     DragState dragState;
     Vector3 dragStartPoint;
@@ -65,39 +64,24 @@ public class BuildingBase : MonoBehaviour
     private void StartDragging()
     {
         dragState = DragState.Dragging;
-        if (!Settings.Current.AllowFreeBuildingPlacement)
-        {
-            draggingGO = Instantiate(scene.DraggedBuildingPrefab);
-            draggingGO.Initialize(Data.Defn, Building);
-            dragStartPoint = transform.position;
-        }
     }
 
     private void DragBuilding()
     {
         Vector3 worldPos = Utilities.GetMouseWorldPosition();
-        if (Settings.Current.HexTiles)
-            scene.Map.Town.MoveBuilding(Data, Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos));
-        else if (Settings.Current.AllowFreeBuildingPlacement)
-            scene.Map.Town.MoveBuilding(Data, new(worldPos.x, Settings.Current.DraggedBuildingY, worldPos.z));
-        else
-            draggingGO.updatePosition(worldPos);
+        var hexTileWorldPos = Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos);
+        var hexTile = Utilities.ConvertWorldPosToHexTile(hexTileWorldPos);
+
+        scene.Map.Town.MoveBuilding(Data, hexTile);
     }
 
     private void StopDragging()
     {
-        scene.Map.Town.MoveBuilding(Data, new(Data.Location.WorldLoc.x, Settings.Current.BuildingsY, Data.Location.WorldLoc.z));
+        Vector3 worldPos = Utilities.GetMouseWorldPosition();
+        var hexTileWorldPos = Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos);
+        var hexTile = Utilities.ConvertWorldPosToHexTile(hexTileWorldPos);
+        scene.Map.Town.MoveBuilding(Data, hexTile);
         dragState = DragState.NotDragging;
-        if (!Settings.Current.AllowFreeBuildingPlacement)
-        {
-            Destroy(draggingGO.gameObject);
-            var validDropSpotForBuilding = scene.Map.IsValidDropSpotForBuilding(Input.mousePosition, Building);
-            if (validDropSpotForBuilding)
-            {
-                var tile = scene.Map.getTileAt(Input.mousePosition);
-                scene.Map.Town.MoveBuilding(Data, tile.Data.TileX, tile.Data.TileY);
-            }
-        }
     }
 
     bool IsMouseOverThis()

@@ -30,8 +30,6 @@ public class TownDefn : BaseDefn
     public int Width;
     public int Height;
 
-    public string Tiles;
-
     // Position in the WorldMap
     public int WorldX;
     public int WorldY;
