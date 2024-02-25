@@ -52,13 +52,10 @@ public partial class TownDefnEditor : OdinEditor
         GUILayout.EndHorizontal();
 
         // handle drag
-        if (Event.current.type != EventType.Layout && Event.current.type != EventType.Repaint)
-        {
-            if (UseHexTiles)
-                HandleMouseInput_HexTiles();
-            else
-                HandleMouseInput_GridTiles();
-        }
+        if (UseHexTiles)
+            HandleMouseInput_HexTiles();
+        else
+            HandleMouseInput_GridTiles();
 
         // Show dragged building (if any)
         if (Event.current.type == EventType.Repaint && isDragging)
@@ -68,15 +65,6 @@ public partial class TownDefnEditor : OdinEditor
             else
                 showDraggingBuilding_GridTiles();
             Repaint();
-        }
-
-        if (Event.current.type == EventType.Repaint)
-        {
-            // var screenPos = ConvertMousePosToRectPos();
-            // var tilePos = new Vector2Int((int)(screenPos.x / TileSize), (int)(screenPos.y / TileSize));
-            // var hex = GridToHex(tilePos);
-            // Debug.Log(tilePos.x + ", " + tilePos.y + " : " + hex.x + ", " + hex.y);
-            // Repaint();
         }
 
         ForceUpdatePositionsInStack();

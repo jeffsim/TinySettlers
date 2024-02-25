@@ -17,27 +17,19 @@ public partial class TownDefnEditor : OdinEditor
         var text = "(" + hexTile.x + "," + hexTile.y + ")";
 
         // Draw where the building would drop
-        var screenPos = ConvertHexTileToScreenPos(hexTile.x, hexTile.y);
+        var rectPos = ConvertHexTileToRectPos(hexTile);
 
         // Offset screenPos.y by -5 for every other building that is also in hexTile
         int positionInStack = 0;
         foreach (var building in TownDefn.Buildings)
             if (building != draggingBuilding && building.TileX == hexTile.x && building.TileY == hexTile.y)
                 positionInStack++;
-        screenPos.y -= 5 * positionInStack;
+        rectPos.y -= 5 * positionInStack;
 
-        drawBuildingWithLabelAt(screenPos, draggingBuilding, text);
+        drawBuildingWithLabelAt(rectPos, draggingBuilding, text);
 
         // draw dragged building at mouse position
         drawBuildingWithLabelAt(dragMousePosition - dragOffset - TileSizeVector / 2, draggingBuilding, text);
-    }
-
-    private Vector2 ConvertHexTileToScreenPos(int hexTileX, int hexTileY, int positionInStack = 0)
-    {
-        float screenX, screenY;
-        screenX = hexTileX * TileSize * 3 / 4f;
-        screenY = (TownDefn.Height - hexTileY - .5f - (hexTileX & 1) / 2f) * TileSize - 5 * positionInStack;
-        return GridRect.position + new Vector2(screenX, screenY);
     }
 
     private Vector2 ConvertMousePosToRectPos()
@@ -54,42 +46,42 @@ public partial class TownDefnEditor : OdinEditor
 
     private Vector2Int ConvertRectPosToHexTile(Vector2 rectPos)
     {
-        float hexTileX, hexTileY;
-        hexTileX = rectPos.x / (TileSize * 3 / 4f);
-        hexTileY = rectPos.y / TileSize - 1.5f + ((int)hexTileX & 1) / 2f;
+        float hexTileX = rectPos.x / (TileSize * 3 / 4f);
+        float hexTileY = rectPos.y / TileSize - ((int)hexTileX & 1) * 0.5f;
         return new Vector2Int((int)hexTileX, (int)hexTileY);
     }
 
-    Vector2Int GridToHex(Vector2Int gridPos)
+    private Vector2 ConvertHexTileToRectPos(Vector2Int hexTile, int positionInStack = 0)
     {
-        float x = 3 / 2 * gridPos.x;
-        float y = Mathf.Sqrt(3f) * (gridPos.y + 0.5f * (gridPos.x & 1));
-        return new Vector2Int((int)x, (int)y);
+        float rectX = hexTile.x * TileSize * 3 / 4f;
+        float rectY = (TownDefn.Height - hexTile.y - .5f - (hexTile.x & 1) / 2f) * TileSize - 5 * positionInStack;
+        return GridRect.position + new Vector2(rectX, rectY);
     }
 
-    private void drawDebugTiles(GUIStyle style)
+    private void drawDebugTiles()
     {
+        var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = new Color(.4f, .4f, .4f, 1) } };
+
+        var tileColor = new Color(0.2f, 0.2f, 0.2f, 1);
+        var borderColor = new Color(0.15f, 0.15f, 0.15f, 1);
         for (int y = 0; y < TownDefn.Height; y++)
             for (int x = 0; x < TownDefn.Width; x++)
             {
-                var screenPos = ConvertHexTileToScreenPos(x, y, 0);
-                drawFilledHexagonAt(screenPos, TileSize, Color.gray);
+                var screenPos = ConvertHexTileToRectPos(new(x, y));
+                drawFilledHexagonAt(screenPos, TileSize, tileColor, borderColor);
                 EditorGUI.LabelField(new(screenPos, TileSizeVector - Vector2.one * 3), "(" + x + "," + y + ")", style);
             }
 
         // draw box at mouse coords
-        var rectPos = ConvertMousePosToRectPos();
-        var mousePos = new Vector2(GridRect.x + rectPos.x, GridRect.y + GridRect.height - rectPos.y);
-        EditorGUI.DrawRect(new Rect(mousePos.x - 4, mousePos.y - 4, 8, 8), Color.red);
+        // var rectPos = ConvertMousePosToRectPos();
+        // var mousePos = new Vector2(GridRect.x + rectPos.x, GridRect.y + GridRect.height - rectPos.y);
+        // EditorGUI.DrawRect(new Rect(mousePos.x - 4, mousePos.y - 4, 8, 8), Color.red);
 
-        // draw line from mousePos to closest Hex center
-        var hexTile = ConvertRectPosToHexTile(rectPos);
-        Debug.Log(hexTile);
-        
-        var screenPos2 = ConvertHexTileToScreenPos(hexTile.x, hexTile.y);
-        EditorGUI.DrawRect(new Rect(screenPos2.x - 4, screenPos2.y - 4, 8, 8), Color.blue);
-        Handles.color = Color.blue;
-        Handles.DrawAAPolyLine(2, mousePos, screenPos2);
+        // // draw line from mousePos to closest Hex center
+        // var screenPos2 = ConvertHexTileToRectPos(ConvertRectPosToHexTile(rectPos)) + TileSizeVector / 2;
+        // EditorGUI.DrawRect(new Rect(screenPos2.x - 4, screenPos2.y - 4, 8, 8), Color.blue);
+        // Handles.color = Color.blue;
+        // Handles.DrawAAPolyLine(2, mousePos, screenPos2);
     }
 
     private void renderMap_HexTiles()
@@ -97,7 +89,7 @@ public partial class TownDefnEditor : OdinEditor
         var shadowStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.black } };
         var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.yellow } };
 
-        drawDebugTiles(style);
+        drawDebugTiles();
 
         // Sort buildings bottom to top to render Z order correctly
         var buildings = TownDefn.Buildings.ToArray();
@@ -107,8 +99,8 @@ public partial class TownDefnEditor : OdinEditor
         {
             if (!buildingDefn.IsEnabled || buildingDefn.Building == null) continue;
 
-            var screenPos = ConvertHexTileToScreenPos(buildingDefn.TileX, buildingDefn.TileY, buildingDefn.PositionInStack);
-            drawFilledHexagonAt(screenPos, TileSize, buildingDefn.Building.EditorColor);
+            var screenPos = ConvertHexTileToRectPos(new(buildingDefn.TileX, buildingDefn.TileY), buildingDefn.PositionInStack);
+            drawFilledHexagonAt(screenPos, TileSize, buildingDefn.Building.EditorColor, Color.black);
 
             var name = !string.IsNullOrEmpty(buildingDefn.TestId) ? buildingDefn.TestId : buildingDefn.Building.FriendlyName;
             if (name.Length > 2)
@@ -144,12 +136,12 @@ public partial class TownDefnEditor : OdinEditor
     private void drawBuildingWithLabelAt(Vector2 pos, Town_BuildingDefn building, string text)
     {
         var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.yellow } };
-        drawFilledHexagonAt(pos, TileSize, building.Building.EditorColor);
+        drawFilledHexagonAt(pos, TileSize, building.Building.EditorColor, Color.black);
         EditorGUI.LabelField(new Rect(pos.x + 2, pos.y - 16, TileSize - 3, TileSize - 3), text, style);
     }
 
-    private void drawFilledHexagonAt(Vector2 vec, float tileSize, Color innerColor) => drawFilledHexagonAt(vec.x, vec.y, tileSize, innerColor);
-    private void drawFilledHexagonAt(float finalX, float finalY, float tileSize, Color innerColor)
+    private void drawFilledHexagonAt(Vector2 vec, float tileSize, Color innerColor, Color borderColor) => drawFilledHexagonAt(vec.x, vec.y, tileSize, innerColor, borderColor);
+    private void drawFilledHexagonAt(float finalX, float finalY, float tileSize, Color innerColor, Color borderColor)
     {
         float centerY = finalY + tileSize / 2;
         float verticalScale = 1;// 0.9f;
@@ -162,7 +154,7 @@ public partial class TownDefnEditor : OdinEditor
 
         Handles.color = innerColor;
         Handles.DrawAAConvexPolygon(p1, p2, p3, p4, p5, p6);
-        Handles.color = Color.black;
+        Handles.color = borderColor;
         Handles.DrawAAPolyLine(2, p1, p2, p3, p4, p5, p6, p1);
     }
 
@@ -176,7 +168,7 @@ public partial class TownDefnEditor : OdinEditor
             Town_BuildingDefn buildingAtTopOfStack = null;
             foreach (var building in TownDefn.Buildings)
             {
-                Rect buildingRect = new(ConvertHexTileToScreenPos(building.TileX, building.TileY, building.PositionInStack), TileSizeVector);
+                Rect buildingRect = new(ConvertHexTileToRectPos(new(building.TileX, building.TileY), building.PositionInStack), TileSizeVector);
                 if (buildingRect.Contains(currentEvent.mousePosition))
                     if (buildingAtTopOfStack == null || building.PositionInStack > buildingAtTopOfStack.PositionInStack)
                         buildingAtTopOfStack = building;
