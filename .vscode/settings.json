@@ -64,7 +64,10 @@
         "Assets/Scenes": true,
         "Assets/ALINE": true,
         "Assets/TextMesh Pro": true,
+        "Assets/URPSettings": true,
+        "Assets/Standard Resources": true,
         "**/*.asmdef": true,
+        "P*.csproj": true,
         "*.git*": true,
     },
     "dotnet.defaultSolution": "TinySettlers.sln"
