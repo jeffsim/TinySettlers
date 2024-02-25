@@ -47,50 +47,31 @@ public static class Utilities
 
     public static Vector2Int ConvertWorldPosToHexTile(Vector3 worldPos)
     {
-        worldPos += Vector3.one * TileData.TileSize / 2;
-        float hexTileX = worldPos.x / (TileData.TileSize * .75f);
-        float hexTileY = worldPos.z / TileData.TileSize - ((int)hexTileX & 1) * 0.5f;
-        return new Vector2Int((int)hexTileX, (int)hexTileY);
-    }
-
-    public static Vector2Int ConvertWorldPosToHexTile2(Vector3 worldPos)
-    {
-        var hexTile = ConvertWorldPosToHexTile(worldPos);
-        var hexTileCenterWorldPos = ConvertHexTileToWorldPos(hexTile);
-        var p0to1 = (worldPos - hexTileCenterWorldPos) / TileData.TileSize + Vector3.one / 2f;
-        var isInFrontQuarter = p0to1.x < .25f;
-        var isInTopHalf = p0to1.z > .5f;
-
-        p0to1.x *= 5;
-        p0to1.z = (p0to1.z - .5f) * 2f;
-        if (isInFrontQuarter)
+        var tileSize = TileData.TileSize;
+        Vector3 offsetWP = worldPos + Vector3.one * tileSize / 2;
+        float hexTileX = offsetWP.x / (tileSize * .75f);
+        float hexTileY = offsetWP.z / tileSize - ((int)hexTileX & 1) * 0.5f;
+        Vector2Int hexTile = new((int)hexTileX, (int)hexTileY);
+        Vector3 normalizedPos = (worldPos - ConvertHexTileToWorldPos(hexTile)) / tileSize + Vector3.one / 2f;
+        if (normalizedPos.x < .25f)
         {
-            if (isInTopHalf)
-            {
-                if (p0to1.x < p0to1.z)
-                    if ((hexTile.x & 1) == 1)
-                        hexTile += new Vector2Int(-1, 1);
-                    else
-                        hexTile += new Vector2Int(-1, 0);
-            }
-            else
-            {
-                if (p0to1.x < -p0to1.z)
-                    if ((hexTile.x & 1) == 1)
-                        hexTile += new Vector2Int(-1, 0);
-                    else
-                        hexTile += new Vector2Int(-1, -1);
-            }
+            normalizedPos.x *= tileSize / 2;
+            normalizedPos.z = (normalizedPos.z - .5f) * 2f;
+            bool isInTopHalf = normalizedPos.z > 0;
+            if ((isInTopHalf && normalizedPos.x < normalizedPos.z) || (!isInTopHalf && normalizedPos.x < -normalizedPos.z))
+                hexTile += ((hexTile.x & 1) == 1) ? new Vector2Int(-1, isInTopHalf ? 1 : 0) : new Vector2Int(-1, isInTopHalf ? 0 : -1);
         }
+
         return hexTile;
     }
 
     internal static Vector3 GetCenterOfHexTileClosestToWorldPos(Vector3 worldPos)
     {
-        var hexTile = ConvertWorldPosToHexTile2(worldPos);
+        var hexTile = ConvertWorldPosToHexTile(worldPos);
         var worldPosAtHexCenter = ConvertHexTileToWorldPos(hexTile);
         return worldPosAtHexCenter;
     }
+
     public static Vector3 OffsetDebugItems = new Vector3(0, 2, 0);
 
     public static Vector3 GetMouseWorldPosition()
@@ -99,12 +80,12 @@ public static class Utilities
         Plane plane = new(Vector3.up, Vector3.zero);
         plane.Raycast(ray, out float distance);
         var pointOnPlane = ray.GetPoint(distance);
-        
+
         // back up slightly along the ray to account for camera angle
         // Following both work for !Orthogonal view.  still don't have working for Orthogonal but :shrug: for now
         pointOnPlane.z -= 1.1547f;
         // pointOnPlane.z -= Mathf.Acos(Camera.main.transform.rotation.x);
-        
+
         return pointOnPlane;
     }
 
@@ -119,6 +100,7 @@ public static class Utilities
 
         return new DateTime(1, 1, 1, hours, minutes, 0).ToString("h:mm tt");
     }
+    
     public static Vector3 LocationWithinDistance(Vector3 worldLoc, float maxDistance)
     {
         var circle = UnityEngine.Random.insideUnitCircle * maxDistance;
