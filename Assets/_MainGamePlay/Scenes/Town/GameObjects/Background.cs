@@ -9,7 +9,14 @@ public class Background : MonoBehaviour
     {
         this.scene = scene;
     }
-
+    Vector2 dragStart;
+    public void OnMouseDown()
+    {
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            dragStart = Input.mousePosition;
+        }
+    }
     public void OnMouseUp()
     {
         if (!EventSystem.current.IsPointerOverGameObject())
@@ -18,6 +25,8 @@ public class Background : MonoBehaviour
                 scene.HideAllDialogs();
             else if (Settings.Current.AllowFreeBuildingPlacement)
             {
+                if (Vector2.Distance(dragStart, Input.mousePosition) > 10)
+                    return;
                 Vector3 mouseScreenPosition = Input.mousePosition;
                 mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
                 var loc = Camera.main.ScreenToWorldPoint(mouseScreenPosition);

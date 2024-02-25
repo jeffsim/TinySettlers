@@ -44,63 +44,60 @@ public class Map : MonoBehaviour
         Town.OnItemAddedToGround += addItemOnGroundGO;
         Town.OnItemRemovedFromGround += OnItemRemovedFromGround;
 
-        for (int y = 0; y < 10; y++)
-            for (int x = 0; x < 10; x++)
-            {
-                var worldPos = Utilities.ConvertHexTileToWorldPos(new Vector2Int(x, y));
-                addSphere(new Vector3(worldPos.x, 2, worldPos.z), 1.5f, Color.red);
-            }
-        mouseSphere = addSphere(Vector3.zero, 1f, Color.blue);
-        hexSphere = addSphere(Vector3.zero, 1.75f, Color.green);
-        hexSphere2 = addSphere(Vector3.zero, 1.75f, Color.white);
-        hexSphere3 = addSphere(Vector3.zero, 1.75f, Color.magenta);
+        // Debug spheres to see where hexes are
+        // for (int y = 0; y < 10; y++)
+        //     for (int x = 0; x < 10; x++)
+        //     {
+        //         var worldPos = Utilities.ConvertHexTileToWorldPos(new Vector2Int(x, y));
+        //         addSphere(new Vector3(worldPos.x, 2, worldPos.z), 1.5f, Color.red);
+        //     }
+        // mouseSphere = addSphere(Vector3.zero, 1f, Color.blue);
+        // hexSphere = addSphere(Vector3.zero, 1.75f, Color.green);
+        // hexSphere2 = addSphere(Vector3.zero, 1.75f, Color.white);
+        // hexSphere3 = addSphere(Vector3.zero, 1.75f, Color.magenta);
     }
 
-    GameObject mouseSphere;
-    GameObject hexSphere;
-    GameObject hexSphere2;
-    GameObject hexSphere3;
+    // GameObject mouseSphere;
+    // GameObject hexSphere;
+    // GameObject hexSphere2;
+    // GameObject hexSphere3;
 
-    private void testDrawPath()
-    {
-        Vector3 mouseWorldPos = GetMouseWorldPosition();
-        mouseWorldPos.y = 2;
-        mouseSphere.transform.position = mouseWorldPos;
+    // private void testDrawPath()
+    // {
+    //     Vector3 worldPos = GetMouseWorldPosition();
+    //     worldPos.y = 2;
+    //     mouseSphere.transform.position = worldPos;
 
-        var hexTile = GetCenterOfHexTileClosestToWorldPos(mouseWorldPos);
-        hexTile.y = 2;
-        hexSphere.transform.position = hexTile;
+    //     var hexTile2 = Utilities.ConvertWorldPosToHexTile(worldPos);
+    //     Debug.Log(hexTile2);
 
-        using (Drawing.Draw.ingame.WithColor(Color.green))
-        using (Drawing.Draw.ingame.WithLineWidth(2))
-            Drawing.Draw.ingame.Line(mouseWorldPos, hexTile);
-    }
+    //     var hexTile = Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos);
+    //     hexTile.y = 2;
+    //     hexSphere.transform.position = hexTile;
 
-    Vector3 GetCenterOfHexTileClosestToWorldPos(Vector3 worldPos)
-    {
-        var hexTile = Utilities.ConvertWorldPosToHexTile(worldPos);
-        var worldPosAtHexCenter = Utilities.ConvertHexTileToWorldPos(hexTile);
-        return worldPosAtHexCenter;
-    }
+    //     using (Drawing.Draw.ingame.WithColor(Color.green))
+    //     using (Drawing.Draw.ingame.WithLineWidth(2))
+    //         Drawing.Draw.ingame.Line(worldPos, hexTile);
+    // }
 
-    private GameObject addSphere(Vector3 pos, float scale, Color color)
-    {
-        var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-        sphere.transform.position = pos;
-        sphere.transform.localScale = Vector3.one * scale;
-        var sphereRenderer = sphere.GetComponent<Renderer>();
-        sphereRenderer.material.color = color;
-        return sphere;
-    }
+    // private GameObject addSphere(Vector3 pos, float scale, Color color)
+    // {
+    //     var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+    //     sphere.transform.position = pos;
+    //     sphere.transform.localScale = Vector3.one * scale;
+    //     var sphereRenderer = sphere.GetComponent<Renderer>();
+    //     sphereRenderer.material.color = color;
+    //     return sphere;
+    // }
 
-    Vector3 GetMouseWorldPosition()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane plane = new(Vector3.up, new Vector3(0, 0, 0));
-        plane.Raycast(ray, out float distance);
-        Vector3 mouseIntersectPoint = ray.GetPoint(distance);
-        return mouseIntersectPoint;
-    }
+    // Vector3 GetMouseWorldPosition()
+    // {
+    //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+    //     Plane plane = new(Vector3.up, new Vector3(0, 0, 0));
+    //     plane.Raycast(ray, out float distance);
+    //     Vector3 mouseIntersectPoint = ray.GetPoint(distance);
+    //     return mouseIntersectPoint;
+    // }
 
     private void OnBuildingRemoved(BuildingData data)
     {
@@ -214,7 +211,7 @@ public class Map : MonoBehaviour
 
     public void Update()
     {
-        testDrawPath();
+        // testDrawPath();
         if (scene.NeedsPathUpdate)
             scene.UpdatePaths();
 
