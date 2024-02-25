@@ -81,6 +81,23 @@ public class Map : MonoBehaviour
     {
         var hexTile2 = Utilities.ConvertWorldPosToHexTile(worldPos);
         var hexTileCenterWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile2);
+        var p0to1 = (worldPos - hexTileCenterWorldPos) / TileData.TileSize + Vector3.one / 2f;
+        // Debug.Log(p0to1);
+        var isInFrontQuarter = p0to1.x < .25f;
+        var isInTopHalf = p0to1.z > .5f;
+        
+        x was working here. now divide as in https://gamedev.stackexchange.com/questions/20742/how-can-i-implement-hexagonal-tilemap-picking-in-xna
+        
+        if (isInFrontQuarter)
+            mouseSphere.GetComponent<Renderer>().material.color = isInTopHalf ? Color.red : Color.green;
+        else
+            mouseSphere.GetComponent<Renderer>().material.color = Color.blue;
+    }
+
+    private void FUCK2(Vector3 worldPos)
+    {
+        var hexTile2 = Utilities.ConvertWorldPosToHexTile(worldPos);
+        var hexTileCenterWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile2);
         // Debug.Log(worldPos.x + ", " + hexTileCenterWorldPos.x + ": " + hexTile2);
 
         var isInFrontQuarter = worldPos.x < hexTileCenterWorldPos.x - .25f * TileData.TileSize;
@@ -94,7 +111,7 @@ public class Map : MonoBehaviour
                 z0to1 = (hexTileCenterWorldPos.z - worldPos.z) / 5f;
             else
                 z0to1 = (worldPos.z - hexTileCenterWorldPos.z) / 5f;
-          
+
             mouseSphere.GetComponent<Renderer>().material.color = isInTopHalf ? Color.cyan : Color.red;
             Debug.Log(x0to1 + ", " + z0to1);
         }
