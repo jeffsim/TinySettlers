@@ -58,8 +58,8 @@ public class Map : MonoBehaviour
                 for (int x = 0; x < 10; x++)
                 {
                     var worldPos = Utilities.ConvertHexTileToWorldPos(new Vector2Int(x, y));
-                    addSphere(new Vector3(worldPos.x, 2, worldPos.z), 1.5f, Color.red);
-                    addLabel(new Vector3(worldPos.x, 2, worldPos.z - 2), "(" + x + ", " + y + ")", 6, Color.yellow);
+                    addSphere(new Vector3(worldPos.x, 1, worldPos.z), 1.5f, Color.red);
+                    addLabel(new Vector3(worldPos.x, 1, worldPos.z - 2), "(" + x + ", " + y + ")", 6, Color.yellow);
                 }
             mouseSphere = addSphere(Vector3.zero, 1f, Color.blue);
             hexSphere = addSphere(Vector3.zero, 1.75f, Color.green);
