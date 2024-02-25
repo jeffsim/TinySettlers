@@ -24,12 +24,9 @@ MonoBehaviour:
   ConstructionTimeInSeconds: 5
   UseBinarySaveFiles: 1
   RealTimeToGameTimeMultiplier: 0.01
-  TileY: -5.5
-  BuildingsY: 0.5
   ItemSpotsY: 0.5
   StorageAreaY: 0.5
   WorkerY: -0.5
-  DraggedBuildingY: 0.5
   ItemCarryY: 0
   ItemDropY: -1.3
   ShowHexDebug: 1

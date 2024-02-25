@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public delegate void OnLocationChangedEvent();
-
 [Serializable]
 public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IPausable
 {
@@ -27,8 +25,6 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
     public int TileX;
     public int TileY;
 
-    static float TileSize = 10;
-
     public BuildingCraftingMgr CraftingMgr;
 
     public List<NeedData> ConstructionNeeds = new();
@@ -39,8 +35,9 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
     [SerializeField] public Occupiable Occupiable { get; set; }
     [SerializeField] public Pausable Pausable { get; set; }
 
-    [NonSerialized] public OnLocationChangedEvent OnLocationChanged;
-
+    [NonSerialized] public Action OnLocationChanged;
+    [NonSerialized] public Action OnPositionInTileStackChanged;
+    
     // Accessors
     public bool IsPaused => Pausable.IsPaused;
 
@@ -491,7 +488,7 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
         var hexTileWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile);
 
         // place at top of stack
-        var countMinusThis = Town.GetTileStackForHexTile(new Vector2Int(TileX, TileY)).Buildings.Count - 1;
+        var countMinusThis = Town.GetTileStackForHexTile(new Vector2Int(TileX, TileY)).Buildings.Count;
         hexTileWorldPos.y = countMinusThis * 1.77f;
 
         Location previousWorldLoc = new(Location.WorldLoc);

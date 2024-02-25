@@ -1,4 +1,5 @@
 using System;
+using System.Data.Common;
 using TMPro;
 using UnityEngine;
 
@@ -26,6 +27,7 @@ public class Building : MonoBehaviour
         name = data.DefnId + " " + data.InstanceId;
 
         Data.OnLocationChanged += OnLocationChanged;
+        Data.OnPositionInTileStackChanged += OnPositionInTileStackChanged;
 
         Name.text = data.Defn.FriendlyName;
         Background.GetComponent<Renderer>().material.color = data.Defn.BuildingColor;
@@ -75,10 +77,19 @@ public class Building : MonoBehaviour
         }
     }
 
+    void OnPositionInTileStackChanged()
+    {
+        // If we're the top building in the stack, make our building visible; otherwise, hide it.
+        var tileStack = Data.Town.GetTileStackForHexTile(Data.TileX, Data.TileY);
+
+        Visual.SetActive(tileStack.IsTopBuilding(Data));
+    }
+
     void OnDestroy()
     {
-        if (Data != null)
-            Data.OnLocationChanged -= OnLocationChanged;
+        if (Data == null) return;
+        Data.OnLocationChanged -= OnLocationChanged;
+        Data.OnPositionInTileStackChanged -= OnPositionInTileStackChanged;
     }
 
     private void OnLocationChanged()

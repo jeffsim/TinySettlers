@@ -18,12 +18,25 @@ public class TileStack
     {
         Buildings.Add(building);
         // Debug.Log($"Added {building} to TileStack {HexTile}. Buildings now in stack: {Buildings.Count}");
+
+        // All buildings below this have changed position in the stack. For now just change all
+        foreach (var buildingInStack in Buildings)
+            buildingInStack.OnPositionInTileStackChanged?.Invoke();
     }
 
     public void RemoveBuilding(BuildingData building)
     {
         Buildings.Remove(building);
         // Debug.Log($"Removed {building} from TileStack {HexTile}. Buildings left: {Buildings.Count}");
+
+        // All buildings above this have changed position in the stack. For now just change all
+        foreach (var buildingInStack in Buildings)
+            buildingInStack.OnPositionInTileStackChanged?.Invoke();
+    }
+
+    internal bool IsTopBuilding(BuildingData data)
+    {
+        return Buildings.Count > 0 && Buildings[Buildings.Count - 1] == data;
     }
 }
 
@@ -155,8 +168,8 @@ public class TownData : BaseData
         if (hexTile.x == building.TileX && hexTile.y == building.TileY)
             return;
         GetTileStackForHexTile(new Vector2Int(building.TileX, building.TileY)).RemoveBuilding(building);
-        GetTileStackForHexTile(hexTile).AddBuilding(building);
         building.MoveTo(hexTile);
+        GetTileStackForHexTile(hexTile).AddBuilding(building);
         OnBuildingMoved?.Invoke(building);
     }
 

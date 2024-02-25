@@ -1,6 +1,4 @@
 --- Hex
-* only top tile in tilestack should show building.
-
 
 
 
