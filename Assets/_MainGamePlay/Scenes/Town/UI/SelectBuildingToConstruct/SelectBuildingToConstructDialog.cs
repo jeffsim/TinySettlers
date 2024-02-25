@@ -17,7 +17,7 @@ public class SelectBuildingToConstructDialog : MonoBehaviour
         transform.position = Camera.main.WorldToScreenPoint(new Vector3(screenPosition.x, 0, screenPosition.z));
 
         var worldLoc = Camera.main.ScreenToWorldPoint(transform.position);
-        worldLoc.y = Settings.Current.BuildingsY;
+        worldLoc.y = 0;
 
         foreach (var defn in GameDefns.Instance.BuildingDefns.Values)
         {

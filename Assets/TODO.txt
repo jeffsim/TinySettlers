@@ -1,3 +1,18 @@
+--- Hex
+* only top tile in tilestack should show building.
+
+
+
+
+
+
+
+
+
+
+
+
+
 Add House
     - energy
         + update

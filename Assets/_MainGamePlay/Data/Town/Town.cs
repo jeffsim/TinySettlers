@@ -17,13 +17,13 @@ public class TileStack
     internal void AddBuilding(BuildingData building)
     {
         Buildings.Add(building);
-        Debug.Log($"Added {building} to TileStack {HexTile}. Buildings now in stack: {Buildings.Count}");
+        // Debug.Log($"Added {building} to TileStack {HexTile}. Buildings now in stack: {Buildings.Count}");
     }
 
     public void RemoveBuilding(BuildingData building)
     {
         Buildings.Remove(building);
-        Debug.Log($"Removed {building} from TileStack {HexTile}. Buildings left: {Buildings.Count}");
+        // Debug.Log($"Removed {building} from TileStack {HexTile}. Buildings left: {Buildings.Count}");
     }
 }
 
