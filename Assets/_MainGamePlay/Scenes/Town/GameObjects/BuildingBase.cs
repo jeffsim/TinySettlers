@@ -6,7 +6,7 @@ public class BuildingBase : MonoBehaviour
 {
     public Building Building;
 
-    private Vector3 offset;
+    //  private Vector3 offset;
     public SceneWithMap scene;
     [NonSerialized] public BuildingData Data;
 
@@ -35,7 +35,7 @@ public class BuildingBase : MonoBehaviour
             case DragState.PreDrag:
                 if (!Input.GetMouseButton(0))
                     CancelPreDrag();
-                else if (Vector3.Distance(dragStartPoint, GetMouseWorldPosition()) > .25f)
+                else if (Vector3.Distance(dragStartPoint, Utilities.GetMouseWorldPosition()) > .25f)
                     StartDragging();
                 break;
 
@@ -52,10 +52,10 @@ public class BuildingBase : MonoBehaviour
     private void StartPreDrag()
     {
         dragState = DragState.PreDrag;
-        dragStartPoint = GetMouseWorldPosition();
-        offset = transform.position - dragStartPoint;
-        if (Settings.Current.AllowFreeBuildingPlacement)
-            offset.z += .25f;
+        dragStartPoint = Utilities.GetMouseWorldPosition();
+        //    offset = transform.position - dragStartPoint;
+        //  if (Settings.Current.AllowFreeBuildingPlacement)
+        //      offset.z += .25f;
     }
 
     private void CancelPreDrag()
@@ -80,14 +80,15 @@ public class BuildingBase : MonoBehaviour
     {
         if (Settings.Current.HexTiles)
         {
-            Vector3 worldPos = GetMouseWorldPosition() + offset;
-            worldPos.y = 0;
+            Vector3 worldPos = Utilities.GetMouseWorldPosition();// + offset;
+            worldPos.y = 2;
             var hexTile = Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos);
+            Debug.Log("a: " + hexTile + ", " + worldPos);
             scene.Map.Town.MoveBuilding(Data, hexTile);
         }
         else if (Settings.Current.AllowFreeBuildingPlacement)
         {
-            Vector3 mousePosition = GetMouseWorldPosition() + offset;
+            Vector3 mousePosition = Utilities.GetMouseWorldPosition();// + offset;
             if (Input.GetKey(KeyCode.LeftShift))
             {
                 mousePosition.x = Mathf.Round(mousePosition.x / 2f) * 2f;
@@ -100,7 +101,7 @@ public class BuildingBase : MonoBehaviour
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             Plane plane = new(Vector3.up, dragStartPoint);
             plane.Raycast(ray, out float distance);
-            Vector3 mouseIntersectPoint = ray.GetPoint(distance) + offset;
+            Vector3 mouseIntersectPoint = ray.GetPoint(distance);// + offset;
             draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, Settings.Current.DraggedBuildingY, mouseIntersectPoint.z));
         }
     }
@@ -124,12 +125,5 @@ public class BuildingBase : MonoBehaviour
     {
         var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         return Physics.Raycast(ray, out RaycastHit hitInfo, Mathf.Infinity, LayerMask.GetMask("BuildingBase")) && hitInfo.collider.gameObject == gameObject;
-    }
-
-    Vector3 GetMouseWorldPosition()
-    {
-        Vector3 mouseScreenPosition = Input.mousePosition;
-        mouseScreenPosition.z = Camera.main.WorldToScreenPoint(transform.position).z;
-        return Camera.main.ScreenToWorldPoint(mouseScreenPosition);
     }
 }

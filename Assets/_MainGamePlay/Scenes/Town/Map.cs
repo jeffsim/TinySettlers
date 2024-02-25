@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Map : MonoBehaviour
@@ -10,6 +11,7 @@ public class Map : MonoBehaviour
     GameObject BuildingsFolder;
     GameObject TilesFolder;
     GameObject WorkersFolder;
+    GameObject DebugFolder;
     public TimeOfDayMgr TimeOfDayMgr;
 
     public void Initialize(SceneWithMap scene, TownData townData)
@@ -46,29 +48,49 @@ public class Map : MonoBehaviour
 
         if (Settings.Current.ShowHexDebug)
         {
+            var curDebugFolder = transform.Find("Debug");
+            if (curDebugFolder != null)
+                Destroy(curDebugFolder);
+            DebugFolder = addFolder("Debug");
+
             // Debug spheres to see where hexes are
             for (int y = 0; y < 10; y++)
                 for (int x = 0; x < 10; x++)
                 {
                     var worldPos = Utilities.ConvertHexTileToWorldPos(new Vector2Int(x, y));
                     addSphere(new Vector3(worldPos.x, 2, worldPos.z), 1.5f, Color.red);
+                    addLabel(new Vector3(worldPos.x, 2, worldPos.z - 2), "(" + x + ", " + y + ")", 6, Color.yellow);
                 }
             mouseSphere = addSphere(Vector3.zero, 1f, Color.blue);
             hexSphere = addSphere(Vector3.zero, 1.75f, Color.green);
         }
     }
 
+    private void addLabel(Vector3 pox, string text, int fontSize, Color color)
+    {
+        var label = new GameObject("Label");
+        label.transform.parent = DebugFolder.transform;
+        label.transform.position = pox;
+        var textMesh = label.AddComponent<TextMeshPro>();
+        textMesh.text = text;
+        textMesh.fontSize = fontSize;
+        textMesh.alignment = TextAlignmentOptions.Center;
+        textMesh.transform.Rotate(45, 0, 0);
+        textMesh.color = color;
+    }
+
     GameObject mouseSphere, hexSphere;
 
     private void testDrawPath()
     {
-        Vector3 worldPos = GetMouseWorldPosition();
+        Vector3 worldPos = Utilities.GetMouseWorldPosition();
         worldPos.y = 2;
         mouseSphere.transform.position = worldPos;
 
-        FUCK(worldPos);
+        Test(worldPos);
 
         var hexTile = Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos);
+        Debug.Log("B: " + hexTile+ ", " + worldPos);
         hexTile.y = 2;
         hexSphere.transform.position = hexTile;
 
@@ -77,43 +99,44 @@ public class Map : MonoBehaviour
             Drawing.Draw.ingame.Line(worldPos, hexTile);
     }
 
-    private void FUCK(Vector3 worldPos)
+    private void Test(Vector3 worldPos)
     {
-        var hexTile2 = Utilities.ConvertWorldPosToHexTile(worldPos);
-        var hexTileCenterWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile2);
+        var hexTile = Utilities.ConvertWorldPosToHexTile(worldPos);
+        var hexTileCenterWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile);
+        // Debug.Log("C: " + hexTileCenterWorldPos);
         var p0to1 = (worldPos - hexTileCenterWorldPos) / TileData.TileSize + Vector3.one / 2f;
-        // Debug.Log(p0to1);
         var isInFrontQuarter = p0to1.x < .25f;
         var isInTopHalf = p0to1.z > .5f;
-        
-        x was working here. now divide as in https://gamedev.stackexchange.com/questions/20742/how-can-i-implement-hexagonal-tilemap-picking-in-xna
-        
-        if (isInFrontQuarter)
-            mouseSphere.GetComponent<Renderer>().material.color = isInTopHalf ? Color.red : Color.green;
-        else
-            mouseSphere.GetComponent<Renderer>().material.color = Color.blue;
-    }
 
-    private void FUCK2(Vector3 worldPos)
-    {
-        var hexTile2 = Utilities.ConvertWorldPosToHexTile(worldPos);
-        var hexTileCenterWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile2);
-        // Debug.Log(worldPos.x + ", " + hexTileCenterWorldPos.x + ": " + hexTile2);
-
-        var isInFrontQuarter = worldPos.x < hexTileCenterWorldPos.x - .25f * TileData.TileSize;
+        p0to1.x *= 5;
+        p0to1.z = (p0to1.z - .5f) * 2f;
+        // Debug.Log("x: " + p0to1.x + ", z:" + p0to1.z);
         if (isInFrontQuarter)
         {
-            var x0to1 = (worldPos.x - hexTileCenterWorldPos.x + 5f) / 2.5f;
-            float z0to1;
-
-            var isInTopHalf = worldPos.z < hexTileCenterWorldPos.z;
             if (isInTopHalf)
-                z0to1 = (hexTileCenterWorldPos.z - worldPos.z) / 5f;
+            {
+                if (p0to1.x > p0to1.z)
+                    mouseSphere.GetComponent<Renderer>().material.color = Color.cyan; // this one
+                else
+                {
+                    if ((hexTile.x & 1) == 1)
+                        mouseSphere.GetComponent<Renderer>().material.color = Color.black; // x-1,y+1
+                    else
+                        mouseSphere.GetComponent<Renderer>().material.color = Color.red; // x-1
+                }
+            }
             else
-                z0to1 = (worldPos.z - hexTileCenterWorldPos.z) / 5f;
-
-            mouseSphere.GetComponent<Renderer>().material.color = isInTopHalf ? Color.cyan : Color.red;
-            Debug.Log(x0to1 + ", " + z0to1);
+            {
+                if (p0to1.x > -p0to1.z)
+                    mouseSphere.GetComponent<Renderer>().material.color = Color.yellow; // this one
+                else
+                {
+                    if ((hexTile.x & 1) == 1)
+                        mouseSphere.GetComponent<Renderer>().material.color = Color.magenta; // x-1
+                    else
+                        mouseSphere.GetComponent<Renderer>().material.color = Color.green; // x-1, y-1
+                }
+            }
         }
         else
             mouseSphere.GetComponent<Renderer>().material.color = Color.blue;
@@ -122,19 +145,11 @@ public class Map : MonoBehaviour
     private GameObject addSphere(Vector3 pos, float scale, Color color)
     {
         var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.parent = DebugFolder.transform;
         sphere.transform.position = pos;
         sphere.transform.localScale = Vector3.one * scale;
         sphere.GetComponent<Renderer>().material.color = color;
         return sphere;
-    }
-
-    Vector3 GetMouseWorldPosition()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane plane = new(Vector3.up, new Vector3(0, 0, 0));
-        plane.Raycast(ray, out float distance);
-        Vector3 mouseIntersectPoint = ray.GetPoint(distance);
-        return mouseIntersectPoint;
     }
 
     private void OnBuildingRemoved(BuildingData data)

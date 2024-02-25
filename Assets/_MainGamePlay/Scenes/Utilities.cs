@@ -53,13 +53,53 @@ public static class Utilities
         return new Vector2Int((int)hexTileX, (int)hexTileY);
     }
 
-    internal static Vector3 GetCenterOfHexTileClosestToWorldPos(Vector3 worldPos)
+    public static Vector2Int ConvertWorldPosToHexTile2(Vector3 worldPos)
     {
         var hexTile = ConvertWorldPosToHexTile(worldPos);
+        var hexTileCenterWorldPos = ConvertHexTileToWorldPos(hexTile);
+        var p0to1 = (worldPos - hexTileCenterWorldPos) / TileData.TileSize + Vector3.one / 2f;
+        var isInFrontQuarter = p0to1.x < .25f;
+        var isInTopHalf = p0to1.z > .5f;
+
+        p0to1.x *= 5;
+        p0to1.z = (p0to1.z - .5f) * 2f;
+        if (isInFrontQuarter)
+        {
+            if (isInTopHalf)
+            {
+                if (p0to1.x < p0to1.z)
+                    if ((hexTile.x & 1) == 1)
+                        hexTile += new Vector2Int(-1, 1);
+                    else
+                        hexTile += new Vector2Int(-1, 0);
+            }
+            else
+            {
+                if (p0to1.x < -p0to1.z)
+                    if ((hexTile.x & 1) == 1)
+                        hexTile += new Vector2Int(-1, 0);
+                    else
+                        hexTile += new Vector2Int(-1, -1);
+            }
+        }
+        return hexTile;
+    }
+
+    internal static Vector3 GetCenterOfHexTileClosestToWorldPos(Vector3 worldPos)
+    {
+        var hexTile = ConvertWorldPosToHexTile2(worldPos);
         var worldPosAtHexCenter = ConvertHexTileToWorldPos(hexTile);
         return worldPosAtHexCenter;
     }
 
+    public static Vector3 GetMouseWorldPosition()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane plane = new(Vector3.up, new Vector3(0, 0, 0));
+        plane.Raycast(ray, out float distance);
+        Vector3 mouseIntersectPoint = ray.GetPoint(distance);
+        return mouseIntersectPoint;
+    }
     public static string ConvertToTimeString(float value)
     {
         if (value < 0 || value > 1)
