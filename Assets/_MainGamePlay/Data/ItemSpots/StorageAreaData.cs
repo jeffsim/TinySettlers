@@ -13,14 +13,47 @@ public class StorageAreaData : BaseData
 
     public BuildingData Building;
 
-    public int NumStorageSpots => StoragePiles.Sum(spot => spot.NumStorageSpots);
-    public int NumAvailableSpots => StoragePiles.Sum(spot => spot.NumAvailableSpots);
+    public int NumStorageSpots
+    {
+        get
+        {
+            int count = 0;
+            foreach (var pile in StoragePiles)
+                count += pile.NumStorageSpots;
+            return count;
+        }
+    }
+    public int NumAvailableSpots
+    {
+        get
+        {
+            int count = 0;
+            foreach (var pile in StoragePiles)
+                count += pile.NumAvailableSpots;
+            return count;
+        }
+    }
     public int NumReservedSpots => StoragePiles.Sum(spot => spot.NumReservedSpots);
     public bool HasAvailableSpot => StoragePiles.Any(spot => spot.HasAvailableSpot);
 
-    public int NumItemsInStorage => StoragePiles.Sum(spot => spot.NumItemsInStorage());
+    public int NumItemsInStorage 
+    {
+        get
+        {
+            int count = 0;
+            foreach (var pile in StoragePiles)
+                count += pile.NumItemsInStorage();
+            return count;
+        }
+    }
     public int NumUnreservedItemsInStorage => StoragePiles.Sum(spot => spot.NumUnreservedItemsInStorage());
-    public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StoragePiles.Sum(spot => spot.NumItemsOfTypeInStorage(itemDefn));
+    public int NumItemsOfTypeInStorage(ItemDefn itemDefn) 
+    {
+        int count = 0;
+        foreach (var pile in StoragePiles)
+            count += pile.NumItemsOfTypeInStorage(itemDefn);
+        return count;
+    }
     public int NumUnreservedItemsOfTypeInStorage(ItemDefn itemDefn) => StoragePiles.Sum(spot => spot.NumUnreservedItemsOfTypeInStorage(itemDefn));
 
     public Vector3 AreaLocOffset;

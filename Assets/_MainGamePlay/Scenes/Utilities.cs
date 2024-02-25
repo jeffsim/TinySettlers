@@ -48,7 +48,7 @@ public static class Utilities
     public static Vector2Int ConvertWorldPosToHexTile(Vector3 worldPos)
     {
         worldPos += Vector3.one * TileData.TileSize / 2;
-        float hexTileX = worldPos.x / (TileData.TileSize * 3 / 4f);
+        float hexTileX = worldPos.x / (TileData.TileSize * .75f);
         float hexTileY = worldPos.z / TileData.TileSize - ((int)hexTileX & 1) * 0.5f;
         return new Vector2Int((int)hexTileX, (int)hexTileY);
     }

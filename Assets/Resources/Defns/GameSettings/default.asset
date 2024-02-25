@@ -34,3 +34,4 @@ MonoBehaviour:
   DraggedBuildingY: 0.5
   ItemCarryY: 0
   ItemDropY: -1.3
+  ShowHexDebug: 1

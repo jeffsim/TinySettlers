@@ -373,8 +373,20 @@ public class TownData : BaseData
     public void AssignWorkerToBuilding(BuildingData data) => GetWorkerInBuilding(Camp)?.Assignable.AssignTo(data);
 
     private WorkerData GetWorkerInBuilding(BuildingData building) => TownWorkerMgr.Workers.FirstOrDefault(worker => worker.Assignable.AssignedTo == building);
-    internal int NumTotalItemsInStorage(ItemDefn neededItem) => AllBuildings.Sum(building => building.NumItemsOfTypeInStorage(neededItem));
-    internal int NumTotalStorageSpots() => AllBuildings.Sum(building => building.NumStorageSpots);
+    internal int NumTotalItemsInStorage(ItemDefn neededItem)
+    {
+        int numInStorage = 0;
+        foreach (var building in AllBuildings)
+            numInStorage += building.NumItemsOfTypeInStorage(neededItem);
+        return numInStorage;
+    }
+    internal int NumTotalStorageSpots()
+    {
+        int count = 0;
+        foreach (var building in AllBuildings)
+            count += building.NumStorageSpots;
+        return count;
+    }
 
     internal void ItemSold(ItemData item)
     {

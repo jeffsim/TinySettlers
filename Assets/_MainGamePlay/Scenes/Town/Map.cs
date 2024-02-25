@@ -44,60 +44,81 @@ public class Map : MonoBehaviour
         Town.OnItemAddedToGround += addItemOnGroundGO;
         Town.OnItemRemovedFromGround += OnItemRemovedFromGround;
 
-        // Debug spheres to see where hexes are
-        // for (int y = 0; y < 10; y++)
-        //     for (int x = 0; x < 10; x++)
-        //     {
-        //         var worldPos = Utilities.ConvertHexTileToWorldPos(new Vector2Int(x, y));
-        //         addSphere(new Vector3(worldPos.x, 2, worldPos.z), 1.5f, Color.red);
-        //     }
-        // mouseSphere = addSphere(Vector3.zero, 1f, Color.blue);
-        // hexSphere = addSphere(Vector3.zero, 1.75f, Color.green);
-        // hexSphere2 = addSphere(Vector3.zero, 1.75f, Color.white);
-        // hexSphere3 = addSphere(Vector3.zero, 1.75f, Color.magenta);
+        if (Settings.Current.ShowHexDebug)
+        {
+            // Debug spheres to see where hexes are
+            for (int y = 0; y < 10; y++)
+                for (int x = 0; x < 10; x++)
+                {
+                    var worldPos = Utilities.ConvertHexTileToWorldPos(new Vector2Int(x, y));
+                    addSphere(new Vector3(worldPos.x, 2, worldPos.z), 1.5f, Color.red);
+                }
+            mouseSphere = addSphere(Vector3.zero, 1f, Color.blue);
+            hexSphere = addSphere(Vector3.zero, 1.75f, Color.green);
+        }
     }
 
-    // GameObject mouseSphere;
-    // GameObject hexSphere;
-    // GameObject hexSphere2;
-    // GameObject hexSphere3;
+    GameObject mouseSphere, hexSphere;
 
-    // private void testDrawPath()
-    // {
-    //     Vector3 worldPos = GetMouseWorldPosition();
-    //     worldPos.y = 2;
-    //     mouseSphere.transform.position = worldPos;
+    private void testDrawPath()
+    {
+        Vector3 worldPos = GetMouseWorldPosition();
+        worldPos.y = 2;
+        mouseSphere.transform.position = worldPos;
 
-    //     var hexTile2 = Utilities.ConvertWorldPosToHexTile(worldPos);
-    //     Debug.Log(hexTile2);
+        FUCK(worldPos);
 
-    //     var hexTile = Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos);
-    //     hexTile.y = 2;
-    //     hexSphere.transform.position = hexTile;
+        var hexTile = Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos);
+        hexTile.y = 2;
+        hexSphere.transform.position = hexTile;
 
-    //     using (Drawing.Draw.ingame.WithColor(Color.green))
-    //     using (Drawing.Draw.ingame.WithLineWidth(2))
-    //         Drawing.Draw.ingame.Line(worldPos, hexTile);
-    // }
+        using (Drawing.Draw.ingame.WithColor(Color.green))
+        using (Drawing.Draw.ingame.WithLineWidth(2))
+            Drawing.Draw.ingame.Line(worldPos, hexTile);
+    }
 
-    // private GameObject addSphere(Vector3 pos, float scale, Color color)
-    // {
-    //     var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-    //     sphere.transform.position = pos;
-    //     sphere.transform.localScale = Vector3.one * scale;
-    //     var sphereRenderer = sphere.GetComponent<Renderer>();
-    //     sphereRenderer.material.color = color;
-    //     return sphere;
-    // }
+    private void FUCK(Vector3 worldPos)
+    {
+        var hexTile2 = Utilities.ConvertWorldPosToHexTile(worldPos);
+        var hexTileCenterWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile2);
+        // Debug.Log(worldPos.x + ", " + hexTileCenterWorldPos.x + ": " + hexTile2);
 
-    // Vector3 GetMouseWorldPosition()
-    // {
-    //     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-    //     Plane plane = new(Vector3.up, new Vector3(0, 0, 0));
-    //     plane.Raycast(ray, out float distance);
-    //     Vector3 mouseIntersectPoint = ray.GetPoint(distance);
-    //     return mouseIntersectPoint;
-    // }
+        var isInFrontQuarter = worldPos.x < hexTileCenterWorldPos.x - .25f * TileData.TileSize;
+        if (isInFrontQuarter)
+        {
+            var x0to1 = (worldPos.x - hexTileCenterWorldPos.x + 5f) / 2.5f;
+            float z0to1;
+
+            var isInTopHalf = worldPos.z < hexTileCenterWorldPos.z;
+            if (isInTopHalf)
+                z0to1 = (hexTileCenterWorldPos.z - worldPos.z) / 5f;
+            else
+                z0to1 = (worldPos.z - hexTileCenterWorldPos.z) / 5f;
+          
+            mouseSphere.GetComponent<Renderer>().material.color = isInTopHalf ? Color.cyan : Color.red;
+            Debug.Log(x0to1 + ", " + z0to1);
+        }
+        else
+            mouseSphere.GetComponent<Renderer>().material.color = Color.blue;
+    }
+
+    private GameObject addSphere(Vector3 pos, float scale, Color color)
+    {
+        var sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        sphere.transform.position = pos;
+        sphere.transform.localScale = Vector3.one * scale;
+        sphere.GetComponent<Renderer>().material.color = color;
+        return sphere;
+    }
+
+    Vector3 GetMouseWorldPosition()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane plane = new(Vector3.up, new Vector3(0, 0, 0));
+        plane.Raycast(ray, out float distance);
+        Vector3 mouseIntersectPoint = ray.GetPoint(distance);
+        return mouseIntersectPoint;
+    }
 
     private void OnBuildingRemoved(BuildingData data)
     {
@@ -211,7 +232,9 @@ public class Map : MonoBehaviour
 
     public void Update()
     {
-        // testDrawPath();
+        if (Settings.Current.ShowHexDebug)
+            testDrawPath();
+
         if (scene.NeedsPathUpdate)
             scene.UpdatePaths();
 

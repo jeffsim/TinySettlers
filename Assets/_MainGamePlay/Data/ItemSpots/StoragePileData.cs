@@ -15,7 +15,17 @@ public class StoragePileData : BaseData
     public List<StorageSpotData> StorageSpots = new();
     public bool HasAvailableSpot => NumAvailableSpots > 0;
     public int NumStorageSpots => StorageSpots.Count;
-    public int NumAvailableSpots => StorageSpots.Count(spot => spot.Container.IsEmpty && !spot.Reservable.IsReserved);
+    public int NumAvailableSpots
+    {
+        get
+        {
+            int count = 0;
+            foreach (var spot in StorageSpots)
+                if (spot.Container.IsEmpty && !spot.Reservable.IsReserved)
+                    count++;
+            return count;
+        }
+    }
     public int NumReservedSpots => StorageSpots.Count(spot => spot.Reservable.IsReserved);
     public int NumItemsInPile => StorageSpots.Count(spot => spot.Container.HasItem);
 
@@ -41,8 +51,22 @@ public class StoragePileData : BaseData
             spot.Location.SetWorldLoc(Area.Location.WorldLoc + PileLocOffset);
     }
 
-    public int NumItemsInStorage() => StorageSpots.Count(spot => spot.Container.HasItem);
-    public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StorageSpots.Count(spot => spot.Container.ContainsItem(itemDefn));
+    public int NumItemsInStorage() 
+    {
+        int count = 0;
+        foreach (var spot in StorageSpots)
+            if (spot.Container.HasItem)
+                count++;
+        return count;
+    }
+    public int NumItemsOfTypeInStorage(ItemDefn itemDefn)
+    {
+        int count = 0;
+        foreach (var spot in StorageSpots)
+            if (spot.Container.ContainsItem(itemDefn))
+                count++;
+        return count;
+    }
     public int NumUnreservedItemsInStorage() => StorageSpots.Count(spot => !spot.Reservable.IsReserved && !spot.Container.IsEmpty);
     public int NumUnreservedItemsOfTypeInStorage(ItemDefn itemDefn) => StorageSpots.Count(spot => !spot.Reservable.IsReserved && spot.Container.ContainsItem(itemDefn));
 

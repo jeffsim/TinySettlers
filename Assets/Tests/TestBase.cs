@@ -30,6 +30,7 @@ public abstract class TestBase
             GameDefns.Instance = go.AddComponent<GameDefns>();
             GameDefns.Instance.Test_ForceAwake();
         }
+        GameDefns.Instance.GameSettingsDefns["default"].HexTiles = false;
         UniqueIdGenerator.Instance = new UniqueIdGenerator();
 
         townDefn = GameDefns.Instance.TownDefns[townDefnName];

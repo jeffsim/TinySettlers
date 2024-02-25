@@ -10,7 +10,14 @@ public class TownWorkerMgr
     public List<WorkerData> Workers = new();
     public int NumMaxWorkers;
     internal List<WorkerData> GetIdleWorkers() => new(Town.TownWorkerMgr.Workers.FindAll(w => w.AI.IsIdle)); 
-    internal int NumBuildingWorkers(BuildingData building) => Workers.Count(worker => worker.Assignable.AssignedTo == building);
+    internal int NumBuildingWorkers(BuildingData building)
+    {
+        int count = 0;
+        foreach (var worker in Workers)
+            if (worker.Assignable.AssignedTo == building)
+                count++;
+        return count;
+    }
     [NonSerialized] public Action<WorkerData> OnWorkerCreated;
 
     public TownWorkerMgr(TownData town)

@@ -80,10 +80,9 @@ public class BuildingBase : MonoBehaviour
     {
         if (Settings.Current.HexTiles)
         {
-            Vector3 mouseWorldPos = GetMouseWorldPosition() + offset;
-            mouseWorldPos.y = 0;
-            // Debug.Log(mouseWorldPos);
-            var hexTile = Utilities.GetCenterOfHexTileClosestToWorldPos(mouseWorldPos);
+            Vector3 worldPos = GetMouseWorldPosition() + offset;
+            worldPos.y = 0;
+            var hexTile = Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos);
             scene.Map.Town.MoveBuilding(Data, hexTile);
         }
         else if (Settings.Current.AllowFreeBuildingPlacement)

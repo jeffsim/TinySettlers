@@ -33,4 +33,6 @@ public class GameSettingsDefn : BaseDefn
     public float DraggedBuildingY = 3;
     public float ItemCarryY = 1.5f;
     public float ItemDropY = -1.3f;
+
+    public bool ShowHexDebug = true;
 }

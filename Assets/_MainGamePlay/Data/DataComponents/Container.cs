@@ -23,7 +23,10 @@ public class Container : BaseData
 
     internal bool ContainsItem(ItemDefn itemDefn)
     {
-        return Items.Any(item => item.Defn.Id == itemDefn.Id);
+        foreach (var item in Items)
+            if (item.Defn.Id == itemDefn.Id)
+                return true;
+        return false;
     }
 
     public void AddItem(ItemData item)

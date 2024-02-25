@@ -51,8 +51,24 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
 
     // Storage related fields
     public List<StorageAreaData> StorageAreas = new();
-    public int NumAvailableStorageSpots => StorageAreas.Sum(area => area.NumAvailableSpots);
-    public int NumStorageSpots => StorageAreas.Sum(area => area.NumStorageSpots);
+    public int NumAvailableStorageSpots
+    {
+        get
+        {
+            int count = 0;
+            foreach (var area in StorageAreas) count += area.NumAvailableSpots;
+            return count;
+        }
+    }
+    public int NumStorageSpots
+    {
+        get
+        {
+            int count = 0;
+            foreach (var area in StorageAreas) count += area.NumStorageSpots;
+            return count;
+        }
+    }
     public bool HasAvailableStorageSpot => StorageAreas.Any(area => area.HasAvailableSpot);
     public bool IsStorageFull => NumAvailableStorageSpots == 0;
     [SerializeReference] public List<StorageSpotData> StorageSpots = new();
@@ -376,7 +392,13 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
     }
 
     public int NumItemsInStorage => StorageAreas.Sum(area => area.NumItemsInStorage);
-    public int NumItemsOfTypeInStorage(ItemDefn itemDefn) => StorageAreas.Sum(area => area.NumItemsOfTypeInStorage(itemDefn));
+    public int NumItemsOfTypeInStorage(ItemDefn itemDefn)
+    {
+        int num = 0;
+        foreach (var area in StorageAreas)
+            num += area.NumItemsOfTypeInStorage(itemDefn);
+        return num;
+    }
 
     public StorageSpotData GetEmptyStorageSpot() => StorageSpots.First(spot => spot.Container.IsEmpty && !spot.Reservable.IsReserved);
 
@@ -529,7 +551,8 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
             {
                 // Allow returning resources that we need for crafting or selling if we're paused or have no workers assigned
                 var allowRemovingNeededItems = IsPaused || NumWorkers == 0;
-                if (!allowRemovingNeededItems && ItemNeeds.Find(need => need.NeededItem == spot.Container.FirstItem.Defn) != null)
+                var itemNeed = getItemNeedForItem(spot.Container.FirstItem.Defn);
+                if (!allowRemovingNeededItems && itemNeed != null)
                     continue;
 
                 var dist = location.DistanceTo(spot.Location);
@@ -540,6 +563,14 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
                 }
             }
         return closestSpot;
+    }
+
+    private NeedData getItemNeedForItem(ItemDefn defn)
+    {
+        foreach (var need in ItemNeeds)
+            if (need.NeededItem.Id == defn.Id)
+                return need;
+        return null;
     }
 
     public List<StorageSpotData> GetStorageSpotsWithUnreservedItem(ItemDefn itemDefn)
