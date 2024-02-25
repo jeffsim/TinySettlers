@@ -27,13 +27,13 @@ public class CameraDragger : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(1))
         {
-            dragStartPos = GetWorldPositionFromMouseClick();
+            dragStartPos = Utilities.GetMouseWorldPosition();
             isDragging = true;
         }
         else if (Input.GetMouseButtonUp(1))
             isDragging = false;
         else if (isDragging && Input.GetMouseButton(1))
-            Camera.main.transform.position -= GetWorldPositionFromMouseClick() - dragStartPos;
+            Camera.main.transform.position -= Utilities.GetMouseWorldPosition() - dragStartPos;
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
@@ -43,14 +43,5 @@ public class CameraDragger : MonoBehaviour
             else
                 Camera.main.transform.position += Camera.main.transform.forward * scroll * dollyZoomSpeed;
         }
-    }
-
-    Vector3 GetWorldPositionFromMouseClick()
-    {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hitInfo))
-            return hitInfo.point;
-        else
-            return Camera.main.transform.position + Camera.main.transform.forward * 0.01f;
     }
 }

@@ -72,7 +72,7 @@ public static class Utilities
         return worldPosAtHexCenter;
     }
 
-    public static Vector3 OffsetDebugItems = new Vector3(0, 2, 0);
+    public static Vector3 OffsetDebugItems = new Vector3(0, 1, 0);
 
     public static Vector3 GetMouseWorldPosition()
     {
@@ -80,12 +80,6 @@ public static class Utilities
         Plane plane = new(Vector3.up, Vector3.zero);
         plane.Raycast(ray, out float distance);
         var pointOnPlane = ray.GetPoint(distance);
-
-        // back up slightly along the ray to account for camera angle
-        // Following both work for !Orthogonal view.  still don't have working for Orthogonal but :shrug: for now
-        pointOnPlane.z -= 1.1547f;
-        // pointOnPlane.z -= Mathf.Acos(Camera.main.transform.rotation.x);
-
         return pointOnPlane;
     }
 
@@ -100,7 +94,7 @@ public static class Utilities
 
         return new DateTime(1, 1, 1, hours, minutes, 0).ToString("h:mm tt");
     }
-    
+
     public static Vector3 LocationWithinDistance(Vector3 worldLoc, float maxDistance)
     {
         var circle = UnityEngine.Random.insideUnitCircle * maxDistance;
