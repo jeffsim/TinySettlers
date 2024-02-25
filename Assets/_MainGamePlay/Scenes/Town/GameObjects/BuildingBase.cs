@@ -28,8 +28,6 @@ public class BuildingBase : MonoBehaviour
         switch (dragState)
         {
             case DragState.NotDragging:
-                if (IsMouseOverThis())
-                    Debug.Log(Data.Defn.Id);
                 if (Input.GetMouseButtonDown(0) && IsMouseOverThis())
                     StartPreDrag();
                 break;

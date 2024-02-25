@@ -96,11 +96,18 @@ public static class Utilities
     public static Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane plane = new(Vector3.up, new Vector3(0, 0, 0));
+        Plane plane = new(Vector3.up, Vector3.zero);
         plane.Raycast(ray, out float distance);
-        Vector3 mouseIntersectPoint = ray.GetPoint(distance);
-        return mouseIntersectPoint;
+        var pointOnPlane = ray.GetPoint(distance);
+        
+        // back up slightly along the ray to account for camera angle
+        // Following both work for !Orthogonal view.  still don't have working for Orthogonal but :shrug: for now
+        pointOnPlane.z -= 1.1547f;
+        // pointOnPlane.z -= Mathf.Acos(Camera.main.transform.rotation.x);
+        
+        return pointOnPlane;
     }
+
     public static string ConvertToTimeString(float value)
     {
         if (value < 0 || value > 1)
