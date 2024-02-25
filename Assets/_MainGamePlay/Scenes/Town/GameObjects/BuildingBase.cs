@@ -28,6 +28,8 @@ public class BuildingBase : MonoBehaviour
         switch (dragState)
         {
             case DragState.NotDragging:
+                if (IsMouseOverThis())
+                    Debug.Log(Data.Defn.Id);
                 if (Input.GetMouseButtonDown(0) && IsMouseOverThis())
                     StartPreDrag();
                 break;
@@ -53,9 +55,6 @@ public class BuildingBase : MonoBehaviour
     {
         dragState = DragState.PreDrag;
         dragStartPoint = Utilities.GetMouseWorldPosition();
-        //    offset = transform.position - dragStartPoint;
-        //  if (Settings.Current.AllowFreeBuildingPlacement)
-        //      offset.z += .25f;
     }
 
     private void CancelPreDrag()
@@ -78,33 +77,15 @@ public class BuildingBase : MonoBehaviour
 
     private void DragBuilding()
     {
+        Vector3 worldPos = Utilities.GetMouseWorldPosition();
         if (Settings.Current.HexTiles)
-        {
-            Vector3 worldPos = Utilities.GetMouseWorldPosition();// + offset;
-            worldPos.y = 2;
-            var hexTile = Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos);
-            Debug.Log("a: " + hexTile + ", " + worldPos);
-            scene.Map.Town.MoveBuilding(Data, hexTile);
-        }
+            scene.Map.Town.MoveBuilding(Data, Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos));
         else if (Settings.Current.AllowFreeBuildingPlacement)
-        {
-            Vector3 mousePosition = Utilities.GetMouseWorldPosition();// + offset;
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                mousePosition.x = Mathf.Round(mousePosition.x / 2f) * 2f;
-                mousePosition.z = Mathf.Round(mousePosition.z / 2f) * 2f;
-            }
-            scene.Map.Town.MoveBuilding(Data, new(mousePosition.x, Settings.Current.DraggedBuildingY, mousePosition.z));
-        }
+            scene.Map.Town.MoveBuilding(Data, new(worldPos.x, Settings.Current.DraggedBuildingY, worldPos.z));
         else
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Plane plane = new(Vector3.up, dragStartPoint);
-            plane.Raycast(ray, out float distance);
-            Vector3 mouseIntersectPoint = ray.GetPoint(distance);// + offset;
-            draggingGO.updatePosition(new Vector3(mouseIntersectPoint.x, Settings.Current.DraggedBuildingY, mouseIntersectPoint.z));
-        }
+            draggingGO.updatePosition(worldPos);
     }
+
     private void StopDragging()
     {
         scene.Map.Town.MoveBuilding(Data, new(Data.Location.WorldLoc.x, Settings.Current.BuildingsY, Data.Location.WorldLoc.z));

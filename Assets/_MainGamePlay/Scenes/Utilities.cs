@@ -91,6 +91,7 @@ public static class Utilities
         var worldPosAtHexCenter = ConvertHexTileToWorldPos(hexTile);
         return worldPosAtHexCenter;
     }
+    public static Vector3 OffsetDebugItems = new Vector3(0, 2, 0);
 
     public static Vector3 GetMouseWorldPosition()
     {

@@ -120,7 +120,7 @@ GameObject:
   - component: {fileID: 5114974101387017975}
   - component: {fileID: 3188592125270526775}
   - component: {fileID: 3598474619384715235}
-  - component: {fileID: 4234613785829009307}
+  - component: {fileID: 5231439955922470057}
   m_Layer: 17
   m_Name: BuildingBase
   m_TagString: Untagged
@@ -210,8 +210,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Building: {fileID: 0}
   scene: {fileID: 0}
---- !u!65 &4234613785829009307
-BoxCollider:
+--- !u!64 &5231439955922470057
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -228,9 +228,10 @@ BoxCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 1af34cea437b85f4fb64afebad6a0088, type: 3}
 --- !u!1 &1427997813647844319
 GameObject:
   m_ObjectHideFlags: 0

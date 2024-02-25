@@ -84,63 +84,60 @@ public class Map : MonoBehaviour
     private void testDrawPath()
     {
         Vector3 worldPos = Utilities.GetMouseWorldPosition();
-        worldPos.y = 2;
-        mouseSphere.transform.position = worldPos;
+        mouseSphere.transform.position = worldPos + Utilities.OffsetDebugItems;
 
-        Test(worldPos);
+        // Test(worldPos);
 
         var hexTile = Utilities.GetCenterOfHexTileClosestToWorldPos(worldPos);
-        Debug.Log("B: " + hexTile+ ", " + worldPos);
-        hexTile.y = 2;
-        hexSphere.transform.position = hexTile;
+        hexSphere.transform.position = hexTile + Utilities.OffsetDebugItems;
 
         using (Drawing.Draw.ingame.WithColor(Color.green))
         using (Drawing.Draw.ingame.WithLineWidth(2))
-            Drawing.Draw.ingame.Line(worldPos, hexTile);
+            Drawing.Draw.ingame.Line(worldPos + Utilities.OffsetDebugItems, hexTile + Utilities.OffsetDebugItems);
     }
 
-    private void Test(Vector3 worldPos)
-    {
-        var hexTile = Utilities.ConvertWorldPosToHexTile(worldPos);
-        var hexTileCenterWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile);
-        // Debug.Log("C: " + hexTileCenterWorldPos);
-        var p0to1 = (worldPos - hexTileCenterWorldPos) / TileData.TileSize + Vector3.one / 2f;
-        var isInFrontQuarter = p0to1.x < .25f;
-        var isInTopHalf = p0to1.z > .5f;
+    // private void Test(Vector3 worldPos)
+    // {
+    //     var hexTile = Utilities.ConvertWorldPosToHexTile(worldPos);
+    //     var hexTileCenterWorldPos = Utilities.ConvertHexTileToWorldPos(hexTile);
+    //     // Debug.Log("C: " + hexTileCenterWorldPos);
+    //     var p0to1 = (worldPos - hexTileCenterWorldPos) / TileData.TileSize + Vector3.one / 2f;
+    //     var isInFrontQuarter = p0to1.x < .25f;
+    //     var isInTopHalf = p0to1.z > .5f;
 
-        p0to1.x *= 5;
-        p0to1.z = (p0to1.z - .5f) * 2f;
-        // Debug.Log("x: " + p0to1.x + ", z:" + p0to1.z);
-        if (isInFrontQuarter)
-        {
-            if (isInTopHalf)
-            {
-                if (p0to1.x > p0to1.z)
-                    mouseSphere.GetComponent<Renderer>().material.color = Color.cyan; // this one
-                else
-                {
-                    if ((hexTile.x & 1) == 1)
-                        mouseSphere.GetComponent<Renderer>().material.color = Color.black; // x-1,y+1
-                    else
-                        mouseSphere.GetComponent<Renderer>().material.color = Color.red; // x-1
-                }
-            }
-            else
-            {
-                if (p0to1.x > -p0to1.z)
-                    mouseSphere.GetComponent<Renderer>().material.color = Color.yellow; // this one
-                else
-                {
-                    if ((hexTile.x & 1) == 1)
-                        mouseSphere.GetComponent<Renderer>().material.color = Color.magenta; // x-1
-                    else
-                        mouseSphere.GetComponent<Renderer>().material.color = Color.green; // x-1, y-1
-                }
-            }
-        }
-        else
-            mouseSphere.GetComponent<Renderer>().material.color = Color.blue;
-    }
+    //     p0to1.x *= 5;
+    //     p0to1.z = (p0to1.z - .5f) * 2f;
+    //     // Debug.Log("x: " + p0to1.x + ", z:" + p0to1.z);
+    //     if (isInFrontQuarter)
+    //     {
+    //         if (isInTopHalf)
+    //         {
+    //             if (p0to1.x > p0to1.z)
+    //                 mouseSphere.GetComponent<Renderer>().material.color = Color.cyan; // this one
+    //             else
+    //             {
+    //                 if ((hexTile.x & 1) == 1)
+    //                     mouseSphere.GetComponent<Renderer>().material.color = Color.black; // x-1,y+1
+    //                 else
+    //                     mouseSphere.GetComponent<Renderer>().material.color = Color.red; // x-1
+    //             }
+    //         }
+    //         else
+    //         {
+    //             if (p0to1.x > -p0to1.z)
+    //                 mouseSphere.GetComponent<Renderer>().material.color = Color.yellow; // this one
+    //             else
+    //             {
+    //                 if ((hexTile.x & 1) == 1)
+    //                     mouseSphere.GetComponent<Renderer>().material.color = Color.magenta; // x-1
+    //                 else
+    //                     mouseSphere.GetComponent<Renderer>().material.color = Color.green; // x-1, y-1
+    //             }
+    //         }
+    //     }
+    //     else
+    //         mouseSphere.GetComponent<Renderer>().material.color = Color.blue;
+    // }
 
     private GameObject addSphere(Vector3 pos, float scale, Color color)
     {
