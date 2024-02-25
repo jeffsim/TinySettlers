@@ -5,8 +5,8 @@ using UnityEngine;
 
 public partial class TownDefnEditor : OdinEditor
 {
-    // NOTE: Using odd-r Hex coordinate system.  See: https://www.redblobgames.com/grids/hexagons/
-
+    // NOTE: Using odd-Q Hex coordinate system.  See: https://www.redblobgames.com/grids/hexagons/#coordinates-offset
+    // “odd-q” vertical layout shoves odd columns down
     private void showDraggingBuilding_HexTiles()
     {
         if (!GridRect.Contains(Event.current.mousePosition))
@@ -32,38 +32,12 @@ public partial class TownDefnEditor : OdinEditor
         drawBuildingWithLabelAt(dragMousePosition - dragOffset - TileSizeVector / 2, draggingBuilding, text);
     }
 
-    public struct HexCoord
+    private Vector2 ConvertHexTileToScreenPos(int hexTileX, int hexTileY, int positionInStack = 0)
     {
-        public int q, r;
-    }
-
-    public struct OddQ
-    {
-        public int col, row;
-    }
-
-    Vector2Int axial_to_oddr(HexCoord hex)
-    {
-        var col = hex.q + (hex.r - (hex.r & 1)) / 2;
-        var row = hex.r;
-        return new(col, row);
-    }
-
-    HexCoord oddr_to_axial(OddQ oddr)
-    {
-        var q = oddr.col - (oddr.row - (oddr.row & 1)) / 2;
-        var r = oddr.row;
-        return new HexCoord { q = q, r = r };
-    }
-
-    private Vector2Int ConvertRectPosToHexTile(Vector2 rectPos)
-    {
-        float tilePlacementWidth = TileSize * 1.5f;
-        int hexTileX = (int)(rectPos.x / tilePlacementWidth);
-        int hexTileY = (int)(rectPos.y / TileSize) * 2;
-        if (rectPos.x > hexTileX * tilePlacementWidth + tilePlacementWidth / 2)
-            hexTileY++;
-        return new Vector2Int(hexTileX, hexTileY);
+        float screenX, screenY;
+        screenX = hexTileX * TileSize * 3 / 4f;
+        screenY = (TownDefn.Height - hexTileY - .5f - (hexTileX & 1) / 2f) * TileSize - 5 * positionInStack;
+        return GridRect.position + new Vector2(screenX, screenY);
     }
 
     private Vector2 ConvertMousePosToRectPos()
@@ -78,25 +52,54 @@ public partial class TownDefnEditor : OdinEditor
         return ConvertRectPosToHexTile(ConvertMousePosToRectPos());
     }
 
-    private Vector2 ConvertHexTileToScreenPos(int hexTileX, int hexTileY, int positionInStack = 0)
+    private Vector2Int ConvertRectPosToHexTile(Vector2 rectPos)
     {
-        float screenX, screenY;
-        screenX = GridRect.x + hexTileX * TileSize * 1.5f;
-        if (hexTileY % 2 == 1)
-            screenX += TileSize * 3 / 4f;
-        screenY = GridRect.y + (TownDefn.Height - hexTileY / 2f - 2) * TileSize - 5 * positionInStack;
+        float hexTileX, hexTileY;
+        hexTileX = rectPos.x / (TileSize * 3 / 4f);
+        hexTileY = rectPos.y / TileSize - 1.5f + ((int)hexTileX & 1) / 2f;
+        return new Vector2Int((int)hexTileX, (int)hexTileY);
+    }
 
-        return new(screenX, screenY);
+    Vector2Int GridToHex(Vector2Int gridPos)
+    {
+        float x = 3 / 2 * gridPos.x;
+        float y = Mathf.Sqrt(3f) * (gridPos.y + 0.5f * (gridPos.x & 1));
+        return new Vector2Int((int)x, (int)y);
+    }
+
+    private void drawDebugTiles(GUIStyle style)
+    {
+        for (int y = 0; y < TownDefn.Height; y++)
+            for (int x = 0; x < TownDefn.Width; x++)
+            {
+                var screenPos = ConvertHexTileToScreenPos(x, y, 0);
+                drawFilledHexagonAt(screenPos, TileSize, Color.gray);
+                EditorGUI.LabelField(new(screenPos, TileSizeVector - Vector2.one * 3), "(" + x + "," + y + ")", style);
+            }
+
+        // draw box at mouse coords
+        var rectPos = ConvertMousePosToRectPos();
+        var mousePos = new Vector2(GridRect.x + rectPos.x, GridRect.y + GridRect.height - rectPos.y);
+        EditorGUI.DrawRect(new Rect(mousePos.x - 4, mousePos.y - 4, 8, 8), Color.red);
+
+        // draw line from mousePos to closest Hex center
+        var hexTile = ConvertRectPosToHexTile(rectPos);
+        Debug.Log(hexTile);
+        
+        var screenPos2 = ConvertHexTileToScreenPos(hexTile.x, hexTile.y);
+        EditorGUI.DrawRect(new Rect(screenPos2.x - 4, screenPos2.y - 4, 8, 8), Color.blue);
+        Handles.color = Color.blue;
+        Handles.DrawAAPolyLine(2, mousePos, screenPos2);
     }
 
     private void renderMap_HexTiles()
     {
-        float tileSize = Mathf.Min(64, 64);
-
         var shadowStyle = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.black } };
         var style = new GUIStyle(GUI.skin.label) { alignment = TextAnchor.MiddleCenter, fontSize = 10, normal = { textColor = Color.yellow } };
 
-        // Render buildings bottom to top to maintain Z
+        drawDebugTiles(style);
+
+        // Sort buildings bottom to top to render Z order correctly
         var buildings = TownDefn.Buildings.ToArray();
         Array.Sort(buildings, (a, b) => b.TileY.CompareTo(a.TileY));
 
@@ -105,16 +108,16 @@ public partial class TownDefnEditor : OdinEditor
             if (!buildingDefn.IsEnabled || buildingDefn.Building == null) continue;
 
             var screenPos = ConvertHexTileToScreenPos(buildingDefn.TileX, buildingDefn.TileY, buildingDefn.PositionInStack);
-            drawFilledHexagonAt(screenPos, tileSize, buildingDefn.Building.EditorColor);
+            drawFilledHexagonAt(screenPos, TileSize, buildingDefn.Building.EditorColor);
 
             var name = !string.IsNullOrEmpty(buildingDefn.TestId) ? buildingDefn.TestId : buildingDefn.Building.FriendlyName;
             if (name.Length > 2)
             {
                 var text = name.Substring(0, Math.Min(name.Length, 6));
-                EditorGUI.LabelField(new Rect(screenPos.x + 2, screenPos.y + 1, tileSize - 3, tileSize - 3), text, shadowStyle);
-                EditorGUI.LabelField(new Rect(screenPos.x + 1, screenPos.y, tileSize - 3, tileSize - 3), text, style);
+                EditorGUI.LabelField(new Rect(screenPos.x + 2, screenPos.y + 1, TileSize - 3, TileSize - 3), text, shadowStyle);
+                EditorGUI.LabelField(new Rect(screenPos.x + 1, screenPos.y, TileSize - 3, TileSize - 3), text, style);
                 text = "(" + buildingDefn.TileX + "," + buildingDefn.TileY + ")";
-                EditorGUI.LabelField(new Rect(screenPos.x + 2, screenPos.y + 16, tileSize - 3, tileSize - 3), text, style);
+                EditorGUI.LabelField(new Rect(screenPos.x + 2, screenPos.y + 16, TileSize - 3, TileSize - 3), text, style);
             }
         }
     }

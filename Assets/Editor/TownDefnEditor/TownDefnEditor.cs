@@ -38,15 +38,16 @@ public partial class TownDefnEditor : OdinEditor
         // render map
         GUILayout.Space(6);
         GUILayout.BeginHorizontal();
-        var width = TownDefn.Width * TileSize + TileSize / 2;
-        var height = TownDefn.Height * TileSize - TileSize;
+        var width = (TownDefn.Width - 1) * TileSize * .75f + TileSize;
+        var height = TownDefn.Height * TileSize + TileSize / 2;
         GridRect = GUILayoutUtility.GetRect(width, height, GUILayout.Width(width), GUILayout.Height(height));
         var borderRect = GridRect.Expand(2, 2);
         GUI.Box(borderRect, "");
-        if (UseHexTiles)
-            renderMap_HexTiles();
-        else
-            renderMap_GridTiles();
+        if (Event.current.type == EventType.Repaint)
+            if (UseHexTiles)
+                renderMap_HexTiles();
+            else
+                renderMap_GridTiles();
 
         GUILayout.EndHorizontal();
 
@@ -80,12 +81,4 @@ public partial class TownDefnEditor : OdinEditor
 
         ForceUpdatePositionsInStack();
     }
-
-    Vector2Int GridToHex(Vector2Int gridPos)
-    {
-        float x = 3 / 2 * gridPos.x;
-        float y = Mathf.Sqrt(3f) * (gridPos.y + 0.5f * (gridPos.x & 1));
-        return new Vector2Int((int)x, (int)y);
-    }
-
 }
