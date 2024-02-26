@@ -138,8 +138,12 @@ public class TownData : BaseData
         return building;
     }
 
-    public TileStack GetTileStackForHexTile(Vector2Int hexTile) => TileStacks[hexTile.y * Defn.Width + hexTile.x];
-    public TileStack GetTileStackForHexTile(int tileX, int tileY) => TileStacks[tileY * Defn.Width + tileX];
+    public TileStack GetTileStackForHexTile(Vector2Int hexTile) => GetTileStackForHexTile(hexTile.x, hexTile.y);
+    public TileStack GetTileStackForHexTile(int tileX, int tileY)
+    {
+        if (tileX < 0 || tileX >= Defn.Width || tileY < 0 || tileY >= Defn.Height) return null;
+        return TileStacks[tileY * Defn.Width + tileX];
+    }
 
     private void FindHomesForUnhomedWorkers()
     {

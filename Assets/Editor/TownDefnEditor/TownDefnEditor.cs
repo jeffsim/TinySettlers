@@ -21,6 +21,7 @@ public partial class TownDefnEditor : OdinEditor
     private bool isDragging = false;
     Vector2 dragOffset;
     private Vector2 dragMousePosition;
+    private Vector2 dragStart;
 
     public override void OnInspectorGUI()
     {

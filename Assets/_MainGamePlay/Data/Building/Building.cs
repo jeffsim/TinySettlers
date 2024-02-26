@@ -121,6 +121,10 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
         Pausable = new(Defn.Pausable, this);
         Constructable = new(Defn.Constructable, this);
 
+        // place at top of stack
+        var countMinusThis = Town.GetTileStackForHexTile(new Vector2Int(TileX, TileY)).Buildings.Count-1;
+        Location.WorldLoc.y = countMinusThis * 1.77f;
+
         if (Defn.CanCraft)
         {
             CraftingMgr = new(this);

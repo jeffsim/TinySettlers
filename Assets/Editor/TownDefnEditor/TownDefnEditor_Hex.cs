@@ -1,7 +1,9 @@
 using System;
+using System.Runtime.InteropServices;
 using Sirenix.OdinInspector.Editor;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public partial class TownDefnEditor : OdinEditor
 {
@@ -100,7 +102,10 @@ public partial class TownDefnEditor : OdinEditor
             if (!buildingDefn.IsEnabled || buildingDefn.Building == null) continue;
 
             var screenPos = ConvertHexTileToRectPos(new(buildingDefn.TileX, buildingDefn.TileY), buildingDefn.PositionInStack);
-            drawFilledHexagonAt(screenPos, TileSize, buildingDefn.Building.EditorColor, Color.black);
+            var color = buildingDefn.Building.EditorColor;
+            if (buildingDefn == draggingBuilding)
+                color /= 2;
+            drawFilledHexagonAt(screenPos, TileSize, color, Color.black);
 
             var name = !string.IsNullOrEmpty(buildingDefn.TestId) ? buildingDefn.TestId : buildingDefn.Building.FriendlyName;
             if (name.Length > 2)
@@ -157,10 +162,11 @@ public partial class TownDefnEditor : OdinEditor
         Handles.color = borderColor;
         Handles.DrawAAPolyLine(2, p1, p2, p3, p4, p5, p6, p1);
     }
-
+    bool movedEnoughToDrag;
     private void HandleMouseInput_HexTiles()
     {
         Event currentEvent = Event.current;
+        var hexTile = ConvertMousePosToHexTile();
 
         // Handle Mouse Down - Start Drag
         if (currentEvent.type == EventType.MouseDown && GridRect.Contains(currentEvent.mousePosition))
@@ -168,8 +174,7 @@ public partial class TownDefnEditor : OdinEditor
             Town_BuildingDefn buildingAtTopOfStack = null;
             foreach (var building in TownDefn.Buildings)
             {
-                Rect buildingRect = new(ConvertHexTileToRectPos(new(building.TileX, building.TileY), building.PositionInStack), TileSizeVector);
-                if (buildingRect.Contains(currentEvent.mousePosition))
+                if (building.IsEnabled && building.TileX == hexTile.x && building.TileY == hexTile.y)
                     if (buildingAtTopOfStack == null || building.PositionInStack > buildingAtTopOfStack.PositionInStack)
                         buildingAtTopOfStack = building;
             }
@@ -178,7 +183,8 @@ public partial class TownDefnEditor : OdinEditor
             {
                 draggingBuilding = buildingAtTopOfStack; // Mark this building as being dragged
                 isDragging = true;
-                dragMousePosition = currentEvent.mousePosition;
+                movedEnoughToDrag = false;
+                dragMousePosition = dragStart = currentEvent.mousePosition;
                 dragOffset = new(0, 0);
                 currentEvent.Use();
             }
@@ -188,33 +194,61 @@ public partial class TownDefnEditor : OdinEditor
         if (currentEvent.type == EventType.MouseDrag && isDragging)
         {
             dragMousePosition = currentEvent.mousePosition;
+            movedEnoughToDrag |= Vector2.Distance(dragMousePosition, dragStart) > 5;
             currentEvent.Use();
         }
 
         // Handle Mouse Up - Drop and Record Undo
         if (currentEvent.type == EventType.MouseUp && isDragging)
         {
-            // Only record the undo event here, right before the change
-            Undo.RecordObject(TownDefn, "Move Building");
-
-            // Calculate new position based on mouse position
-            var hexTile = ConvertMousePosToHexTile();
-
-            // Update the building's position
-            if (draggingBuilding != null)
+            if (movedEnoughToDrag)
             {
-                draggingBuilding.TileX = hexTile.x;
-                draggingBuilding.TileY = hexTile.y;
-                TownDefn.Buildings.Remove(draggingBuilding);
-                TownDefn.Buildings.Add(draggingBuilding);
+                // Update the building's position
+                if (draggingBuilding != null)
+                {
+                    // Record the undo event here, right before the change
+                    Undo.RecordObject(TownDefn, "Move Building");
+
+                    draggingBuilding.TileX = hexTile.x;
+                    draggingBuilding.TileY = hexTile.y;
+                    TownDefn.Buildings.Remove(draggingBuilding);
+                    TownDefn.Buildings.Add(draggingBuilding);
+                    Undo.FlushUndoRecordObjects();
+                    EditorUtility.SetDirty(TownDefn);
+                }
+            }
+            else
+            {
+                // Clicked; duplicate building in tile
+                Undo.RecordObject(TownDefn, "Duplicate Building");
+
+                var newBuilding = new Town_BuildingDefn()
+                {
+                    IsEnabled = true,
+                    Building = draggingBuilding.Building,
+                    TileX = hexTile.x,
+                    TileY = hexTile.y,
+                    PositionInStack = 0,
+                    StartingItemsInBuilding = new(),
+                    NumWorkersStartAtBuilding = 0
+                };
+                TownDefn.Buildings.Add(newBuilding);
+
                 Undo.FlushUndoRecordObjects();
                 EditorUtility.SetDirty(TownDefn);
             }
-
             // Reset drag state
             draggingBuilding = null;
             isDragging = false;
             currentEvent.Use();
         }
+    }
+
+    private Town_BuildingDefn getBuildingAt(Vector2Int hexTile)
+    {
+        foreach (var building in TownDefn.Buildings)
+            if (building.IsEnabled && building.TileX == hexTile.x && building.TileY == hexTile.y)
+                return building;
+        return null;
     }
 }
