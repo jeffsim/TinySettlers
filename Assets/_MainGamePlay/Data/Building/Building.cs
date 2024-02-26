@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 
 [Serializable]
@@ -37,7 +38,7 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
 
     [NonSerialized] public Action OnLocationChanged;
     [NonSerialized] public Action OnPositionInTileStackChanged;
-    
+
     // Accessors
     public bool IsPaused => Pausable.IsPaused;
 
@@ -122,7 +123,7 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
         Constructable = new(Defn.Constructable, this);
 
         // place at top of stack
-        var countMinusThis = Town.GetTileStackForHexTile(new Vector2Int(TileX, TileY)).Buildings.Count-1;
+        var countMinusThis = Town.GetTileStackForHexTile(new Vector2Int(TileX, TileY)).Buildings.Count - 1;
         Location.WorldLoc.y = countMinusThis * 1.77f;
 
         if (Defn.CanCraft)
@@ -236,7 +237,18 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
         // grow
         foreach (var spot in GatheringSpots)
             spot.Update();
+
+        // test - spit out log every N seconds 
+        if (false && Defn.Id == "forest")
+            if (GameTime.time - lastLogOutputTime > 5)
+            {
+                var defn = GameDefns.Instance.BuildingDefns["Resource_Wood"];
+                Town.ConstructBuilding(defn, TileX, TileY);
+                lastLogOutputTime = GameTime.time;
+            }
     }
+
+    float lastLogOutputTime = 0;
 
     public void UpdateNeedPriorities()
     {

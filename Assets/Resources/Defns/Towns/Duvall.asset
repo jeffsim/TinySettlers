@@ -142,10 +142,10 @@ MonoBehaviour:
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 0
   - IsEnabled: 1
-    Building: {fileID: 11400000, guid: 829b56cdca3664623ba2653708959f4e, type: 2}
+    Building: {fileID: 11400000, guid: a7013901059cac54b82e45f5a0c74bd5, type: 2}
     TestId: 
-    TileX: 3
-    TileY: 0
-    PositionInStack: 3
+    TileX: 4
+    TileY: 1
+    PositionInStack: 0
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 0
