@@ -110,6 +110,14 @@ MonoBehaviour:
       Count: 2
     NumWorkersStartAtBuilding: 1
   - IsEnabled: 1
+    Building: {fileID: 11400000, guid: a7013901059cac54b82e45f5a0c74bd5, type: 2}
+    TestId: 
+    TileX: 4
+    TileY: 1
+    PositionInStack: 0
+    StartingItemsInBuilding: []
+    NumWorkersStartAtBuilding: 0
+  - IsEnabled: 1
     Building: {fileID: 11400000, guid: 32d664a4ff2974b0d89f2f9dbe66195b, type: 2}
     TestId: 
     TileX: 2
@@ -122,30 +130,6 @@ MonoBehaviour:
     TestId: 
     TileX: 3
     TileY: 0
-    PositionInStack: 0
-    StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 0
-  - IsEnabled: 1
-    Building: {fileID: 11400000, guid: 829b56cdca3664623ba2653708959f4e, type: 2}
-    TestId: 
-    TileX: 3
-    TileY: 0
-    PositionInStack: 1
-    StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 0
-  - IsEnabled: 1
-    Building: {fileID: 11400000, guid: 829b56cdca3664623ba2653708959f4e, type: 2}
-    TestId: 
-    TileX: 3
-    TileY: 0
-    PositionInStack: 2
-    StartingItemsInBuilding: []
-    NumWorkersStartAtBuilding: 0
-  - IsEnabled: 1
-    Building: {fileID: 11400000, guid: a7013901059cac54b82e45f5a0c74bd5, type: 2}
-    TestId: 
-    TileX: 4
-    TileY: 1
     PositionInStack: 0
     StartingItemsInBuilding: []
     NumWorkersStartAtBuilding: 0

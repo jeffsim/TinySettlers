@@ -39,6 +39,14 @@ public class ConstructableDefn
 {
 }
 
+[Serializable]
+public class GeneratableDefn
+{
+    public bool CanGenerate;
+    public BuildingDefn Building;
+    public float BaseSecondsToGenerate;
+}
+
 [CreateAssetMenu(fileName = "BuildingDefn")]
 public class BuildingDefn : BaseDefn
 {
@@ -111,4 +119,6 @@ public class BuildingDefn : BaseDefn
     public PausableDefn Pausable;
     public OccupiableDefn Occupiable;
     public ConstructableDefn Constructable;
+
+    public GeneratableDefn Generatable;
 }

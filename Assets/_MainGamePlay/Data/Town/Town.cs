@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 public delegate void OnItemAddedToGroundEvent(ItemData item);
 
@@ -182,7 +183,8 @@ public class TownData : BaseData
         GameTime.Update();
         TimeMgr.Update();
 
-        foreach (var building in AllBuildings)
+        var buildings = new List<BuildingData>(AllBuildings);
+        foreach (var building in buildings)
             building.Update();
 
         // e.g. pick up items on the ground

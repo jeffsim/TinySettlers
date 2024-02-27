@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Sirenix.OdinInspector.Editor;
 using UnityEngine;
 
 [Serializable]
-public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IPausable
+public partial class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IPausable, IGeneratable
 {
     public override string ToString() => Defn.FriendlyName + " (" + InstanceId + ")";
 
@@ -28,13 +25,12 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
 
     public BuildingCraftingMgr CraftingMgr;
 
-    public List<NeedData> ConstructionNeeds = new();
-
     // Data Components
     [SerializeField] public Constructable Constructable { get; set; }
     [SerializeField] public Location Location { get; set; }
     [SerializeField] public Occupiable Occupiable { get; set; }
     [SerializeField] public Pausable Pausable { get; set; }
+    [SerializeField] public Generatable Generatable { get; set; }
 
     [NonSerialized] public Action OnLocationChanged;
     [NonSerialized] public Action OnPositionInTileStackChanged;
@@ -42,69 +38,8 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
     // Accessors
     public bool IsPaused => Pausable.IsPaused;
 
-    public List<NeedData> Needs = new();
-
-    public List<GatheringSpotData> GatheringSpots = new();
-    public List<SleepingSpotData> SleepingSpots = new();
-
-    // Storage related fields
-    public List<StorageAreaData> StorageAreas = new();
-    public int NumAvailableStorageSpots
-    {
-        get
-        {
-            int count = 0;
-            foreach (var area in StorageAreas) count += area.NumAvailableSpots;
-            return count;
-        }
-    }
-    public int NumStorageSpots
-    {
-        get
-        {
-            int count = 0;
-            foreach (var area in StorageAreas) count += area.NumStorageSpots;
-            return count;
-        }
-    }
-    public bool HasAvailableStorageSpot => StorageAreas.Any(area => area.HasAvailableSpot);
-    public bool IsStorageFull => NumAvailableStorageSpots == 0;
-    [SerializeReference] public List<StorageSpotData> StorageSpots = new();
-
-    // Resource gathering fields
-    public int NumReservedGatheringSpots
-    {
-        get
-        {
-            // TODO (PERF): Cache
-            int count = 0;
-            foreach (var spot in GatheringSpots) if (spot.Reservable.IsReserved) count++;
-            return count;
-        }
-    }
-    public int NumAvailableGatheringSpots => Defn.GatheringSpots.Count - NumReservedGatheringSpots;
-    public bool HasAvailableGatheringSpot => NumAvailableGatheringSpots > 0;
-
-    // storage
-    public int NumReservedStorageSpots => StorageAreas.Sum(area => area.NumReservedSpots);
-
     // TODO: Track this in building instead of recalculating
     public int NumWorkers => Town.TownWorkerMgr.NumBuildingWorkers(this);
-
-    // If this building can craft items or sell items, then ItemNeeds contains the priority of
-    // how much we need each of those items.  priority is dependent on how many are in storage.
-    public List<NeedData> ItemNeeds = new();
-
-    // How badly we need a courier to clear out our storage
-    public NeedData ClearOutStorageNeed;
-
-    // If this building can gather resources, then GatheringNeeds contains the priority of
-    // gathering each resource.  e.g.:
-    // * if we have many of X and few of Y, then Y may have a higher priority
-    // * if our storage is nearly full then all resource gathering is at a reduced priority
-    // * TODO: If another building has broadcast a need for resource R and we can gather it, then
-    //   increase priority to gather it.  note that a settlers-like model may ONLY do these.
-    public List<NeedData> GatheringNeeds = new();
 
     public BuildingData(BuildingDefn buildingDefn, int tileX, int tileY)
     {
@@ -121,6 +56,8 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
         Occupiable = new(Defn.Occupiable, this);
         Pausable = new(Defn.Pausable, this);
         Constructable = new(Defn.Constructable, this);
+        if (Defn.Generatable.CanGenerate)
+            Generatable = new(Defn.Generatable, this);
 
         // place at top of stack
         var countMinusThis = Town.GetTileStackForHexTile(new Vector2Int(TileX, TileY)).Buildings.Count - 1;
@@ -194,31 +131,6 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
         UpdateWorldLoc();
     }
 
-    public int GetStorageSpotIndex(StorageSpotData spotToCheck)
-    {
-        Debug.Assert(spotToCheck.Building == this, "wrong building");
-        var index = 0;
-        foreach (var spot in StorageSpots)
-            if (spot == spotToCheck)
-                return index;
-            else
-                index++;
-        Debug.Assert(false, "Failed to find storage spot");
-        return -1;
-    }
-
-    public StorageSpotData GetStorageSpotWithUnreservedItemOfType(ItemDefn itemDefn, ItemClass itemClass = ItemClass.Unset)
-    {
-        foreach (var spot in StorageSpots)
-            if (!spot.Reservable.IsReserved && spot.Container.FirstItem != null && spot.Container.FirstItem.DefnId == itemDefn.Id)// && spot.ItemInStorage.Defn.ItemClass == itemClass)
-                return spot;
-
-        return null;
-    }
-
-    public bool NeedsItemForSelf(ItemDefn itemDefn) => ItemNeeds.Find(need => need.NeededItem == itemDefn) != null;
-    public bool HasUnreservedItemOfTypeAndDoesntNeedIt(ItemDefn itemDefn) => StorageSpots.Any(spot => !spot.Reservable.IsReserved && spot.Container.ContainsItem(itemDefn) && !NeedsItemForSelf(itemDefn));
-
     /**
         returns true if this building supports gathering the required resource AND there's
         an available gathering spot
@@ -234,250 +146,23 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
     {
         UpdateNeedPriorities();
 
-        // grow
         foreach (var spot in GatheringSpots)
             spot.Update();
 
+        Generatable?.Update();
         // test - spit out log every N seconds 
-        if (false && Defn.Id == "forest")
-            if (GameTime.time - lastLogOutputTime > 5)
-            {
-                var defn = GameDefns.Instance.BuildingDefns["Resource_Wood"];
-                Town.ConstructBuilding(defn, TileX, TileY);
-                lastLogOutputTime = GameTime.time;
-            }
+        // if (Defn.Generatable.CanGenerate)
+        //     if (GameTime.time - lastLogOutputTime > Defn.Generatable.BaseSecondsToGenerate)
+        //     {
+        //         Town.ConstructBuilding(Defn.Generatable.Building, TileX, TileY);
+        //         lastLogOutputTime = GameTime.time;
+        //     }
     }
+    // float lastLogOutputTime = 0;
 
-    float lastLogOutputTime = 0;
-
-    public void UpdateNeedPriorities()
+    public void OnGenerated()
     {
-        int totalNumStorageSpot = StorageAreas.Sum(area => area.NumStorageSpots);
-
-        float percentFull = 1 - (float)NumAvailableStorageSpots / totalNumStorageSpot;
-
-        if (Defn.CanStoreItems)
-        {
-            if (Defn.IsPrimaryStorage)
-                ClearOutStorageNeed.Priority = 0;
-            else
-            {
-                // unless close to full, Cleanup tasks are lower priority than filling crafting need tasks
-                ClearOutStorageNeed.Priority = percentFull / 10f;
-
-                // if we're a crafting building then we have a higher priority than non-crafting buildings (e.g. woodcutter) to clear storage
-                // so that we can craft more
-                if (Defn.CanCraft)
-                    ClearOutStorageNeed.Priority *= 1.5f;
-            }
-        }
-
-        foreach (var need in ItemNeeds)
-        {
-            if (IsPaused)
-            {
-                need.Priority = 0;
-                continue;
-            }
-            need.Priority = 1;
-            float storageOccupancyRatio = (float)NumItemsInStorage / totalNumStorageSpot;
-            float fullnessAdjustment = percentFull > 0.99f ? 0 :
-                                       percentFull > 0.75f ? 0.5f :
-                                       percentFull > 0.5f ? 0.75f :
-                                       percentFull > 0.25f ? 0.875f :
-                                       percentFull > 0.1f ? 0.9f : 1f;
-            float occupancyAdjustment = storageOccupancyRatio > 0.5f ? 0.5f :
-                                        storageOccupancyRatio > 0.25f ? 0.75f : 1f;
-
-            need.Priority *= Math.Min(fullnessAdjustment, occupancyAdjustment);
-        }
-
-        foreach (var need in Needs)
-        {
-            if (need.IsBeingFullyMet || IsPaused)
-            {
-                need.Priority = 0;
-                continue;
-            }
-
-            if (need.Type == NeedType.CraftGood)
-            {
-                // Priority of Crafting is set by:
-                //  does anyone else need it and how badly (priority of need)
-                //  how many of the item are already in the Town?
-                //  do we want/need to sell the item?
-                var globalPriorityOfNeedForItem = 0f;
-                foreach (var building in Town.AllBuildings)
-                    foreach (var otherNeed in building.Needs)
-                        if (otherNeed.Type == NeedType.CraftingOrConstructionMaterial && otherNeed.NeededItem == need.NeededItem)
-                            globalPriorityOfNeedForItem += otherNeed.Priority;
-
-                var storageImpact = Mathf.Clamp(Town.NumTotalItemsInStorage(need.NeededItem) / 10f, 0, 2);
-
-                var priorityToSellItem = 0f;
-                foreach (var building in Town.AllBuildings)
-                    foreach (var otherNeed in building.Needs)
-                        if (otherNeed.Type == NeedType.SellItem && otherNeed.NeededItem == need.NeededItem)
-                            priorityToSellItem += otherNeed.Priority;
-
-                need.Priority = storageImpact / 2f + globalPriorityOfNeedForItem + priorityToSellItem + .3f;
-                need.Priority = 2;
-            }
-
-            if (need.Type == NeedType.SellItem)
-            {
-                // The need to sell (for the worker) is always 1.  Howver, the building's need for the item
-                // to be sold is based on how many are in storage and how badly other buildings need it
-                need.Priority = 2;
-
-                // Get the ItemNeed for this item to sell
-                var itemNeed = ItemNeeds.Find(n => n.NeededItem == need.NeededItem);
-                Debug.Assert(itemNeed != null, "ItemNeed not found for item to sell");
-
-                var item = itemNeed.NeededItem;
-                var globalNeedForItem = 0f;
-
-                // if the item-to-be-sold is highly needed by other buildings, then don't sell it
-                foreach (var building in Town.AllBuildings)
-                {
-                    if (building == this) continue;
-                    foreach (var otherNeed in building.Needs)
-                    {
-                        if (otherNeed.Type == NeedType.CraftingOrConstructionMaterial && otherNeed.NeededItem == item)
-                            globalNeedForItem += otherNeed.Priority;
-                        // if (otherNeed.Type == NeedType.ClearStorage && building.NumItemsInStorage(item) > 0) // todo: not quite right; only 1 of need's item is in storage will be the smae priority as if 9 of needs' item are in storage
-                        // globalNeedForItem += otherNeed.Priority;
-                        //   numInStorage += building.NumItemsInStorage(item); // doesn't include ferrying items but :shrug:
-                    }
-                }
-                // if (globalNeedForItem > 0.5f) // TODO: Allow user to modify this to e.g. effect a 'fire sale' in which even highly needed items are sold
-                // {
-                //     need.Priority = 0;
-                //     continue;
-                // }
-
-                // if here then the item-to-be-sold isn't highly needed.  If there's a lot of it in storage, then sell it
-                int numInStorage = Town.NumTotalItemsInStorage(item);
-                var storageImpact = Mathf.Clamp(numInStorage / 10f, 0, 2);
-                itemNeed.Priority = storageImpact / 2f + .2f;
-            }
-        }
-        foreach (var need in GatheringNeeds)
-        {
-            if (IsPaused)
-            {
-                need.Priority = 0;
-                continue;
-            }
-            need.Priority = .1f;
-            // if we have a lot of them then reduce priority
-            int numOfNeededItemAlreadyInStorage = NumItemsOfTypeInStorage(need.NeededItem);
-            numOfNeededItemAlreadyInStorage = Town.NumTotalItemsInStorage(need.NeededItem);
-
-            if (numOfNeededItemAlreadyInStorage > Town.NumTotalStorageSpots() / 2)
-                need.Priority *= .5f; // storage is half+ full of the needed item
-            else if (numOfNeededItemAlreadyInStorage > Town.NumTotalStorageSpots() / 4)
-                need.Priority *= .75f; // storage is 25%-50% full of the needed item
-        }
-
-    }
-
-    public bool HasUnreservedResourcesInStorageToCraftItem(ItemDefn item)
-    {
-        foreach (var resource in item.ResourcesNeededForCrafting)
-            if (!hasUnreservedItemsInStorage(resource.Item, resource.Count))
-                return false;
-        return true;
-    }
-
-    private bool hasUnreservedItemsInStorage(ItemDefn itemDefn, int count)
-    {
-        int num = 0;
-        foreach (var area in StorageAreas)
-            num += area.NumUnreservedItemsOfTypeInStorage(itemDefn);
-        return num >= count;
-    }
-
-    public int NumItemsInStorage => StorageAreas.Sum(area => area.NumItemsInStorage);
-    public int NumItemsOfTypeInStorage(ItemDefn itemDefn)
-    {
-        int num = 0;
-        foreach (var area in StorageAreas)
-            num += area.NumItemsOfTypeInStorage(itemDefn);
-        return num;
-    }
-
-    public StorageSpotData GetEmptyStorageSpot() => StorageSpots.First(spot => spot.Container.IsEmpty && !spot.Reservable.IsReserved);
-
-    public StorageSpotData GetClosestEmptyStorageSpot(Location loc) => GetClosestEmptyStorageSpot(loc, out float _);
-    public StorageSpotData GetClosestEmptyStorageSpot(Location loc, out float dist)
-    {
-        return loc.GetClosest(StorageSpots, out dist, spot => spot.Container.IsEmpty && !spot.Reservable.IsReserved);
-    }
-
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItem(Location loc, ItemDefn itemDefn) => GetClosestUnreservedStorageSpotWithItem(loc, itemDefn, out float _);
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItem(Location loc, ItemDefn itemDefn, out float distance)
-    {
-        return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservable.IsReserved && spot.Container.ContainsItem(itemDefn));
-    }
-
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItemIgnoreList(Location loc, ItemDefn itemDefn, List<StorageSpotData> ignore) => GetClosestUnreservedStorageSpotWithItemIgnoreList(loc, itemDefn, ignore, out float _);
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItemIgnoreList(Location loc, ItemDefn itemDefn, List<StorageSpotData> ignore, out float distance)
-    {
-        return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservable.IsReserved && spot.Container.ContainsItem(itemDefn) && !ignore.Contains(spot));
-    }
-
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(Location loc) => GetClosestUnreservedStorageSpotWithItemToReapOrSell(loc, out float _);
-    public StorageSpotData GetClosestUnreservedStorageSpotWithItemToReapOrSell(Location loc, out float distance)
-    {
-        return loc.GetClosest(StorageSpots, out distance, spot => !spot.Reservable.IsReserved && spot.Container.HasItem);
-    }
-
-    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(Location loc) => GetClosestUnreservedGatheringSpotWithItemToReap(loc, out float _);
-    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(Location loc, out float distance)
-    {
-        return loc.GetClosest(GatheringSpots, out distance, spot => !spot.Reservable.IsReserved && spot.Container.HasItem);
-    }
-
-    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(Location loc, ItemDefn itemDefn) => GetClosestUnreservedGatheringSpotWithItemToReap(loc, itemDefn, out float _);
-    public GatheringSpotData GetClosestUnreservedGatheringSpotWithItemToReap(Location loc, ItemDefn itemDefn, out float distance)
-    {
-        return loc.GetClosest(GatheringSpots, out distance, spot => !spot.Reservable.IsReserved && spot.Container.HasItem && spot.Container.FirstItem.DefnId == itemDefn.Id);
-    }
-
-    public StorageSpotData ReserveStorageSpot(WorkerData worker) => worker.ReserveFirstReservable(StorageSpots);
-    public GatheringSpotData ReserveGatheringSpot(WorkerData worker) => worker.ReserveFirstReservable(GatheringSpots);
-
-    public void UnreserveStorageSpot(WorkerData worker) => worker.UnreserveFirstReservedByWorker(StorageSpots);
-    public void UnreserveGatheringSpot(WorkerData worker) => worker.UnreserveFirstReservedByWorker(GatheringSpots);
-
-    public GatheringSpotData ReserveClosestGatheringSpot(WorkerData worker, Location loc)
-    {
-        var spot = loc.GetClosest(GatheringSpots);
-        spot?.Reservable.ReserveBy(worker);
-        return spot;
-    }
-
-    public ItemData GetUnreservedItemInStorage(ItemDefn item)
-    {
-        foreach (var spot in StorageSpots)
-            if (!spot.Reservable.IsReserved && spot.Container.FirstItem != null && spot.Container.FirstItem.DefnId == item.Id)
-                return spot.Container.FirstItem;
-        return null;
-    }
-
-    public StorageSpotData GetStorageSpotWithUnreservedItem(ItemDefn item)
-    {
-        foreach (var spot in StorageSpots)
-            if (!spot.Reservable.IsReserved && spot.Container.FirstItem != null && spot.Container.FirstItem.DefnId == item.Id)
-                return spot;
-        return null;
-    }
-
-    public void Debug_RemoveAllItemsFromStorage()
-    {
-        foreach (var area in StorageAreas)
-            area.Debug_RemoveAllItemsFromStorage();
+        Town.ConstructBuilding(Defn.Generatable.Building, TileX, TileY);
     }
 
     public void Destroy()
@@ -525,60 +210,6 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
         foreach (var spot in GatheringSpots) spot.UpdateWorldLoc();
         foreach (var spot in SleepingSpots) spot.UpdateWorldLoc();
         CraftingMgr?.UpdateWorldLoc();
-    }
-
-    public StorageSpotData GetFirstStorageSpotWithUnreservedItemToRemove()
-    {
-        foreach (var spot in StorageSpots)
-            if (!spot.Reservable.IsReserved && spot.Container.FirstItem != null)
-            {
-                // Allow returning resources that we need for crafting or selling if we're paused or have no workers assigned
-                var allowRemovingNeededItems = IsPaused || NumWorkers == 0;
-                if (!allowRemovingNeededItems && ItemNeeds.Find(need => need.NeededItem == spot.Container.FirstItem.Defn) != null)
-                    continue;
-                return spot;
-            }
-        return null;
-    }
-
-    public StorageSpotData GetClosestStorageSpotWithUnreservedItemToRemove(Location location)
-    {
-        StorageSpotData closestSpot = null;
-        float closestDist = float.MaxValue;
-        foreach (var spot in StorageSpots)
-            if (!spot.Reservable.IsReserved && spot.Container.FirstItem != null)
-            {
-                // Allow returning resources that we need for crafting or selling if we're paused or have no workers assigned
-                var allowRemovingNeededItems = IsPaused || NumWorkers == 0;
-                var itemNeed = getItemNeedForItem(spot.Container.FirstItem.Defn);
-                if (!allowRemovingNeededItems && itemNeed != null)
-                    continue;
-
-                var dist = location.DistanceTo(spot.Location);
-                if (dist < closestDist)
-                {
-                    closestDist = dist;
-                    closestSpot = spot;
-                }
-            }
-        return closestSpot;
-    }
-
-    private NeedData getItemNeedForItem(ItemDefn defn)
-    {
-        foreach (var need in ItemNeeds)
-            if (need.NeededItem.Id == defn.Id)
-                return need;
-        return null;
-    }
-
-    public List<StorageSpotData> GetStorageSpotsWithUnreservedItem(ItemDefn itemDefn)
-    {
-        var spots = new List<StorageSpotData>();
-        foreach (var spot in StorageSpots)
-            if (!spot.Reservable.IsReserved && spot.Container.FirstItem != null && spot.Container.FirstItem.DefnId == itemDefn.Id)
-                spots.Add(spot);
-        return spots;
     }
 
     public void OnPauseToggled()

@@ -58,3 +58,7 @@ MonoBehaviour:
   Occupiable:
     WorkersCanLiveHere: 0
     MaxWorkersLivingHere: 4
+  Generatable:
+    CanGenerate: 1
+    Building: {fileID: 11400000, guid: a7013901059cac54b82e45f5a0c74bd5, type: 2}
+    BaseSecondsToGenerate: 10
