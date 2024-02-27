@@ -46,7 +46,7 @@ public partial class BuildingData : BaseData, ILocation, IOccupiable, IConstruct
         DefnId = buildingDefn.Id;
         TileX = tileX;
         TileY = tileY;
-        Location = new(Utilities.ConvertHexTileToWorldPos(new Vector2Int(tileX, tileY)));
+        Location = new(Utilities.ConvertHexTileToWorldPos(new(tileX, tileY)));
     }
 
     public void Initialize(TownData town)
@@ -60,7 +60,7 @@ public partial class BuildingData : BaseData, ILocation, IOccupiable, IConstruct
             Generatable = new(Defn.Generatable, this);
 
         // place at top of stack
-        var countMinusThis = Town.GetTileStackForHexTile(new Vector2Int(TileX, TileY)).Buildings.Count - 1;
+        var countMinusThis = Town.GetTileStackForHexTile(new(TileX, TileY)).Buildings.Count - 1;
         Location.WorldLoc.y = countMinusThis * 1.77f;
 
         if (Defn.CanCraft)
