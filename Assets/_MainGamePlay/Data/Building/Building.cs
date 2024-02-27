@@ -150,15 +150,7 @@ public partial class BuildingData : BaseData, ILocation, IOccupiable, IConstruct
             spot.Update();
 
         Generatable?.Update();
-        // test - spit out log every N seconds 
-        // if (Defn.Generatable.CanGenerate)
-        //     if (GameTime.time - lastLogOutputTime > Defn.Generatable.BaseSecondsToGenerate)
-        //     {
-        //         Town.ConstructBuilding(Defn.Generatable.Building, TileX, TileY);
-        //         lastLogOutputTime = GameTime.time;
-        //     }
     }
-    // float lastLogOutputTime = 0;
 
     public void OnGenerated()
     {
