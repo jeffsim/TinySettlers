@@ -27,4 +27,5 @@ public class GameSettingsDefn : BaseDefn
     public float ItemDropY = -1.3f;
 
     public bool ShowHexDebug = true;
+    public int MaxStackHeight = 8;
 }

@@ -56,8 +56,7 @@ public partial class BuildingData : BaseData, ILocation, IOccupiable, IConstruct
         Occupiable = new(Defn.Occupiable, this);
         Pausable = new(Defn.Pausable, this);
         Constructable = new(Defn.Constructable, this);
-        if (Defn.Generatable.CanGenerate)
-            Generatable = new(Defn.Generatable, this);
+        Generatable = new(Defn.Generatable, this);
 
         // place at top of stack
         var countMinusThis = Town.GetTileStackForHexTile(new(TileX, TileY)).Buildings.Count - 1;
@@ -154,6 +153,11 @@ public partial class BuildingData : BaseData, ILocation, IOccupiable, IConstruct
 
     public void OnGenerated()
     {
+        // limit to MaxStackHeight
+        var tileStack = Town.GetTileStackForHexTile(new(TileX, TileY));
+        if (tileStack.Buildings.Count >= Settings.Current.MaxStackHeight)
+            return;
+
         Town.ConstructBuilding(Defn.Generatable.Building, TileX, TileY);
     }
 

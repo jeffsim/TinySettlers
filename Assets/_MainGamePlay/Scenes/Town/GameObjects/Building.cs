@@ -18,6 +18,8 @@ public class Building : MonoBehaviour
 
     public BuildingBase BuildingBase;
 
+    CountdownTimer Timer;
+
     public void Initialize(BuildingData data, SceneWithMap scene)
     {
         this.scene = scene;
@@ -25,6 +27,10 @@ public class Building : MonoBehaviour
         BuildingBase.InitializeForBuilding(this, scene, data);
 
         name = data.DefnId + " " + data.InstanceId;
+
+        Timer = GetComponentInChildren<CountdownTimer>();
+        Timer.InitializeForBuilding(data);
+        UpdateTimerVisibility();
 
         Data.OnLocationChanged += OnLocationChanged;
         Data.OnPositionInTileStackChanged += OnPositionInTileStackChanged;
@@ -77,12 +83,20 @@ public class Building : MonoBehaviour
         }
     }
 
+    private void UpdateTimerVisibility()
+    {
+        var tileStack = Data.Town.GetTileStackForHexTile(Data.TileX, Data.TileY);
+        var isTopBuilding = tileStack.IsTopBuilding(Data);
+
+        // If we're the top building in the stack, make our building visible; otherwise, hide it.
+        Visual.SetActive(isTopBuilding);
+
+        Timer.gameObject.SetActive(isTopBuilding && Data.Generatable.IsEnabled);
+    }
+
     void OnPositionInTileStackChanged()
     {
-        // If we're the top building in the stack, make our building visible; otherwise, hide it.
-        var tileStack = Data.Town.GetTileStackForHexTile(Data.TileX, Data.TileY);
-
-        Visual.SetActive(tileStack.IsTopBuilding(Data));
+        UpdateTimerVisibility();
     }
 
     void OnDestroy()
