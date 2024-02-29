@@ -30,7 +30,6 @@ MonoBehaviour:
   EditorColor: {r: 0.4431373, g: 0.4431373, b: 0.4431373, a: 1}
   PlayerCanMove: 0
   PlayerCanDestroy: 0
-  PlayerCanPause: 0
   CanBeConstructed: 0
   ResourcesNeededForConstruction: []
   NumConstructorSpots: 0
@@ -53,5 +52,12 @@ MonoBehaviour:
   GoodsThatCanBeSold: []
   WorkersCanRestHere: 0
   SleepingSpots: []
-  WorkersCanLiveHere: 0
-  MaxWorkersLivingHere: 4
+  Pausable:
+    CanBePaused: 0
+  Occupiable:
+    WorkersCanLiveHere: 0
+    MaxWorkersLivingHere: 4
+  Generatable:
+    CanGenerate: 1
+    Building: {fileID: 11400000, guid: 00804bebf3b6944cc9d85b5f90a25800, type: 2}
+    BaseSecondsToGenerate: 4

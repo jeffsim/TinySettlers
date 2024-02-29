@@ -1,0 +1,68 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e75d84e7abf74cb19c5077568ca91fd, type: 3}
+  m_Name: Farm
+  m_EditorClassIdentifier: 
+  Id: farm
+  BuildingColor: {r: 0.44313726, g: 0.24496941, b: 0, a: 1}
+  BuildingBottomColor: {r: 0, g: 0, b: 0, a: 0}
+  FriendlyName: Farm
+  IsTestBuilding: 0
+  BuildingClass: 2
+  VisualPrefab: {fileID: 1559070810855096, guid: 12e626b54a7370c4d8d5716900b9c6d9, type: 3}
+  VisualScale: {x: 0.4, y: 0.4, z: 0.4}
+  VisualRotation: {x: 0, y: 0, z: 0, w: 0}
+  VisualOffset: {x: -2, y: 0.5, z: 1.5}
+  AssignedWorkerColor: {r: 0.9607843, g: 0.51197916, b: 0, a: 0}
+  AssignedWorkerFriendlyName: Crafter
+  HasWorkers: 1
+  MaxWorkers: 4
+  MaxTownWorkersIncreasedWhenBuilt: 0
+  EditorColor: {r: 0.44313726, g: 0.20887102, b: 0, a: 1}
+  PlayerCanMove: 1
+  PlayerCanDestroy: 1
+  CanBeConstructed: 1
+  ResourcesNeededForConstruction:
+  - Item: {fileID: 11400000, guid: c2e25733a758e4213be41a1a634af4dd, type: 2}
+    Count: 1
+  NumConstructorSpots: 2
+  CanCraft: 0
+  CraftableItems:
+  - {fileID: 11400000, guid: a806f05d763e8a744aa2323085bb94cb, type: 2}
+  CraftingSpots:
+  - {x: 0, y: 2.5, z: 0}
+  - {x: 2, y: 2.5, z: 0}
+  CanStoreItems: 1
+  IsPrimaryStorage: 0
+  StorageAreas:
+  - Location: {x: 0, y: 0, z: 0}
+    StorageAreaSize: {x: 2, y: 2}
+    StoragePileSize: {x: 1, y: 1, z: 1}
+  WorkersCanFerryItems: 0
+  CanGatherResources: 0
+  GatherableResources: []
+  ResourcesCanBeGatheredFromHere: 0
+  ResourcesThatCanBeGatheredFromHere: []
+  GatheringSpots: []
+  CanSellGoods: 0
+  GoodsThatCanBeSold: []
+  WorkersCanRestHere: 0
+  SleepingSpots: []
+  Pausable:
+    CanBePaused: 1
+  Occupiable:
+    WorkersCanLiveHere: 0
+    MaxWorkersLivingHere: 4
+  Generatable:
+    CanGenerate: 1
+    Building: {fileID: 11400000, guid: 6941677a9792545938b9f0cdf010eb2d, type: 2}
+    BaseSecondsToGenerate: 4
