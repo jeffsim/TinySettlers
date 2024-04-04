@@ -57,7 +57,7 @@
         "Temp/": true,
         "[AMST]*.csproj": true,
         "T*.sln": true,
-        "Packages": true,
+        // "Packages": true,
         "Assets/Settings": true,
         "Assets/Resources": true,
         "Assets/Plugins": true,
