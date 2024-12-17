@@ -49,6 +49,8 @@ public class Worker : MonoBehaviour
         // Instantiate VisualPrefab from Defn and attach
         Visual = Instantiate(Data.Defn.VisualPrefab);
         Visual.transform.SetParent(transform, false);
+        Visual.transform.localScale = Vector3.one * .5f;
+
         animator = Visual.GetComponent<Animator>();
         animator.Play("idle_01");
         // Find CarryAboveHeadSpot

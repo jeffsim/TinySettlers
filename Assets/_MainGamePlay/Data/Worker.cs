@@ -72,7 +72,7 @@ public class WorkerData : BaseData, ILocation, IAssignable, IOccupier, IExhausti
     internal float GetMovementSpeed()
     {
         // todo: can be modified via e.g. research, town upgrades, ...
-        var distanceMovedPerSecond = 5f;
+        var distanceMovedPerSecond = 2.5f;
         if (Hands.HasItem)
             distanceMovedPerSecond *= Hands.FirstItem.Defn.CarryingSpeedModifier;
         return distanceMovedPerSecond;
