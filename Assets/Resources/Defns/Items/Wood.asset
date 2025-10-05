@@ -20,3 +20,4 @@ MonoBehaviour:
   ItemClass: 1
   BaseSellPrice: 1
   CarryingSpeedModifier: 1
+  SecondsToGrow: 3
