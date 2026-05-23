@@ -7,10 +7,10 @@ public class StorageSpotData : BaseData, ILocationProvider, IReservationProvider
     public override string ToString() => $"Storage {InstanceId}: {ItemContainer} {Reservation}";
     public int IndexInStoragePile;
 
-    [SerializeField] public BuildingData Building { get; set; }
-    [SerializeField] public LocationComponent Location { get; set; } = new();
-    [SerializeField] public ReservationComponent Reservation { get; set; } = new();
-    [SerializeField] public ItemContainerComponent ItemContainer { get; set; } = new();
+    public BuildingData Building { get; set; }
+    public LocationComponent Location { get; set; } = new();
+    public ReservationComponent Reservation { get; set; } = new();
+    public ItemContainerComponent ItemContainer { get; set; } = new();
 
     public StorageSpotData(StoragePileData pile, int pileIndex)
     {

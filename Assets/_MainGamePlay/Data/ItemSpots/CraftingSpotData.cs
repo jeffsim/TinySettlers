@@ -6,11 +6,11 @@ public class CraftingSpotData : BaseData, ILocationProvider, IReservationProvide
 {
     public override string ToString() => $"Crafting {InstanceId}: {ItemsContainer} {Reservation}";
 
-    [SerializeField] public BuildingData Building { get; set; }
+    public BuildingData Building { get; set; }
 
-    [SerializeField] public LocationComponent Location { get; set; } = new();
-    [SerializeField] public ReservationComponent Reservation { get; set; } = new();
-    [SerializeField] public MultipleItemContainerComponent ItemsContainer { get; set; } = new();
+    public LocationComponent Location { get; set; } = new();
+    public ReservationComponent Reservation { get; set; } = new();
+    public MultipleItemContainerComponent ItemsContainer { get; set; } = new();
     public Vector3 LocOffset;
 
     public CraftingSpotData(BuildingData building, int index)

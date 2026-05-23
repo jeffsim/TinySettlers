@@ -40,8 +40,8 @@ public class BuildingData : BaseData, ILocationProvider, IOccupantMgrProvider
 
     public bool IsPaused;
 
-    [SerializeField] public LocationComponent Location { get; set; }
-    [SerializeField] public OccupantMgrComponent OccupantMgr { get; set; }
+    public LocationComponent Location { get; set; }
+    public OccupantMgrComponent OccupantMgr { get; set; }
 
     [NonSerialized] public OnLocationChangedEvent OnLocationChanged;
 

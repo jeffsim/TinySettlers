@@ -8,12 +8,12 @@ public class WorkerData : BaseData, ILocationProvider, IAssignmentProvider, IOcc
 {
     public override string ToString() => Assignment.AssignedTo.Defn.AssignedWorkerFriendlyName + " (" + InstanceId + ")";// + "-" + worker.Data.UniqueId;
 
-    [SerializeField] public LocationComponent Location { get; set; }
-    [SerializeField] public AssignmentComponent Assignment { get; set; } = new();
-    [SerializeField] public ItemContainerComponent Hands { get; set; } = new();
-    [SerializeField] public AIComponent AI { get; set; }
-    [SerializeField] public EnergyComponent Energy { get; set; } = new();
-    [SerializeField] public OccupantComponent Occupant { get; set; } = new();
+    public LocationComponent Location { get; set; }
+    public AssignmentComponent Assignment { get; set; } = new();
+    public ItemContainerComponent Hands { get; set; } = new();
+    public AIComponent AI { get; set; }
+    public EnergyComponent Energy { get; set; } = new();
+    public OccupantComponent Occupant { get; set; } = new();
 
     internal void DropItemOnGround() => Town.AddItemToGround(Hands.ClearItem(), Location);
 
