@@ -5,14 +5,14 @@ using UnityEngine;
 public class GatheringSpotData : BaseData, ILocation, IReservable, IContainerInBuilding
 {
     public override string ToString() => $"Gathering {InstanceId}: {Container} {Reservable}";
-    [SerializeField] public BuildingData Building { get; set; }
+    public BuildingData Building { get; set; }
 
     public string ItemGrownInSpotDefnId;
     public float PercentGrown;
 
-    [SerializeField] public Location Location { get; set; } = new();
-    [SerializeField] public Reservable Reservable { get; set; }
-    [SerializeField] public Container Container { get; set; } = new();
+    public Location Location { get; set; } = new();
+    public Reservable Reservable { get; set; }
+    public Container Container { get; set; } = new();
     public Vector3 LocOffset;
 
     public GatheringSpotData(BuildingData building, int index)

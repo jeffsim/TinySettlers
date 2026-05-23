@@ -34,10 +34,10 @@ public class BuildingData : BaseData, ILocation, IOccupiable, IConstructable, IP
     public List<NeedData> ConstructionNeeds = new();
 
     // Data Components
-    [SerializeField] public Constructable Constructable { get; set; }
-    [SerializeField] public Location Location { get; set; }
-    [SerializeField] public Occupiable Occupiable { get; set; }
-    [SerializeField] public Pausable Pausable { get; set; }
+    public Constructable Constructable { get; set; }
+    public Location Location { get; set; }
+    public Occupiable Occupiable { get; set; }
+    public Pausable Pausable { get; set; }
 
     [NonSerialized] public OnLocationChangedEvent OnLocationChanged;
 

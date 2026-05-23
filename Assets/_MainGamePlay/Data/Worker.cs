@@ -12,12 +12,12 @@ public class WorkerData : BaseData, ILocation, IAssignable, IOccupier, IExhausti
     public WorkerDefn Defn => _defn = _defn != null ? _defn : GameDefns.Instance.WorkerDefns[DefnId];
     public string DefnId;
 
-    [SerializeField] public Location Location { get; set; }
-    [SerializeField] public Container Hands { get; set; }
-    [SerializeField] public AIComponent AI { get; set; }
-    [SerializeField] public Assignable Assignable { get; set; }
-    [SerializeField] public Occupier Occupier { get; set; }
-    [SerializeField] public Exhaustible Exhaustible { get; set; }
+    public Location Location { get; set; }
+    public Container Hands { get; set; }
+    public AIComponent AI { get; set; }
+    public Assignable Assignable { get; set; }
+    public Occupier Occupier { get; set; }
+    public Exhaustible Exhaustible { get; set; }
 
     public TownData Town;
     public NeedData OriginalPickupItemNeed;

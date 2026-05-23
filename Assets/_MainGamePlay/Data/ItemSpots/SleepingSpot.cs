@@ -7,9 +7,9 @@ public class SleepingSpotData : BaseData, ILocation, IReservable
     public override string ToString() => $"Sleeping {InstanceId}: {Reservable}";
     public int IndexInStoragePile;
 
-    [SerializeField] public BuildingData Building { get; set; }
-    [SerializeField] public Location Location { get; set; } = new();
-    [SerializeField] public Reservable Reservable { get; set; }
+    public BuildingData Building { get; set; }
+    public Location Location { get; set; } = new();
+    public Reservable Reservable { get; set; }
 
     public Vector3 LocOffset;
 

@@ -6,11 +6,11 @@ public class CraftingSpotData : BaseData, ILocation, IReservable, IContainerInBu
 {
     public override string ToString() => $"Crafting {InstanceId}: {Container} {Reservable}";
 
-    [SerializeField] public BuildingData Building { get; set; }
+    public BuildingData Building { get; set; }
 
-    [SerializeField] public Location Location { get; set; } = new();
-    [SerializeField] public Reservable Reservable { get; set; }
-    [SerializeField] public Container Container { get; set; } = new();
+    public Location Location { get; set; } = new();
+    public Reservable Reservable { get; set; }
+    public Container Container { get; set; } = new();
     public Vector3 LocOffset;
 
     public CraftingSpotData(BuildingData building, int index)

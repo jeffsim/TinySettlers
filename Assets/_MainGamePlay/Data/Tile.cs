@@ -9,7 +9,7 @@ public class TileData : BaseData, ILocation
     public string DefnId;
     public int TileX;
     public int TileY;
-    [SerializeField] public Location Location { get; set; }
+    public Location Location { get; set; }
 
     static float TileSize = 10;
     public float WorldX => Location.WorldLoc.x;

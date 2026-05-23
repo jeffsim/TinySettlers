@@ -5,12 +5,12 @@ using UnityEngine;
 public abstract class Subtask
 {
     [SerializeField] protected Task Task;
-    [SerializeField] public virtual bool IsWalkingToTarget { get; set; } = false;
-    [SerializeField] protected virtual float RunTime { get; set; } = 0;
-    [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingPaused { get; set; } = true;
-    [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingDestroyed { get; set; } = true;
-    [SerializeField] public virtual bool AutomaticallyAbandonIfAssignedBuildingMoved { get; set; } = false;
-    [SerializeField] public virtual bool InstantlyComplete { get; set; } = false;
+    public virtual bool IsWalkingToTarget { get; set; } = false;
+    protected virtual float RunTime { get; set; } = 0;
+    public virtual bool AutomaticallyAbandonIfAssignedBuildingPaused { get; set; } = true;
+    public virtual bool AutomaticallyAbandonIfAssignedBuildingDestroyed { get; set; } = true;
+    public virtual bool AutomaticallyAbandonIfAssignedBuildingMoved { get; set; } = false;
+    public virtual bool InstantlyComplete { get; set; } = false;
 
     public List<BuildingData> UpdateWorkerLocWhenTheseBuildingsMove = new();
     public List<BuildingData> UpdateMoveTargetWhenTheseBuildingsMove = new();
